@@ -8,7 +8,7 @@
 <title>Dashboard BNBA PPKS ODHIV Sumut</title>
 <style>
 :root{--green:#155c4d;--teal:#57b4b1;--blue:#247ba0;--sky:#dff3fa;--ink:#203633;--muted:#647773;--line:#dbe8e5;--bg:#f3f8f7}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,sans-serif;color:var(--ink)}header{background:linear-gradient(110deg,#124d42,#247ba0);color:white;padding:22px max(20px,calc((100vw - 1120px)/2))}header .eyebrow{font-size:.8rem;letter-spacing:.09em;text-transform:uppercase;opacity:.85}h1{font-size:clamp(1.35rem,3vw,2rem);margin:6px 0}header p{margin:0;opacity:.9;font-size:.95rem}.wrap{max-width:1120px;margin:24px auto;padding:0 18px}.alert{background:#fff8e8;border:1px solid #ecd59c;border-radius:12px;padding:15px 17px;line-height:1.5;margin-bottom:18px}.alert strong{display:block;color:#79550a;margin-bottom:3px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;min-width:0}.card h2{font-size:1rem;margin:0 0 8px;color:var(--green)}.card p{font-size:.92rem;color:var(--muted);line-height:1.55;margin:0}.status{display:inline-block;border-radius:99px;padding:5px 9px;font-size:.78rem;font-weight:700;background:#eaf4f2;color:#155c4d;margin-top:13px}.section{margin-top:18px}.section h2{font-size:1.05rem;margin:0 0 12px}.steps{padding-left:20px;margin:0}.steps li{margin:8px 0;line-height:1.5}.code{font-family:ui-monospace,monospace;font-size:.85rem;background:#edf4f5;padding:2px 5px;border-radius:5px;overflow-wrap:anywhere}footer{text-align:center;color:var(--muted);font-size:.82rem;padding:24px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,sans-serif;color:var(--ink)}header{background:linear-gradient(110deg,#124d42,#247ba0);color:white;padding:22px max(20px,calc((100vw - 1120px)/2))}header .eyebrow{font-size:.8rem;letter-spacing:.09em;text-transform:uppercase;opacity:.85}h1{font-size:clamp(1.35rem,3vw,2rem);margin:6px 0}header p{margin:0;opacity:.9;font-size:.95rem}.wrap{max-width:1120px;margin:24px auto;padding:0 18px}.alert{background:#fff8e8;border:1px solid #ecd59c;border-radius:12px;padding:15px 17px;line-height:1.5;margin-bottom:18px}.alert strong{display:block;color:#79550a;margin-bottom:3px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;min-width:0}.card h2{font-size:1rem;margin:0 0 8px;color:var(--green)}.card p{font-size:.92rem;color:var(--muted);line-height:1.55;margin:0}.status{display:inline-block;border-radius:99px;padding:5px 9px;font-size:.78rem;font-weight:700;background:#eaf4f2;color:#155c4d;margin-top:13px}.section{margin-top:18px}.section h2{font-size:1.05rem;margin:0 0 12px}.login{display:grid;gap:10px;margin-top:14px}.login label{font-size:.88rem;font-weight:650}.login input{width:100%;padding:12px;border:1px solid #cbdcd7;border-radius:9px;font:inherit}.login button{padding:12px 16px;border:0;border-radius:9px;background:var(--green);color:#fff;font:inherit;font-weight:700}.login button:disabled{opacity:.6}.msg{font-size:.9rem;min-height:1.4em;color:var(--muted)}.steps{padding-left:20px;margin:0}.steps li{margin:8px 0;line-height:1.5}.code{font-family:ui-monospace,monospace;font-size:.85rem;background:#edf4f5;padding:2px 5px;border-radius:5px;overflow-wrap:anywhere}footer{text-align:center;color:var(--muted);font-size:.82rem;padding:24px}
 @media(max-width:700px){.grid{grid-template-columns:1fr}.wrap{margin:16px auto}header{padding:20px}}
 </style></head>
 <body>
@@ -16,10 +16,33 @@
 <main class="wrap">
 <div class="alert"><strong>Penyiapan sistem — belum untuk data nyata</strong>Dashboard ini belum mengaktifkan login admin atau koneksi Google Sheets/Drive. Data responden dan foto tetap diblokir sampai autentikasi, izin akses, serta pengujian keamanan selesai.</div>
 <div class="grid">
-<section class="card"><h2>Data responden</h2><p>Sumber yang direncanakan: Google Sheets pada tab <span class="code">From Response 1</span>. Akses harus melalui backend terautentikasi.</p><span class="status">Belum terhubung</span></section>
+<section class="card"><h2>Login petugas</h2><p>Form ini baru menguji endpoint autentikasi. Akun owner harus dibuat terlebih dahulu dan fitur data belum aktif.</p><form class="login" id="loginForm"><label for="username">Username</label><input id="username" name="username" autocomplete="username" required maxlength="64"><label for="password">Kata sandi</label><input id="password" name="password" type="password" autocomplete="current-password" required maxlength="1024"><button id="loginButton" type="submit">Masuk</button><div id="loginMessage" class="msg" role="status" aria-live="polite"></div></form><button id="logoutButton" type="button" hidden style="margin-top:10px;padding:10px 14px;border:1px solid #cbdcd7;border-radius:9px;background:white;color:var(--green)">Keluar</button></section><section class="card"><h2>Data responden</h2><p>Sumber yang direncanakan: Google Sheets pada tab <span class="code">From Response 1</span>. Akses harus melalui backend terautentikasi.</p><span class="status">Belum terhubung</span></section>
 <section class="card"><h2>Verifikasi dan pelaporan</h2><p>Status yang direncanakan: Sudah Dilaporkan, Belum Dilaporkan, dan Proses Verifikasi. Desil diisi petugas berwenang.</p><span class="status">Menunggu backend</span></section>
 <section class="card"><h2>Dokumen dan cetak</h2><p>Rencana: foto dari Drive privat, pemilihan beberapa responden, dan satu lembar A4 per responden dengan pilihan orientasi.</p><span class="status">Belum aktif</span></section>
 </div>
 <section class="card section"><h2>Langkah penyelesaian berikutnya</h2><ol class="steps"><li>Konfigurasi Cloudflare D1 dan rahasia server tanpa memasukkannya ke GitHub.</li><li>Implementasikan login admin, sesi aman, dan provisioning owner satu kali.</li><li>Hubungkan Google Sheets serta Drive privat melalui service account dengan akses minimum.</li><li>Uji pembatasan akses, audit, dan cetak menggunakan data uji sebelum memakai data sebenarnya.</li></ol></section>
-</main><footer>Data sensitif • Akses terbatas untuk petugas berwenang</footer>
+</main>
+<script>
+const form=document.getElementById('loginForm'), msg=document.getElementById('loginMessage'), button=document.getElementById('loginButton'), logout=document.getElementById('logoutButton');
+let csrfToken='';
+async function checkSession(){
+ try { const r=await fetch('/api/me',{credentials:'same-origin',cache:'no-store'}); if(!r.ok)return;
+ const d=await r.json(); csrfToken=d.csrfToken||''; msg.textContent='Sesi aktif: '+(d.admin.display_name||d.admin.username)+'. Akses data belum diaktifkan.'; logout.hidden=false;
+ } catch { /* offline or endpoint not configured */ }
+}
+form.addEventListener('submit',async e=>{
+ e.preventDefault(); button.disabled=true; msg.textContent='Memeriksa akun…';
+ try{
+  const r=await fetch('/api/login',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json'},body:JSON.stringify({username:form.username.value,password:form.password.value})});
+  const d=await r.json(); if(!r.ok)throw new Error(d.error||'Login gagal.');
+  csrfToken=d.csrfToken||''; form.password.value=''; msg.textContent='Login berhasil. Data responden tetap terkunci sampai integrasi selesai.'; logout.hidden=false;
+ }catch(err){msg.textContent=err.message||'Tidak dapat menghubungi server.';}finally{button.disabled=false;}
+});
+logout.addEventListener('click',async()=>{
+ try{const r=await fetch('/api/logout',{method:'POST',credentials:'same-origin',headers:{'X-CSRF-Token':csrfToken}}); if(!r.ok)throw new Error('Logout gagal.'); csrfToken=''; logout.hidden=true; msg.textContent='Sesi sudah ditutup.';}
+ catch(err){msg.textContent=err.message||'Logout gagal.';}
+});
+checkSession();
+</script>
+<footer>Data sensitif • Akses terbatas untuk petugas berwenang</footer>
 </body></html>
