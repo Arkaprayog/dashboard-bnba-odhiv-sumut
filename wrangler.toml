@@ -9,7 +9,7 @@ binding = "ASSETS"
 [[d1_databases]]
 binding = "DB"
 database_name = "ppks-odhiv-auth"
-database_id = "GANTI_DENGAN_DATABASE_ID"
+database_id = "c0b05571-c0ac-48a7-ac58-d600f7c7e5cb"
 
 [vars]
 APP_NAME = "Data Base PPKS ODHIV Sumut"
