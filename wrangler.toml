@@ -14,7 +14,7 @@ database_id = "c0b05571-c0ac-48a7-ac58-d600f7c7e5cb"
 [vars]
 APP_NAME = "Data Base PPKS ODHIV Sumut"
 # Isi setelah deploy dengan domain asli, tanpa garis miring di akhir.
-APP_ORIGIN = "https://GANTI-DENGAN-DOMAIN-ANDA"
+APP_ORIGIN = "https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev"
 WEBAUTHN_RP_NAME = "Data Base PPKS ODHIV Sumut"
-WEBAUTHN_RP_ID = "GANTI-DENGAN-HOSTNAME-ANDA"
+WEBAUTHN_RP_ID = "dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev"
 SESSION_TTL_SECONDS = "28800"
