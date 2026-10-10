@@ -13,6 +13,10 @@ interface Env {
   APP_ORIGIN: string;
   SESSION_TTL_SECONDS?: string;
   OWNER_BOOTSTRAP_TOKEN?: string;
+  GOOGLE_SERVICE_ACCOUNT_EMAIL?: string;
+  GOOGLE_PRIVATE_KEY?: string;
+  GOOGLE_SHEET_ID?: string;
+  GOOGLE_SHEET_TAB?: string;
 }
 const NO_STORE = { "cache-control": "no-store", "x-content-type-options": "nosniff" };
 function reply(data: unknown, status = 200, extra: Record<string,string> = {}) {
@@ -52,6 +56,27 @@ async function sessionAdmin(request: Request, env: Env) {
   return env.DB.prepare(`SELECT a.id,a.username,a.display_name,a.role,s.csrf_token
     FROM sessions s JOIN admins a ON a.id=s.admin_id
     WHERE s.id_hash=? AND s.revoked_at IS NULL AND s.expires_at>? AND a.active=1`).bind(hash,now).first<Record<string,string>>();
+}
+async function googleAccessToken(env: Env): Promise<string> {
+  const email=env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+  const pem=env.GOOGLE_PRIVATE_KEY;
+  if(!email || !pem) throw new Error("Google API belum dikonfigurasi.");
+  const now=Math.floor(Date.now()/1000);
+  const enc=(v:unknown)=>b64(new TextEncoder().encode(JSON.stringify(v)));
+  const header=enc({alg:"RS256",typ:"JWT"});
+  const claim=enc({iss:email,scope:"https://www.googleapis.com/auth/spreadsheets.readonly",aud:"https://oauth2.googleapis.com/token",iat:now,exp:now+3600});
+  const unsigned=header+"."+claim;
+  const body=pem.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\\s/g,"");
+  const binary=atob(body);
+  const keyBytes=Uint8Array.from(binary,ch=>ch.charCodeAt(0));
+  const key=await crypto.subtle.importKey("pkcs8",keyBytes,{name:"RSASSA-PKCS1-v1_5",hash:"SHA-256"},false,["sign"]);
+  const signature=await crypto.subtle.sign("RSASSA-PKCS1-v1_5",key,new TextEncoder().encode(unsigned));
+  const assertion=unsigned+"."+b64(new Uint8Array(signature));
+  const response=await fetch("https://oauth2.googleapis.com/token",{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},body:new URLSearchParams({grant_type:"urn:ietf:params:oauth:grant-type:jwt-bearer",assertion})});
+  if(!response.ok) throw new Error("Google OAuth gagal.");
+  const data=await response.json() as {access_token?:string};
+  if(!data.access_token) throw new Error("Token Google tidak tersedia.");
+  return data.access_token;
 }
 async function audit(env: Env, adminId: string, action: string) {
   await env.DB.prepare("INSERT INTO audit_log(admin_id,action) VALUES(?,?)").bind(adminId,action).run();
@@ -122,6 +147,32 @@ export default {
         return reply({ok:true,admin:{username:admin.username,display_name:admin.display_name,role:admin.role},csrfToken:csrf},200,{
           "set-cookie":`ppks_session=${raw}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${ttl}`
         });
+      }
+      if (url.pathname === "/api/respondents" && request.method === "GET") {
+        const admin=await sessionAdmin(request,env);
+        if(!admin) return reply({error:"Silakan login."},401);
+        if(!env.GOOGLE_SHEET_ID) return reply({error:"Integrasi Google Sheets belum dikonfigurasi."},503);
+        try {
+          const token=await googleAccessToken(env);
+          const tab=(env.GOOGLE_SHEET_TAB || "From Response 1").replace(/'/g,"''");
+          const range="'"+tab+"'!A1:AZ1000";
+          const url="https://sheets.googleapis.com/v4/spreadsheets/"+encodeURIComponent(env.GOOGLE_SHEET_ID)+"/values/"+encodeURIComponent(range)+"?valueRenderOption=FORMATTED_VALUE";
+          const response=await fetch(url,{headers:{authorization:"Bearer "+token}});
+          if(!response.ok) return reply({error:"Google Sheets tidak dapat dibaca. Periksa akses service account dan nama tab."},502);
+          const sheet=await response.json() as {values?:string[][]};
+          const values=sheet.values||[];
+          if(values.length<1) return reply({items:[],headers:[]});
+          const headers=values[0].map(v=>String(v||"").trim());
+          const items=values.slice(1).filter(row=>row.some(v=>String(v||"").trim())).map((row,index)=>{
+            const record:Record<string,string>={};
+            headers.forEach((header,i)=>{if(header) record[header]=String(row[i]||"");});
+            record["_row"]=String(index+2);
+            return record;
+          });
+          return reply({headers,items,source:"Google Sheets",count:items.length});
+        } catch {
+          return reply({error:"Integrasi Google Sheets gagal. Periksa konfigurasi secret dan log server."},503);
+        }
       }
       if (url.pathname === "/api/workflow" && request.method === "GET") {
         const admin = await sessionAdmin(request,env);
