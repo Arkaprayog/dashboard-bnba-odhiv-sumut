@@ -123,6 +123,33 @@ export default {
           "set-cookie":`ppks_session=${raw}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${ttl}`
         });
       }
+      if (url.pathname === "/api/workflow" && request.method === "GET") {
+        const admin = await sessionAdmin(request,env);
+        if (!admin) return reply({error:"Silakan login."},401);
+        const rows = await env.DB.prepare("SELECT respondent_key,report_status,desil,template_choice,updated_at FROM respondent_workflow ORDER BY updated_at DESC LIMIT 500").all();
+        return reply({items:rows.results || [], csrfToken:admin.csrf_token, note:"Metadata workflow saja; belum terhubung ke Google Sheets."});
+      }
+      if (url.pathname === "/api/workflow" && request.method === "POST") {
+        if (request.headers.get("Origin") !== env.APP_ORIGIN) return reply({error:"Origin tidak diizinkan."},403);
+        const admin = await sessionAdmin(request,env);
+        if (!admin) return reply({error:"Silakan login."},401);
+        const csrf=request.headers.get("X-CSRF-Token");
+        if (!csrf || csrf !== admin.csrf_token) return reply({error:"Token CSRF tidak valid."},403);
+        if (admin.role !== "owner" && admin.role !== "admin") return reply({error:"Peran tidak diizinkan mengubah metadata."},403);
+        let body:{respondentKey?:string;reportStatus?:string;desil?:number|null;templateChoice?:string|null};
+        try { body=await request.json() as typeof body; } catch { return reply({error:"Format permintaan tidak valid."},400); }
+        const key=typeof body.respondentKey==="string"?body.respondentKey.trim():"";
+        const statuses=["Sudah Dilaporkan","Belum Dilaporkan","Proses Verifikasi"];
+        const templates=["Template 1","Template 2"];
+        if(!/^[A-Za-z0-9_-]{12,100}$/.test(key) || typeof body.reportStatus!=="string" || !statuses.includes(body.reportStatus)) return reply({error:"Kunci responden atau status tidak valid."},400);
+        if(body.desil!==undefined && body.desil!==null && (!Number.isInteger(body.desil) || body.desil<0 || body.desil>10)) return reply({error:"Desil harus angka 0 sampai 10."},400);
+        if(body.templateChoice!==undefined && body.templateChoice!==null && !templates.includes(body.templateChoice)) return reply({error:"Pilihan template tidak valid."},400);
+        const desil=body.desil===undefined?null:body.desil;
+        const template=body.templateChoice===undefined?null:body.templateChoice;
+        await env.DB.prepare("INSERT INTO respondent_workflow(respondent_key,report_status,desil,template_choice,updated_by,updated_at) VALUES(?,?,?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(respondent_key) DO UPDATE SET report_status=excluded.report_status,desil=COALESCE(excluded.desil,respondent_workflow.desil),template_choice=COALESCE(excluded.template_choice,respondent_workflow.template_choice),updated_by=excluded.updated_by,updated_at=CURRENT_TIMESTAMP").bind(key,body.reportStatus,desil,template,admin.id).run();
+        await audit(env,admin.id,"workflow_update");
+        return reply({ok:true});
+      }
       if (url.pathname === "/api/me" && request.method === "GET") {
         const admin=await sessionAdmin(request,env);
         if(!admin) return reply({error:"Silakan login."},401);
