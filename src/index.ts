@@ -106,7 +106,7 @@ export default {
         const username = typeof body.username==="string" ? body.username.trim().toLowerCase() : "";
         const displayName = typeof body.displayName==="string" ? body.displayName.trim() : "";
         const password = typeof body.password==="string" ? body.password : "";
-        if (!/^[a-z0-9._-]{3,64}$/.test(username) || displayName.length<2 || displayName.length>100 || password.length<14 || password.length>1024) return reply({error:"Gunakan username 3–64 karakter, nama 2–100 karakter, dan kata sandi minimal 14 karakter."},400);
+        if (!/^[a-z0-9._-]{3,64}$/.test(username) || displayName.length<2 || displayName.length>100 || password.length<6 || password.length>1024 || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) return reply({error:"Gunakan username 3–64 karakter, nama 2–100 karakter, dan kata sandi minimal 6 karakter yang memuat angka serta simbol."},400);
         const salt = crypto.getRandomValues(new Uint8Array(16));
         const hash = await passwordHash(password,salt);
         const hex=(v:Uint8Array)=>[...v].map(n=>n.toString(16).padStart(2,"0")).join("");
