@@ -12,7 +12,6 @@ interface Env {
   DB: D1Database;
   APP_ORIGIN: string;
   SESSION_TTL_SECONDS?: string;
-  OWNER_BOOTSTRAP_TOKEN?: string;
   GOOGLE_SERVICE_ACCOUNT_EMAIL?: string;
   GOOGLE_PRIVATE_KEY?: string;
   GOOGLE_SHEET_ID?: string;
@@ -87,7 +86,7 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     if (url.pathname === "/api/health" && request.method === "GET") {
-      return reply({ok:true,service:"dashboard-bnba-odhiv-sumut",mode:"auth-bootstrap"});
+      return reply({ok:true,service:"dashboard-bnba-odhiv-sumut",mode:"ready"});
     }
     if (url.pathname.startsWith("/api/")) {
       if (!env.DB) return reply({error:"Database D1 belum dikonfigurasi."},503);
@@ -116,7 +115,7 @@ export default {
           console.error("setup_owner_database_error", { incidentId, message: error instanceof Error ? error.message : "unknown_error" });
           return reply({error:"Akun owner tidak dapat diselesaikan karena kesalahan database. Periksa log Worker dengan ID insiden: "+incidentId},503);
         }
-        return reply({ok:true,message:"Akun owner berhasil dibuat. Hapus secret OWNER_BOOTSTRAP_TOKEN dari konfigurasi Worker sekarang."},201);
+        return reply({ok:true,message:"Akun owner berhasil dibuat. Simpan kredensial dengan aman dan segera masuk untuk memeriksa pengaturan."},201);
         } catch (error) {
           const incidentId = crypto.randomUUID();
           console.error("setup_owner_internal_error", { incidentId, message: error instanceof Error ? error.message : "unknown_error" });
