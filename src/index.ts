@@ -114,7 +114,11 @@ export default {
         try {
           await env.DB.prepare("INSERT INTO admins(id,username,display_name,password_hash,password_salt,role,active) VALUES(?,?,?,?,?,'owner',1)").bind(id,username,displayName,hex(hash),hex(salt)).run();
           await audit(env,id,"owner_bootstrap");
-        } catch { return reply({error:"Akun tidak dapat dibuat. Pastikan migrasi database sudah dijalankan."},503); }
+        } catch (error) {
+          const incidentId = crypto.randomUUID();
+          console.error("setup_owner_database_error", { incidentId, message: error instanceof Error ? error.message : "unknown_error" });
+          return reply({error:"Akun owner tidak dapat diselesaikan karena kesalahan database. Periksa log Worker dengan ID insiden: "+incidentId},503);
+        }
         return reply({ok:true,message:"Akun owner berhasil dibuat. Hapus secret OWNER_BOOTSTRAP_TOKEN dari konfigurasi Worker sekarang."},201);
         } catch (error) {
           const incidentId = crypto.randomUUID();
