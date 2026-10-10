@@ -26,13 +26,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
       - name: Install dependencies
         run: npm install
       - name: Typecheck
         run: npm run typecheck
 
   deploy:
-    name: Deploy production Worker (manual only)
+    name: Deploy and health-check production Worker
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     needs: validate
     runs-on: ubuntu-latest
@@ -45,11 +46,34 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
       - name: Install dependencies
         run: npm install
+      - name: Check Cloudflare secrets are configured
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN" || (echo "::error::Missing CLOUDFLARE_API_TOKEN in GitHub Actions secrets/environment." && exit 1)
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || (echo "::error::Missing CLOUDFLARE_ACCOUNT_ID in GitHub Actions secrets/environment." && exit 1)
       - name: Deploy Worker
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy
+      - name: Verify production backend health
+        env:
+          HEALTH_URL: https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev/api/health
+        run: |
+          for attempt in $(seq 1 10); do
+            if curl --fail --silent --show-error "$HEALTH_URL"; then
+              echo
+              echo "Backend health check passed."
+              exit 0
+            fi
+            echo "Health check attempt $attempt/10 failed; retrying in 6 seconds."
+            sleep 6
+          done
+          echo "::error::Backend health check failed after deployment."
+          exit 1
