@@ -90,6 +90,14 @@ export default {
     }
     if (url.pathname.startsWith("/api/")) {
       if (!env.DB) return reply({error:"Database D1 belum dikonfigurasi."},503);
+      if (url.pathname === "/api/setup-status" && request.method === "GET") {
+        try {
+          const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM admins").first<{n:number}>();
+          return reply({ok:true,setupOpen:!!count && count.n===0});
+        } catch {
+          return reply({ok:false,error:"Status setup tidak dapat diperiksa."},503);
+        }
+      }
       if (url.pathname === "/api/setup-owner" && request.method === "POST") {
         if (request.headers.get("Origin") !== env.APP_ORIGIN) return reply({error:"Origin tidak diizinkan."},403);
         // First-owner bootstrap intentionally needs no token entry. It is only available
