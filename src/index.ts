@@ -159,6 +159,7 @@ export default {
       if (url.pathname === "/api/respondents" && request.method === "GET") {
         const admin=await sessionAdmin(request,env);
         if(!admin) return reply({error:"Silakan login."},401);
+        if(admin.role!=="owner" && admin.role!=="admin") return reply({error:"Peran tidak diizinkan mengakses data responden."},403);
         if(!env.GOOGLE_SHEET_ID) return reply({error:"Integrasi Google Sheets belum dikonfigurasi."},503);
         try {
           const token=await googleAccessToken(env);
