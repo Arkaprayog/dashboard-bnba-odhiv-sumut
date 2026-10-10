@@ -41,3 +41,11 @@ LOG_LEVEL = "debug"
 
 [triggers]
 crons = ["0 2 * * *"]
+
+[observability]
+enabled = true
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+invocation_logs = true
