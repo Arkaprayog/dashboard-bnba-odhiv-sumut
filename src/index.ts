@@ -98,6 +98,7 @@ export default {
         const a = new TextEncoder().encode(supplied), b = new TextEncoder().encode(env.OWNER_BOOTSTRAP_TOKEN);
         let diff = a.length ^ b.length; for (let i=0;i<Math.max(a.length,b.length);i++) diff |= (a[i]||0) ^ (b[i]||0);
         if (diff !== 0) return reply({error:"Token setup tidak valid."},403);
+        try {
         const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM admins").first<{n:number}>();
         if (!count || count.n !== 0) return reply({error:"Setup awal sudah ditutup karena akun admin sudah ada."},409);
         let body:{username?:string;displayName?:string;password?:string};
@@ -115,6 +116,11 @@ export default {
           await audit(env,id,"owner_bootstrap");
         } catch { return reply({error:"Akun tidak dapat dibuat. Pastikan migrasi database sudah dijalankan."},503); }
         return reply({ok:true,message:"Akun owner berhasil dibuat. Hapus secret OWNER_BOOTSTRAP_TOKEN dari konfigurasi Worker sekarang."},201);
+        } catch (error) {
+          const incidentId = crypto.randomUUID();
+          console.error("setup_owner_internal_error", { incidentId, message: error instanceof Error ? error.message : "unknown_error" });
+          return reply({error:"Setup owner gagal karena kesalahan internal. Jangan ulangi berkali-kali; periksa log Worker dengan ID insiden: "+incidentId},500);
+        }
       }
       if (url.pathname === "/api/login" && request.method === "POST") {
         if (request.headers.get("Origin") !== env.APP_ORIGIN) return reply({error:"Origin tidak diizinkan."},403);
