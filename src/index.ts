@@ -66,7 +66,8 @@ async function googleAccessToken(env: Env): Promise<string> {
   const header=enc({alg:"RS256",typ:"JWT"});
   const claim=enc({iss:email,scope:"https://www.googleapis.com/auth/spreadsheets.readonly",aud:"https://oauth2.googleapis.com/token",iat:now,exp:now+3600});
   const unsigned=header+"."+claim;
-  const body=pem.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\s/g,"");
+  const normalizedPem=pem.replace(/\\n/g,"\n").trim();
+  const body=normalizedPem.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\s/g,"");
   const binary=atob(body);
   const keyBytes=Uint8Array.from(binary,ch=>ch.charCodeAt(0));
   const key=await crypto.subtle.importKey("pkcs8",keyBytes,{name:"RSASSA-PKCS1-v1_5",hash:"SHA-256"},false,["sign"]);
