@@ -1,6 +1,24 @@
 name = "dashboard-bnba-odhiv-sumut"
 main = "src/index.ts"
-compatibility_date = "2026-10-01"
+compatibility_date = "2026-10-10"
+compatibility_flags = ["nodejs_compat"]
+
+[build]
+command = "npm install && npm run build"
+cwd = "./"
+watch_paths = ["src/**/*.ts"]
+
+[env.production]
+name = "dashboard-bnba-odhiv-sumut-prod"
+routes = [
+  { pattern = "dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev", zone_name = "aryprayoga139.workers.dev" }
+]
+
+[env.staging]
+name = "dashboard-bnba-odhiv-sumut-staging"
+routes = [
+  { pattern = "staging-dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev", zone_name = "aryprayoga139.workers.dev" }
+]
 
 [assets]
 directory = "./public"
@@ -17,3 +35,12 @@ APP_ORIGIN = "https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev"
 WEBAUTHN_RP_NAME = "Data Base PPKS ODHIV Sumut"
 WEBAUTHN_RP_ID = "dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev"
 SESSION_TTL_SECONDS = "28800"
+LOG_LEVEL = "info"
+
+[env.staging.vars]
+APP_ORIGIN = "https://staging-dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev"
+WEBAUTHN_RP_ID = "staging-dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev"
+LOG_LEVEL = "debug"
+
+[triggers]
+crons = ["0 2 * * *"]
