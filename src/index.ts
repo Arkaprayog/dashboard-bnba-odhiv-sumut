@@ -37,11 +37,11 @@ function isAllowedOrigin(request: Request, env: Env): boolean {
   if (!originHeader) return true;
 
   const requestOrigin = normalizeOrigin(originHeader);
+  const fallbackOrigin = new URL(request.url).origin;
   const allowedOrigins = new Set<string>([
-    normalizeOrigin(env.APP_ORIGIN || ""),
-    new URL(env.APP_ORIGIN || request.url).origin,
-    new URL(request.url).origin,
-  ].filter(Boolean));
+    env.APP_ORIGIN ? normalizeOrigin(env.APP_ORIGIN) : "",
+    fallbackOrigin,
+  ].filter((value): value is string => Boolean(value)));
 
   return allowedOrigins.has(requestOrigin);
 }
@@ -103,11 +103,13 @@ async function googleAccessToken(env: Env): Promise<string> {
   const email = env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
   const pem = env.GOOGLE_PRIVATE_KEY;
   if (!email || !pem) throw new Error("Google API belum dikonfigurasi.");
+
   const now = Math.floor(Date.now() / 1000);
   const enc = (v: unknown) => b64(new TextEncoder().encode(JSON.stringify(v)));
   const header = enc({ alg: "RS256", typ: "JWT" });
   const claim = enc({ iss: email, scope: "https://www.googleapis.com/auth/spreadsheets.readonly", aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600 });
   const unsigned = header + "." + claim;
+
   const normalizedPem = pem.replace(/\\n/g, "\n").trim();
   const body = normalizedPem.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\s/g, "");
   const binary = atob(body);
@@ -115,13 +117,11 @@ async function googleAccessToken(env: Env): Promise<string> {
   const key = await crypto.subtle.importKey("pkcs8", keyBytes, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["sign"]);
   const signature = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", key, new TextEncoder().encode(unsigned));
   const assertion = unsigned + "." + b64(new Uint8Array(signature));
+
   const response = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
     headers: { "content-type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-      assertion,
-    }),
+    body: new URLSearchParams({ grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion }),
   });
 
   if (!response.ok) throw new Error("Google OAuth gagal.");
@@ -167,38 +167,33 @@ export default {
         if (url.pathname === "/api/setup-owner" && request.method === "POST") {
           if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
 
+          const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM admins").first<{ n: number }>();
+          if (!count || count.n !== 0) return reply({ error: "Setup awal sudah ditutup karena akun admin sudah ada." }, 409);
+
+          let body: { username?: string; displayName?: string; password?: string };
           try {
-            const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM admins").first<{ n: number }>();
-            if (!count || count.n !== 0) return reply({ error: "Setup awal sudah ditutup karena akun admin sudah ada." }, 409);
-
-            let body: { username?: string; displayName?: string; password?: string };
-            try {
-              body = await request.json() as typeof body;
-            } catch {
-              return reply({ error: "Format permintaan tidak valid." }, 400);
-            }
-
-            const username = typeof body.username === "string" ? body.username.trim().toLowerCase() : "";
-            const displayName = typeof body.displayName === "string" ? body.displayName.trim() : "";
-            const password = typeof body.password === "string" ? body.password : "";
-
-            if (!/^[a-z0-9._-]{3,64}$/.test(username) || displayName.length < 2 || displayName.length > 100 || password.length < 6 || password.length > 1024 || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
-              return reply({ error: "Data akun tidak valid. Gunakan username 3-64 karakter dan password minimal 6 karakter dengan angka serta simbol." }, 400);
-            }
-
-            const salt = crypto.getRandomValues(new Uint8Array(16));
-            const hash = await passwordHash(password, salt);
-            const hex = (v: Uint8Array) => [...v].map((n) => n.toString(16).padStart(2, "0")).join("");
-            const id = crypto.randomUUID();
-
-            await env.DB.prepare("INSERT INTO admins(id,username,display_name,password_hash,password_salt,role,active) VALUES(?,?,?,?,?,?,?)").bind(id, username, displayName, hex(hash), hex(salt), "owner", 1).run();
-            await audit(env, id, "owner_bootstrap");
-
-            return reply({ ok: true, message: "Akun owner berhasil dibuat. Simpan kredensial dengan aman dan segera masuk untuk memeriksa pengaturan." }, 201);
-          } catch (error) {
-            const incidentId = logIncident("setup_owner_internal_error", error, { path: url.pathname, stage: requestStage });
-            return reply({ error: "Setup owner gagal karena kesalahan internal. Jangan ulangi berkali-kali; periksa log Worker dengan ID insiden: " + incidentId }, 500);
+            body = await request.json() as typeof body;
+          } catch {
+            return reply({ error: "Format permintaan tidak valid." }, 400);
           }
+
+          const username = typeof body.username === "string" ? body.username.trim().toLowerCase() : "";
+          const displayName = typeof body.displayName === "string" ? body.displayName.trim() : "";
+          const password = typeof body.password === "string" ? body.password : "";
+
+          if (!/^[a-z0-9._-]{3,64}$/.test(username) || displayName.length < 2 || displayName.length > 100 || password.length < 6 || password.length > 1024 || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
+            return reply({ error: "Data akun tidak valid. Gunakan username 3-64 karakter dan password minimal 6 karakter dengan angka serta simbol." }, 400);
+          }
+
+          const salt = crypto.getRandomValues(new Uint8Array(16));
+          const hash = await passwordHash(password, salt);
+          const hex = (v: Uint8Array) => [...v].map((n) => n.toString(16).padStart(2, "0")).join("");
+          const id = crypto.randomUUID();
+
+          await env.DB.prepare("INSERT INTO admins(id,username,display_name,password_hash,password_salt,role,active) VALUES(?,?,?,?,?,?,?)").bind(id, username, displayName, hex(hash), hex(salt), "owner", 1).run();
+          await audit(env, id, "owner_bootstrap");
+
+          return reply({ ok: true, message: "Akun owner berhasil dibuat. Simpan kredensial dengan aman dan segera masuk untuk memeriksa pengaturan." }, 201);
         }
 
         if (url.pathname === "/api/login" && request.method === "POST") {
@@ -217,53 +212,47 @@ export default {
             return reply({ error: "Nama pengguna atau kata sandi salah." }, 401);
           }
 
-          try {
-            requestStage = "login_rate_limit_check";
-            const now = Math.floor(Date.now() / 1000);
-            const recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM login_attempts WHERE username_key=? AND attempted_at>? AND succeeded=0").bind(username, now - 900).first<{ n: number }>();
-            if ((recent?.n || 0) >= 10) return reply({ error: "Terlalu banyak percobaan login. Coba lagi setelah 15 menit." }, 429, { "retry-after": "900" });
+          requestStage = "login_rate_limit_check";
+          const now = Math.floor(Date.now() / 1000);
+          const recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM login_attempts WHERE username_key=? AND attempted_at>? AND succeeded=0").bind(username, now - 900).first<{ n: number }>();
+          if ((recent?.n || 0) >= 10) return reply({ error: "Terlalu banyak percobaan login. Coba lagi setelah 15 menit." }, 429, { "retry-after": "900" });
 
-            requestStage = "login_record_attempt";
-            const attempt = await env.DB.prepare("INSERT INTO login_attempts(username_key,attempted_at,succeeded) VALUES(?,?,0)").bind(username, now).run();
-            const attemptId = attempt.meta.last_row_id;
+          requestStage = "login_record_attempt";
+          const attempt = await env.DB.prepare("INSERT INTO login_attempts(username_key,attempted_at,succeeded) VALUES(?,?,0)").bind(username, now).run();
+          const attemptId = attempt.meta.last_row_id;
 
-            requestStage = "login_lookup_admin";
-            const admin = await env.DB.prepare("SELECT id,username,display_name,password_hash,password_salt,role,active FROM admins WHERE username=? LIMIT 1").bind(username).first<AdminRow>();
-            if (!admin || admin.active !== 1) return reply({ error: "Nama pengguna atau kata sandi salah." }, 401);
+          requestStage = "login_lookup_admin";
+          const admin = await env.DB.prepare("SELECT id,username,display_name,password_hash,password_salt,role,active FROM admins WHERE username=? LIMIT 1").bind(username).first<AdminRow>();
+          if (!admin || admin.active !== 1) return reply({ error: "Nama pengguna atau kata sandi salah." }, 401);
 
-            requestStage = "login_verify_password";
-            const salt = unhex(admin.password_salt);
-            if (salt.length < 16) return reply({ error: "Akun belum disiapkan dengan format aman." }, 503);
+          requestStage = "login_verify_password";
+          const salt = unhex(admin.password_salt);
+          if (salt.length < 16) return reply({ error: "Akun belum disiapkan dengan format aman." }, 503);
 
-            const actual = await passwordHash(password, salt);
-            const expected = unhex(admin.password_hash);
+          const actual = await passwordHash(password, salt);
+          const expected = unhex(admin.password_hash);
+          let diff = actual.length ^ expected.length;
+          for (let i = 0; i < Math.max(actual.length, expected.length); i++) diff |= (actual[i] || 0) ^ (expected[i] || 0);
+          if (diff !== 0) return reply({ error: "Nama pengguna atau kata sandi salah." }, 401);
 
-            let diff = actual.length ^ expected.length;
-            for (let i = 0; i < Math.max(actual.length, expected.length); i++) diff |= (actual[i] || 0) ^ (expected[i] || 0);
-            if (diff !== 0) return reply({ error: "Nama pengguna atau kata sandi salah." }, 401);
+          requestStage = "login_create_session";
+          await env.DB.prepare("UPDATE login_attempts SET succeeded=1 WHERE id=?").bind(attemptId).run();
+          const raw = b64(crypto.getRandomValues(new Uint8Array(32)));
+          const csrf = b64(crypto.getRandomValues(new Uint8Array(24)));
+          const idHash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw)));
+          const sessionNow = Math.floor(Date.now() / 1000);
+          const ttl = Math.max(900, Math.min(28800, Number(env.SESSION_TTL_SECONDS) || 28800));
+          await env.DB.prepare("INSERT INTO sessions(id_hash,admin_id,csrf_token,created_at,expires_at) VALUES(?,?,?,?,?)").bind(idHash, admin.id, csrf, sessionNow, sessionNow + ttl).run();
 
-            requestStage = "login_create_session";
-            await env.DB.prepare("UPDATE login_attempts SET succeeded=1 WHERE id=?").bind(attemptId).run();
-            const raw = b64(crypto.getRandomValues(new Uint8Array(32)));
-            const csrf = b64(crypto.getRandomValues(new Uint8Array(24)));
-            const idHash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw)));
-            const sessionNow = Math.floor(Date.now() / 1000);
-            const ttl = Math.max(900, Math.min(28800, Number(env.SESSION_TTL_SECONDS) || 28800));
-            await env.DB.prepare("INSERT INTO sessions(id_hash,admin_id,csrf_token,created_at,expires_at) VALUES(?,?,?,?,?)").bind(idHash, admin.id, csrf, sessionNow, sessionNow + ttl).run();
+          requestStage = "login_update_admin";
+          await env.DB.prepare("UPDATE admins SET last_login_at=CURRENT_TIMESTAMP WHERE id=?").bind(admin.id).run();
 
-            requestStage = "login_update_admin";
-            await env.DB.prepare("UPDATE admins SET last_login_at=CURRENT_TIMESTAMP WHERE id=?").bind(admin.id).run();
+          requestStage = "login_audit";
+          await audit(env, admin.id, "login_success");
 
-            requestStage = "login_audit";
-            await audit(env, admin.id, "login_success");
-
-            return reply({ ok: true, admin: { username: admin.username, display_name: admin.display_name, role: admin.role }, csrfToken: csrf }, 200, {
-              "set-cookie": `ppks_session=${raw}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${ttl}`,
-            });
-          } catch (error) {
-            const incidentId = logIncident("login_internal_error", error, { path: url.pathname, stage: requestStage, username });
-            return reply({ error: "Terjadi kesalahan internal pada server. Periksa log Worker dengan ID insiden: " + incidentId }, 500);
-          }
+          return reply({ ok: true, admin: { username: admin.username, display_name: admin.display_name, role: admin.role }, csrfToken: csrf }, 200, {
+            "set-cookie": `ppks_session=${raw}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${ttl}`,
+          });
         }
 
         if (url.pathname === "/api/respondents" && request.method === "GET") {
@@ -271,6 +260,7 @@ export default {
           if (!admin) return reply({ error: "Silakan login." }, 401);
           if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengakses data responden." }, 403);
           if (!env.GOOGLE_SHEET_ID) return reply({ error: "Integrasi Google Sheets belum dikonfigurasi." }, 503);
+
           try {
             const token = await googleAccessToken(env);
             const tab = (env.GOOGLE_SHEET_TAB || "From Response 1").replace(/'/g, "''");
@@ -306,23 +296,27 @@ export default {
 
         if (url.pathname === "/api/workflow" && request.method === "POST") {
           if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+
           const admin = await sessionAdmin(request, env);
           if (!admin) return reply({ error: "Silakan login." }, 401);
           const csrf = request.headers.get("X-CSRF-Token");
           if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
           if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengubah metadata." }, 403);
+
           let body: { respondentKey?: string; reportStatus?: string; desil?: number | null; templateChoice?: string | null };
           try {
             body = await request.json() as typeof body;
           } catch {
             return reply({ error: "Format permintaan tidak valid." }, 400);
           }
+
           const key = typeof body.respondentKey === "string" ? body.respondentKey.trim() : "";
           const statuses = ["Sudah Dilaporkan", "Belum Dilaporkan", "Proses Verifikasi"];
           const templates = ["Template 1", "Template 2"];
           if (!/^[A-Za-z0-9_-]{12,100}$/.test(key) || typeof body.reportStatus !== "string" || !statuses.includes(body.reportStatus)) return reply({ error: "Kunci responden atau status tidak valid." }, 400);
           if (body.desil !== undefined && body.desil !== null && (!Number.isInteger(body.desil) || body.desil < 0 || body.desil > 10)) return reply({ error: "Desil harus angka 0 sampai 10." }, 400);
           if (body.templateChoice !== undefined && body.templateChoice !== null && !templates.includes(body.templateChoice)) return reply({ error: "Pilihan template tidak valid." }, 400);
+
           const desil = body.desil === undefined ? null : body.desil;
           const template = body.templateChoice === undefined ? null : body.templateChoice;
           await env.DB.prepare("INSERT INTO respondent_workflow(respondent_key,report_status,desil,template_choice,updated_by,updated_at) VALUES(?,?,?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(respondent_key) DO UPDATE SET report_status=excluded.report_status, desil=excluded.desil, template_choice=excluded.template_choice, updated_by=excluded.updated_by, updated_at=CURRENT_TIMESTAMP").bind(key, body.reportStatus, desil, template, admin.id).run();
@@ -338,10 +332,12 @@ export default {
 
         if (url.pathname === "/api/logout" && request.method === "POST") {
           if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+
           const admin = await sessionAdmin(request, env);
           if (!admin) return reply({ ok: true }, 200, { "set-cookie": "ppks_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0" });
           const csrf = request.headers.get("X-CSRF-Token");
           if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+
           const raw = cookieValue(request, "ppks_session");
           if (!raw) return reply({ ok: true }, 200, { "set-cookie": "ppks_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0" });
           const hash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw)));
