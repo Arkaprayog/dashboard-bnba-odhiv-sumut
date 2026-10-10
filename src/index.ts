@@ -89,6 +89,7 @@ export default {
       return reply({ok:true,service:"dashboard-bnba-odhiv-sumut",mode:"ready"});
     }
     if (url.pathname.startsWith("/api/")) {
+      try {
       if (!env.DB) return reply({error:"Database D1 belum dikonfigurasi."},503);
       if (url.pathname === "/api/setup-status" && request.method === "GET") {
         try {
@@ -238,6 +239,11 @@ export default {
       // Respondent APIs stay closed until Google Sheets/Drive authorization,
       // workflow writes, rate limiting and access policies are reviewed.
       return reply({error:"Endpoint data belum diaktifkan. Login tidak membuka akses data sampai integrasi selesai."},503);
+      } catch (error) {
+        const incidentId = crypto.randomUUID();
+        console.error("api_unhandled_error", { incidentId, path: url.pathname, method: request.method, message: error instanceof Error ? error.message : "unknown_error" });
+        return reply({error:"Terjadi kesalahan internal pada server. Periksa log Worker dengan ID insiden: "+incidentId},500);
+      }
     }
     return env.ASSETS.fetch(request);
   }
