@@ -2,6 +2,7 @@ name = "dashboard-bnba-odhiv-sumut"
 main = "src/index.ts"
 compatibility_date = "2026-10-10"
 compatibility_flags = ["nodejs_compat"]
+workers_dev = true
 
 [build]
 command = "npm install && npm run build"
@@ -10,15 +11,11 @@ watch_paths = ["src/**/*.ts"]
 
 [env.production]
 name = "dashboard-bnba-odhiv-sumut-prod"
-routes = [
-  { pattern = "dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev", zone_name = "aryprayoga139.workers.dev" }
-]
+workers_dev = true
 
 [env.staging]
 name = "dashboard-bnba-odhiv-sumut-staging"
-routes = [
-  { pattern = "staging-dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev", zone_name = "aryprayoga139.workers.dev" }
-]
+workers_dev = true
 
 [assets]
 directory = "./public"
