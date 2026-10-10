@@ -25,7 +25,7 @@
 <label for="bootstrapToken">Token bootstrap dari Cloudflare</label><input id="bootstrapToken" name="bootstrapToken" type="password" autocomplete="off" required minlength="32">
 <label for="ownerUsername">Username owner</label><input id="ownerUsername" name="ownerUsername" value="owner" autocomplete="username" required minlength="3" maxlength="64" pattern="[a-zA-Z0-9._-]+">
 <label for="displayName">Nama tampilan</label><input id="displayName" name="displayName" autocomplete="name" required minlength="2" maxlength="100">
-<label for="ownerPassword">Kata sandi (minimal 14 karakter)</label><input id="ownerPassword" name="ownerPassword" type="password" autocomplete="new-password" required minlength="14" maxlength="1024">
+<label for="ownerPassword">Kata sandi (minimal 6 karakter, wajib angka dan simbol)</label><input id="ownerPassword" name="ownerPassword" type="password" autocomplete="new-password" required minlength="6" maxlength="1024" pattern="(?=.*[0-9])(?=.*[^A-Za-z0-9]).{6,}" title="Minimal 6 karakter, wajib memuat angka dan simbol">
 <button id="setupButton" type="submit">Buat akun owner</button><div id="setupMessage" class="msg" role="status" aria-live="polite"></div>
 </form></section>
 <section class="card section"><h2>Fitur yang masih perlu dituntaskan</h2><ol class="steps"><li>Verifikasi login owner dan hapus token bootstrap.</li><li>Uji integrasi Google Sheets dan Drive privat dengan izin minimum.</li><li>Bangun filter responden, workflow pelaporan, template laporan, dan cetak A4.</li><li>Uji kontrol akses sebelum memakai data sebenarnya.</li></ol></section>
