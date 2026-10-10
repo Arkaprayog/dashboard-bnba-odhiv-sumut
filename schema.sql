@@ -54,7 +54,21 @@ CREATE TABLE IF NOT EXISTS audit_log (
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Store only workflow metadata here; identity/health details remain in the
+-- restricted source spreadsheet. respondent_key must be a stable opaque key,
+-- not an NIK or phone number.
+CREATE TABLE IF NOT EXISTS respondent_workflow (
+  respondent_key TEXT PRIMARY KEY,
+  report_status TEXT NOT NULL DEFAULT 'Belum Dilaporkan'
+    CHECK (report_status IN ('Sudah Dilaporkan','Belum Dilaporkan','Proses Verifikasi')),
+  desil INTEGER CHECK (desil BETWEEN 1 AND 10 OR desil = 0),
+  template_choice TEXT CHECK (template_choice IN ('Template 1','Template 2')),
+  updated_by TEXT REFERENCES admins(id),
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE INDEX IF NOT EXISTS idx_passkeys_admin ON passkeys(admin_id);
 CREATE INDEX IF NOT EXISTS idx_challenges_expiry ON auth_challenges(expires_at);
 CREATE INDEX IF NOT EXISTS idx_sessions_admin ON sessions(admin_id);
 CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_log(created_at);
+CREATE INDEX IF NOT EXISTS idx_workflow_status ON respondent_workflow(report_status);
