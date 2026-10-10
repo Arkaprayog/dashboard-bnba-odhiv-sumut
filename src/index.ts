@@ -76,15 +76,9 @@ export default {
         if (salt.length<16) return reply({error:"Akun belum disiapkan dengan format aman."},503);
         const actual=await passwordHash(password,salt);
         const expected=unhex(admin.password_hash);
-        if (actual.length!==expected.length || !crypto.subtle.timingSafeEqual) {
-          // Web Crypto does not provide timingSafeEqual in all Worker runtimes.
-          let diff=actual.length ^ expected.length;
-          for(let i=0;i<Math.max(actual.length,expected.length);i++) diff |= (actual[i]||0) ^ (expected[i]||0);
-          if(diff!==0) return reply({error:"Nama pengguna atau kata sandi salah."},401);
-        } else {
-          let diff=0; for(let i=0;i<actual.length;i++) diff |= actual[i]^expected[i];
-          if(diff!==0) return reply({error:"Nama pengguna atau kata sandi salah."},401);
-        }
+        let diff = actual.length ^ expected.length;
+        for (let i=0; i<Math.max(actual.length,expected.length); i++) diff |= (actual[i]||0) ^ (expected[i]||0);
+        if (diff !== 0) return reply({error:"Nama pengguna atau kata sandi salah."},401);
         const raw=b64(crypto.getRandomValues(new Uint8Array(32)));
         const csrf=b64(crypto.getRandomValues(new Uint8Array(24)));
         const idHash=await digestHex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(raw)));
