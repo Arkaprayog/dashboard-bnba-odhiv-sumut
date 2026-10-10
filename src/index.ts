@@ -7,6 +7,7 @@ interface AdminRow {
   role: "owner" | "admin" | "staff";
   active: number;
 }
+
 interface Env {
   ASSETS: Fetcher;
   DB: D1Database;
@@ -17,253 +18,345 @@ interface Env {
   GOOGLE_SHEET_ID?: string;
   GOOGLE_SHEET_TAB?: string;
 }
+
 const NO_STORE = { "cache-control": "no-store", "x-content-type-options": "nosniff" };
-function reply(data: unknown, status = 200, extra: Record<string,string> = {}) {
-  return new Response(JSON.stringify(data), { status, headers: { ...NO_STORE, "content-type":"application/json; charset=utf-8", ...extra } });
+
+function reply(data: unknown, status = 200, extra: Record<string, string> = {}) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { ...NO_STORE, "content-type": "application/json; charset=utf-8", ...extra },
+  });
 }
+
+function normalizeOrigin(value: string): string {
+  return value.replace(/\/$/, "");
+}
+
+function isAllowedOrigin(request: Request, env: Env): boolean {
+  const originHeader = request.headers.get("Origin");
+  if (!originHeader) return true;
+
+  const requestOrigin = normalizeOrigin(originHeader);
+  const allowedOrigins = new Set<string>([
+    normalizeOrigin(env.APP_ORIGIN || ""),
+    new URL(env.APP_ORIGIN || request.url).origin,
+    new URL(request.url).origin,
+  ].filter(Boolean));
+
+  return allowedOrigins.has(requestOrigin);
+}
+
+function logIncident(scope: string, error: unknown, context: Record<string, unknown> = {}) {
+  const incidentId = crypto.randomUUID();
+  console.error(scope, {
+    incidentId,
+    ...context,
+    message: error instanceof Error ? error.message : "unknown_error",
+    stack: error instanceof Error ? error.stack : undefined,
+  });
+  return incidentId;
+}
+
 function cookieValue(request: Request, name: string): string | null {
   const raw = request.headers.get("Cookie") || "";
   for (const item of raw.split(";")) {
     const i = item.indexOf("=");
-    if (i > 0 && item.slice(0,i).trim() === name) return item.slice(i+1).trim();
+    if (i > 0 && item.slice(0, i).trim() === name) return item.slice(i + 1).trim();
   }
   return null;
 }
+
 function b64(bytes: Uint8Array): string {
   let s = "";
   for (const b of bytes) s += String.fromCharCode(b);
-  return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
+
 function unhex(s: string): Uint8Array {
   if (!/^(?:[0-9a-f]{2})+$/i.test(s)) return new Uint8Array();
-  const out = new Uint8Array(s.length/2);
-  for (let i=0;i<out.length;i++) out[i]=parseInt(s.slice(i*2,i*2+2),16);
+  const out = new Uint8Array(s.length / 2);
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(s.slice(i * 2, i * 2 + 2), 16);
   return out;
 }
+
 async function digestHex(bytes: ArrayBuffer): Promise<string> {
-  return [...new Uint8Array(bytes)].map(v=>v.toString(16).padStart(2,"0")).join("");
+  return [...new Uint8Array(bytes)].map((v) => v.toString(16).padStart(2, "0")).join("");
 }
+
 async function passwordHash(password: string, salt: Uint8Array): Promise<Uint8Array> {
   const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
   const saltBuffer = Uint8Array.from(salt).buffer as ArrayBuffer;
-  return new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",salt:saltBuffer,iterations:310000,hash:"SHA-256"},key,256));
+  return new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", salt: saltBuffer, iterations: 310000, hash: "SHA-256" }, key, 256));
 }
+
 async function sessionAdmin(request: Request, env: Env) {
   const raw = cookieValue(request, "ppks_session");
   if (!raw || raw.length > 200) return null;
   const hash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw)));
-  const now = Math.floor(Date.now()/1000);
+  const now = Math.floor(Date.now() / 1000);
   return env.DB.prepare(`SELECT a.id,a.username,a.display_name,a.role,s.csrf_token
     FROM sessions s JOIN admins a ON a.id=s.admin_id
-    WHERE s.id_hash=? AND s.revoked_at IS NULL AND s.expires_at>? AND a.active=1`).bind(hash,now).first<Record<string,string>>();
+    WHERE s.id_hash=? AND s.revoked_at IS NULL AND s.expires_at>? AND a.active=1`).bind(hash, now).first<Record<string, string>>();
 }
+
 async function googleAccessToken(env: Env): Promise<string> {
-  const email=env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-  const pem=env.GOOGLE_PRIVATE_KEY;
-  if(!email || !pem) throw new Error("Google API belum dikonfigurasi.");
-  const now=Math.floor(Date.now()/1000);
-  const enc=(v:unknown)=>b64(new TextEncoder().encode(JSON.stringify(v)));
-  const header=enc({alg:"RS256",typ:"JWT"});
-  const claim=enc({iss:email,scope:"https://www.googleapis.com/auth/spreadsheets.readonly",aud:"https://oauth2.googleapis.com/token",iat:now,exp:now+3600});
-  const unsigned=header+"."+claim;
-  const normalizedPem=pem.replace(/\\n/g,"\n").trim();
-  const body=normalizedPem.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\s/g,"");
-  const binary=atob(body);
-  const keyBytes=Uint8Array.from(binary,ch=>ch.charCodeAt(0));
-  const key=await crypto.subtle.importKey("pkcs8",keyBytes,{name:"RSASSA-PKCS1-v1_5",hash:"SHA-256"},false,["sign"]);
-  const signature=await crypto.subtle.sign("RSASSA-PKCS1-v1_5",key,new TextEncoder().encode(unsigned));
-  const assertion=unsigned+"."+b64(new Uint8Array(signature));
-  const response=await fetch("https://oauth2.googleapis.com/token",{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},body:new URLSearchParams({grant_type:"urn:ietf:params:oauth:grant-type:jwt-bearer",assertion}).toString()});
-  if(!response.ok) throw new Error("Google OAuth gagal.");
-  const data=await response.json() as {access_token?:string};
-  if(!data.access_token) throw new Error("Token Google tidak tersedia.");
+  const email = env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+  const pem = env.GOOGLE_PRIVATE_KEY;
+  if (!email || !pem) throw new Error("Google API belum dikonfigurasi.");
+  const now = Math.floor(Date.now() / 1000);
+  const enc = (v: unknown) => b64(new TextEncoder().encode(JSON.stringify(v)));
+  const header = enc({ alg: "RS256", typ: "JWT" });
+  const claim = enc({ iss: email, scope: "https://www.googleapis.com/auth/spreadsheets.readonly", aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600 });
+  const unsigned = header + "." + claim;
+  const normalizedPem = pem.replace(/\\n/g, "\n").trim();
+  const body = normalizedPem.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\s/g, "");
+  const binary = atob(body);
+  const keyBytes = Uint8Array.from(binary, (ch) => ch.charCodeAt(0));
+  const key = await crypto.subtle.importKey("pkcs8", keyBytes, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["sign"]);
+  const signature = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", key, new TextEncoder().encode(unsigned));
+  const assertion = unsigned + "." + b64(new Uint8Array(signature));
+  const response = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+      assertion,
+    }),
+  });
+
+  if (!response.ok) throw new Error("Google OAuth gagal.");
+  const data = (await response.json()) as { access_token?: string };
+  if (!data.access_token) throw new Error("Token Google tidak tersedia.");
   return data.access_token;
 }
+
 async function audit(env: Env, adminId: string, action: string) {
-  await env.DB.prepare("INSERT INTO audit_log(admin_id,action) VALUES(?,?)").bind(adminId,action).run();
+  await env.DB.prepare("INSERT INTO audit_log(admin_id,action) VALUES(?,?)").bind(adminId, action).run();
 }
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+
     if (url.pathname === "/api/health" && request.method === "GET") {
       try {
-        if (!env.DB) return reply({ok:false,service:"dashboard-bnba-odhiv-sumut",error:"Database D1 belum dikonfigurasi."},503);
-        await env.DB.prepare("SELECT 1 AS ok").first<{ok:number}>();
-        return reply({ok:true,service:"dashboard-bnba-odhiv-sumut",database:"connected",mode:"ready"});
+        if (!env.DB) return reply({ ok: false, service: "dashboard-bnba-odhiv-sumut", error: "Database D1 belum dikonfigurasi." }, 503);
+        await env.DB.prepare("SELECT 1 AS ok").first<{ ok: number }>();
+        return reply({ ok: true, service: "dashboard-bnba-odhiv-sumut", database: "connected", mode: "ready" });
       } catch (error) {
-        const incidentId = crypto.randomUUID();
-        console.error("health_check_failed", { incidentId, message: error instanceof Error ? error.message : "unknown_error" });
-        return reply({ok:false,service:"dashboard-bnba-odhiv-sumut",error:"Pemeriksaan backend gagal.",incidentId},503);
+        const incidentId = logIncident("health_check_failed", error, { path: url.pathname });
+        return reply({ ok: false, service: "dashboard-bnba-odhiv-sumut", error: "Pemeriksaan backend gagal.", incidentId }, 503);
       }
     }
+
     if (url.pathname.startsWith("/api/")) {
       let requestStage = "route_dispatch";
       try {
-      if (!env.DB) return reply({error:"Database D1 belum dikonfigurasi."},503);
-      if (url.pathname === "/api/setup-status" && request.method === "GET") {
-        try {
-          const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM admins").first<{n:number}>();
-          return reply({ok:true,setupOpen:!!count && count.n===0});
-        } catch {
-          return reply({ok:false,error:"Status setup tidak dapat diperiksa."},503);
+        if (!env.DB) return reply({ error: "Database D1 belum dikonfigurasi." }, 503);
+
+        if (url.pathname === "/api/setup-status" && request.method === "GET") {
+          try {
+            const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM admins").first<{ n: number }>();
+            return reply({ ok: true, setupOpen: !!count && count.n === 0 });
+          } catch (error) {
+            const incidentId = logIncident("setup_status_database_error", error, { path: url.pathname });
+            return reply({ ok: false, error: "Status setup tidak dapat diperiksa. Periksa log Worker dengan ID insiden: " + incidentId }, 503);
+          }
         }
-      }
-      if (url.pathname === "/api/setup-owner" && request.method === "POST") {
-        if (request.headers.get("Origin") !== env.APP_ORIGIN) return reply({error:"Origin tidak diizinkan."},403);
-        // First-owner bootstrap intentionally needs no token entry. It is only available
-        // while the admins table is empty; keep the strong password rule and Origin check.
-        try {
-        const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM admins").first<{n:number}>();
-        if (!count || count.n !== 0) return reply({error:"Setup awal sudah ditutup karena akun admin sudah ada."},409);
-        let body:{username?:string;displayName?:string;password?:string};
-        try { body = await request.json() as typeof body; } catch { return reply({error:"Format permintaan tidak valid."},400); }
-        const username = typeof body.username==="string" ? body.username.trim().toLowerCase() : "";
-        const displayName = typeof body.displayName==="string" ? body.displayName.trim() : "";
-        const password = typeof body.password==="string" ? body.password : "";
-        if (!/^[a-z0-9._-]{3,64}$/.test(username) || displayName.length<2 || displayName.length>100 || password.length<6 || password.length>1024 || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) return reply({error:"Username 3-64 karakter (huruf kecil/angka/titik/garis), nama tampilan 2-100 karakter, password min 6 karakter, wajib angka dan simbol."},400);
-        const salt = crypto.getRandomValues(new Uint8Array(16));
-        const hash = await passwordHash(password,salt);
-        const hex=(v:Uint8Array)=>[...v].map(n=>n.toString(16).padStart(2,"0")).join("");
-        const id = crypto.randomUUID();
-        try {
-          await env.DB.prepare("INSERT INTO admins(id,username,display_name,password_hash,password_salt,role,active) VALUES(?,?,?,?,?,?,?)").bind(id,username,displayName,hex(hash),hex(salt),"owner",1).run();
-          await audit(env,id,"owner_bootstrap");
-        } catch (error) {
-          const incidentId = crypto.randomUUID();
-          console.error("setup_owner_database_error", { incidentId, message: error instanceof Error ? error.message : "unknown_error" });
-          return reply({error:"Akun owner tidak dapat diselesaikan karena kesalahan database. Periksa log Worker dengan ID insiden: "+incidentId},503);
+
+        if (url.pathname === "/api/setup-owner" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+
+          try {
+            const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM admins").first<{ n: number }>();
+            if (!count || count.n !== 0) return reply({ error: "Setup awal sudah ditutup karena akun admin sudah ada." }, 409);
+
+            let body: { username?: string; displayName?: string; password?: string };
+            try {
+              body = await request.json() as typeof body;
+            } catch {
+              return reply({ error: "Format permintaan tidak valid." }, 400);
+            }
+
+            const username = typeof body.username === "string" ? body.username.trim().toLowerCase() : "";
+            const displayName = typeof body.displayName === "string" ? body.displayName.trim() : "";
+            const password = typeof body.password === "string" ? body.password : "";
+
+            if (!/^[a-z0-9._-]{3,64}$/.test(username) || displayName.length < 2 || displayName.length > 100 || password.length < 6 || password.length > 1024 || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
+              return reply({ error: "Data akun tidak valid. Gunakan username 3-64 karakter dan password minimal 6 karakter dengan angka serta simbol." }, 400);
+            }
+
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const hash = await passwordHash(password, salt);
+            const hex = (v: Uint8Array) => [...v].map((n) => n.toString(16).padStart(2, "0")).join("");
+            const id = crypto.randomUUID();
+
+            await env.DB.prepare("INSERT INTO admins(id,username,display_name,password_hash,password_salt,role,active) VALUES(?,?,?,?,?,?,?)").bind(id, username, displayName, hex(hash), hex(salt), "owner", 1).run();
+            await audit(env, id, "owner_bootstrap");
+
+            return reply({ ok: true, message: "Akun owner berhasil dibuat. Simpan kredensial dengan aman dan segera masuk untuk memeriksa pengaturan." }, 201);
+          } catch (error) {
+            const incidentId = logIncident("setup_owner_internal_error", error, { path: url.pathname, stage: requestStage });
+            return reply({ error: "Setup owner gagal karena kesalahan internal. Jangan ulangi berkali-kali; periksa log Worker dengan ID insiden: " + incidentId }, 500);
+          }
         }
-        return reply({ok:true,message:"Akun owner berhasil dibuat. Simpan kredensial dengan aman dan segera masuk untuk memeriksa pengaturan."},201);
-        } catch (error) {
-          const incidentId = crypto.randomUUID();
-          console.error("setup_owner_internal_error", { incidentId, message: error instanceof Error ? error.message : "unknown_error" });
-          return reply({error:"Setup owner gagal karena kesalahan internal. Jangan ulangi berkali-kali; periksa log Worker dengan ID insiden: "+incidentId},500);
+
+        if (url.pathname === "/api/login" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+
+          let body: { username?: string; password?: string };
+          try {
+            body = await request.json() as typeof body;
+          } catch {
+            return reply({ error: "Format permintaan tidak valid." }, 400);
+          }
+
+          const username = typeof body.username === "string" ? body.username.trim().toLowerCase() : "";
+          const password = typeof body.password === "string" ? body.password : "";
+          if (!/^[a-z0-9._-]{3,64}$/.test(username) || password.length < 1 || password.length > 1024) {
+            return reply({ error: "Nama pengguna atau kata sandi salah." }, 401);
+          }
+
+          try {
+            requestStage = "login_rate_limit_check";
+            const now = Math.floor(Date.now() / 1000);
+            const recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM login_attempts WHERE username_key=? AND attempted_at>? AND succeeded=0").bind(username, now - 900).first<{ n: number }>();
+            if ((recent?.n || 0) >= 10) return reply({ error: "Terlalu banyak percobaan login. Coba lagi setelah 15 menit." }, 429, { "retry-after": "900" });
+
+            requestStage = "login_record_attempt";
+            const attempt = await env.DB.prepare("INSERT INTO login_attempts(username_key,attempted_at,succeeded) VALUES(?,?,0)").bind(username, now).run();
+            const attemptId = attempt.meta.last_row_id;
+
+            requestStage = "login_lookup_admin";
+            const admin = await env.DB.prepare("SELECT id,username,display_name,password_hash,password_salt,role,active FROM admins WHERE username=? LIMIT 1").bind(username).first<AdminRow>();
+            if (!admin || admin.active !== 1) return reply({ error: "Nama pengguna atau kata sandi salah." }, 401);
+
+            requestStage = "login_verify_password";
+            const salt = unhex(admin.password_salt);
+            if (salt.length < 16) return reply({ error: "Akun belum disiapkan dengan format aman." }, 503);
+
+            const actual = await passwordHash(password, salt);
+            const expected = unhex(admin.password_hash);
+
+            let diff = actual.length ^ expected.length;
+            for (let i = 0; i < Math.max(actual.length, expected.length); i++) diff |= (actual[i] || 0) ^ (expected[i] || 0);
+            if (diff !== 0) return reply({ error: "Nama pengguna atau kata sandi salah." }, 401);
+
+            requestStage = "login_create_session";
+            await env.DB.prepare("UPDATE login_attempts SET succeeded=1 WHERE id=?").bind(attemptId).run();
+            const raw = b64(crypto.getRandomValues(new Uint8Array(32)));
+            const csrf = b64(crypto.getRandomValues(new Uint8Array(24)));
+            const idHash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw)));
+            const sessionNow = Math.floor(Date.now() / 1000);
+            const ttl = Math.max(900, Math.min(28800, Number(env.SESSION_TTL_SECONDS) || 28800));
+            await env.DB.prepare("INSERT INTO sessions(id_hash,admin_id,csrf_token,created_at,expires_at) VALUES(?,?,?,?,?)").bind(idHash, admin.id, csrf, sessionNow, sessionNow + ttl).run();
+
+            requestStage = "login_update_admin";
+            await env.DB.prepare("UPDATE admins SET last_login_at=CURRENT_TIMESTAMP WHERE id=?").bind(admin.id).run();
+
+            requestStage = "login_audit";
+            await audit(env, admin.id, "login_success");
+
+            return reply({ ok: true, admin: { username: admin.username, display_name: admin.display_name, role: admin.role }, csrfToken: csrf }, 200, {
+              "set-cookie": `ppks_session=${raw}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${ttl}`,
+            });
+          } catch (error) {
+            const incidentId = logIncident("login_internal_error", error, { path: url.pathname, stage: requestStage, username });
+            return reply({ error: "Terjadi kesalahan internal pada server. Periksa log Worker dengan ID insiden: " + incidentId }, 500);
+          }
         }
-      }
-      if (url.pathname === "/api/login" && request.method === "POST") {
-        if (request.headers.get("Origin") !== env.APP_ORIGIN) return reply({error:"Origin tidak diizinkan."},403);
-        let body: {username?:string;password?:string};
-        try { body = await request.json() as typeof body; } catch { return reply({error:"Format permintaan tidak valid."},400); }
-        const username = typeof body.username==="string" ? body.username.trim().toLowerCase() : "";
-        const password = typeof body.password==="string" ? body.password : "";
-        if (!/^[a-z0-9._-]{3,64}$/.test(username) || password.length<1 || password.length>1024) return reply({error:"Nama pengguna atau kata sandi salah."},401);
-        requestStage = "login_rate_limit_check";
-        const now = Math.floor(Date.now()/1000);
-        const recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM login_attempts WHERE username_key=? AND attempted_at>? AND succeeded=0").bind(username,now-900).first<{n:number}>();
-        if ((recent?.n || 0) >= 10) return reply({error:"Terlalu banyak percobaan login. Coba lagi setelah 15 menit."},429,{"retry-after":"900"});
-        requestStage = "login_record_attempt";
-        const attempt = await env.DB.prepare("INSERT INTO login_attempts(username_key,attempted_at,succeeded) VALUES(?,?,0)").bind(username,now).run();
-        const attemptId = attempt.meta.last_row_id;
-        requestStage = "login_lookup_admin";
-        const admin = await env.DB.prepare("SELECT id,username,display_name,password_hash,password_salt,role,active FROM admins WHERE username=? LIMIT 1").bind(username).first<AdminRow>();
-        if (!admin || admin.active!==1) return reply({error:"Nama pengguna atau kata sandi salah."},401);
-        requestStage = "login_verify_password";
-        const salt=unhex(admin.password_salt);
-        if (salt.length<16) return reply({error:"Akun belum disiapkan dengan format aman."},503);
-        const actual=await passwordHash(password,salt);
-        const expected=unhex(admin.password_hash);
-        let diff = actual.length ^ expected.length;
-        for (let i=0; i<Math.max(actual.length,expected.length); i++) diff |= (actual[i]||0) ^ (expected[i]||0);
-        if (diff !== 0) return reply({error:"Nama pengguna atau kata sandi salah."},401);
-        requestStage = "login_create_session";
-        await env.DB.prepare("UPDATE login_attempts SET succeeded=1 WHERE id=?").bind(attemptId).run();
-        const raw=b64(crypto.getRandomValues(new Uint8Array(32)));
-        const csrf=b64(crypto.getRandomValues(new Uint8Array(24)));
-        const idHash=await digestHex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(raw)));
-        const sessionNow=Math.floor(Date.now()/1000);
-        const ttl=Math.max(900,Math.min(28800,Number(env.SESSION_TTL_SECONDS)||28800));
-        await env.DB.prepare("INSERT INTO sessions(id_hash,admin_id,csrf_token,created_at,expires_at) VALUES(?,?,?,?,?)").bind(idHash,admin.id,csrf,sessionNow,sessionNow+ttl).run();
-        requestStage = "login_update_admin";
-        await env.DB.prepare("UPDATE admins SET last_login_at=CURRENT_TIMESTAMP WHERE id=?").bind(admin.id).run();
-        requestStage = "login_audit";
-        await audit(env,admin.id,"login_success");
-        return reply({ok:true,admin:{username:admin.username,display_name:admin.display_name,role:admin.role},csrfToken:csrf},200,{
-          "set-cookie":`ppks_session=${raw}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${ttl}`
-        });
-      }
-      if (url.pathname === "/api/respondents" && request.method === "GET") {
-        const admin=await sessionAdmin(request,env);
-        if(!admin) return reply({error:"Silakan login."},401);
-        if(admin.role!=="owner" && admin.role!=="admin") return reply({error:"Peran tidak diizinkan mengakses data responden."},403);
-        if(!env.GOOGLE_SHEET_ID) return reply({error:"Integrasi Google Sheets belum dikonfigurasi."},503);
-        try {
-          const token=await googleAccessToken(env);
-          const tab=(env.GOOGLE_SHEET_TAB || "From Response 1").replace(/'/g,"''");
-          const range="'"+tab+"'!A1:AZ1000";
-          const sheetUrl="https://sheets.googleapis.com/v4/spreadsheets/"+encodeURIComponent(env.GOOGLE_SHEET_ID)+"/values/"+encodeURIComponent(range)+"?valueRenderOption=FORMATTED_VALUE";
-          const response=await fetch(sheetUrl,{headers:{authorization:"Bearer "+token}});
-          if(!response.ok) return reply({error:"Google Sheets tidak dapat dibaca. Periksa akses service account dan nama tab."},502);
-          const sheet=await response.json() as {values?:string[][]};
-          const values=sheet.values||[];
-          if(values.length<1) return reply({items:[],headers:[]});
-          const headers=values[0].map(v=>String(v||"").trim());
-          const items=values.slice(1).filter(row=>row.some(v=>String(v||"").trim())).map((row,index)=>{
-            const record:Record<string,string>={};
-            headers.forEach((header,i)=>{if(header) record[header]=String(row[i]||"");});
-            record["_row"]=String(index+2);
-            return record;
-          });
-          return reply({headers,items,source:"Google Sheets",count:items.length});
-        } catch (error) {
-          const incidentId = crypto.randomUUID();
-          console.error("respondents_error", { incidentId, message: error instanceof Error ? error.message : "unknown_error" });
-          return reply({error:"Integrasi Google Sheets gagal. Periksa konfigurasi secret dan log server."},503);
+
+        if (url.pathname === "/api/respondents" && request.method === "GET") {
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengakses data responden." }, 403);
+          if (!env.GOOGLE_SHEET_ID) return reply({ error: "Integrasi Google Sheets belum dikonfigurasi." }, 503);
+          try {
+            const token = await googleAccessToken(env);
+            const tab = (env.GOOGLE_SHEET_TAB || "From Response 1").replace(/'/g, "''");
+            const range = "'" + tab + "'!A1:AZ1000";
+            const sheetUrl = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID) + "/values/" + encodeURIComponent(range) + "?valueRenderOption=FORMATTED_VALUE";
+            const response = await fetch(sheetUrl, { headers: { authorization: "Bearer " + token } });
+            if (!response.ok) return reply({ error: "Google Sheets tidak dapat dibaca. Periksa akses service account dan nama tab." }, 502);
+            const sheet = await response.json() as { values?: string[][] };
+            const values = sheet.values || [];
+            if (values.length < 1) return reply({ items: [], headers: [] });
+            const headers = values[0].map((v) => String(v || "").trim());
+            const items = values.slice(1).filter((row) => row.some((v) => String(v || "").trim())).map((row, index) => {
+              const record: Record<string, string> = {};
+              headers.forEach((header, i) => {
+                if (header) record[header] = String(row[i] || "");
+              });
+              record["_row"] = String(index + 2);
+              return record;
+            });
+            return reply({ headers, items, source: "Google Sheets", count: items.length });
+          } catch (error) {
+            const incidentId = logIncident("respondents_error", error, { path: url.pathname, stage: requestStage });
+            return reply({ error: "Integrasi Google Sheets gagal. Periksa konfigurasi secret dan log server. ID insiden: " + incidentId }, 503);
+          }
         }
-      }
-      if (url.pathname === "/api/workflow" && request.method === "GET") {
-        const admin = await sessionAdmin(request,env);
-        if (!admin) return reply({error:"Silakan login."},401);
-        const rows = await env.DB.prepare("SELECT respondent_key,report_status,desil,template_choice,updated_at FROM respondent_workflow ORDER BY updated_at DESC LIMIT 500").all();
-        return reply({items:rows.results || [], csrfToken:admin.csrf_token, note:"Metadata workflow saja; belum terhubung ke Google Sheets."});
-      }
-      if (url.pathname === "/api/workflow" && request.method === "POST") {
-        if (request.headers.get("Origin") !== env.APP_ORIGIN) return reply({error:"Origin tidak diizinkan."},403);
-        const admin = await sessionAdmin(request,env);
-        if (!admin) return reply({error:"Silakan login."},401);
-        const csrf=request.headers.get("X-CSRF-Token");
-        if (!csrf || csrf !== admin.csrf_token) return reply({error:"Token CSRF tidak valid."},403);
-        if (admin.role !== "owner" && admin.role !== "admin") return reply({error:"Peran tidak diizinkan mengubah metadata."},403);
-        let body:{respondentKey?:string;reportStatus?:string;desil?:number|null;templateChoice?:string|null};
-        try { body=await request.json() as typeof body; } catch { return reply({error:"Format permintaan tidak valid."},400); }
-        const key=typeof body.respondentKey==="string"?body.respondentKey.trim():"";
-        const statuses=["Sudah Dilaporkan","Belum Dilaporkan","Proses Verifikasi"];
-        const templates=["Template 1","Template 2"];
-        if(!/^[A-Za-z0-9_-]{12,100}$/.test(key) || typeof body.reportStatus!=="string" || !statuses.includes(body.reportStatus)) return reply({error:"Kunci responden atau status tidak valid."},400);
-        if(body.desil!==undefined && body.desil!==null && (!Number.isInteger(body.desil) || body.desil<0 || body.desil>10)) return reply({error:"Desil harus angka 0 sampai 10."},400);
-        if(body.templateChoice!==undefined && body.templateChoice!==null && !templates.includes(body.templateChoice)) return reply({error:"Pilihan template tidak valid."},400);
-        const desil=body.desil===undefined?null:body.desil;
-        const template=body.templateChoice===undefined?null:body.templateChoice;
-        await env.DB.prepare("INSERT INTO respondent_workflow(respondent_key,report_status,desil,template_choice,updated_by,updated_at) VALUES(?,?,?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(respondent_key) DO UPDATE SET report_status=?,desil=?,template_choice=?,updated_by=?,updated_at=CURRENT_TIMESTAMP").bind(key,body.reportStatus,desil,template,admin.id,body.reportStatus,desil,template,admin.id).run();
-        await audit(env,admin.id,"workflow_update");
-        return reply({ok:true});
-      }
-      if (url.pathname === "/api/me" && request.method === "GET") {
-        const admin=await sessionAdmin(request,env);
-        if(!admin) return reply({error:"Silakan login."},401);
-        return reply({admin:{username:admin.username,display_name:admin.display_name,role:admin.role},csrfToken:admin.csrf_token});
-      }
-      if (url.pathname === "/api/logout" && request.method === "POST") {
-        if (request.headers.get("Origin") !== env.APP_ORIGIN) return reply({error:"Origin tidak diizinkan."},403);
-        const admin=await sessionAdmin(request,env);
-        if(!admin) return reply({ok:true},200,{"set-cookie":"ppks_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0"});
-        const csrf=request.headers.get("X-CSRF-Token");
-        if(!csrf || csrf!==admin.csrf_token) return reply({error:"Token CSRF tidak valid."},403);
-        const raw=cookieValue(request,"ppks_session");
-        if(!raw) return reply({ok:true},200,{"set-cookie":"ppks_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0"});
-        const hash=await digestHex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(raw)));
-        await env.DB.prepare("UPDATE sessions SET revoked_at=? WHERE id_hash=?").bind(Math.floor(Date.now()/1000),hash).run();
-        await audit(env,admin.id,"logout");
-        return reply({ok:true},200,{"set-cookie":"ppks_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0"});
-      }
-      // Respondent APIs stay closed until Google Sheets/Drive authorization,
-      // workflow writes, rate limiting and access policies are reviewed.
-      return reply({error:"Endpoint data belum diaktifkan. Login tidak membuka akses data sampai integrasi selesai."},503);
+
+        if (url.pathname === "/api/workflow" && request.method === "GET") {
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          const rows = await env.DB.prepare("SELECT respondent_key,report_status,desil,template_choice,updated_at FROM respondent_workflow ORDER BY updated_at DESC LIMIT 500").all();
+          return reply({ items: rows.results || [], csrfToken: admin.csrf_token, note: "Metadata workflow saja; belum terhubung ke Google Sheets." });
+        }
+
+        if (url.pathname === "/api/workflow" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengubah metadata." }, 403);
+          let body: { respondentKey?: string; reportStatus?: string; desil?: number | null; templateChoice?: string | null };
+          try {
+            body = await request.json() as typeof body;
+          } catch {
+            return reply({ error: "Format permintaan tidak valid." }, 400);
+          }
+          const key = typeof body.respondentKey === "string" ? body.respondentKey.trim() : "";
+          const statuses = ["Sudah Dilaporkan", "Belum Dilaporkan", "Proses Verifikasi"];
+          const templates = ["Template 1", "Template 2"];
+          if (!/^[A-Za-z0-9_-]{12,100}$/.test(key) || typeof body.reportStatus !== "string" || !statuses.includes(body.reportStatus)) return reply({ error: "Kunci responden atau status tidak valid." }, 400);
+          if (body.desil !== undefined && body.desil !== null && (!Number.isInteger(body.desil) || body.desil < 0 || body.desil > 10)) return reply({ error: "Desil harus angka 0 sampai 10." }, 400);
+          if (body.templateChoice !== undefined && body.templateChoice !== null && !templates.includes(body.templateChoice)) return reply({ error: "Pilihan template tidak valid." }, 400);
+          const desil = body.desil === undefined ? null : body.desil;
+          const template = body.templateChoice === undefined ? null : body.templateChoice;
+          await env.DB.prepare("INSERT INTO respondent_workflow(respondent_key,report_status,desil,template_choice,updated_by,updated_at) VALUES(?,?,?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(respondent_key) DO UPDATE SET report_status=excluded.report_status, desil=excluded.desil, template_choice=excluded.template_choice, updated_by=excluded.updated_by, updated_at=CURRENT_TIMESTAMP").bind(key, body.reportStatus, desil, template, admin.id).run();
+          await audit(env, admin.id, "workflow_update");
+          return reply({ ok: true });
+        }
+
+        if (url.pathname === "/api/me" && request.method === "GET") {
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          return reply({ admin: { username: admin.username, display_name: admin.display_name, role: admin.role }, csrfToken: admin.csrf_token });
+        }
+
+        if (url.pathname === "/api/logout" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ ok: true }, 200, { "set-cookie": "ppks_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0" });
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          const raw = cookieValue(request, "ppks_session");
+          if (!raw) return reply({ ok: true }, 200, { "set-cookie": "ppks_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0" });
+          const hash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw)));
+          await env.DB.prepare("UPDATE sessions SET revoked_at=? WHERE id_hash=?").bind(Math.floor(Date.now() / 1000), hash).run();
+          await audit(env, admin.id, "logout");
+          return reply({ ok: true }, 200, { "set-cookie": "ppks_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0" });
+        }
+
+        return reply({ error: "Endpoint data belum diaktifkan. Login tidak membuka akses data sampai integrasi selesai." }, 503);
       } catch (error) {
-        const incidentId = crypto.randomUUID();
-        console.error("api_unhandled_error", { incidentId, path: url.pathname, method: request.method, stage: requestStage, message: error instanceof Error ? error.message : "unknown_error" });
-        return reply({error:"Terjadi kesalahan internal pada server. Periksa log Worker dengan ID insiden: "+incidentId},500);
+        const incidentId = logIncident("api_unhandled_error", error, { path: url.pathname, method: request.method, stage: requestStage });
+        return reply({ error: "Terjadi kesalahan internal pada server. Periksa log Worker dengan ID insiden: " + incidentId }, 500);
       }
     }
+
     return env.ASSETS.fetch(request);
-  }
+  },
 };
