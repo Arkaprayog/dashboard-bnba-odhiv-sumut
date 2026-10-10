@@ -258,6 +258,58 @@ export default {
           });
         }
 
+        if (url.pathname === "/api/change-password" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Sesi login tidak berlaku. Silakan login kembali." }, 401);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+
+          let body: { currentPassword?: string; newPassword?: string };
+          try {
+            body = await request.json() as typeof body;
+          } catch {
+            return reply({ error: "Format permintaan tidak valid." }, 400);
+          }
+
+          const currentPassword = typeof body.currentPassword === "string" ? body.currentPassword : "";
+          const newPassword = typeof body.newPassword === "string" ? body.newPassword : "";
+          if (!currentPassword || newPassword.length < 12 || newPassword.length > 1024 ||
+              !/[a-z]/.test(newPassword) || !/[A-Z]/.test(newPassword) ||
+              !/[0-9]/.test(newPassword) || !/[^A-Za-z0-9]/.test(newPassword)) {
+            return reply({ error: "Password baru minimal 12 karakter dan harus memuat huruf besar, huruf kecil, angka, serta simbol." }, 400);
+          }
+          if (currentPassword === newPassword) return reply({ error: "Password baru harus berbeda dari password saat ini." }, 400);
+
+          const stored = await env.DB.prepare("SELECT password_hash,password_salt FROM admins WHERE id=? AND active=1")
+            .bind(admin.id).first<{ password_hash: string; password_salt: string }>();
+          if (!stored) return reply({ error: "Akun admin tidak aktif atau tidak ditemukan." }, 401);
+
+          const currentSalt = unhex(stored.password_salt);
+          const expected = unhex(stored.password_hash);
+          if (currentSalt.length < 16 || expected.length !== 32) {
+            throw new Error("Stored password hash format is invalid.");
+          }
+          const actual = await passwordHash(currentPassword, currentSalt);
+          let diff = actual.length ^ expected.length;
+          for (let i = 0; i < Math.max(actual.length, expected.length); i++) diff |= (actual[i] || 0) ^ (expected[i] || 0);
+          if (diff !== 0) return reply({ error: "Password saat ini tidak cocok." }, 401);
+
+          const newSalt = crypto.getRandomValues(new Uint8Array(16));
+          const newHash = await passwordHash(newPassword, newSalt);
+          const hex = (v: Uint8Array) => [...v].map((n) => n.toString(16).padStart(2, "0")).join("");
+          await env.DB.prepare("UPDATE admins SET password_hash=?,password_salt=? WHERE id=? AND active=1")
+            .bind(hex(newHash), hex(newSalt), admin.id).run();
+          await audit(env, admin.id, "password_change");
+          await env.DB.prepare("UPDATE sessions SET revoked_at=? WHERE admin_id=? AND revoked_at IS NULL")
+            .bind(Math.floor(Date.now() / 1000), admin.id).run();
+
+          return reply({ ok: true, message: "Password berhasil diganti. Silakan login kembali dengan password baru." }, 200, {
+            "set-cookie": "ppks_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0",
+          });
+        }
+
         if (url.pathname === "/api/respondents" && request.method === "GET") {
           const admin = await sessionAdmin(request, env);
           if (!admin) return reply({ error: "Silakan login." }, 401);
