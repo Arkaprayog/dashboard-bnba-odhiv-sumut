@@ -5,64 +5,78 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light">
 <title>Dashboard BNBA PPKS ODHIV Sumut</title>
 <style>
-:root{--green:#155c4d;--teal:#57b4b1;--blue:#247ba0;--sky:#dff3fa;--ink:#203633;--muted:#647773;--line:#dbe8e5;--bg:#f3f8f7}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,sans-serif;color:var(--ink)}header{background:linear-gradient(110deg,#124d42,#247ba0);color:white;padding:22px max(20px,calc((100vw - 1120px)/2))}header .eyebrow{font-size:.8rem;letter-spacing:.09em;text-transform:uppercase;opacity:.85}h1{font-size:clamp(1.35rem,3vw,2rem);margin:6px 0}header p{margin:0;opacity:.9;font-size:.95rem}.wrap{max-width:1120px;margin:24px auto;padding:0 18px}.alert{background:#fff8e8;border:1px solid #ecd59c;border-radius:12px;padding:15px 17px;line-height:1.5;margin-bottom:18px}.alert strong{display:block;color:#79550a;margin-bottom:3px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;min-width:0}.card h2{font-size:1rem;margin:0 0 8px;color:var(--green)}.card p{font-size:.92rem;color:var(--muted);line-height:1.55;margin:0}.status{display:inline-block;border-radius:99px;padding:5px 9px;font-size:.78rem;font-weight:700;background:#eaf4f2;color:#155c4d;margin-top:13px}.section{margin-top:18px}.section h2{font-size:1.05rem;margin:0 0 12px}.login{display:grid;gap:10px;margin-top:14px}.login label{font-size:.88rem;font-weight:650}.login input{width:100%;padding:12px;border:1px solid #cbdcd7;border-radius:9px;font:inherit}.login button{padding:12px 16px;border:0;border-radius:9px;background:var(--green);color:#fff;font:inherit;font-weight:700}.login button:disabled{opacity:.6}.msg{font-size:.9rem;min-height:1.4em;color:var(--muted);overflow-wrap:anywhere}.steps{padding-left:20px;margin:0}.steps li{margin:8px 0;line-height:1.5}.code{font-family:ui-monospace,monospace;font-size:.85rem;background:#edf4f5;padding:2px 5px;border-radius:5px;overflow-wrap:anywhere}footer{text-align:center;color:var(--muted);font-size:.82rem;padding:24px}
-@media(max-width:700px){.grid{grid-template-columns:1fr}.wrap{margin:16px auto}header{padding:20px}}
-</style></head>
+:root{--green:#155c4d;--teal:#57b4b1;--blue:#247ba0;--ink:#203633;--muted:#647773;--line:#dbe8e5;--bg:#f3f8f7;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}header{background:linear-gradient(115deg,#124d42,#247ba0);color:white;padding:30px max(20px,calc((100vw - 1080px)/2)) 34px}.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85}h1{font-size:clamp(1.5rem,4vw,2.25rem);line-height:1.2;margin:9px 0}header p{margin:0;max-width:700px;line-height:1.6;opacity:.92}.wrap{max-width:1080px;margin:24px auto;padding:0 18px}.notice{background:#fff8e8;border:1px solid #ecd59c;border-radius:15px;padding:17px 19px;line-height:1.6;margin-bottom:20px}.notice strong{display:block;color:#79550a;margin-bottom:4px}.intro{margin:0 0 15px;font-size:1.15rem;color:var(--green)}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:20px;min-width:0;box-shadow:0 4px 16px rgba(21,92,77,.035)}.symbol{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:#eaf4f2;color:var(--green);font-size:1.25rem;margin-bottom:14px}.card h2{font-size:1.02rem;margin:0 0 8px;color:var(--green)}.card p{font-size:.92rem;color:var(--muted);line-height:1.6;margin:0}.status{display:inline-block;border-radius:99px;padding:6px 10px;font-size:.78rem;font-weight:700;background:#eaf4f2;color:#155c4d;margin-top:15px}.section{margin-top:18px}.section h2{font-size:1.05rem;margin:0 0 10px;color:var(--green)}.section p{line-height:1.65;color:var(--muted);margin:0}.steps{padding-left:20px;margin:12px 0 0}.steps li{margin:8px 0;line-height:1.55}.footer{text-align:center;color:var(--muted);font-size:.82rem;padding:25px 16px 32px}.pill{display:inline-flex;align-items:center;gap:7px;font-size:.85rem;font-weight:650;color:var(--green);background:#eaf4f2;border-radius:99px;padding:8px 12px;margin-top:18px}.dot{width:8px;height:8px;border-radius:50%;background:#d39b25}@media(max-width:720px){header{padding:24px 20px 27px}.wrap{margin:17px auto}.grid{grid-template-columns:1fr}.card{padding:18px}.notice{padding:15px}}
+</style>
+</head>
 <body>
-<header><div class="eyebrow">Portal internal • Sumatera Utara</div><h1>Dashboard BNBA PPKS ODHIV Sumut</h1><p>Pengelolaan administrasi dan pelaporan responden</p></header>
+<header>
+  <div class="eyebrow">Portal internal · Sumatera Utara</div>
+  <h1>Dashboard BNBA PPKS ODHIV Sumut</h1>
+  <p>Portal informasi pengelolaan administrasi dan pelaporan responden. Halaman awal dapat dibuka tanpa login; data pribadi tetap dilindungi.</p>
+</header>
 <main class="wrap">
-<div class="alert"><strong>Penyiapan sistem — belum untuk data nyata</strong>Data responden dan foto tetap diblokir sampai autentikasi, izin akses, serta pengujian keamanan selesai.</div>
-<div class="grid">
-<section class="card"><h2>Login petugas</h2><p>Masuk menggunakan akun yang telah dibuat.</p><form class="login" id="loginForm"><label for="username">Username</label><input id="username" name="username" autocomplete="username" required maxlength="64"><label for="password">Kata sandi</label><input id="password" name="password" type="password" autocomplete="current-password" required maxlength="1024"><button id="loginButton" type="submit">Masuk</button><div id="loginMessage" class="msg" role="status" aria-live="polite"></div></form><button id="logoutButton" type="button" hidden style="margin-top:10px;padding:10px 14px;border:1px solid #cbdcd7;border-radius:9px;background:white;color:var(--green)">Keluar</button></section>
-<section class="card"><h2>Data responden</h2><p>Sumber yang direncanakan: Google Sheets pada tab <span class="code">From Response 1</span>. Akses hanya melalui backend terautentikasi.</p><span class="status">Belum diaktifkan</span></section>
-<section class="card"><h2>Verifikasi dan pelaporan</h2><p>Status laporan dan desil akan dikelola petugas berwenang setelah integrasi selesai.</p><span class="status">Menunggu backend</span></section>
-</div>
-<section class="card section"><h2>Setup akun owner pertama</h2><p>Gunakan hanya jika belum ada akun admin. Setup otomatis ditutup setelah akun owner pertama berhasil dibuat.</p>
-<form class="login" id="setupForm">
-<label for="ownerUsername">Username owner</label><input id="ownerUsername" name="ownerUsername" value="owner" autocomplete="username" required minlength="3" maxlength="64" pattern="[a-zA-Z0-9._-]+">
-<label for="displayName">Nama tampilan</label><input id="displayName" name="displayName" autocomplete="name" required minlength="2" maxlength="100">
-<label for="ownerPassword">Kata sandi (minimal 6 karakter, wajib angka dan simbol)</label><input id="ownerPassword" name="ownerPassword" type="password" autocomplete="new-password" required minlength="6" maxlength="1024" pattern="(?=.*[0-9])(?=.*[^A-Za-z0-9]).{6,}" title="Minimal 6 karakter, wajib memuat angka dan simbol">
-<button id="setupButton" type="submit">Buat akun owner</button><div id="setupMessage" class="msg" role="status" aria-live="polite"></div>
-</form></section>
-<section class="card section"><h2>Fitur yang masih perlu dituntaskan</h2><ol class="steps"><li>Verifikasi login owner dan hapus token bootstrap.</li><li>Uji integrasi Google Sheets dan Drive privat dengan izin minimum.</li><li>Bangun filter responden, workflow pelaporan, template laporan, dan cetak A4.</li><li>Uji kontrol akses sebelum memakai data sebenarnya.</li></ol></section>
+  <div class="notice" role="status">
+    <strong>Mode penyiapan sistem</strong>
+    Tampilan dashboard awal sudah tersedia. Data responden, foto, dan dokumen pribadi belum ditampilkan karena pemeriksaan keamanan serta integrasi sumber data belum selesai.
+  </div>
+  <h2 class="intro">Ringkasan sistem</h2>
+  <div class="grid">
+    <section class="card">
+      <div class="symbol" aria-hidden="true">▤</div>
+      <h2>Data responden</h2>
+      <p>Sumber data yang direncanakan adalah Google Sheets. Rincian responden tidak ditampilkan pada halaman umum.</p>
+      <span class="status">Belum diaktifkan</span>
+    </section>
+    <section class="card">
+      <div class="symbol" aria-hidden="true">✓</div>
+      <h2>Verifikasi dan pelaporan</h2>
+      <p>Alur verifikasi, status laporan, dan pemantauan tindak lanjut akan tersedia setelah backend selesai diuji.</p>
+      <span class="status">Dalam penyiapan</span>
+    </section>
+    <section class="card">
+      <div class="symbol" aria-hidden="true">▣</div>
+      <h2>Template dan dokumen</h2>
+      <p>Template laporan dan keluaran cetak akan disiapkan setelah aturan akses serta sumber data dikonfirmasi.</p>
+      <span class="status">Dalam penyiapan</span>
+    </section>
+  </div>
+  <section class="card section">
+    <h2>Status layanan</h2>
+    <p id="serviceText">Memeriksa status layanan…</p>
+    <div class="pill"><span class="dot" id="serviceDot"></span><span id="serviceStatus">Memeriksa backend</span></div>
+  </section>
+  <section class="card section">
+    <h2>Langkah berikutnya</h2>
+    <ol class="steps">
+      <li>Memastikan layanan backend dan basis data berjalan normal.</li>
+      <li>Menguji koneksi Google Sheets tanpa menampilkan data pribadi ke halaman publik.</li>
+      <li>Mengaktifkan fitur data hanya melalui akses petugas yang terotorisasi.</li>
+    </ol>
+  </section>
 </main>
+<footer class="footer">Portal administrasi internal · Lindungi kerahasiaan dan data pribadi responden</footer>
 <script>
-const form=document.getElementById('loginForm'), msg=document.getElementById('loginMessage'), button=document.getElementById('loginButton'), logout=document.getElementById('logoutButton');
-const setupForm=document.getElementById('setupForm'), setupMsg=document.getElementById('setupMessage'), setupButton=document.getElementById('setupButton');
-let csrfToken='';
-async function readApiResponse(r){const text=await r.text();let data;try{data=JSON.parse(text);}catch{const kind=(r.headers.get('content-type')||'').includes('text/html')||/^\s*<!doctype html|^\s*<html/i.test(text)?'HTML':'teks non-JSON';throw new Error('Server mengirim '+kind+' (HTTP '+r.status+'), bukan JSON. Jangan ulangi setup; periksa log Worker di Cloudflare.');}return data;}
-async function checkBackend(){
- const status=document.querySelector('.grid .card:nth-child(3) .status');
+(async()=>{
+ const status=document.getElementById('serviceStatus');
+ const text=document.getElementById('serviceText');
+ const dot=document.getElementById('serviceDot');
  try{
-  const r=await fetch('/api/health',{credentials:'same-origin',cache:'no-store'});
-  const d=await readApiResponse(r);
+  const r=await fetch('/api/health',{method:'GET',cache:'no-store',credentials:'same-origin'});
+  const d=await r.json();
   if(!r.ok||!d.ok) throw new Error('Backend belum siap');
-  status.textContent='Backend aktif';status.style.background='#e5f5e9';status.style.color='#176b3a';
- }catch{status.textContent='Backend belum terhubung';status.style.background='#fff0e8';status.style.color='#8b3c18';}
-}
-async function checkSetupStatus(){
- try{
-  const r=await fetch('/api/setup-status',{credentials:'same-origin',cache:'no-store'});
-  const d=await readApiResponse(r);
-  if(!r.ok||!d.ok) throw new Error('Status setup tidak tersedia');
-  if(!d.setupOpen){
-   for(const el of setupForm.querySelectorAll('input,button')) el.disabled=true;
-   setupMsg.textContent='Setup awal sudah ditutup karena akun owner/admin sudah ada. Gunakan formulir login di atas.';
-  }else{
-   setupMsg.textContent='Belum ada akun admin. Setup owner pertama tersedia.';
-  }
- }catch{setupMsg.textContent='Status setup belum dapat diperiksa dari backend.';}
-}
-async function checkSession(){try{const r=await fetch('/api/me',{credentials:'same-origin',cache:'no-store'});if(!r.ok)return;const d=await readApiResponse(r);csrfToken=d.csrfToken||'';msg.textContent='Sesi aktif: '+(d.admin.display_name||d.admin.username)+'. Data responden belum diaktifkan.';logout.hidden=false;}catch{}}
-form.addEventListener('submit',async e=>{e.preventDefault();button.disabled=true;msg.textContent='Memeriksa akun…';try{const r=await fetch('/api/login',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json'},body:JSON.stringify({username:form.username.value,password:form.password.value})});const d=await readApiResponse(r);if(!r.ok)throw new Error(d.error||'Login gagal.');csrfToken=d.csrfToken||'';form.password.value='';msg.textContent='Login berhasil. Data responden tetap terkunci sampai integrasi selesai.';logout.hidden=false;}catch(err){msg.textContent=err.message||'Tidak dapat menghubungi server.';}finally{button.disabled=false;}});
-logout.addEventListener('click',async()=>{try{const r=await fetch('/api/logout',{method:'POST',credentials:'same-origin',headers:{'X-CSRF-Token':csrfToken}});if(!r.ok)throw new Error('Logout gagal.');csrfToken='';logout.hidden=true;msg.textContent='Sesi sudah ditutup.';}catch(err){msg.textContent=err.message||'Logout gagal.';}});
-setupForm.addEventListener('submit',async e=>{e.preventDefault();setupButton.disabled=true;setupMsg.textContent='Membuat akun owner…';try{const r=await fetch('/api/setup-owner',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json'},body:JSON.stringify({username:setupForm.ownerUsername.value,displayName:setupForm.displayName.value,password:setupForm.ownerPassword.value})});const d=await readApiResponse(r);if(!r.ok)throw new Error(d.error||'Setup gagal.');setupForm.reset();setupMsg.textContent='Akun owner berhasil dibuat. Silakan login di formulir atas.';}catch(err){setupMsg.textContent=err.message||'Tidak dapat menghubungi server.';}finally{setupButton.disabled=false;}});
-checkSession();
-checkBackend();
-checkSetupStatus();
+  status.textContent='Backend aktif';
+  text.textContent='Layanan backend merespons dan koneksi basis data tersedia. Integrasi data responden masih dinonaktifkan.';
+  dot.style.background='#258653';
+ }catch{
+  status.textContent='Perlu pemeriksaan';
+  text.textContent='Status backend belum dapat diverifikasi. Halaman awal tetap dapat digunakan; data pribadi tidak ditampilkan.';
+  dot.style.background='#d39b25';
+ }
+})();
 </script>
-<footer>Data sensitif • Akses terbatas untuk petugas berwenang</footer>
-</body></html>
+</body>
+</html>
