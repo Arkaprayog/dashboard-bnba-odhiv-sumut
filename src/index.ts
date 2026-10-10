@@ -12,6 +12,7 @@ interface Env {
   DB: D1Database;
   APP_ORIGIN: string;
   SESSION_TTL_SECONDS?: string;
+  OWNER_BOOTSTRAP_TOKEN?: string;
 }
 const NO_STORE = { "cache-control": "no-store", "x-content-type-options": "nosniff" };
 function reply(data: unknown, status = 200, extra: Record<string,string> = {}) {
@@ -63,6 +64,31 @@ export default {
     }
     if (url.pathname.startsWith("/api/")) {
       if (!env.DB) return reply({error:"Database D1 belum dikonfigurasi."},503);
+      if (url.pathname === "/api/setup-owner" && request.method === "POST") {
+        if (request.headers.get("Origin") !== env.APP_ORIGIN) return reply({error:"Origin tidak diizinkan."},403);
+        if (!env.OWNER_BOOTSTRAP_TOKEN || env.OWNER_BOOTSTRAP_TOKEN.length < 32) return reply({error:"Setup owner belum diaktifkan oleh administrator sistem."},503);
+        const supplied = request.headers.get("X-Owner-Bootstrap-Token") || "";
+        const a = new TextEncoder().encode(supplied), b = new TextEncoder().encode(env.OWNER_BOOTSTRAP_TOKEN);
+        let diff = a.length ^ b.length; for (let i=0;i<Math.max(a.length,b.length);i++) diff |= (a[i]||0) ^ (b[i]||0);
+        if (diff !== 0) return reply({error:"Token setup tidak valid."},403);
+        const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM admins").first<{n:number}>();
+        if (!count || count.n !== 0) return reply({error:"Setup awal sudah ditutup karena akun admin sudah ada."},409);
+        let body:{username?:string;displayName?:string;password?:string};
+        try { body = await request.json() as typeof body; } catch { return reply({error:"Format permintaan tidak valid."},400); }
+        const username = typeof body.username==="string" ? body.username.trim().toLowerCase() : "";
+        const displayName = typeof body.displayName==="string" ? body.displayName.trim() : "";
+        const password = typeof body.password==="string" ? body.password : "";
+        if (!/^[a-z0-9._-]{3,64}$/.test(username) || displayName.length<2 || displayName.length>100 || password.length<14 || password.length>1024) return reply({error:"Gunakan username 3–64 karakter, nama 2–100 karakter, dan kata sandi minimal 14 karakter."},400);
+        const salt = crypto.getRandomValues(new Uint8Array(16));
+        const hash = await passwordHash(password,salt);
+        const hex=(v:Uint8Array)=>[...v].map(n=>n.toString(16).padStart(2,"0")).join("");
+        const id = crypto.randomUUID();
+        try {
+          await env.DB.prepare("INSERT INTO admins(id,username,display_name,password_hash,password_salt,role,active) VALUES(?,?,?,?,?,'owner',1)").bind(id,username,displayName,hex(hash),hex(salt)).run();
+          await audit(env,id,"owner_bootstrap");
+        } catch { return reply({error:"Akun tidak dapat dibuat. Pastikan migrasi database sudah dijalankan."},503); }
+        return reply({ok:true,message:"Akun owner berhasil dibuat. Hapus secret OWNER_BOOTSTRAP_TOKEN dari konfigurasi Worker sekarang."},201);
+      }
       if (url.pathname === "/api/login" && request.method === "POST") {
         if (request.headers.get("Origin") !== env.APP_ORIGIN) return reply({error:"Origin tidak diizinkan."},403);
         let body: {username?:string;password?:string};
