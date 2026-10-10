@@ -64,7 +64,7 @@ form.addEventListener('submit',async e=>{
   const response=await fetch('/api/login',{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify({username:username.value.trim(),password:password.value})});
   const data=await response.json().catch(()=>({error:'Respons server tidak valid.'}));
   if(!response.ok||!data.ok){message.textContent=data.error||'Login gagal. Periksa username dan password.';return;}
-  message.textContent='Login berhasil. Sesi aman aktif untuk '+(data.admin?.display_name||data.admin?.username||'petugas')+'.';
+  message.textContent='Login berhasil. Sesi aman aktif untuk '+(data.admin?.display_name||data.admin?.username||'petugas')+'. Namun halaman dashboard data belum tersedia, sehingga data tetap terkunci.';
   password.value='';
  }catch(err){message.textContent='Tidak dapat menghubungi server. Periksa koneksi lalu coba lagi.';}
  finally{submit.disabled=false;}
