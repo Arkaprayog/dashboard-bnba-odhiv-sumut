@@ -110,7 +110,9 @@ async function googleAccessToken(env: Env): Promise<string> {
   const claim = enc({ iss: email, scope: "https://www.googleapis.com/auth/spreadsheets.readonly", aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600 });
   const unsigned = header + "." + claim;
 
-  const normalizedPem = pem.replace(/\\n/g, "\n").trim();
+  const normalizedPem = pem.replace(/\
+/g, "
+").trim();
   const body = normalizedPem.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\s/g, "");
   const binary = atob(body);
   const keyBytes = Uint8Array.from(binary, (ch) => ch.charCodeAt(0));
@@ -322,7 +324,11 @@ export default {
             const range = "'" + tab + "'!A1:AZ1000";
             const sheetUrl = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID) + "/values/" + encodeURIComponent(range) + "?valueRenderOption=FORMATTED_VALUE";
             const response = await fetch(sheetUrl, { headers: { authorization: "Bearer " + token } });
-            if (!response.ok) {\n              let detail = "";\n              try { const payload = await response.json() as { error?: { status?: string; message?: string } }; detail = [payload.error?.status, payload.error?.message].filter(Boolean).join(": "); } catch { /* Abaikan respons error yang bukan JSON. */ }\n              return reply({ error: "Google Sheets menolak permintaan (HTTP " + response.status + "). " + (detail || "Periksa izin spreadsheet, ID spreadsheet, dan nama tab.") }, 502);\n            }
+            if (!response.ok) {
+              let detail = "";
+              try { const payload = await response.json() as { error?: { status?: string; message?: string } }; detail = [payload.error?.status, payload.error?.message].filter(Boolean).join(": "); } catch { /* Abaikan respons error yang bukan JSON. */ }
+              return reply({ error: "Google Sheets menolak permintaan (HTTP " + response.status + "). " + (detail || "Periksa izin spreadsheet, ID spreadsheet, dan nama tab.") }, 502);
+            }
             const sheet = await response.json() as { values?: string[][] };
             const values = sheet.values || [];
             if (values.length < 1) return reply({ items: [], headers: [] });
@@ -338,7 +344,8 @@ export default {
             return reply({ headers, items, source: "Google Sheets", count: items.length });
           } catch (error) {
             const incidentId = logIncident("respondents_error", error, { path: url.pathname, stage: requestStage });
-            const safeMessage = error instanceof Error ? error.message : "Kesalahan integrasi tidak diketahui.";\n            return reply({ error: "Integrasi Google Sheets gagal: " + safeMessage + " (ID insiden: " + incidentId + ")" }, 503);
+            const safeMessage = error instanceof Error ? error.message : "Kesalahan integrasi tidak diketahui.";
+            return reply({ error: "Integrasi Google Sheets gagal: " + safeMessage + " (ID insiden: " + incidentId + ")" }, 503);
           }
         }
 
