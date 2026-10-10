@@ -15,8 +15,8 @@
     "@simplewebauthn/server": "^13.1.2"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260609.1",
+    "@cloudflare/workers-types": "^4.20261010.1",
     "typescript": "^5.8.3",
-    "wrangler": "^4.40.0"
+    "wrangler": "^4.149.0"
   }
 }
