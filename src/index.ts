@@ -110,9 +110,7 @@ async function googleAccessToken(env: Env): Promise<string> {
   const claim = enc({ iss: email, scope: "https://www.googleapis.com/auth/spreadsheets.readonly", aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600 });
   const unsigned = header + "." + claim;
 
-  const normalizedPem = pem.replace(/\
-/g, "
-").trim();
+  const normalizedPem = pem.replace(/\\n/g, "\n").trim();
   const body = normalizedPem.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\s/g, "");
   const binary = atob(body);
   const keyBytes = Uint8Array.from(binary, (ch) => ch.charCodeAt(0));
