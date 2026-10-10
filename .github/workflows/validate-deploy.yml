@@ -65,13 +65,24 @@ jobs:
           HEALTH_URL: https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev/api/health
         run: |
           for attempt in $(seq 1 10); do
-            if curl --fail --silent --show-error "$HEALTH_URL"; then
-              echo
-              echo "Backend health check passed."
+            response="$(curl --fail --silent --show-error "$HEALTH_URL" 2>/dev/null || true)"
+            if printf '%s' "$response" | node -e '
+              let data = "";
+              process.stdin.setEncoding("utf8");
+              process.stdin.on("data", chunk => data += chunk);
+              process.stdin.on("end", () => {
+                try {
+                  const result = JSON.parse(data);
+                  if (result.ok === true && result.database === "connected" && result.mode === "ready") process.exit(0);
+                } catch {}
+                process.exit(1);
+              });
+            '; then
+              echo "Backend health check passed: $response"
               exit 0
             fi
             echo "Health check attempt $attempt/10 failed; retrying in 6 seconds."
             sleep 6
           done
-          echo "::error::Backend health check failed after deployment."
+          echo "::error::Backend health check did not confirm ok=true, database=connected, mode=ready."
           exit 1
