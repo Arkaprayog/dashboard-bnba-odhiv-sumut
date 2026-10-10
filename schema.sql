@@ -72,3 +72,12 @@ CREATE INDEX IF NOT EXISTS idx_challenges_expiry ON auth_challenges(expires_at);
 CREATE INDEX IF NOT EXISTS idx_sessions_admin ON sessions(admin_id);
 CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_log(created_at);
 CREATE INDEX IF NOT EXISTS idx_workflow_status ON respondent_workflow(report_status);
+
+-- Login throttling metadata; never store submitted passwords.
+CREATE TABLE IF NOT EXISTS login_attempts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username_key TEXT NOT NULL,
+  attempted_at INTEGER NOT NULL,
+  succeeded INTEGER NOT NULL DEFAULT 0 CHECK (succeeded IN (0,1))
+);
+CREATE INDEX IF NOT EXISTS idx_login_attempts_user_time ON login_attempts(username_key, attempted_at);
