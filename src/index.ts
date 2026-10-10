@@ -124,9 +124,19 @@ async function googleAccessToken(env: Env): Promise<string> {
     body: new URLSearchParams({ grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion }),
   });
 
-  if (!response.ok) throw new Error("Google OAuth menolak kredensial (HTTP " + response.status + "). Periksa email service account dan format GOOGLE_PRIVATE_KEY.");
-  const data = (await response.json()) as { access_token?: string };
-  if (!data.access_token) throw new Error("Token Google tidak tersedia.");
+  if (!response.ok) {
+    let oauthCode = "";
+    let oauthDescription = "";
+    try {
+      const payload = await response.json() as { error?: string; error_description?: string };
+      oauthCode = payload.error || "";
+      oauthDescription = payload.error_description || "";
+    } catch { /* Respons OAuth bukan JSON; jangan tampilkan isi mentahnya. */ }
+    const detail = [oauthCode, oauthDescription].filter(Boolean).join(": ");
+    throw new Error("Google OAuth menolak kredensial (HTTP " + response.status + ")" + (detail ? " — " + detail : "") + ". Periksa email service account, status kunci, dan format GOOGLE_PRIVATE_KEY.");
+  }
+  const data = (await response.json()) as { access_token?: string; expires_in?: number; token_type?: string };
+  if (!data.access_token) throw new Error("Google OAuth berhasil merespons tetapi token akses tidak tersedia.");
   return data.access_token;
 }
 
