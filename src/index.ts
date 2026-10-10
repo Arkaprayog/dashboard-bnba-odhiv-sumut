@@ -124,7 +124,7 @@ async function googleAccessToken(env: Env): Promise<string> {
     body: new URLSearchParams({ grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion }),
   });
 
-  if (!response.ok) throw new Error("Google OAuth gagal.");
+  if (!response.ok) throw new Error("Google OAuth menolak kredensial (HTTP " + response.status + "). Periksa email service account dan format GOOGLE_PRIVATE_KEY.");
   const data = (await response.json()) as { access_token?: string };
   if (!data.access_token) throw new Error("Token Google tidak tersedia.");
   return data.access_token;
@@ -322,7 +322,7 @@ export default {
             const range = "'" + tab + "'!A1:AZ1000";
             const sheetUrl = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID) + "/values/" + encodeURIComponent(range) + "?valueRenderOption=FORMATTED_VALUE";
             const response = await fetch(sheetUrl, { headers: { authorization: "Bearer " + token } });
-            if (!response.ok) return reply({ error: "Google Sheets tidak dapat dibaca. Periksa akses service account dan nama tab." }, 502);
+            if (!response.ok) {\n              let detail = "";\n              try { const payload = await response.json() as { error?: { status?: string; message?: string } }; detail = [payload.error?.status, payload.error?.message].filter(Boolean).join(": "); } catch { /* Abaikan respons error yang bukan JSON. */ }\n              return reply({ error: "Google Sheets menolak permintaan (HTTP " + response.status + "). " + (detail || "Periksa izin spreadsheet, ID spreadsheet, dan nama tab.") }, 502);\n            }
             const sheet = await response.json() as { values?: string[][] };
             const values = sheet.values || [];
             if (values.length < 1) return reply({ items: [], headers: [] });
@@ -338,7 +338,7 @@ export default {
             return reply({ headers, items, source: "Google Sheets", count: items.length });
           } catch (error) {
             const incidentId = logIncident("respondents_error", error, { path: url.pathname, stage: requestStage });
-            return reply({ error: "Integrasi Google Sheets gagal. Periksa konfigurasi secret dan log server. ID insiden: " + incidentId }, 503);
+            const safeMessage = error instanceof Error ? error.message : "Kesalahan integrasi tidak diketahui.";\n            return reply({ error: "Integrasi Google Sheets gagal: " + safeMessage + " (ID insiden: " + incidentId + ")" }, 503);
           }
         }
 
