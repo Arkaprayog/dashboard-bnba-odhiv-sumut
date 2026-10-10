@@ -93,11 +93,8 @@ export default {
       if (!env.DB) return reply({error:"Database D1 belum dikonfigurasi."},503);
       if (url.pathname === "/api/setup-owner" && request.method === "POST") {
         if (request.headers.get("Origin") !== env.APP_ORIGIN) return reply({error:"Origin tidak diizinkan."},403);
-        if (!env.OWNER_BOOTSTRAP_TOKEN || env.OWNER_BOOTSTRAP_TOKEN.length < 32) return reply({error:"Setup owner belum diaktifkan oleh administrator sistem."},503);
-        const supplied = request.headers.get("X-Owner-Bootstrap-Token") || "";
-        const a = new TextEncoder().encode(supplied), b = new TextEncoder().encode(env.OWNER_BOOTSTRAP_TOKEN);
-        let diff = a.length ^ b.length; for (let i=0;i<Math.max(a.length,b.length);i++) diff |= (a[i]||0) ^ (b[i]||0);
-        if (diff !== 0) return reply({error:"Token setup tidak valid."},403);
+        // First-owner bootstrap intentionally needs no token entry. It is only available
+        // while the admins table is empty; keep the strong password rule and Origin check.
         try {
         const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM admins").first<{n:number}>();
         if (!count || count.n !== 0) return reply({error:"Setup awal sudah ditutup karena akun admin sudah ada."},409);
