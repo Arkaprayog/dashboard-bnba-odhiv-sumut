@@ -86,7 +86,7 @@ async function digestHex(bytes: ArrayBuffer): Promise<string> {
 async function passwordHash(password: string, salt: Uint8Array): Promise<Uint8Array> {
   const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
   const saltBuffer = Uint8Array.from(salt).buffer as ArrayBuffer;
-  return new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", salt: saltBuffer, iterations: 310000, hash: "SHA-256" }, key, 256));
+  return new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", salt: saltBuffer, iterations: 100000, hash: "SHA-256" }, key, 256));
 }
 
 async function sessionAdmin(request: Request, env: Env) {
