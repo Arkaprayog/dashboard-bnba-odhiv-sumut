@@ -73,7 +73,7 @@ async function googleAccessToken(env: Env): Promise<string> {
   const key=await crypto.subtle.importKey("pkcs8",keyBytes,{name:"RSASSA-PKCS1-v1_5",hash:"SHA-256"},false,["sign"]);
   const signature=await crypto.subtle.sign("RSASSA-PKCS1-v1_5",key,new TextEncoder().encode(unsigned));
   const assertion=unsigned+"."+b64(new Uint8Array(signature));
-  const response=await fetch("https://oauth2.googleapis.com/token",{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},body:new URLSearchParams({grant_type:"urn:ietf:params:oauth:grant-type:jwt-bearer",assertion})});
+  const response=await fetch("https://oauth2.googleapis.com/token",{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},body:new URLSearchParams({grant_type:"urn:ietf:params:oauth:grant-type:jwt-bearer",assertion}).toString()});
   if(!response.ok) throw new Error("Google OAuth gagal.");
   const data=await response.json() as {access_token?:string};
   if(!data.access_token) throw new Error("Token Google tidak tersedia.");
@@ -111,13 +111,13 @@ export default {
         const username = typeof body.username==="string" ? body.username.trim().toLowerCase() : "";
         const displayName = typeof body.displayName==="string" ? body.displayName.trim() : "";
         const password = typeof body.password==="string" ? body.password : "";
-        if (!/^[a-z0-9._-]{3,64}$/.test(username) || displayName.length<2 || displayName.length>100 || password.length<6 || password.length>1024 || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) return reply({error:"Gunakan username 3–64 karakter, nama 2–100 karakter, dan kata sandi minimal 6 karakter yang memuat angka serta simbol."},400);
+        if (!/^[a-z0-9._-]{3,64}$/.test(username) || displayName.length<2 || displayName.length>100 || password.length<6 || password.length>1024 || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) return reply({error:"Username 3-64 karakter (huruf kecil/angka/titik/garis), nama tampilan 2-100 karakter, password min 6 karakter, wajib angka dan simbol."},400);
         const salt = crypto.getRandomValues(new Uint8Array(16));
         const hash = await passwordHash(password,salt);
         const hex=(v:Uint8Array)=>[...v].map(n=>n.toString(16).padStart(2,"0")).join("");
         const id = crypto.randomUUID();
         try {
-          await env.DB.prepare("INSERT INTO admins(id,username,display_name,password_hash,password_salt,role,active) VALUES(?,?,?,?,?,'owner',1)").bind(id,username,displayName,hex(hash),hex(salt)).run();
+          await env.DB.prepare("INSERT INTO admins(id,username,display_name,password_hash,password_salt,role,active) VALUES(?,?,?,?,?,?,?)").bind(id,username,displayName,hex(hash),hex(salt),"owner",1).run();
           await audit(env,id,"owner_bootstrap");
         } catch (error) {
           const incidentId = crypto.randomUUID();
@@ -174,8 +174,8 @@ export default {
           const token=await googleAccessToken(env);
           const tab=(env.GOOGLE_SHEET_TAB || "From Response 1").replace(/'/g,"''");
           const range="'"+tab+"'!A1:AZ1000";
-          const url="https://sheets.googleapis.com/v4/spreadsheets/"+encodeURIComponent(env.GOOGLE_SHEET_ID)+"/values/"+encodeURIComponent(range)+"?valueRenderOption=FORMATTED_VALUE";
-          const response=await fetch(url,{headers:{authorization:"Bearer "+token}});
+          const sheetUrl="https://sheets.googleapis.com/v4/spreadsheets/"+encodeURIComponent(env.GOOGLE_SHEET_ID)+"/values/"+encodeURIComponent(range)+"?valueRenderOption=FORMATTED_VALUE";
+          const response=await fetch(sheetUrl,{headers:{authorization:"Bearer "+token}});
           if(!response.ok) return reply({error:"Google Sheets tidak dapat dibaca. Periksa akses service account dan nama tab."},502);
           const sheet=await response.json() as {values?:string[][]};
           const values=sheet.values||[];
@@ -188,7 +188,9 @@ export default {
             return record;
           });
           return reply({headers,items,source:"Google Sheets",count:items.length});
-        } catch {
+        } catch (error) {
+          const incidentId = crypto.randomUUID();
+          console.error("respondents_error", { incidentId, message: error instanceof Error ? error.message : "unknown_error" });
           return reply({error:"Integrasi Google Sheets gagal. Periksa konfigurasi secret dan log server."},503);
         }
       }
@@ -215,7 +217,7 @@ export default {
         if(body.templateChoice!==undefined && body.templateChoice!==null && !templates.includes(body.templateChoice)) return reply({error:"Pilihan template tidak valid."},400);
         const desil=body.desil===undefined?null:body.desil;
         const template=body.templateChoice===undefined?null:body.templateChoice;
-        await env.DB.prepare("INSERT INTO respondent_workflow(respondent_key,report_status,desil,template_choice,updated_by,updated_at) VALUES(?,?,?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(respondent_key) DO UPDATE SET report_status=excluded.report_status,desil=COALESCE(excluded.desil,respondent_workflow.desil),template_choice=COALESCE(excluded.template_choice,respondent_workflow.template_choice),updated_by=excluded.updated_by,updated_at=CURRENT_TIMESTAMP").bind(key,body.reportStatus,desil,template,admin.id).run();
+        await env.DB.prepare("INSERT INTO respondent_workflow(respondent_key,report_status,desil,template_choice,updated_by,updated_at) VALUES(?,?,?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(respondent_key) DO UPDATE SET report_status=?,desil=?,template_choice=?,updated_by=?,updated_at=CURRENT_TIMESTAMP").bind(key,body.reportStatus,desil,template,admin.id,body.reportStatus,desil,template,admin.id).run();
         await audit(env,admin.id,"workflow_update");
         return reply({ok:true});
       }
@@ -230,7 +232,8 @@ export default {
         if(!admin) return reply({ok:true},200,{"set-cookie":"ppks_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0"});
         const csrf=request.headers.get("X-CSRF-Token");
         if(!csrf || csrf!==admin.csrf_token) return reply({error:"Token CSRF tidak valid."},403);
-        const raw=cookieValue(request,"ppks_session")!;
+        const raw=cookieValue(request,"ppks_session");
+        if(!raw) return reply({ok:true},200,{"set-cookie":"ppks_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0"});
         const hash=await digestHex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(raw)));
         await env.DB.prepare("UPDATE sessions SET revoked_at=? WHERE id_hash=?").bind(Math.floor(Date.now()/1000),hash).run();
         await audit(env,admin.id,"logout");
