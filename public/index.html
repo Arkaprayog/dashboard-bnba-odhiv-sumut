@@ -4,12 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
 <title>Dashboard BNBA PPKS ODHIV Sumut</title>
 <style>
-:root{color-scheme:light;--green:#155c4d;--teal:#57b4b1;--blue:#247ba0;--sky:#dff3fa;--ink:#1f302f}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(145deg,#eaf7f3,#e7f4fb);color:var(--ink);display:grid;place-items:center;padding:20px}
-main{width:min(100%,480px);background:white;border-radius:22px;padding:28px;box-shadow:0 16px 48px #174b4520;border-top:6px solid var(--green)}
-h1{font-size:1.45rem;margin:0 0 8px;color:var(--green)}p{line-height:1.6;color:#536663}.pill{display:inline-block;background:#e5f5ef;color:#155c4d;padding:6px 10px;border-radius:99px;font-size:.85rem;font-weight:650}
-.note{margin-top:18px;padding:14px;border-radius:12px;background:#eff8fb;border:1px solid #cbe9f3;font-size:.92rem}
+:root{--green:#155c4d;--teal:#57b4b1;--blue:#247ba0;--sky:#dff3fa;--ink:#203633;--muted:#647773;--line:#dbe8e5;--bg:#f3f8f7}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,sans-serif;color:var(--ink)}header{background:linear-gradient(110deg,#124d42,#247ba0);color:white;padding:22px max(20px,calc((100vw - 1120px)/2))}header .eyebrow{font-size:.8rem;letter-spacing:.09em;text-transform:uppercase;opacity:.85}h1{font-size:clamp(1.35rem,3vw,2rem);margin:6px 0}header p{margin:0;opacity:.9;font-size:.95rem}.wrap{max-width:1120px;margin:24px auto;padding:0 18px}.alert{background:#fff8e8;border:1px solid #ecd59c;border-radius:12px;padding:15px 17px;line-height:1.5;margin-bottom:18px}.alert strong{display:block;color:#79550a;margin-bottom:3px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;min-width:0}.card h2{font-size:1rem;margin:0 0 8px;color:var(--green)}.card p{font-size:.92rem;color:var(--muted);line-height:1.55;margin:0}.status{display:inline-block;border-radius:99px;padding:5px 9px;font-size:.78rem;font-weight:700;background:#eaf4f2;color:#155c4d;margin-top:13px}.section{margin-top:18px}.section h2{font-size:1.05rem;margin:0 0 12px}.steps{padding-left:20px;margin:0}.steps li{margin:8px 0;line-height:1.5}.code{font-family:ui-monospace,monospace;font-size:.85rem;background:#edf4f5;padding:2px 5px;border-radius:5px;overflow-wrap:anywhere}footer{text-align:center;color:var(--muted);font-size:.82rem;padding:24px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.wrap{margin:16px auto}header{padding:20px}}
 </style></head>
-<body><main><span class="pill">Portal Admin • Sumatera Utara</span><h1>Data Base BNBA PPKS ODHIV Sumut</h1><p>Portal internal untuk pengelolaan data responden secara terbatas.</p><div class="note"><strong>Penyiapan sistem belum selesai.</strong><br>Login admin, koneksi Google Sheets/Drive, dan pengujian keamanan harus diselesaikan sebelum data responden dapat diakses. Jangan masukkan data asli pada tahap ini.</div></main></body></html>
+<body>
+<header><div class="eyebrow">Portal internal • Sumatera Utara</div><h1>Dashboard BNBA PPKS ODHIV Sumut</h1><p>Pengelolaan administrasi dan pelaporan responden</p></header>
+<main class="wrap">
+<div class="alert"><strong>Penyiapan sistem — belum untuk data nyata</strong>Dashboard ini belum mengaktifkan login admin atau koneksi Google Sheets/Drive. Data responden dan foto tetap diblokir sampai autentikasi, izin akses, serta pengujian keamanan selesai.</div>
+<div class="grid">
+<section class="card"><h2>Data responden</h2><p>Sumber yang direncanakan: Google Sheets pada tab <span class="code">From Response 1</span>. Akses harus melalui backend terautentikasi.</p><span class="status">Belum terhubung</span></section>
+<section class="card"><h2>Verifikasi dan pelaporan</h2><p>Status yang direncanakan: Sudah Dilaporkan, Belum Dilaporkan, dan Proses Verifikasi. Desil diisi petugas berwenang.</p><span class="status">Menunggu backend</span></section>
+<section class="card"><h2>Dokumen dan cetak</h2><p>Rencana: foto dari Drive privat, pemilihan beberapa responden, dan satu lembar A4 per responden dengan pilihan orientasi.</p><span class="status">Belum aktif</span></section>
+</div>
+<section class="card section"><h2>Langkah penyelesaian berikutnya</h2><ol class="steps"><li>Konfigurasi Cloudflare D1 dan rahasia server tanpa memasukkannya ke GitHub.</li><li>Implementasikan login admin, sesi aman, dan provisioning owner satu kali.</li><li>Hubungkan Google Sheets serta Drive privat melalui service account dengan akses minimum.</li><li>Uji pembatasan akses, audit, dan cetak menggunakan data uji sebelum memakai data sebenarnya.</li></ol></section>
+</main><footer>Data sensitif • Akses terbatas untuk petugas berwenang</footer>
+</body></html>
