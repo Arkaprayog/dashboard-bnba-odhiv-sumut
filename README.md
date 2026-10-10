@@ -1,145 +1,58 @@
-# Data Base PPKS ODHIV Sumut — Cloudflare secure starter
+# Data Base PPKS ODHIV Sumut — secure starter
 
-Starter ini menyediakan kerangka backend password + WebAuthn/passkey multi-perangkat, skema D1, sesi HttpOnly, pemeriksaan Origin/CSRF, peran akun, audit dasar, dan halaman login bertema hijau-biru.
+## Status keamanan
 
-## Status dan batas penting
+Proyek ini **belum siap untuk data responden nyata**. Dashboard operasional, pembatasan akses berbasis peran, rate limiting menyeluruh, dan alur foto privat harus diuji serta ditinjau sebelum produksi.
 
-**Ini paket integrasi awal yang tetap belum siap produksi atau diaudit.** Adapter Google Sheets/Drive sisi server sudah ditambahkan, tetapi harus dikonfigurasi dan diuji di staging terlebih dahulu. Dashboard frontend penuh, provisioning owner, rate limiting, dan pengelolaan admin belum lengkap; jangan masukkan data nyata sebelum seluruh checklist keamanan selesai. Implementasi perlu ditinjau developer berpengalaman, diuji di staging, dan diuji terhadap versi library WebAuthn yang digunakan.
+- Jangan pernah menyimpan rahasia di source code, `wrangler.toml`, GitHub, atau browser.
+- Gunakan data sintetis untuk pengujian.
+- Spreadsheet dan folder foto harus tetap privat; berikan akses service account minimum yang diperlukan.
+- Jangan mencatat nama, nomor telepon, NIK, URL foto, atau isi baris responden ke log.
 
-Yang belum disertakan secara aktif:
-- Dashboard data lengkap dan UI pengelolaan Desil/Status Laporan/Template belum dibuat; endpoint responden mengembalikan data sumber untuk integrasi frontend.
-- Pembuatan owner pertama. Buat akun awal melalui skrip provisioning yang aman setelah review kode; jangan membuka endpoint publik untuk membuat owner.
-- Rate limiting persisten dan perlindungan brute-force. Pasang Cloudflare rate limiting/WAF sebelum membuka akses.
-- Alur pemulihan akun, pencabutan passkey oleh owner, serta UI pengelolaan petugas lengkap.
-- Uji penetrasi, kebijakan retensi, backup/restore, dan peninjauan privasi.
+## Konfigurasi Google yang benar untuk kode Worker saat ini
 
-## Prasyarat
+Kode `src/index.ts` membaca dua secret terpisah untuk autentikasi Google:
 
-- Akun Cloudflare; domain HTTPS milik organisasi sangat disarankan.
-- Node.js LTS dan npm di komputer.
-- Project Google Cloud dengan Google Sheets API dan Google Drive API diaktifkan.
-- Akun layanan Google (service account) dengan akses minimum yang diperlukan ke spreadsheet dan folder Drive privat.
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL`: email service account.
+- `GOOGLE_PRIVATE_KEY`: private key PEM milik service account. Jika dimasukkan melalui dashboard, pertahankan format PEM; bila memakai string dengan escape, kode menormalisasi `\\n` menjadi baris baru.
 
-## 1. Siapkan project
+Konfigurasi spreadsheet:
+- `GOOGLE_SHEET_ID`: ID spreadsheet.
+- `GOOGLE_SHEET_TAB`: nama tab respons, misalnya `From Response 1`.
 
-```bash
-npm install
-npx wrangler login
-npx wrangler d1 create ppks-odhiv-auth
-```
+Jangan memakai format JSON service account tunggal kecuali kode Worker terlebih dahulu diubah untuk mem-parsing format tersebut dan perubahan itu telah diuji. Jangan mengirim file kunci atau nilainya ke chat.
 
-Salin `database_id` dari hasil perintah ke `wrangler.toml`, menggantikan `GANTI_DENGAN_DATABASE_ID`.
-
-Terapkan skema:
+Untuk memasukkan secret dari terminal yang terautentikasi ke akun Cloudflare yang benar:
 
 ```bash
-npm run db:migrate:local
-npm run db:migrate:remote
+npx wrangler secret put GOOGLE_SERVICE_ACCOUNT_EMAIL
+npx wrangler secret put GOOGLE_PRIVATE_KEY
 ```
 
-Jangan menjalankan migrasi remote sebelum memeriksa akun dan database Cloudflare yang benar.
+Masukkan nilai hanya pada prompt terminal yang aman. Tambahkan ID spreadsheet dan nama tab sebagai konfigurasi server sesuai kebijakan organisasi. Jangan menaruh nilainya di frontend.
 
-## 2. Konfigurasi domain WebAuthn
+## Kontrol akses data
 
-Di `wrangler.toml`, atur:
-- `APP_ORIGIN` ke origin final, contoh `https://dashboard.domain-organisasi.id` (tanpa slash terakhir).
-- `WEBAUTHN_RP_ID` ke hostname persis, contoh `dashboard.domain-organisasi.id` (tanpa protokol dan path).
-- `WEBAUTHN_RP_NAME` sesuai nama portal.
+Sebelum endpoint responden diaktifkan untuk penggunaan operasional:
+1. Batasi setiap endpoint ke peran yang memang memerlukan akses.
+2. Ambil hanya kolom yang diperlukan untuk tugas pengguna, bukan seluruh rentang sumber.
+3. Terapkan pagination dan batas jumlah baris.
+4. Jangan mengirim data sensitif ke pengguna yang hanya perlu melihat status agregat.
+5. Pastikan seluruh perubahan metadata memiliki validasi, pemeriksaan CSRF, dan audit tanpa menyimpan isi data sensitif.
+6. Uji akses tanpa sesi, sesi kedaluwarsa, akun nonaktif, peran terbatas, serta percobaan login berulang.
 
-WebAuthn mengikat kredensial ke origin/RP ID. Mengubah domain setelah passkey didaftarkan dapat membuat passkey lama tidak dapat dipakai.
+## Deployment
 
-## 3. Rahasia
+GitHub Actions disiapkan untuk deployment manual setelah validasi. Tambahkan `CLOUDFLARE_API_TOKEN` dan `CLOUDFLARE_ACCOUNT_ID` sebagai GitHub Actions secrets; jangan pernah menaruh token di source code atau mengirimkannya lewat chat. Gunakan token dengan izin minimum yang diperlukan.
 
-Simpan rahasia dengan Wrangler secrets, jangan masukkan ke file yang dikomit atau frontend. Contoh untuk integrasi Google nanti:
+Urutan aman:
+1. Review perubahan kode dan konfigurasi.
+2. Jalankan `npm install` dan `npm run typecheck`.
+3. Uji dengan data sintetis di staging.
+4. Verifikasi binding D1, aset, dan semua nama secret tanpa menampilkan nilainya.
+5. Deploy manual setelah semua pemeriksaan lulus.
+6. Periksa versi aktif dan uji login, logout, CSRF, hak akses, dan kegagalan integrasi.
 
-```bash
-npx wrangler secret put GOOGLE_SERVICE_ACCOUNT_JSON
-npx wrangler secret put GOOGLE_SHEET_ID
-npx wrangler secret put GOOGLE_SHEET_TAB
-npx wrangler secret put GOOGLE_DRIVE_FOLDER_ID
-```
+## Privasi
 
-`GOOGLE_SERVICE_ACCOUNT_JSON` harus berisi JSON service account satu baris. Batasi service account hanya ke spreadsheet yang dibutuhkan dan folder Drive foto yang relevan. Jangan membuat folder atau foto menjadi public. Untuk organisasi, gunakan kebijakan Google Workspace yang disetujui dan tinjau apakah service account sesuai kebijakan pengelolaan data.
-
-## 4. Membuat akun owner awal
-
-Tidak ada endpoint publik untuk membuat owner pertama dengan sengaja. Ini menghindari penyerang mengambil alih sistem sebelum admin dibuat.
-
-Sebelum produksi, buat skrip provisioning satu kali yang:
-1. dijalankan lokal oleh operator yang berwenang;
-2. meminta username, nama tampilan, dan password panjang secara interaktif;
-3. menghitung PBKDF2 dengan parameter yang sama seperti `src/index.ts`;
-4. memasukkan owner ke D1 menggunakan binding/alat admin yang aman;
-5. tidak mencetak password/hash/rahasia ke log;
-6. dihapus atau dinonaktifkan setelah selesai.
-
-PBKDF2 di starter ini menggunakan Web Crypto (310.000 iterasi, SHA-256). Minta peninjau keamanan menilai parameter, penanganan rahasia, rate limiting, dan strategi upgrade sebelum produksi.
-
-## 5. Pendaftaran passkey dan multi-perangkat
-
-Alur starter mewajibkan password terlebih dahulu, lalu WebAuthn. Setelah owner dibuat, implementasikan prosedur bootstrap pertama secara tertutup sebelum petugas memakai aplikasi. Endpoint pendaftaran passkey saat ini mensyaratkan sesi aktif dengan role owner/admin. Jangan membuat jalan pintas publik untuk melewati syarat ini.
-
-Setiap petugas harus memiliki akun individual. Untuk menambah perangkat, petugas login lalu mendaftarkan passkey baru; passkey tersinkronisasi juga dapat tersedia tergantung pengelola passkey dan kebijakan perangkat. Biometrik tidak dikirim ke server; OS/authenticator menangani sidik jari/wajah/PIN.
-
-## 6. Aktifkan koneksi Google Sheets dan foto Drive privat
-
-Kode server menggunakan service account untuk mengambil data langsung dari Google Sheets API dan foto melalui Drive API. Kredensial tidak dikirim ke browser.
-
-1. Di Google Cloud Console, pastikan **Google Sheets API** dan **Google Drive API** sama-sama Enabled pada project yang memiliki service account.
-2. Di Google Sheets, bagikan spreadsheet kepada email service account sebagai **Viewer**. Akses umum tetap **Restricted**.
-3. Untuk foto, buka folder Drive tempat foto unggahan Google Form disimpan dan bagikan folder tersebut kepada service account sebagai **Viewer**. Jangan mengubah folder/foto menjadi publik. Jika kebijakan organisasi melarang berbagi folder ini, hentikan dan minta administrator Google Workspace memilih metode akses yang disetujui.
-4. Deploy Worker ke lingkungan staging dahulu. Di Cloudflare Dashboard → Workers & Pages → pilih Worker → Settings → Variables and Secrets, tambahkan **Secret** bernama `GOOGLE_SERVICE_ACCOUNT_JSON`, lalu masukkan seluruh isi file JSON. Jangan menaruh isi JSON di `wrangler.toml`, source code, chat, atau variabel frontend.
-5. Tambahkan konfigurasi `GOOGLE_SHEET_ID` dengan nilai ID spreadsheet dan `GOOGLE_SHEET_TAB` dengan `From Response 1`. ID spreadsheet yang dimaksud sudah dicantumkan di bawah. Gunakan Secret/variable sisi server sesuai kebijakan organisasi.
-6. Tambahkan `GOOGLE_DRIVE_FOLDER_ID` bila diperlukan untuk pencatatan konfigurasi; adapter foto menggunakan file ID dari kolom `FOTO DIRI` dan memeriksa izin Drive dari server.
-7. Setelah secret ditambahkan, deploy ulang Worker agar konfigurasi diterapkan. Jangan mengirimkan file JSON kepada pihak lain.
-8. Uji endpoint `/api/respondents` hanya setelah login admin yang valid. Bila respons 503, periksa nama secret, ID spreadsheet, nama tab, API yang aktif, dan akses service account. Endpoint foto menggunakan `/api/photos/FILE_ID` dan hanya boleh dipanggil setelah sesi login.
-
-Untuk mengatur ID spreadsheet dan tab lewat terminal Wrangler, gunakan:
-
-```bash
-npx wrangler secret put GOOGLE_SERVICE_ACCOUNT_JSON
-npx wrangler secret put GOOGLE_SHEET_ID
-npx wrangler secret put GOOGLE_SHEET_TAB
-```
-
-Saat diminta, masukkan isi JSON lengkap untuk secret pertama; untuk dua secret berikutnya, masukkan ID spreadsheet dan nama tab. Jika memakai Cloudflare Dashboard, buat secret/variable di sana dan jangan membuat duplikasi yang membingungkan.
-
-
-Spreadsheet yang sudah ditentukan pemilik proyek:
-- Spreadsheet ID: `1ISR8v6QdDVHLjWjjDO5lIjhvEG-Ukt1KSZtfjx817BQ`
-- Tab: `From Response 1`
-- Header nomor: `No HP/WA`
-- Header foto: `FOTO DIRI`
-- Google Form: `https://forms.gle/9YuWSVtgpcSed5St5`
-
-Catatan implementasi:
-- Worker mengautentikasi ke Google API dari server memakai service account.
-- Worker hanya mengambil kolom yang diperlukan dan melakukan validasi header; jangan mengandalkan indeks kolom tetap jika header bisa berubah.
-- URL foto Drive diperlakukan sebagai ID/link input, bukan disisipkan langsung ke halaman.
-- Endpoint foto memeriksa sesi dan peran, mengambil file melalui Drive API dengan kredensial server, memeriksa tipe MIME/ukuran, lalu mengalirkan konten tanpa membuat file publik.
-- Gunakan `Cache-Control: private, no-store`; jangan menulis URL foto, NIK, nomor telepon, atau isi baris ke log.
-- Jangan pernah mengirim kredensial Google atau token akses ke browser.
-
-## 7. Pengujian wajib sebelum produksi
-
-- Password salah, akun tidak aktif, passkey salah, challenge kedaluwarsa/terpakai, Origin/RP ID salah, dan replay challenge harus ditolak.
-- Pastikan rate limit login aktif; tambahkan jeda/penundaan dan alarm percobaan gagal.
-- Pastikan session cookie `Secure`, `HttpOnly`, `SameSite=Strict`; session ID dirotasi setelah login; sesi dicabut saat logout dan akun dinonaktifkan.
-- Pastikan petugas tidak dapat melihat data yang tidak diizinkan dengan mengubah URL/API secara manual.
-- Pastikan foto Drive tidak dapat diakses dengan URL langsung oleh akun lain/tanpa sesi.
-- Uji di ponsel Android dan komputer; verifikasi perilaku passkey pada masing-masing OS.
-- Aktifkan backup, retensi log yang minimal, prosedur insiden, dan peninjauan akses berkala.
-
-## 8. Jalankan lokal dan deploy
-
-```bash
-npm run dev
-npm run typecheck
-npm run deploy
-```
-
-Periksa `wrangler.toml` dan nama/ID database sebelum deploy. Jangan deploy ke domain publik sebelum provisioning owner dan pengujian keamanan diselesaikan.
-
-## Catatan hukum dan privasi
-
-Database memuat data identitas dan informasi yang dapat mengungkap kondisi kesehatan. Tetapkan dasar pemrosesan, tujuan, hak akses, retensi, penanggung jawab, dan prosedur insiden sesuai ketentuan perlindungan data pribadi serta kebijakan organisasi. Akses hanya untuk petugas yang benar-benar memerlukan.
+Data identitas dan informasi kesehatan perlu pembatasan akses, tujuan penggunaan, retensi, backup, dan prosedur insiden yang disetujui organisasi. Jangan gunakan data nyata sebelum kontrol ini selesai ditinjau.
