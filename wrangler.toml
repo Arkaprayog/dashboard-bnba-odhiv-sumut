@@ -1,0 +1,20 @@
+name = "ppks-odhiv-sumut-dashboard"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ppks-odhiv-auth"
+database_id = "GANTI_DENGAN_DATABASE_ID"
+
+[vars]
+APP_NAME = "Data Base PPKS ODHIV Sumut"
+# Isi setelah deploy dengan domain asli, tanpa garis miring di akhir.
+APP_ORIGIN = "https://GANTI-DENGAN-DOMAIN-ANDA"
+WEBAUTHN_RP_NAME = "Data Base PPKS ODHIV Sumut"
+WEBAUTHN_RP_ID = "GANTI-DENGAN-HOSTNAME-ANDA"
+SESSION_TTL_SECONDS = "28800"
