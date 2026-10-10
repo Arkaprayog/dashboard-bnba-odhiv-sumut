@@ -96,6 +96,11 @@ export default {
         const username = typeof body.username==="string" ? body.username.trim().toLowerCase() : "";
         const password = typeof body.password==="string" ? body.password : "";
         if (!/^[a-z0-9._-]{3,64}$/.test(username) || password.length<1 || password.length>1024) return reply({error:"Nama pengguna atau kata sandi salah."},401);
+        const now = Math.floor(Date.now()/1000);
+        const recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM login_attempts WHERE username_key=? AND attempted_at>? AND succeeded=0").bind(username,now-900).first<{n:number}>();
+        if ((recent?.n || 0) >= 10) return reply({error:"Terlalu banyak percobaan login. Coba lagi setelah 15 menit."},429,{"retry-after":"900"});
+        const attempt = await env.DB.prepare("INSERT INTO login_attempts(username_key,attempted_at,succeeded) VALUES(?,?,0)").bind(username,now).run();
+        const attemptId = attempt.meta.last_row_id;
         const admin = await env.DB.prepare("SELECT id,username,display_name,password_hash,password_salt,role,active FROM admins WHERE username=? LIMIT 1").bind(username).first<AdminRow>();
         if (!admin || admin.active!==1) return reply({error:"Nama pengguna atau kata sandi salah."},401);
         const salt=unhex(admin.password_salt);
@@ -105,6 +110,7 @@ export default {
         let diff = actual.length ^ expected.length;
         for (let i=0; i<Math.max(actual.length,expected.length); i++) diff |= (actual[i]||0) ^ (expected[i]||0);
         if (diff !== 0) return reply({error:"Nama pengguna atau kata sandi salah."},401);
+        await env.DB.prepare("UPDATE login_attempts SET succeeded=1 WHERE id=?").bind(attemptId).run();
         const raw=b64(crypto.getRandomValues(new Uint8Array(32)));
         const csrf=b64(crypto.getRandomValues(new Uint8Array(24)));
         const idHash=await digestHex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(raw)));
