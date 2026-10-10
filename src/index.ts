@@ -1,33 +1,27 @@
-import { json, Router } from 'itty-router';
-
 interface Env {
   ASSETS: Fetcher;
-  APP_ORIGIN: string;
-  GOOGLE_SERVICE_ACCOUNT_JSON?: string;
-  GOOGLE_SHEET_ID?: string;
-  GOOGLE_SHEET_TAB?: string;
 }
 
-const router = Router();
-
-router.get('/api/health', () => Response.json({ ok: true, service: 'dashboard-bnba-odhiv-sumut', mode: 'starter' }, {
-  headers: { 'Cache-Control': 'no-store' }
-}));
-
-// Deliberately fail closed until admin authentication and Google API adapter are
-// fully configured and security-reviewed. Never expose respondent data publicly.
-router.all('/api/*', () => Response.json({ error: 'Not configured. Admin authentication is required before data access.' }, {
-  status: 503,
-  headers: { 'Cache-Control': 'no-store' }
-}));
-
-router.all('*', async (request: Request, env: Env) => {
-  const assetResponse = await env.ASSETS.fetch(request);
-  return assetResponse;
-});
+const json = (data: unknown, status = 200) =>
+  new Response(JSON.stringify(data), {
+    status,
+    headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }
+  });
 
 export default {
-  fetch(request: Request, env: Env, ctx: ExecutionContext) {
-    return router.handle(request, env, ctx);
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const url = new URL(request.url);
+
+    if (url.pathname === "/api/health") {
+      return json({ ok: true, service: "dashboard-bnba-odhiv-sumut", mode: "starter" });
+    }
+
+    // Fail closed: no respondent or health data is served until authentication
+    // and the Google API adapter have been configured and security-reviewed.
+    if (url.pathname.startsWith("/api/")) {
+      return json({ error: "Belum dikonfigurasi. Akses data memerlukan autentikasi admin." }, 503);
+    }
+
+    return env.ASSETS.fetch(request);
   }
 };
