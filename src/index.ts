@@ -46,7 +46,8 @@ async function digestHex(bytes: ArrayBuffer): Promise<string> {
 }
 async function passwordHash(password: string, salt: Uint8Array): Promise<Uint8Array> {
   const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
-  return new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",salt,iterations:310000,hash:"SHA-256"},key,256));
+  const saltBuffer = Uint8Array.from(salt).buffer as ArrayBuffer;
+  return new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",salt:saltBuffer,iterations:310000,hash:"SHA-256"},key,256));
 }
 async function sessionAdmin(request: Request, env: Env) {
   const raw = cookieValue(request, "ppks_session");
@@ -140,9 +141,9 @@ export default {
         const raw=b64(crypto.getRandomValues(new Uint8Array(32)));
         const csrf=b64(crypto.getRandomValues(new Uint8Array(24)));
         const idHash=await digestHex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(raw)));
-        const now=Math.floor(Date.now()/1000);
+        const sessionNow=Math.floor(Date.now()/1000);
         const ttl=Math.max(900,Math.min(28800,Number(env.SESSION_TTL_SECONDS)||28800));
-        await env.DB.prepare("INSERT INTO sessions(id_hash,admin_id,csrf_token,created_at,expires_at) VALUES(?,?,?,?,?)").bind(idHash,admin.id,csrf,now,now+ttl).run();
+        await env.DB.prepare("INSERT INTO sessions(id_hash,admin_id,csrf_token,created_at,expires_at) VALUES(?,?,?,?,?)").bind(idHash,admin.id,csrf,sessionNow,sessionNow+ttl).run();
         await env.DB.prepare("UPDATE admins SET last_login_at=CURRENT_TIMESTAMP WHERE id=?").bind(admin.id).run();
         await audit(env,admin.id,"login_success");
         return reply({ok:true,admin:{username:admin.username,display_name:admin.display_name,role:admin.role},csrfToken:csrf},200,{
