@@ -33,8 +33,10 @@ function normalizeOrigin(value: string): string {
 }
 
 function isAllowedOrigin(request: Request, env: Env): boolean {
+  // All callers are state-changing POST routes. Reject requests without Origin
+  // rather than treating a missing header as trusted, reducing CSRF exposure.
   const originHeader = request.headers.get("Origin");
-  if (!originHeader) return true;
+  if (!originHeader) return false;
 
   const requestOrigin = normalizeOrigin(originHeader);
   const fallbackOrigin = new URL(request.url).origin;
