@@ -30,6 +30,17 @@ jobs:
         run: npm install
       - name: Typecheck
         run: npm run typecheck
+      - name: Check dashboard JavaScript syntax
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const html = fs.readFileSync('public/index.html', 'utf8');
+          const scripts = [...html.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)];
+          if (!scripts.length) throw new Error('No inline dashboard script found.');
+          fs.writeFileSync('/tmp/dashboard-inline.js', scripts[scripts.length - 1][1]);
+          NODE
+          node --check /tmp/dashboard-inline.js
+          test -s public/sw.js
       - name: Validate production Wrangler configuration (dry run)
         run: npx wrangler deploy --dry-run --env production
       - name: Validate Sahabat ODHIV Wrangler configuration (dry run)
@@ -103,6 +114,14 @@ jobs:
           page_status="$(curl --silent --show-error --output /tmp/sahabat-dashboard.html --write-out '%{http_code}' "$APP_URL/")"
           test "$page_status" = "200" || (echo "::error::Sahabat dashboard page returned HTTP $page_status." && exit 1)
           grep -qi '<html' /tmp/sahabat-dashboard.html || (echo "::error::Sahabat dashboard response is not HTML." && exit 1)
+          grep -q 'ownerProfileForm' /tmp/sahabat-dashboard.html || (echo "::error::Owner profile UI is missing." && exit 1)
+          sw_status="$(curl --silent --show-error --output /tmp/sahabat-sw.js --write-out '%{http_code}' "$APP_URL/sw.js")"
+          test "$sw_status" = "200" || (echo "::error::Service worker returned HTTP $sw_status." && exit 1)
+          grep -q "addEventListener('push'" /tmp/sahabat-sw.js || (echo "::error::Push event handler missing." && exit 1)
+          profile_status="$(curl --silent --show-error --output /tmp/sahabat-profile.json --write-out '%{http_code}' "$APP_URL/api/owner-profile")"
+          test "$profile_status" = "401" || (echo "::error::Owner profile API must be protected (HTTP 401), got $profile_status." && exit 1)
+          notifications_status="$(curl --silent --show-error --output /tmp/sahabat-notifications.json --write-out '%{http_code}' "$APP_URL/api/notifications")"
+          test "$notifications_status" = "401" || (echo "::error::Notifications API must be protected (HTTP 401), got $notifications_status." && exit 1)
           api_status="$(curl --silent --show-error --output /tmp/sahabat-respondents.json --write-out '%{http_code}' "$APP_URL/api/respondents")"
           test "$api_status" = "401" || (echo "::error::Sahabat respondent API should require authentication (HTTP 401), got $api_status." && cat /tmp/sahabat-respondents.json && exit 1)
           node -e 'const fs=require("fs");const d=JSON.parse(fs.readFileSync("/tmp/sahabat-respondents.json","utf8"));if(!d.error)process.exit(1);'
@@ -142,6 +161,14 @@ jobs:
           page_status="$(curl --silent --show-error --output /tmp/dashboard.html --write-out '%{http_code}' "$APP_URL/")"
           test "$page_status" = "200" || (echo "::error::Dashboard page returned HTTP $page_status." && exit 1)
           grep -qi '<html' /tmp/dashboard.html || (echo "::error::Dashboard response is not HTML." && exit 1)
+          grep -q 'ownerProfileForm' /tmp/dashboard.html || (echo "::error::Owner profile UI is missing." && exit 1)
+          sw_status="$(curl --silent --show-error --output /tmp/dashboard-sw.js --write-out '%{http_code}' "$APP_URL/sw.js")"
+          test "$sw_status" = "200" || (echo "::error::Service worker returned HTTP $sw_status." && exit 1)
+          grep -q "addEventListener('push'" /tmp/dashboard-sw.js || (echo "::error::Push event handler missing." && exit 1)
+          profile_status="$(curl --silent --show-error --output /tmp/dashboard-profile.json --write-out '%{http_code}' "$APP_URL/api/owner-profile")"
+          test "$profile_status" = "401" || (echo "::error::Owner profile API must be protected (HTTP 401), got $profile_status." && exit 1)
+          notifications_status="$(curl --silent --show-error --output /tmp/dashboard-notifications.json --write-out '%{http_code}' "$APP_URL/api/notifications")"
+          test "$notifications_status" = "401" || (echo "::error::Notifications API must be protected (HTTP 401), got $notifications_status." && exit 1)
           api_status="$(curl --silent --show-error --output /tmp/respondents.json --write-out '%{http_code}' "$APP_URL/api/respondents")"
           test "$api_status" = "401" || (echo "::error::Unauthenticated respondent endpoint should return HTTP 401, got $api_status." && cat /tmp/respondents.json && exit 1)
           node -e 'const fs=require("fs");const d=JSON.parse(fs.readFileSync("/tmp/respondents.json","utf8"));if(!d.error)process.exit(1);'
