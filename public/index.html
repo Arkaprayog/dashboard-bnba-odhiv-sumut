@@ -352,8 +352,22 @@ form.addEventListener('submit',async e=>{
   const response=await fetch('/api/login',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','accept':'application/json'},body:JSON.stringify({password:password.value}),signal:controller.signal});
   const data=await parseResponse(response);
   if(!response.ok||!data.ok){message.textContent=data.error||('Login gagal (HTTP '+response.status+'). Coba lagi.');return;}
-  password.value='';
-  showDashboard(data.admin,data.csrfToken);
+  // Reveal the authenticated view before clearing credentials; keep the
+  // password available if client-side dashboard initialization throws.
+  try{
+   showDashboard(data.admin,data.csrfToken);
+   if(!dashboard.hidden){
+    password.value='';
+    message.textContent='';
+   }else{
+    message.textContent='Login diterima, tetapi dashboard belum terbuka. Muat ulang halaman dan coba lagi.';
+   }
+  }catch(uiError){
+   dashboard.hidden=true;
+   form.hidden=false;
+   message.textContent='Login berhasil diverifikasi, tetapi tampilan dashboard gagal dibuka. Muat ulang halaman. Password tidak diubah.';
+   console.error('Dashboard initialization failed',uiError);
+  }
  }catch(err){
   message.textContent=err&&err.name==='AbortError'?'Server terlalu lama merespons. Periksa koneksi lalu coba lagi.':'Tidak dapat menghubungi server. Periksa koneksi lalu coba lagi.';
  }finally{
