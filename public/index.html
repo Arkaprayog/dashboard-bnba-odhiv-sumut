@@ -266,6 +266,9 @@ async function loadRespondents(){
       if(name==='yanti lim bong'||name==='yanti limbong')convertForExport=true;
       const searchable=allHeaders.map(header=>String(item[header]??'')).join(' ').toLocaleLowerCase();
       if(query&&!searchable.includes(query))return;
+      const statusHeader=allHeaders.find(header=>String(header).trim().toLocaleLowerCase()==='status laporan');
+      const selectedStatus=document.getElementById('respondentStatusFilter')?.value||'';
+      if(selectedStatus&&String(statusHeader?item[statusHeader]??'':'').trim()!==selectedStatus)return;
       lines.push(headers.map(header=>{
         let value=item[header]??'';
         if(timestampHeader&&String(header)===String(timestampHeader))value=formatTimestamp(value,convertForExport);
