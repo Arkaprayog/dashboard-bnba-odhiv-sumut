@@ -230,6 +230,8 @@ async function loadRespondents(){
       if(selectedStatus&&String(statusHeader?item[statusHeader]??'':'').trim()!==selectedStatus)return;
       const tr=document.createElement('tr');
       const pendingChanges={};
+      let workflowSaveButton=null;
+      let workflowStateLabel=null;
       tableHeaders.forEach(name=>{
         const td=document.createElement('td');
         if(name==='PRINT DOKUMEN'){
@@ -269,6 +271,8 @@ async function loadRespondents(){
         if(name==='AKSI'){
           const save=document.createElement('button');save.type='button';save.className='workflow-save';save.textContent='Simpan';
           const state=document.createElement('span');state.className='workflow-state';state.textContent=Object.keys(pendingChanges).length?'Belum disimpan':'';
+          workflowSaveButton=save;
+          workflowStateLabel=state;
           save.addEventListener('click',async()=>{
             const changes=Object.entries(pendingChanges);
             if(!changes.length){state.textContent='Tidak ada perubahan';return;}
@@ -344,7 +348,7 @@ async function loadRespondents(){
           if(current&&!choices.includes(current))choices.push(current);
           choices.forEach(choice=>{const option=document.createElement('option');option.value=choice;option.textContent=choice||(isDesil?'Pilih desil':'Pilih status');control.appendChild(option);});
           control.value=current;
-          control.addEventListener('change',()=>{pendingChanges[name]=control.value;state.textContent='Belum disimpan';save.textContent='Simpan perubahan';});
+          control.addEventListener('change',()=>{pendingChanges[name]=control.value;if(workflowStateLabel)workflowStateLabel.textContent='Belum disimpan';if(workflowSaveButton)workflowSaveButton.textContent='Simpan perubahan';});
           td.appendChild(control);
         }else{
           if(timestampHeader&&String(name)===String(timestampHeader))value=formatTimestamp(value,convertMDY);
