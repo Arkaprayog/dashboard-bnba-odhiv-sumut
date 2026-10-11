@@ -226,20 +226,20 @@ export default {
         if (url.pathname === "/api/login" && request.method === "POST") {
           if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
 
-          let body: { username?: string; password?: string };
+          let body: { password?: string };
           try {
             body = await request.json() as typeof body;
           } catch {
             return reply({ error: "Format permintaan tidak valid." }, 400);
           }
 
-          const username = typeof body.username === "string" ? body.username.trim().toLowerCase() : "";
           const password = typeof body.password === "string" ? body.password : "";
-          if (!/^[a-z0-9._-]{3,64}$/.test(username) || password.length < 1 || password.length > 1024) {
-            return reply({ error: "Username atau password tidak valid." }, 401);
+          if (password.length < 1 || password.length > 1024) {
+            return reply({ error: "Password tidak valid." }, 401);
           }
 
-          const loginKey = username;
+          // Password-only login: no username field is required.
+          const loginKey = "password-only";
           requestStage = "login_rate_limit_check";
           const now = Math.floor(Date.now() / 1000);
           const recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM login_attempts WHERE username_key=? AND attempted_at>? AND succeeded=0").bind(loginKey, now - 900).first<{ n: number }>();
@@ -255,22 +255,27 @@ export default {
             return reply({ error: "Akun admin belum dibuat. Lakukan setup owner terlebih dahulu." }, 401);
           }
 
-          const admin = await env.DB.prepare("SELECT id,username,display_name,password_hash,password_salt,role,active FROM admins WHERE username=? AND active=1").bind(username).first<AdminRow>();
-          if (!admin) {
-            return reply({ error: "Username atau password salah." }, 401);
-          }
-
           requestStage = "login_verify_password";
-          const salt = unhex(admin.password_salt);
-          const expected = unhex(admin.password_hash);
-          if (salt.length < 16 || expected.length === 0) {
-            return reply({ error: "Data akun tidak valid atau terenkripsi dengan format yang tidak didukung." }, 401);
+          const admins = await env.DB.prepare("SELECT id,username,display_name,password_hash,password_salt,role,active FROM admins WHERE active=1 LIMIT 50").all<AdminRow>();
+          let admin: AdminRow | null = null;
+          let matches = 0;
+          for (const candidate of (admins.results || [])) {
+            const salt = unhex(candidate.password_salt);
+            const expected = unhex(candidate.password_hash);
+            if (salt.length < 16 || expected.length === 0) continue;
+            const actual = await passwordHash(password, salt);
+            let diff = actual.length ^ expected.length;
+            for (let i = 0; i < Math.max(actual.length, expected.length); i++) diff |= (actual[i] || 0) ^ (expected[i] || 0);
+            if (diff === 0) {
+              admin = candidate;
+              matches++;
+            }
           }
-          const actual = await passwordHash(password, salt);
-          let diff = actual.length ^ expected.length;
-          for (let i = 0; i < Math.max(actual.length, expected.length); i++) diff |= (actual[i] || 0) ^ (expected[i] || 0);
-          if (diff !== 0) {
-            return reply({ error: "Username atau password salah." }, 401);
+          if (matches === 0 || !admin) {
+            return reply({ error: "Password salah. Silakan periksa lalu coba lagi." }, 401);
+          }
+          if (matches > 1) {
+            return reply({ error: "Password ini digunakan oleh lebih dari satu akun admin. Demi keamanan, minta administrator menyamakan konfigurasi akun." }, 409);
           }
 
           requestStage = "login_create_session";
