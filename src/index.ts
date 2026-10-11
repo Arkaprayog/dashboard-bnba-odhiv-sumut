@@ -717,7 +717,7 @@ export default {
         }
 
         if (url.pathname === "/api/push-config" && request.method === "GET") {
-          return reply({ ok: true, enabled: !!env.VAPID_PUBLIC_KEY, publicKey: env.VAPID_PUBLIC_KEY || "" });
+          return reply({ ok: true, enabled: !!(env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT), publicKey: env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT ? env.VAPID_PUBLIC_KEY : "" });
         }
 
         if (url.pathname === "/api/owner-profile" && (request.method === "GET" || request.method === "POST")) {
