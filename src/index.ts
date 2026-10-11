@@ -330,7 +330,8 @@ export default {
             const token = await googleAccessToken(env);
             const tab = (env.GOOGLE_SHEET_TAB || "From Response 1").replace(/'/g, "''");
             const range = "'" + tab + "'!A1:AZ1000";
-            const sheetUrl = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID) + "/values/" + encodeURIComponent(range) + "?valueRenderOption=FORMATTED_VALUE";
+            const encodedRange = encodeURIComponent(range).replace(/[\x27!()*]/g, (char) => "%" + char.charCodeAt(0).toString(16).toUpperCase());
+            const sheetUrl = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID) + "/values/" + encodedRange + "?valueRenderOption=FORMATTED_VALUE";
             const response = await fetch(sheetUrl, { headers: { authorization: "Bearer " + token } });
             if (!response.ok) {
               let detail = "";
