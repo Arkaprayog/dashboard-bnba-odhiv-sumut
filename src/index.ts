@@ -501,7 +501,7 @@ export default {
             const driveUrl = "https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(fileId);
             // Check Drive metadata first: the media response may use a generic content type,
             // while the authoritative file MIME type is returned by files.get metadata.
-            const metadataResponse = await fetch(driveUrl + "?fields=id,name,mimeType,size&supportsAllDrives=true", { headers: { authorization: "Bearer " + token } });
+            const metadataResponse = await fetch(driveUrl + "?fields=id,name,mimeType&supportsAllDrives=true", { headers: { authorization: "Bearer " + token } });
             if (!metadataResponse.ok) {
               let driveReason = "";
               try {
@@ -510,12 +510,8 @@ export default {
               } catch {}
               return reply({ error: "Google Drive gagal membaca metadata foto (HTTP " + metadataResponse.status + "). " + (driveReason || "Periksa izin file dan akses API Drive.") }, 502);
             }
-            const metadata = await metadataResponse.json() as { name?: string; mimeType?: string; size?: string };
+            const metadata = await metadataResponse.json() as { name?: string; mimeType?: string };
             const type = (metadata.mimeType || "").toLowerCase();
-            const photoSize = Number(metadata.size || 0);
-            if (Number.isFinite(photoSize) && photoSize > 10 * 1024 * 1024) {
-              return reply({ error: "Foto responden melebihi batas 10 MB per foto. Pilih foto yang lebih kecil atau unggah ulang dengan ukuran yang sesuai." }, 413);
-            }
             if (!type.startsWith("image/")) {
               return reply({ error: "File di Google Sheets bukan file gambar yang bisa ditampilkan. Jenis file: " + (type || "tidak diketahui") + (metadata.name ? "; nama file: " + metadata.name : "") + ". Pastikan sel berisi tautan file foto asli (JPEG, PNG, atau WebP), bukan folder, PDF, atau shortcut." }, 415);
             }
