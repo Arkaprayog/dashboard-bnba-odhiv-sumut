@@ -424,8 +424,7 @@ async function loadRespondents(){
             whatsapp.addEventListener('click',()=>{
               const initialMessage='Halo, saya menghubungi Anda terkait tindak lanjut dukungan yang Anda perlukan. Apakah saat ini waktu yang tepat untuk berbicara?';
               const url='https://wa.me/'+waNumber+'?text='+encodeURIComponent(initialMessage);
-              const opened=window.open(url,'_blank','noopener,noreferrer');
-              if(!opened)dashboardMessage.textContent='WhatsApp diblokir browser. Izinkan pop-up untuk dashboard atau buka tautan kembali.';
+              window.open(url,'_blank','noopener,noreferrer');
             });
           }
           const save=document.createElement('button');save.type='button';save.className='workflow-save';save.textContent='Simpan';
