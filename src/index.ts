@@ -177,6 +177,11 @@ async function ensureFeatureSchema(env: Env) {
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       read_at TEXT
     )`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS notification_state (
+      state_key TEXT PRIMARY KEY,
+      state_value TEXT NOT NULL,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )`),
   ]);
 }
 
