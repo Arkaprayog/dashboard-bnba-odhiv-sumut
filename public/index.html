@@ -174,7 +174,7 @@ async function loadRespondents(){
     tableHeaders.splice(maritalIndex>=0?maritalIndex+1:tableHeaders.length,0,employmentHeader);
   }
   const statusColumnIndex=tableHeaders.findIndex(name=>normalizeColumnName(name)==='statuslaporan');
-  tableHeaders.splice(statusColumnIndex>=0?statusColumnIndex+1:tableHeaders.length,0,'AKSI');
+  tableHeaders.splice(statusColumnIndex>=0?statusColumnIndex+1:tableHeaders.length,0,'AKSI','PRINT DOKUMEN');
   const thead=document.createElement('thead');const headRow=document.createElement('tr');
   tableHeaders.forEach(name=>{const th=document.createElement('th');th.textContent=String(name);headRow.appendChild(th);});
 
@@ -216,6 +216,40 @@ async function loadRespondents(){
       const pendingChanges={};
       tableHeaders.forEach(name=>{
         const td=document.createElement('td');
+        if(name==='PRINT DOKUMEN'){
+          const print=document.createElement('button');print.type='button';print.className='workflow-save';print.textContent='Print';print.setAttribute('aria-label','Cetak dokumen A4 untuk responden baris '+item._row);
+          print.addEventListener('click',()=>{
+            const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+            const norm=header=>normalizeColumnName(header);
+            const findHeader=tests=>allHeaders.find(header=>tests.some(test=>test(norm(header))));
+            const fields=[
+              ['Timestamp',findHeader([v=>v==='timestamp'])],
+              ['Nama Lengkap',findHeader([v=>v==='namalengkap'])],
+              ['NIK',findHeader([v=>v==='nik'||v.startsWith('nik')])],
+              ['Usia',findHeader([v=>v==='usia'])],
+              ['Status Pernikahan',findHeader([v=>v==='statuspernikahan'])],
+              ['PEKERJAAN',findHeader([v=>v.includes('statuspekerjaancalonpenerimamanfaat')||v==='statuspekerjaan'||v==='pekerjaansaatini'])],
+              ['Alamat Domisili Saat Ini',findHeader([v=>v==='alamatdomisilisaatini'])],
+              ['Kota Domisili Saat Ini',findHeader([v=>v==='kotadomisilisaatini'])],
+              ['Jenis Bantuan yang Diharapkan',findHeader([v=>v.includes('jenisbantuansepertiapayangandaharapkan')||v.includes('jenisbantuan')])]
+            ].filter(([label,header])=>header&&label!=='Status Laporan'&&label!=='AKSI');
+            const photos=[
+              ['Foto Diri',findHeader([v=>v.includes('fotodiri')])],
+              ['Foto KTP',findHeader([v=>v.includes('fotoktp')])],
+              ['Foto KK',findHeader([v=>v.includes('fotokk')||v.includes('fotokartukeluarga')])],
+              ['Foto Rumah Tampak Depan',findHeader([v=>v.includes('fotorumahtampakdepan')])]
+            ].filter(([,header])=>header);
+            const imageUrl=value=>{const textValue=String(value??'').trim();if(!/^https:\/\//i.test(textValue))return '';if(/drive\.google\.com\/file\/d\/([^/]+)/i.test(textValue))return textValue.replace(/https:\/\/drive\.google\.com\/file\/d\/([^/]+)\/.*/i,'https://drive.google.com/uc?export=view&id=$1');return textValue;};
+            const win=window.open('','_blank','noopener,noreferrer');
+            if(!win){dashboardMessage.textContent='Izinkan pop-up untuk membuka pratinjau cetak.';return;}
+            const valueFor=header=>{let value=item[header]??'';if(timestampHeader&&header===timestampHeader)value=formatTimestamp(value,false);return value;};
+            const details=fields.map(([label,header])=>'<tr><th>'+escapeHtml(label)+'</th><td>'+escapeHtml(valueFor(header))+'</td></tr>').join('');
+            const photoMarkup=photos.map(([label,header])=>{const src=imageUrl(item[header]);return '<div class="photo">'+(src?'<img src="'+escapeHtml(src)+'" alt="'+escapeHtml(label)+'">':'<div class="missing">Foto belum tersedia sebagai gambar langsung</div>')+'<b>'+escapeHtml(label)+'</b></div>';}).join('');
+            win.document.write('<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dokumen Responden BNBA</title><style>@page{size:A4 portrait;margin:10mm}*{box-sizing:border-box}body{font:10pt Arial,sans-serif;color:#17365d;margin:0}.head{text-align:center;border-bottom:2px solid #1d69a6;padding:0 0 10px;margin-bottom:12px}.head h1{font-size:15pt;margin:0 0 4px}.head h2{font-size:12pt;margin:0}.section{background:#1769aa;color:white;padding:7px 9px;font-weight:bold;margin:10px 0 5px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #bdd7ee;padding:6px;text-align:left;vertical-align:top}th{width:31%;background:#e8f3fb}.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.photo{border:1px solid #bdd7ee;padding:4px;text-align:center;break-inside:avoid}.photo img{width:100%;height:105px;object-fit:contain}.photo b{display:block;font-size:8pt;padding:4px 0}.missing{height:105px;display:flex;align-items:center;justify-content:center;font-size:8pt;color:#666}.foot{margin-top:16px;border-top:1px solid #8ab9df;padding-top:6px;font-size:8pt;color:#555}@media print{button{display:none}}</style></head><body><div class="head"><h1>DATA RESPONDEN BANTUAN NON TUNAI (BNBA)</h1><h2>Dashboard BNBA ODHIV Sumut</h2></div><div class="section">IDENTITAS RESPONDEN</div><table>'+details+'</table><div class="section">DOKUMENTASI</div><div class="photos">'+(photoMarkup||'<p>Dokumentasi belum tersedia.</p>')+'</div><div class="foot">Dicetak dari Dashboard BNBA ODHIV Sumut · Dokumen bersifat rahasia</div><script>window.addEventListener("load",()=>setTimeout(()=>window.print(),700));<\/script></body></html>');
+            win.document.close();
+          });
+          td.append(print);tr.appendChild(td);return;
+        }
         if(name==='AKSI'){
           const save=document.createElement('button');save.type='button';save.className='workflow-save';save.textContent='Simpan';
           const state=document.createElement('span');state.className='workflow-state';state.textContent=Object.keys(pendingChanges).length?'Belum disimpan':'';
