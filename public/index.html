@@ -144,10 +144,13 @@ async function loadRespondents(){
   if(!headers.length){respondentData.textContent='Belum ada data untuk ditampilkan.';return;}
   const table=document.createElement('table');table.className='datatable';
   const thead=document.createElement('thead');const headRow=document.createElement('tr');
-  headers.forEach(name=>{const th=document.createElement('th');th.textContent=String(name);headRow.appendChild(th);});
+  tableHeaders.forEach(name=>{const th=document.createElement('th');th.textContent=String(name);headRow.appendChild(th);});
 
   thead.appendChild(headRow);table.appendChild(thead);
   const tbody=document.createElement('tbody');
+  const tableHeaders=[...headers];
+  const statusColumnIndex=tableHeaders.findIndex(name=>String(name).trim().toLocaleLowerCase()==='status laporan');
+  tableHeaders.splice(statusColumnIndex>=0?statusColumnIndex+1:tableHeaders.length,0,'AKSI');
   const nameHeader=allHeaders.find(name=>String(name).trim().toLocaleLowerCase()==='nama lengkap');
   const timestampHeader=allHeaders.find(name=>String(name).trim().toLocaleLowerCase()==='timestamp');
   const formatTimestamp=(value,convertMDY)=>{
@@ -178,8 +181,29 @@ async function loadRespondents(){
       const searchable=allHeaders.map(name=>String(item[name]??'')).join(' ').toLocaleLowerCase();
       if(query&&!searchable.includes(query))return;
       const tr=document.createElement('tr');
-      headers.forEach(name=>{
+      const pendingChanges={};
+      tableHeaders.forEach(name=>{
         const td=document.createElement('td');
+        if(name==='AKSI'){
+          const save=document.createElement('button');save.type='button';save.className='workflow-save';save.textContent='Simpan';
+          const state=document.createElement('span');state.className='workflow-state';state.textContent='';
+          save.addEventListener('click',async()=>{
+            const changes=Object.entries(pendingChanges);
+            if(!changes.length){state.textContent='Tidak ada perubahan';return;}
+            save.disabled=true;state.textContent='Menyimpan…';
+            try{
+              for(const [field,value] of changes){
+                const response=await fetch('/api/respondent-field',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify({row:Number(item._row),field,value})});
+                const payload=await parseResponse(response);
+                if(!response.ok||!payload.ok)throw new Error(payload.error||('Gagal menyimpan '+field));
+                item[field]=value;delete pendingChanges[field];
+              }
+              state.textContent='Tersimpan';dashboardMessage.textContent='Perubahan responden tersimpan ke Google Sheets.';
+            }catch(error){state.textContent='Gagal menyimpan';dashboardMessage.textContent=error instanceof Error?error.message:'Gagal menyimpan perubahan.';}
+            finally{save.disabled=false;}
+          });
+          td.append(save,state);tr.appendChild(td);return;
+        }
         let value=item[name]??'';
         const normalizedHeader=String(name).trim().toLocaleLowerCase();
         const isDesil=normalizedHeader==='desil';
@@ -193,20 +217,7 @@ async function loadRespondents(){
           if(current&&!choices.includes(current))choices.push(current);
           choices.forEach(choice=>{const option=document.createElement('option');option.value=choice;option.textContent=choice||(isDesil?'Pilih desil':'Pilih status');control.appendChild(option);});
           control.value=current;
-          control.addEventListener('change',async()=>{
-            const previous=String(item[name]??'');
-            control.disabled=true;
-            try{
-              const response=await fetch('/api/respondent-field',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify({row:Number(item._row),field:name,value:control.value})});
-              const payload=await parseResponse(response);
-              if(!response.ok||!payload.ok)throw new Error(payload.error||'Perubahan belum tersimpan.');
-              item[name]=control.value;
-              dashboardMessage.textContent=String(name)+' berhasil disimpan ke Google Sheets.';
-            }catch(error){
-              control.value=previous;
-              dashboardMessage.textContent=error instanceof Error?error.message:'Gagal menyimpan perubahan.';
-            }finally{control.disabled=false;}
-          });
+          control.addEventListener('change',()=>{pendingChanges[name]=control.value;});
           td.appendChild(control);
         }else{
           if(timestampHeader&&String(name)===String(timestampHeader))value=formatTimestamp(value,convertMDY);
