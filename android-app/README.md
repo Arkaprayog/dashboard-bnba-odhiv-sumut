@@ -40,6 +40,8 @@ Open Actions → **Build Sahabat ODHIV Sumut Android APK** → Run workflow. Dow
 - Verify respondent APIs remain protected when signed out.
 - Verify notification permission and push enrollment in Chrome separately.
 - Verify offline screen appears with airplane mode enabled.
+
+- Check the app in both portrait and landscape on a phone and an Android tablet; the activity is resizeable and the WebView uses the page's responsive viewport. Actual table wrapping and wide-screen layout still depend on the dashboard's web CSS.
 - Verify Google Sheets and Drive synchronization only after reconnecting.
 - Never test using exported real respondent data. Use synthetic data where possible.
 
