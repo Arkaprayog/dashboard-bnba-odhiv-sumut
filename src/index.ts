@@ -147,6 +147,25 @@ async function audit(env: Env, adminId: string, action: string) {
 }
 
 export default {
+  // Scheduled housekeeping keeps authentication metadata bounded without
+  // deleting respondent data, admin accounts, or audit history.
+  async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+    ctx.waitUntil((async () => {
+      const now = Math.floor(Date.now() / 1000);
+      const thirtyDaysAgo = now - 30 * 24 * 60 * 60;
+      try {
+        await env.DB.batch([
+          env.DB.prepare("DELETE FROM auth_challenges WHERE expires_at<=? OR used_at IS NOT NULL").bind(now),
+          env.DB.prepare("DELETE FROM login_attempts WHERE attempted_at<?").bind(thirtyDaysAgo),
+          env.DB.prepare("DELETE FROM sessions WHERE expires_at<=? OR (revoked_at IS NOT NULL AND revoked_at<=?)").bind(now, thirtyDaysAgo),
+        ]);
+      } catch (error) {
+        logIncident("scheduled_auth_housekeeping_failed", error);
+        throw error;
+      }
+    })());
+  },
+
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
