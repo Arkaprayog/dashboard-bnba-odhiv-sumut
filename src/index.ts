@@ -363,18 +363,35 @@ export default {
           if (!/^[A-Za-z0-9_-]{10,200}$/.test(fileId)) return reply({ error: "ID foto tidak valid." }, 400);
           try {
             const token = await googleAccessToken(env);
-            const response = await fetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(fileId) + "?alt=media&supportsAllDrives=true", { headers: { authorization: "Bearer " + token } });
+            const driveUrl = "https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(fileId);
+            // Check Drive metadata first: the media response may use a generic content type,
+            // while the authoritative file MIME type is returned by files.get metadata.
+            const metadataResponse = await fetch(driveUrl + "?fields=id,name,mimeType&supportsAllDrives=true", { headers: { authorization: "Bearer " + token } });
+            if (!metadataResponse.ok) {
+              let driveReason = "";
+              try {
+                const payload = await metadataResponse.json() as { error?: { status?: string; message?: string; errors?: Array<{ reason?: string }> } };
+                driveReason = [payload.error?.status, payload.error?.errors?.[0]?.reason, payload.error?.message].filter(Boolean).join(" — ");
+              } catch {}
+              return reply({ error: "Google Drive gagal membaca metadata foto (HTTP " + metadataResponse.status + "). " + (driveReason || "Periksa izin file dan akses API Drive.") }, 502);
+            }
+            const metadata = await metadataResponse.json() as { name?: string; mimeType?: string };
+            const type = (metadata.mimeType || "").toLowerCase();
+            if (!type.startsWith("image/")) {
+              return reply({ error: "File di Google Sheets bukan file gambar yang bisa ditampilkan. Jenis file: " + (type || "tidak diketahui") + (metadata.name ? "; nama file: " + metadata.name : "") + ". Pastikan sel berisi tautan file foto asli (JPEG, PNG, atau WebP), bukan folder, PDF, atau shortcut." }, 415);
+            }
+            const response = await fetch(driveUrl + "?alt=media&supportsAllDrives=true", { headers: { authorization: "Bearer " + token } });
             if (!response.ok) {
               let driveReason = "";
               try {
                 const payload = await response.json() as { error?: { status?: string; message?: string; errors?: Array<{ reason?: string }> } };
                 driveReason = [payload.error?.status, payload.error?.errors?.[0]?.reason, payload.error?.message].filter(Boolean).join(" — ");
               } catch {}
-              return reply({ error: "Google Drive menolak akses foto (HTTP " + response.status + "). " + (driveReason || "Periksa izin file dan akses API Drive.") }, 502);
+              return reply({ error: "Google Drive gagal mengirim foto (HTTP " + response.status + "). " + (driveReason || "Periksa izin file dan akses API Drive.") }, 502);
             }
-            const type = response.headers.get("content-type") || "application/octet-stream";
-            if (!type.startsWith("image/")) return reply({ error: "Berkas yang dituju bukan gambar." }, 415);
-            return new Response(response.body, { status: 200, headers: { ...NO_STORE, "content-type": type, "cache-control": "private, no-store", "content-disposition": "inline", "x-content-type-options": "nosniff" } });
+            const responseType = (response.headers.get("content-type") || "").toLowerCase();
+            const safeType = responseType.startsWith("image/") ? responseType : type;
+            return new Response(response.body, { status: 200, headers: { ...NO_STORE, "content-type": safeType, "cache-control": "private, no-store", "content-disposition": "inline", "x-content-type-options": "nosniff" } });
           } catch (error) {
             const incidentId = logIncident("respondent_photo_error", error, { path: url.pathname, stage: requestStage });
             return reply({ error: "Foto responden gagal dimuat. ID insiden: " + incidentId }, 502);
