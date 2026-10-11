@@ -109,7 +109,7 @@ async function googleAccessToken(env: Env): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const enc = (v: unknown) => b64(new TextEncoder().encode(JSON.stringify(v)));
   const header = enc({ alg: "RS256", typ: "JWT" });
-  const claim = enc({ iss: email, scope: "https://www.googleapis.com/auth/spreadsheets.readonly", aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600 });
+  const claim = enc({ iss: email, scope: "https://www.googleapis.com/auth/spreadsheets", aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600 });
   const unsigned = header + "." + claim;
 
   const normalizedPem = pem.replace(/\\n/g, "\n").trim();
@@ -416,6 +416,53 @@ export default {
             const incidentId = logIncident("respondents_error", error, { path: url.pathname, stage: requestStage });
             const safeMessage = error instanceof Error ? error.message : "Kesalahan integrasi tidak diketahui.";
             return reply({ error: "Integrasi Google Sheets gagal: " + safeMessage + " (ID insiden: " + incidentId + ")" }, 503);
+          }
+        }
+
+        if (url.pathname === "/api/respondent-field" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengubah data responden." }, 403);
+          let body: { row?: number; field?: string; value?: string };
+          try { body = await request.json() as typeof body; } catch { return reply({ error: "Format permintaan tidak valid." }, 400); }
+          const row = body.row;
+          const field = typeof body.field === "string" ? body.field.trim() : "";
+          const value = typeof body.value === "string" ? body.value.trim() : "";
+          if (!Number.isInteger(row) || !row || row < 2 || row > 1001) return reply({ error: "Baris responden tidak valid." }, 400);
+          if (!["DESIL", "Desil", "STATUS LAPORAN", "Status Laporan"].includes(field)) return reply({ error: "Kolom yang boleh diedit hanya Desil dan Status Laporan." }, 400);
+          if (field.toLocaleLowerCase() === "desil" && value !== "" && !/^(0|[1-9]|10)$/.test(value)) return reply({ error: "Desil harus angka 0 sampai 10." }, 400);
+          if (!value || value.length > 120) return reply({ error: "Nilai tidak boleh kosong dan maksimal 120 karakter." }, 400);
+          try {
+            const token = await googleAccessToken(env);
+            const base = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID || "");
+            const metaRes = await fetch(base + "?fields=sheets.properties(title,sheetId)", { headers: { authorization: "Bearer " + token } });
+            if (!metaRes.ok) throw new Error("Tidak dapat membaca metadata spreadsheet (HTTP " + metaRes.status + ").");
+            const meta = await metaRes.json() as { sheets?: Array<{properties?:{title?:string;sheetId?:number}}> };
+            const titles = (meta.sheets || []).map(x => x.properties?.title || "");
+            const configured = (env.GOOGLE_SHEET_TAB || "From Response 1").trim();
+            const norm = (v:string) => v.toLocaleLowerCase().replace(/[^a-z0-9]/g, "");
+            const tab = titles.find(x => x === configured) || titles.find(x => norm(x) === norm(configured)) || titles.find(x => /^(formresponses?1|fromresponses?1)$/.test(norm(x)));
+            if (!tab) throw new Error("Tab respons tidak ditemukan.");
+            const headRange = encodeURIComponent("'" + tab.replace(/'/g,"''") + "'!A1:AZ1");
+            const headRes = await fetch(base + "/values/" + headRange, {headers:{authorization:"Bearer "+token}});
+            if (!headRes.ok) throw new Error("Gagal membaca judul kolom (HTTP "+headRes.status+").");
+            const headJson = await headRes.json() as {values?:string[][]};
+            const headers = (headJson.values?.[0] || []).map(x=>String(x||"").trim());
+            const idx = headers.findIndex(x=>x.toLocaleLowerCase()===field.toLocaleLowerCase());
+            if (idx < 0) throw new Error("Kolom "+field+" tidak ditemukan pada tab respons.");
+            let col = ""; let n = idx + 1;
+            while (n > 0) { const rem=(n-1)%26; col=String.fromCharCode(65+rem)+col; n=Math.floor((n-1)/26); }
+            const range = encodeURIComponent("'" + tab.replace(/'/g,"''") + "'!" + col + row);
+            const put = await fetch(base + "/values/" + range + "?valueInputOption=USER_ENTERED", {method:"PUT",headers:{authorization:"Bearer "+token,"content-type":"application/json"},body:JSON.stringify({values:[[value]]})});
+            if (!put.ok) { let msg=""; try { const e=await put.json() as {error?:{message?:string}}; msg=e.error?.message||""; } catch {} throw new Error("Gagal menyimpan ke Google Sheets (HTTP "+put.status+"). "+msg); }
+            await audit(env, admin.id, "respondent_field_update");
+            return reply({ok:true, value});
+          } catch(error) {
+            const incidentId=logIncident("respondent_field_update_failed",error,{path:url.pathname});
+            return reply({error:(error instanceof Error?error.message:"Gagal menyimpan perubahan.")+" (ID insiden: "+incidentId+")"},503);
           }
         }
 
