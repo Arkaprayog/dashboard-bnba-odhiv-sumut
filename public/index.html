@@ -166,7 +166,14 @@ async function loadRespondents(){
   if(!headers.length){respondentData.textContent='Belum ada data untuk ditampilkan.';return;}
   const table=document.createElement('table');table.className='datatable';
   const tableHeaders=[...headers];
-  const statusColumnIndex=tableHeaders.findIndex(name=>String(name).trim().toLocaleLowerCase()==='status laporan');
+  const normalizeColumnName=name=>String(name??'').normalize('NFKD').toLocaleLowerCase().replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+  const employmentHeader=tableHeaders.find(name=>{const normalized=normalizeColumnName(name);return normalized==='statuspekerjaancalonpenerimamanfaatsaatini'||normalized==='statuspekerjaan'||normalized==='pekerjaansaatini';});
+  if(employmentHeader){
+    tableHeaders.splice(tableHeaders.indexOf(employmentHeader),1);
+    const maritalIndex=tableHeaders.findIndex(name=>normalizeColumnName(name)==='statuspernikahan');
+    tableHeaders.splice(maritalIndex>=0?maritalIndex+1:tableHeaders.length,0,employmentHeader);
+  }
+  const statusColumnIndex=tableHeaders.findIndex(name=>normalizeColumnName(name)==='statuslaporan');
   tableHeaders.splice(statusColumnIndex>=0?statusColumnIndex+1:tableHeaders.length,0,'AKSI');
   const thead=document.createElement('thead');const headRow=document.createElement('tr');
   tableHeaders.forEach(name=>{const th=document.createElement('th');th.textContent=String(name);headRow.appendChild(th);});
