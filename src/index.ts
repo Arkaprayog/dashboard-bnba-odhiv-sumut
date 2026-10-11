@@ -180,13 +180,6 @@ async function ensureFeatureSchema(env: Env) {
   ]);
 }
 
-function base64UrlBytes(value: string): Uint8Array {
-  const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
-  const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
-  const binary = atob(padded);
-  return Uint8Array.from(binary, (char) => char.charCodeAt(0));
-}
-
 async function sendPushToAll(env: Env, title: string, body: string, tag: string) {
   if (!env.VAPID_PRIVATE_KEY || !env.VAPID_PUBLIC_KEY || !env.VAPID_SUBJECT) return;
   const rows = await env.DB.prepare("SELECT endpoint_hash,endpoint,p256dh,auth FROM push_subscriptions").all<{
@@ -231,6 +224,8 @@ async function audit(env: Env, adminId: string, action: string) {
     password_change: { title: "Password owner/admin diubah", body: "Password akun dashboard baru saja diubah." },
     respondent_update: { title: "Data responden diperbarui", body: "Ada perubahan data pada dashboard. Masuk untuk memeriksanya." },
     owner_profile_update: { title: "Profil owner diperbarui", body: "Informasi profil owner dashboard telah disimpan." },
+    respondent_field_update: { title: "Data responden diperbarui", body: "Desil atau Status Laporan telah diubah di dashboard." },
+    login_success: { title: "Login dashboard berhasil", body: "Ada sesi login baru ke dashboard. Jika ini bukan Anda, segera ganti password." },
   };
   const notification = labels[action];
   if (notification) {
@@ -248,11 +243,37 @@ export default {
         await env.DB.batch([
           env.DB.prepare("DELETE FROM auth_challenges WHERE expires_at<=? OR used_at IS NOT NULL").bind(now),
           env.DB.prepare("DELETE FROM login_attempts WHERE attempted_at<?").bind(thirtyDaysAgo),
-          env.DB.prepare("DELETE FROM sessions WHERE expires_at<=? OR (revoked_at IS NOT NULL AND revoked_at<=?)").bind(now, thirtyDaysAgo),
+          env.DB.prepare("DELETE FROM sessions WHERE expires_at<=? OR (revoked_at IS NOT NULL AND revoked_at<=?)").bind(now, now - 30 * 24 * 60 * 60),
         ]);
       } catch (error) {
         logIncident("scheduled_auth_housekeeping_failed", error);
         throw error;
+      }
+      if (env.GOOGLE_SHEET_ID && env.GOOGLE_SERVICE_ACCOUNT_EMAIL && env.GOOGLE_PRIVATE_KEY) {
+        try {
+          await ensureFeatureSchema(env);
+          const token = await googleAccessToken(env);
+          const tab = (env.GOOGLE_SHEET_TAB || "From Response 1").trim().replace(/'/g, "''");
+          const range = encodeURIComponent("'" + tab + "'!A:A");
+          const response = await fetch("https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID) + "/values/" + range + "?majorDimension=ROWS", { headers: { authorization: "Bearer " + token } });
+          if (!response.ok) throw new Error("Google Sheets row-count poll returned HTTP " + response.status);
+          const payload = await response.json() as { values?: unknown[][] };
+          const rowCount = (payload.values || []).filter(row => row.some(cell => String(cell ?? "").trim() !== "")).length;
+          const prior = await env.DB.prepare("SELECT state_value FROM notification_state WHERE state_key='response_row_count'").first<{ state_value: string }>();
+          if (!prior) {
+            await env.DB.prepare("INSERT INTO notification_state(state_key,state_value) VALUES('response_row_count',?)").bind(String(rowCount)).run();
+          } else {
+            const previousCount = Number(prior.state_value) || 0;
+            if (rowCount > previousCount) {
+              await recordNotification(env, "Ada respons Google Form baru", "Data respons baru masuk. Masuk ke dashboard untuk memeriksanya.", "new_form_response");
+            }
+            if (rowCount !== previousCount) {
+              await env.DB.prepare("UPDATE notification_state SET state_value=?,updated_at=CURRENT_TIMESTAMP WHERE state_key='response_row_count'").bind(String(rowCount)).run();
+            }
+          }
+        } catch (error) {
+          logIncident("scheduled_response_poll_failed", error, { task: "form_response_notifications" });
+        }
       }
     })());
   },
@@ -748,6 +769,21 @@ export default {
           await ensureFeatureSchema(env);
           await env.DB.prepare("UPDATE dashboard_notifications SET read_at=CURRENT_TIMESTAMP WHERE read_at IS NULL").run();
           return reply({ ok: true });
+        }
+
+        if (url.pathname === "/api/push-test" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          if (admin.role !== "owner") return reply({ error: "Hanya owner yang dapat menguji notifikasi." }, 403);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY || !env.VAPID_SUBJECT) return reply({ error: "Push notification belum dikonfigurasi di Cloudflare." }, 503);
+          await ensureFeatureSchema(env);
+          const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM push_subscriptions").first<{ n: number }>();
+          if (!count?.n) return reply({ error: "Belum ada perangkat yang berlangganan notifikasi. Aktifkan notifikasi HP terlebih dahulu." }, 409);
+          await recordNotification(env, "Tes notifikasi Sahabat ODHIV Sumut", "Jika pesan ini muncul di ponsel, notifikasi push sudah tersambung.", "push_test");
+          return reply({ ok: true, message: "Notifikasi tes dikirim ke perangkat yang terdaftar." });
         }
 
         if (url.pathname === "/api/push-subscriptions" && request.method === "POST") {
