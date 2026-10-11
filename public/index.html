@@ -591,7 +591,7 @@ document.getElementById('ownerPhoto').addEventListener('change',async event=>{
  try{
   const bitmap=await createImageBitmap(file);
   let maxSide=1200;let quality=0.82;let dataUrl='';
-  for(let attempt=0;attempt<8;attempt++){
+  for(let attempt=0;attempt<10;attempt++){
    const scale=Math.min(1,maxSide/Math.max(bitmap.width,bitmap.height));
    const canvas=document.createElement('canvas');
    canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
