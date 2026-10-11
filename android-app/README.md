@@ -3,11 +3,13 @@
 This project wraps the existing Cloudflare dashboard:
 https://sahabatodhiv-sumut.aryprayoga139.workers.dev/
 
-## What this first build does
+## What this build does
 
 - Opens the existing dashboard over HTTPS; it does not copy Google Sheets data into the APK.
 - Provides a privacy-safe local offline screen. Respondent data and synchronization remain online-only.
 - Keeps dashboard login and backend APIs on the existing Cloudflare Worker.
+- Allows image upload fields in the dashboard to open a chooser for either the device camera or an existing gallery photo. Video selection/capture is intentionally disabled.
+- Uses a temporary cache file for camera photos and Android's system picker for gallery photos; it does not request broad access to all photos.
 - Keeps in-dashboard notifications available while the dashboard is open.
 - Provides a browser hand-off for background push enrollment. The current backend uses the existing Web Push/VAPID subscription endpoints; Android WebView itself is not assumed to support Web Push. The user must open the site in a supported browser (normally Chrome), sign in, and enable phone notifications there.
 - Blocks cleartext HTTP, mixed content, file access from the remote page, third-party cookies, and navigation to non-dashboard sites inside the WebView.
@@ -33,6 +35,8 @@ Open Actions → **Build Sahabat ODHIV Sumut Android APK** → Run workflow. Dow
 ## Important test checklist
 
 - Verify login/logout and session expiry on an Android device.
+- Verify image upload can open the camera and gallery, upload a photo, and handle cancel/permission denial.
+- Confirm video files are not offered by the image chooser.
 - Verify respondent APIs remain protected when signed out.
 - Verify notification permission and push enrollment in Chrome separately.
 - Verify offline screen appears with airplane mode enabled.
@@ -43,15 +47,13 @@ Open Actions → **Build Sahabat ODHIV Sumut Android APK** → Run workflow. Dow
 
 Background push notifications use the existing browser Web Push implementation. The APK wrapper does not yet bundle Firebase Cloud Messaging (FCM); push enrollment opens the dashboard in the system browser. A fully native push channel inside the APK would require an FCM project, package registration, and securely configured credentials.
 
-## Android device permissions (staged for native features)
+## Android device permissions
 
-The manifest declares camera, microphone, coarse/fine location, notifications, vibration, and network permissions for the planned native UI. These declarations do not mean Android has granted access: runtime permission prompts and feature-specific handling must be implemented and tested when each native feature is added.
-
-- Camera/video: request camera permission only when recording/capturing is used; microphone permission only when audio capture is used.
-- Gallery: use Android Photo Picker for selected photos/videos rather than broad access to all media.
-- Location: request foreground location only when a real feature needs it; background location is not declared.
-- Notifications: Android 13+ requires runtime notification permission for app notifications.
+- Camera: the app launches Android's camera app only when a user selects the take-photo option. Android's camera app handles its own camera permission prompt. The app does not record video.
+- Gallery: the system picker returns only the photo the user chooses; no broad media/storage permission is declared.
+- Location: coarse/fine permissions are reserved for a future feature and should only be requested if a feature genuinely needs location. No background location is declared.
+- Notifications: Android 13+ requires runtime notification permission for native app notifications.
 - Calls/SMS: prefer opening the user's dialer or SMS app with an intent. The app does not request CALL_PHONE, SEND_SMS, READ_SMS, or call-log access.
-- Do not collect location, audio, video, SMS, or call data silently. Explain the purpose and allow the user to deny access.
+- No microphone/audio capture, video capture, silent location collection, or background media collection is implemented.
 
-These are groundwork declarations only. The current APK remains a WebView prototype; native feature screens, runtime permission flows, and native push still need implementation and device testing.
+Camera/gallery chooser behavior is implemented in the WebView upload flow, but it must still be tested on a physical Android device with the actual dashboard photo-upload fields.
