@@ -634,9 +634,6 @@ async function loadRespondents(){
         const isReportStatus=normalizedHeader==='statuslaporan';
         const isPhoto=/^foto(?:diri|ktp|kk|rumah)/.test(normalizedHeader);
         if(isPhoto){
-          // A Google Forms upload cell can contain one Drive URL, multiple URLs
-          // separated by commas/newlines, or a bare Drive file ID. Resolve only
-          // Drive IDs so each image is fetched through the authenticated backend.
           const textValue=String(value??'').trim();
           const resolveDriveIds=raw=>{
             const parts=String(raw??'').split(/[\n\r,;]+/).map(part=>part.trim()).filter(Boolean);
@@ -654,6 +651,34 @@ async function loadRespondents(){
             }
             return [...new Set(ids)];
           };
+          let uploadControlAdded=false;
+          const addUploadControl=()=>{
+            if(uploadControlAdded)return;
+            uploadControlAdded=true;
+            const wrap=document.createElement('div');wrap.style.marginTop='8px';wrap.style.minWidth='120px';
+            const button=document.createElement('button');button.type='button';button.className='workflow-save';button.textContent='Upload foto';button.setAttribute('aria-label','Upload '+columnLabel+' untuk responden baris '+item._row);
+            const input=document.createElement('input');input.type='file';input.accept='image/jpeg,image/png,image/webp';input.hidden=true;
+            const status=document.createElement('span');status.className='workflow-state';status.setAttribute('aria-live','polite');
+            button.addEventListener('click',()=>input.click());
+            input.addEventListener('change',async()=>{
+              const file=input.files?.[0];if(!file)return;
+              if(!['image/jpeg','image/png','image/webp'].includes(file.type)){status.textContent='Pilih JPG, PNG, atau WebP.';input.value='';return;}
+              if(file.size>8*1024*1024){status.textContent='Ukuran maksimal 8 MB.';input.value='';return;}
+              button.disabled=true;status.textContent='Mengunggah dan menyimpan…';
+              try{
+                const body=new FormData();body.append('row',String(item._row));body.append('field',name);body.append('file',file,file.name);
+                const response=await fetch('/api/respondent-photo-upload',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken},body});
+                const payload=await parseResponse(response);
+                if(!response.ok||!payload.ok)throw new Error(payload.error||'Foto gagal diunggah.');
+                item[name]=payload.url||'';
+                status.textContent='Foto tersimpan di Google Sheets.';
+                dashboardMessage.textContent='Foto '+columnLabel+' berhasil diunggah dan tautannya tersimpan ke Google Sheets.';
+                await loadRespondents();
+              }catch(error){status.textContent='Upload gagal';dashboardMessage.textContent=error instanceof Error?error.message:'Foto gagal diunggah.';}
+              finally{button.disabled=false;input.value='';}
+            });
+            wrap.append(button,input,status);td.appendChild(wrap);
+          };
           const fileIds=resolveDriveIds(textValue);
           if(fileIds.length){
             const gallery=document.createElement('div');
@@ -667,14 +692,16 @@ async function loadRespondents(){
                 try{
                   const check=await fetch(imageSource,{credentials:'same-origin',cache:'no-store'});let detail='';
                   try{const payload=await check.json();detail=String(payload.error||'');}catch{}
-                  missing.textContent=check.status===401?'Sesi login berakhir. Login kembali.':check.status===403?'Akses foto ditolak (403). Periksa izin file unggahan Google Drive.':check.status===404?'Foto tidak ditemukan (404). Periksa tautan file di Google Sheets.':check.status===413?(detail||'Foto responden melebihi batas 10 MB.'):check.status===415?(detail||'File yang ditautkan bukan gambar (415).'):check.status===502?(detail||'Google Drive gagal mengirim foto (502).'):('Foto gagal dimuat (HTTP '+check.status+').');
+                  missing.textContent=check.status===401?'Sesi login berakhir. Login kembali.':check.status===403?'Akses foto ditolak (403). Periksa izin file unggahan Google Drive.':check.status===404?'Foto tidak ditemukan (404). Periksa tautan file di Google Sheets.':check.status===413?(detail||'Foto responden melebihi batas 8 MB.'):check.status===415?(detail||'File yang ditautkan bukan gambar (415).'):check.status===502?(detail||'Google Drive gagal mengirim foto (502).'):('Foto gagal dimuat (HTTP '+check.status+').');
                 }catch{missing.textContent='Foto gagal dimuat. Periksa koneksi lalu muat ulang.';}
+                addUploadControl();
               };
               gallery.appendChild(img);
             }
             td.appendChild(gallery);
           }else{
-            td.textContent=textValue?'Tautan foto tidak dikenali. Gunakan tautan/ID file Google Drive.':'Foto belum tersedia';
+            const missing=document.createElement('span');missing.className='photo-unavailable';missing.textContent=textValue?'Tautan foto tidak dikenali atau foto gagal dimuat.':'Foto belum tersedia.';
+            td.appendChild(missing);addUploadControl();
           }
         }else if(isDesil||isReportStatus){
           const control=document.createElement('select');
