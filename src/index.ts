@@ -731,8 +731,9 @@ export default {
           }
 
           const uploadedIds: string[] = [];
+          let token = "";
           try {
-            const token = await googleAccessToken(env);
+            token = await googleAccessToken(env);
             const uploadPrivatePhoto = async (photo: File, label: string) => {
               const safeName = (photo.name || label).replace(/[^A-Za-z0-9._-]/g, "_").slice(0, 80) || label;
               const metadata = { name: "KuisionerOwner-" + Date.now() + "-" + label + "-" + safeName, mimeType: photo.type };
@@ -799,7 +800,7 @@ export default {
             await audit(env, admin.id, "owner_questionnaire_submit");
             return reply({ ok: true, message: "Kuesioner tersimpan.", tab: "Kuisioner Owner" });
           } catch (error) {
-            for (const id of uploadedIds) {
+            if (token) for (const id of uploadedIds) {
               try { await fetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(id), { method: "DELETE", headers: { authorization: "Bearer " + token } }); } catch {}
             }
             const incidentId = logIncident("owner_questionnaire_submit_failed", error, { path: url.pathname, stage: requestStage });
