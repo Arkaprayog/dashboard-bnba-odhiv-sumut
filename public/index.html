@@ -10,7 +10,15 @@
 <style>
 :root{--navy:#063a7d;--blue:#0757b5;--sky:#149ee8;--cyan:#26c4e3;--green:#23c781;--white:#fff}
 *{box-sizing:border-box}html{min-height:100%;background:#063a76}body{margin:0;min-height:100svh;display:block;padding:clamp(12px,3vh,26px) 12px;color:var(--white);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(ellipse at 80% 18%,rgba(31,171,244,.9) 0,rgba(13,102,197,.6) 25%,transparent 52%),linear-gradient(145deg,#06447f 0%,#0759b5 44%,#003677 100%);position:relative;isolation:isolate}body:before{content:"";position:fixed;inset:10px;border:1.5px solid rgba(35,199,129,.8);border-radius:27px;pointer-events:none;z-index:-1}body:after{content:"";position:fixed;width:125vw;height:38vh;left:-12vw;bottom:-22vh;transform:rotate(-9deg);background:linear-gradient(180deg,transparent 0 14%,rgba(38,196,227,.95) 14% 28%,rgba(4,119,210,.96) 28% 48%,rgba(0,52,126,.88) 48% 63%,rgba(20,195,221,.9) 63% 78%,rgba(0,76,131,.9) 78%);clip-path:polygon(0 30%,100% 0,100% 100%,0 100%);opacity:.9;pointer-events:none;z-index:-1}.corner{position:fixed;width:220px;height:120px;border-top:5px solid var(--green);border-radius:70% 0 0 0;opacity:.9;pointer-events:none;z-index:-1}.corner.top{top:0;left:0;transform:rotate(-8deg)}.corner.bottom{right:-35px;bottom:5px;transform:rotate(170deg)}main{width:min(100%,560px);margin:0 auto;padding:30px clamp(18px,5vw,42px);text-align:center;background:linear-gradient(155deg,rgba(4,51,119,.3),rgba(0,39,102,.12));border:1px solid rgba(255,255,255,.18);border-radius:26px;box-shadow:0 22px 65px rgba(0,23,66,.24);backdrop-filter:blur(3px)}.kemensos-mark{display:block;width:112px;height:112px;margin:0 auto 7px}.ministry{font-size:clamp(.88rem,3.4vw,1.02rem);font-weight:850;letter-spacing:.025em;line-height:1.4}.ministry small{display:block;font-size:.85em;font-weight:650}.directorate{max-width:420px;margin:12px auto 0;font-size:clamp(.83rem,3.2vw,.98rem);font-weight:600;line-height:1.42;color:#f0f6ff}.brand{display:flex;align-items:center;justify-content:center;gap:14px;margin:27px 0 27px;text-align:left}.ribbon{width:34px;height:48px;flex:0 0 auto}.separator{width:2px;height:49px;background:rgba(255,255,255,.86);flex:0 0 auto}.brand h1{font-size:clamp(1.12rem,4.7vw,1.62rem);line-height:1.2;letter-spacing:.015em;margin:0;font-weight:850}.form{display:grid;gap:14px;text-align:left}.field{position:relative}.field input{width:100%;height:62px;border:1px solid rgba(255,255,255,.82);border-radius:14px;background:rgba(255,255,255,.97);padding:0 54px 0 58px;color:#123b67;font:inherit;font-size:1.05rem;outline:none;box-shadow:0 5px 18px rgba(0,27,81,.12)}.field input::placeholder{color:#8295ae}.field input:focus{border-color:#70e5c0;box-shadow:0 0 0 3px rgba(35,199,129,.2)}.lock{position:absolute;left:19px;top:50%;transform:translateY(-50%);color:#07528f;pointer-events:none;width:20px;height:22px}.toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#6d829a;padding:10px;cursor:pointer}.submit{height:62px;border:1px solid rgba(255,255,255,.16);border-radius:15px;background:linear-gradient(180deg,#0872dc,#03459e);color:white;font:inherit;font-weight:800;font-size:1.18rem;box-shadow:0 8px 18px rgba(0,25,83,.28);cursor:pointer}.submit:focus-visible,.toggle:focus-visible{outline:3px solid #70e5c0;outline-offset:3px}.message{min-height:1.4em;margin:0;text-align:center;font-size:.92rem;font-weight:700;color:#fff0c2;overflow-wrap:anywhere;white-space:pre-wrap;padding:0 8px}.message:not(:empty){padding:11px 12px;border:1px solid rgba(255,240,194,.55);border-radius:10px;background:rgba(0,20,55,.72);box-shadow:0 4px 12px rgba(0,0,0,.18)}.foot{margin:26px 0 0;font-size:.85rem;line-height:1.7;color:#e1edff}.shield{display:inline-block;vertical-align:middle;margin-right:7px}.rule{height:1px;background:rgba(38,196,227,.55);margin:22px 0 15px}.setup{margin:0;font-size:.8rem;line-height:1.5;color:#d3e8ff}.dashhead{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;flex-wrap:wrap}.dashhead h2{margin:0;font-size:1.35rem}.dashhead p{margin:4px 0 0;color:#e1edff;font-size:.9rem}.dashbtn{border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:10px 13px;background:#064a9c;color:white;font:inherit;font-weight:700;cursor:pointer}.dashactions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0;justify-content:center}.dashmsg{white-space:pre-wrap;overflow-wrap:anywhere;text-align:left;color:#fff0c2;font-size:.9rem}.dashpanel{margin-top:16px;padding:14px;border:1px solid rgba(255,255,255,.25);border-radius:14px;text-align:left;background:rgba(0,35,90,.25)}.dashpanel h3{margin:0 0 10px;font-size:1rem}.datawrap{width:100%;max-width:100%;overflow:auto;max-height:55vh;overscroll-behavior:contain}.datatable{border-collapse:collapse;width:max-content;min-width:100%;table-layout:auto;font-size:.85rem;color:#fff}.datatable th,.datatable td{border:1px solid rgba(255,255,255,.22);padding:10px 12px;text-align:left;vertical-align:top;min-width:140px;max-width:300px;white-space:normal;overflow-wrap:break-word;word-break:normal;line-height:1.45}.datatable th{background:rgba(0,30,80,.75);font-weight:750;min-width:160px;white-space:normal}.datatable td{min-width:140px}.dashfield label{display:block;margin:7px 0 5px;font-size:.85rem;color:#e1edff}.dashfield input{width:100%;height:48px;border:1px solid #dce8f7;border-radius:10px;padding:0 12px;font:inherit;color:#123b67}.workflow-control{width:100%;min-width:120px;min-height:40px;border:1px solid #dce8f7;border-radius:8px;padding:6px;background:#fff;color:#123b67;font:inherit}.workflow-save{display:block;width:100%;min-width:120px;min-height:40px;margin:0;padding:6px 12px;border:1px solid #dce8f7;border-radius:8px;background:linear-gradient(135deg,#20b9d5 0%,#0876c9 55%,#0750a0 100%);box-shadow:0 3px 0 rgba(0,28,75,.35),inset 0 1px 0 rgba(255,255,255,.28);color:#fff;font:inherit;font-weight:750;line-height:1.25;white-space:nowrap;cursor:pointer;transition:filter .15s ease,transform .15s ease}.workflow-save:hover{filter:brightness(1.08)}.workflow-save:active{transform:translateY(1px)}.workflow-save:focus-visible{outline:3px solid #fff;outline-offset:2px}.workflow-save:disabled{opacity:.65;cursor:wait}.workflow-state{display:block;margin-top:4px;font-size:.75rem;color:#dcecff;min-width:120px}.form[hidden],#dashboard[hidden],#changePasswordForm[hidden]{display:none!important}.authenticated main{width:min(100%,1200px);padding:clamp(14px,2.5vw,30px)}.authenticated .kemensos-mark,.authenticated .ministry,.authenticated .directorate,.authenticated .brand,.authenticated .foot,.authenticated .rule,.authenticated .setup{display:none}.authenticated .datawrap{max-height:65vh;overflow-x:auto;overflow-y:auto;touch-action:pan-x pan-y;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.65) rgba(0,25,70,.35);-webkit-overflow-scrolling:touch}.authenticated .datatable th{position:sticky;top:0;z-index:2}.authenticated .datatable th:first-child,.authenticated .datatable td:first-child{position:sticky;left:0;background:#07366f;box-shadow:2px 0 5px rgba(0,0,0,.18)}.authenticated .datatable th:first-child{z-index:4}.authenticated .datatable td:first-child{z-index:1}.scroll-hint{margin:7px 0 10px;color:#dcecff;font-size:.78rem;line-height:1.4}.respondent-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,155px),1fr));gap:8px;margin:12px 0}.respondent-stat{min-width:0;padding:12px;border:1px solid rgba(255,255,255,.24);border-radius:12px;background:rgba(4,40,91,.38)}.respondent-stat-label{display:block;color:#dcecff;font-size:.78rem;line-height:1.4}.respondent-stat-value{display:block;margin-top:5px;color:#fff;font-size:1.05rem;line-height:1.4;overflow-wrap:anywhere}.respondent-search{display:grid;gap:6px;margin:12px 0 6px}.respondent-search label{font-size:.86rem;font-weight:700;color:#e8f2ff}.respondent-search input{width:100%;min-width:0;height:44px;border:1px solid rgba(255,255,255,.48);border-radius:10px;padding:0 12px;background:rgba(255,255,255,.97);color:#123b67;font:inherit;font-size:16px}.respondent-search input::placeholder{color:#6f8299}.respondent-search input:focus{outline:3px solid rgba(112,229,192,.55);border-color:#70e5c0}.filter-count{min-height:1.2em;margin:5px 0;color:#dcecff;font-size:.82rem}.datawrap:focus-visible{outline:2px solid #70e5c0;outline-offset:2px}.authenticated .datawrap{border-radius:8px;overscroll-behavior-x:contain}.authenticated .datatable{border-spacing:0}.authenticated .datatable th:first-child,.authenticated .datatable td:first-child{background:#07366f;box-shadow:3px 0 7px rgba(0,0,0,.24);background-clip:padding-box}.authenticated .datatable th:first-child{z-index:5}.authenticated .datatable td:first-child{z-index:2}@media(max-width:600px){.authenticated main{padding:12px 8px;border-radius:18px}.authenticated .dashpanel{padding:9px}.authenticated .datatable{font-size:.79rem}.authenticated .datatable th,.authenticated .datatable td{padding:9px 10px;min-width:132px;max-width:240px}.authenticated .datatable th:first-child,.authenticated .datatable td:first-child{min-width:76px;max-width:88px}.authenticated .dashactions{justify-content:stretch}.authenticated .dashactions .dashbtn{flex:1 1 145px}.authenticated .scroll-hint{font-size:.76rem}.authenticated .datawrap{max-height:60vh}}@media(max-height:780px){main{padding-top:22px;padding-bottom:22px}.kemensos-mark{width:88px;height:88px}.brand{margin:20px 0}.foot{margin-top:19px}}@media(max-width:390px){.brand{gap:10px}.ribbon{width:28px;height:42px}.separator{height:43px}.brand h1{font-size:1.05rem}}
-.respondent-photo{display:block;width:112px;height:112px;max-width:100%;object-fit:contain;border:1px solid #d4e2f0;border-radius:8px;background:#fff}.photo-unavailable{display:inline-block;min-width:90px;color:#8a4b08;font-size:12px}.datatable td{vertical-align:middle}</style>
+.respondent-photo{display:block;width:112px;height:112px;max-width:100%;object-fit:contain;border:1px solid #d4e2f0;border-radius:8px;background:#fff}.photo-unavailable{display:inline-block;min-width:90px;color:#8a4b08;font-size:12px}.datatable td{vertical-align:middle}
+.owner-card{display:flex;align-items:center;gap:14px;margin:0 0 18px;padding:14px;text-align:left;border:1px solid rgba(255,255,255,.28);border-radius:16px;background:rgba(0,35,90,.34)}
+.owner-avatar{width:76px;height:76px;flex:0 0 76px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.8);background:#fff}
+.owner-summary{min-width:0;flex:1}.owner-summary h3{margin:0 0 4px;font-size:1.02rem}.owner-summary p{margin:2px 0;color:#e1edff;font-size:.82rem;overflow-wrap:anywhere}
+.owner-edit{border:1px solid rgba(255,255,255,.42);border-radius:9px;padding:9px 11px;background:#0757a5;color:#fff;font:inherit;font-weight:700;cursor:pointer;white-space:nowrap}
+.top-actions{display:flex;align-items:center;gap:8px}.bell-button{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:42px;height:42px;border:1px solid rgba(255,255,255,.38);border-radius:11px;background:rgba(4,48,110,.7);color:#fff;cursor:pointer}.bell-count{position:absolute;top:-6px;right:-5px;min-width:18px;height:18px;padding:0 4px;border-radius:99px;background:#f04452;color:#fff;font-size:.68rem;font-weight:800;line-height:18px}.notification-panel{position:relative;margin:0 0 16px;padding:14px;border:1px solid rgba(255,255,255,.3);border-radius:14px;background:rgba(0,31,78,.75);text-align:left}.notification-panel h3{margin:0 0 10px;font-size:1rem}.notification-list{display:grid;gap:8px;max-height:260px;overflow:auto}.notification-item{padding:10px;border-radius:9px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}.notification-item strong{display:block;font-size:.88rem}.notification-item p{margin:4px 0;font-size:.82rem;color:#e1edff}.notification-item small{font-size:.72rem;color:#c7dcf5}.notification-empty{font-size:.85rem;color:#dcecff}
+.owner-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.owner-form-grid .dashfield{min-width:0}.owner-form-grid .dashfield input{min-width:0}.owner-photo-input{color:#fff!important;height:auto!important;padding:10px!important;background:rgba(0,35,90,.3)!important}.owner-form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+@media(max-width:600px){.owner-card{align-items:flex-start;gap:10px;padding:10px}.owner-avatar{width:58px;height:58px;flex-basis:58px}.owner-edit{font-size:.8rem;padding:8px}.owner-summary h3{font-size:.92rem}.owner-summary p{font-size:.76rem}.top-actions{gap:6px}.bell-button{min-width:40px;height:40px}.owner-form-grid{grid-template-columns:minmax(0,1fr)}}
+</style>
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
@@ -50,10 +58,39 @@
     <p class="message" id="message" role="status" aria-live="polite"></p>
   </form>
   <section id="dashboard" hidden aria-labelledby="dashboardTitle">
+    <div class="owner-card" id="ownerCard">
+      <img class="owner-avatar" id="ownerAvatar" alt="Foto owner" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' rx='40' fill='%23e8f2ff'/%3E%3Ccircle cx='40' cy='29' r='14' fill='%237d9bb8'/%3E%3Cpath d='M13 75c2-18 13-27 27-27s25 9 27 27' fill='%237d9bb8'/%3E%3C/svg%3E">
+      <div class="owner-summary"><h3 id="ownerName">Profil Owner</h3><p id="ownerInstitution">Instansi belum diisi</p><p id="ownerContact">Lengkapi profil owner agar mudah dikenali.</p></div>
+      <button class="owner-edit" id="editOwnerProfile" type="button">Edit profil</button>
+    </div>
     <div class="dashhead">
       <div><h2 id="dashboardTitle">Dashboard</h2><p id="welcome"></p></div>
-      <button class="dashbtn" id="logoutButton" type="button">Keluar</button>
+      <div class="top-actions">
+        <button class="bell-button" id="notificationBell" type="button" aria-label="Notifikasi" aria-expanded="false" title="Notifikasi">
+          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bell-count" id="notificationCount" hidden>0</span>
+        </button>
+        <button class="dashbtn" id="logoutButton" type="button">Keluar</button>
+      </div>
     </div>
+    <div class="notification-panel" id="notificationPanel" hidden>
+      <div class="dashhead"><h3>Notifikasi aktivitas</h3><button class="dashbtn" id="enablePushButton" type="button">Aktifkan notifikasi HP</button></div>
+      <div class="notification-list" id="notificationList"><p class="notification-empty">Memuat notifikasi…</p></div>
+      <p class="scroll-hint" id="pushHelp">Aktifkan notifikasi perangkat agar pemberitahuan dapat muncul saat dashboard berada di latar belakang.</p>
+    </div>
+    <form id="ownerProfileForm" class="dashpanel" hidden>
+      <h3>Profil Owner</h3>
+      <div class="owner-form-grid">
+        <div class="dashfield"><label for="ownerPhoto">Foto (JPEG/PNG/WebP, maks. 300 KB)</label><input class="owner-photo-input" id="ownerPhoto" type="file" accept="image/jpeg,image/png,image/webp"></div>
+        <div class="dashfield"><label for="ownerEmployeeName">Nama Pegawai *</label><input id="ownerEmployeeName" maxlength="100" required></div>
+        <div class="dashfield"><label for="ownerNip">NIP</label><input id="ownerNip" maxlength="40"></div>
+        <div class="dashfield"><label for="ownerPhone">Nomor HP</label><input id="ownerPhone" maxlength="40" inputmode="tel"></div>
+        <div class="dashfield"><label for="ownerEmail">Email</label><input id="ownerEmail" type="email" maxlength="160"></div>
+        <div class="dashfield"><label for="ownerInstitution">Instansi</label><input id="ownerInstitution" maxlength="160"></div>
+        <div class="dashfield" style="grid-column:1/-1"><label for="ownerAddress">Alamat</label><input id="ownerAddress" maxlength="300"></div>
+      </div>
+      <div class="owner-form-actions"><button class="dashbtn" id="saveOwnerProfile" type="submit">Simpan profil</button><button class="dashbtn" id="cancelOwnerProfile" type="button">Batal</button></div>
+      <p class="dashmsg" id="ownerProfileMessage" role="status" aria-live="polite"></p>
+    </form>
     <div class="dashactions">
       <button class="dashbtn" id="refreshButton" type="button">Muat data responden</button>
       <button class="dashbtn" id="showChangePassword" type="button">Ganti password</button>
@@ -84,6 +121,103 @@ const dashboardMessage=document.getElementById('dashboardMessage');
 const respondentSummary=document.getElementById('respondentSummary');
 const respondentData=document.getElementById('respondentData');
 const changePasswordForm=document.getElementById('changePasswordForm');
+
+let ownerProfilePhotoData='';
+let notificationPollHandle=null;
+let notificationRefreshBusy=false;
+const ownerProfileForm=document.getElementById('ownerProfileForm');
+const ownerProfileMessage=document.getElementById('ownerProfileMessage');
+const notificationPanel=document.getElementById('notificationPanel');
+const notificationList=document.getElementById('notificationList');
+const notificationCount=document.getElementById('notificationCount');
+const notificationBell=document.getElementById('notificationBell');
+function safeText(value){return String(value??'').trim();}
+function renderOwnerProfile(profile){
+ const name=safeText(profile.employee_name)||'Profil Owner belum lengkap';
+ document.getElementById('ownerName').textContent=name;
+ document.getElementById('ownerInstitution').textContent=safeText(profile.institution)||'Instansi belum diisi';
+ const contact=[safeText(profile.phone),safeText(profile.email)].filter(Boolean).join(' · ');
+ document.getElementById('ownerContact').textContent=contact||'Nomor HP dan email belum diisi';
+ const avatar=document.getElementById('ownerAvatar');
+ if(profile.photo_data&&/^data:image\/(?:jpeg|png|webp);base64,/.test(profile.photo_data))avatar.src=profile.photo_data;
+ document.getElementById('ownerEmployeeName').value=safeText(profile.employee_name);
+ document.getElementById('ownerNip').value=safeText(profile.nip);
+ document.getElementById('ownerAddress').value=safeText(profile.address);
+ document.getElementById('ownerPhone').value=safeText(profile.phone);
+ document.getElementById('ownerEmail').value=safeText(profile.email);
+ document.getElementById('ownerInstitution').dataset.value=safeText(profile.institution);
+ document.getElementById('ownerInstitution').value=safeText(profile.institution);
+ ownerProfilePhotoData=profile.photo_data||'';
+}
+async function loadOwnerProfile(){
+ try{
+  const response=await fetch('/api/owner-profile',{credentials:'same-origin',cache:'no-store'});
+  const data=await parseResponse(response);
+  if(response.status===403){document.getElementById('ownerCard').hidden=true;return;}
+  if(!response.ok||!data.ok)throw new Error(data.error||'Profil owner belum dapat dimuat.');
+  renderOwnerProfile(data.profile||{});
+ }catch(error){ownerProfileMessage.textContent=error instanceof Error?error.message:'Profil owner belum dapat dimuat.';}
+}
+async function loadNotifications(){
+ if(notificationRefreshBusy||dashboard.hidden)return;
+ notificationRefreshBusy=true;
+ try{
+  const response=await fetch('/api/notifications',{credentials:'same-origin',cache:'no-store'});
+  const data=await parseResponse(response);
+  if(!response.ok||!data.ok)return;
+  const unread=Number(data.unread)||0;
+  notificationCount.hidden=unread<1;
+  notificationCount.textContent=unread>99?'99+':String(unread);
+  notificationBell.setAttribute('aria-label',unread?'Notifikasi, '+unread+' belum dibaca':'Notifikasi');
+  notificationList.replaceChildren();
+  if(!data.items?.length){const empty=document.createElement('p');empty.className='notification-empty';empty.textContent='Belum ada notifikasi aktivitas.';notificationList.append(empty);}
+  else data.items.forEach(item=>{
+   const entry=document.createElement('article');entry.className='notification-item';
+   const title=document.createElement('strong');title.textContent=String(item.title||'Aktivitas dashboard');
+   const body=document.createElement('p');body.textContent=String(item.body||'');
+   const time=document.createElement('small');time.textContent=String(item.created_at||'').replace('T',' ').replace('Z','');
+   entry.append(title,body,time);notificationList.append(entry);
+  });
+ }catch{}finally{notificationRefreshBusy=false;}
+}
+async function enablePushNotifications(){
+ const button=document.getElementById('enablePushButton');
+ if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window)){
+  document.getElementById('pushHelp').textContent='Browser ini belum mendukung notifikasi push. Coba Chrome/Edge terbaru dan pastikan situs dibuka melalui HTTPS.';
+  return;
+ }
+ button.disabled=true;button.textContent='Menyiapkan…';
+ try{
+  const configResponse=await fetch('/api/push-config',{credentials:'same-origin',cache:'no-store'});
+  const config=await parseResponse(configResponse);
+  if(!config.enabled||!config.publicKey)throw new Error('Kunci push belum dikonfigurasi di Cloudflare.');
+  const permission=await Notification.requestPermission();
+  if(permission!=='granted')throw new Error('Izin notifikasi belum diberikan. Aktifkan izin notifikasi situs melalui pengaturan browser.');
+  const registration=await navigator.serviceWorker.register('/sw.js',{scope:'/'});
+  await navigator.serviceWorker.ready;
+  const key=base64UrlToBytes(config.publicKey);
+  let subscription=await registration.pushManager.getSubscription();
+  if(!subscription)subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:key});
+  const response=await fetch('/api/push-subscriptions',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify(subscription.toJSON())});
+  const data=await parseResponse(response);
+  if(!response.ok||!data.ok)throw new Error(data.error||'Langganan notifikasi gagal disimpan.');
+  document.getElementById('pushHelp').textContent='Notifikasi perangkat aktif. Suara dan getaran mengikuti dukungan browser serta pengaturan ponsel.';
+  button.textContent='Notifikasi aktif';
+ }catch(error){
+  document.getElementById('pushHelp').textContent=error instanceof Error?error.message:'Notifikasi belum dapat diaktifkan.';
+  button.textContent='Coba aktifkan lagi';
+ }finally{button.disabled=false;}
+}
+function base64UrlToBytes(value){
+ const normalized=String(value).replace(/-/g,'+').replace(/_/g,'/');
+ const padded=normalized+'='.repeat((4-normalized.length%4)%4);
+ const binary=atob(padded);return Uint8Array.from(binary,c=>c.charCodeAt(0));
+}
+function startNotificationPolling(){
+ if(notificationPollHandle)clearInterval(notificationPollHandle);
+ loadNotifications();
+ notificationPollHandle=setInterval(()=>{if(!document.hidden)loadNotifications();},30000);
+}
 let csrfToken='';
 toggle.addEventListener('click',()=>{const show=password.type==='password';password.type=show?'text':'password';toggle.setAttribute('aria-label',show?'Sembunyikan password':'Tampilkan password');});
 function showDashboard(admin,csrf){
@@ -93,6 +227,9 @@ function showDashboard(admin,csrf){
  dashboard.hidden=false;
  message.textContent='';
  welcome.textContent='Masuk sebagai '+(admin?.display_name||admin?.username||'admin')+' · Peran: '+(admin?.role||'admin');
+ loadOwnerProfile();
+ loadNotifications();
+ startNotificationPolling();
  loadRespondents();
 }
 function showLogin(text){
@@ -441,6 +578,40 @@ form.addEventListener('submit',async e=>{
   submit.disabled=false;
  }
 });
+
+document.getElementById('editOwnerProfile').addEventListener('click',()=>{ownerProfileForm.hidden=!ownerProfileForm.hidden;ownerProfileMessage.textContent='';});
+document.getElementById('cancelOwnerProfile').addEventListener('click',()=>{ownerProfileForm.hidden=true;ownerProfileMessage.textContent='';document.getElementById('ownerPhoto').value='';loadOwnerProfile();});
+document.getElementById('ownerPhoto').addEventListener('change',async event=>{
+ const file=event.target.files?.[0];if(!file)return;
+ if(!['image/jpeg','image/png','image/webp'].includes(file.type)){ownerProfileMessage.textContent='Pilih foto JPEG, PNG, atau WebP.';event.target.value='';return;}
+ if(file.size>300*1024){ownerProfileMessage.textContent='Ukuran foto maksimal 300 KB.';event.target.value='';return;}
+ try{
+  const bitmap=await createImageBitmap(file);const canvas=document.createElement('canvas');
+  const scale=Math.min(1,900/Math.max(bitmap.width,bitmap.height));canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+  const context=canvas.getContext('2d');if(!context)throw new Error('Pemrosesan foto tidak didukung browser ini.');
+  context.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();
+  const mime=file.type==='image/webp'?'image/webp':'image/jpeg';
+  ownerProfilePhotoData=canvas.toDataURL(mime,mime==='image/jpeg'?0.84:undefined);
+  document.getElementById('ownerAvatar').src=ownerProfilePhotoData;
+  ownerProfileMessage.textContent='Foto siap disimpan.';
+ }catch(error){ownerProfileMessage.textContent=error instanceof Error?error.message:'Foto tidak dapat diproses.';}
+});
+ownerProfileForm.addEventListener('submit',async event=>{
+ event.preventDefault();const button=document.getElementById('saveOwnerProfile');button.disabled=true;ownerProfileMessage.textContent='Menyimpan profil…';
+ const payload={photoData:ownerProfilePhotoData,photoMime:ownerProfilePhotoData.startsWith('data:image/webp')?'image/webp':ownerProfilePhotoData.startsWith('data:image/png')?'image/png':ownerProfilePhotoData?'image/jpeg':'',
+ employeeName:document.getElementById('ownerEmployeeName').value,nip:document.getElementById('ownerNip').value,address:document.getElementById('ownerAddress').value,phone:document.getElementById('ownerPhone').value,email:document.getElementById('ownerEmail').value,institution:document.getElementById('ownerInstitution').value};
+ try{
+  const response=await fetch('/api/owner-profile',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify(payload)});
+  const data=await parseResponse(response);if(!response.ok||!data.ok)throw new Error(data.error||'Profil belum berhasil disimpan.');
+  ownerProfileMessage.textContent='Profil berhasil disimpan.';ownerProfileForm.hidden=true;await loadOwnerProfile();await loadNotifications();
+ }catch(error){ownerProfileMessage.textContent=error instanceof Error?error.message:'Profil gagal disimpan.';}
+ finally{button.disabled=false;}
+});
+notificationBell.addEventListener('click',async()=>{
+ notificationPanel.hidden=!notificationPanel.hidden;notificationBell.setAttribute('aria-expanded',String(!notificationPanel.hidden));
+ if(!notificationPanel.hidden){await loadNotifications();try{await fetch('/api/notifications/read',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken}});await loadNotifications();}catch{}}
+});
+document.getElementById('enablePushButton').addEventListener('click',enablePushNotifications);
 document.getElementById('refreshButton').addEventListener('click',loadRespondents);
 document.getElementById('showChangePassword').addEventListener('click',()=>{
  changePasswordForm.hidden=!changePasswordForm.hidden;
@@ -471,7 +642,7 @@ document.getElementById('logoutButton').addEventListener('click',async()=>{
   const response=await fetch('/api/logout',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken}});
   const data=await parseResponse(response);
   if(!response.ok){dashboardMessage.textContent=data.error||'Logout belum berhasil.';return;}
-  csrfToken='';showLogin('Anda sudah keluar dari dashboard.');
+  csrfToken='';if(notificationPollHandle)clearInterval(notificationPollHandle);showLogin('Anda sudah keluar dari dashboard.');
  }catch(error){dashboardMessage.textContent='Tidak dapat menghubungi server untuk logout.';}
 });
 (async()=>{
