@@ -139,9 +139,22 @@ async function loadRespondents(){
     searchBox=document.createElement('input');searchBox.id='respondentSearch';searchBox.type='search';searchBox.placeholder='Nama, nomor HP/WA, atau kata kunci';searchBox.autocomplete='off';searchBox.setAttribute('aria-label','Cari responden berdasarkan isi data');
     const searchActions=document.createElement('div');searchActions.className='respondent-search-actions';
     const exportButton=document.createElement('button');exportButton.type='button';exportButton.className='dashbtn export-btn';exportButton.textContent='Unduh CSV';exportButton.setAttribute('aria-label','Unduh data responden yang ditampilkan ke CSV');
-    searchActions.appendChild(exportButton);searchWrap.append(searchLabel,searchBox,searchActions);respondentSummary.insertAdjacentElement('afterend',searchWrap);
+    searchActions.appendChild(exportButton);
+    const statusFilterLabel=document.createElement('label');statusFilterLabel.htmlFor='respondentStatusFilter';statusFilterLabel.textContent='Filter status laporan';
+    const statusFilter=document.createElement('select');statusFilter.id='respondentStatusFilter';statusFilter.className='workflow-control';statusFilter.setAttribute('aria-label','Filter berdasarkan status laporan');
+    searchWrap.append(searchLabel,searchBox,statusFilterLabel,statusFilter,searchActions);respondentSummary.insertAdjacentElement('afterend',searchWrap);
   }
   searchBox.value='';
+  const statusFilter=document.getElementById('respondentStatusFilter');
+  if(statusFilter){
+    const statusHeader=allHeaders.find(name=>String(name).trim().toLocaleLowerCase()==='status laporan');
+    const previousFilter=statusFilter.value;
+    statusFilter.replaceChildren();
+    const allOption=document.createElement('option');allOption.value='';allOption.textContent='Semua status';statusFilter.appendChild(allOption);
+    const statusValues=[...new Set(items.map(item=>String(statusHeader?item[statusHeader]??'':'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'id'));
+    statusValues.forEach(value=>{const option=document.createElement('option');option.value=value;option.textContent=value;statusFilter.appendChild(option);});
+    statusFilter.value=statusValues.includes(previousFilter)?previousFilter:'';
+  }
   if(!headers.length){respondentData.textContent='Belum ada data untuk ditampilkan.';return;}
   const table=document.createElement('table');table.className='datatable';
   const tableHeaders=[...headers];
@@ -178,9 +191,12 @@ async function loadRespondents(){
     const query=searchBox.value.trim().toLocaleLowerCase();
     tbody.replaceChildren();
     let shown=0;
+    const statusHeader=allHeaders.find(name=>String(name).trim().toLocaleLowerCase()==='status laporan');
+    const selectedStatus=document.getElementById('respondentStatusFilter')?.value||'';
     rows.forEach(({item,convertMDY})=>{
       const searchable=allHeaders.map(name=>String(item[name]??'')).join(' ').toLocaleLowerCase();
       if(query&&!searchable.includes(query))return;
+      if(selectedStatus&&String(statusHeader?item[statusHeader]??'':'').trim()!==selectedStatus)return;
       const tr=document.createElement('tr');
       const pendingChanges={};
       tableHeaders.forEach(name=>{
@@ -235,7 +251,7 @@ async function loadRespondents(){
   table.appendChild(tbody);respondentData.appendChild(table);
   let countLabel=document.getElementById('respondentFilteredCount');
   if(!countLabel){countLabel=document.createElement('p');countLabel.id='respondentFilteredCount';countLabel.className='filter-count';respondentData.insertAdjacentElement('beforebegin',countLabel);}
-  searchBox.oninput=renderRows;renderRows();
+  searchBox.oninput=renderRows;if(document.getElementById('respondentStatusFilter'))document.getElementById('respondentStatusFilter').onchange=renderRows;renderRows();
   const exportButton=document.querySelector('.respondent-search-actions .export-btn');
   exportButton.onclick=()=>{
     const query=searchBox.value.trim().toLocaleLowerCase();
