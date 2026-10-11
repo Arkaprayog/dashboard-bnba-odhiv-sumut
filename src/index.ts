@@ -17,6 +17,7 @@ interface Env {
   GOOGLE_PRIVATE_KEY?: string;
   GOOGLE_SHEET_ID?: string;
   GOOGLE_SHEET_TAB?: string;
+  OWNER_BOOTSTRAP_TOKEN?: string;
 }
 
 const NO_STORE = { "cache-control": "no-store", "x-content-type-options": "nosniff", "x-frame-options": "DENY", "referrer-policy": "no-referrer", "permissions-policy": "camera=(), microphone=(), geolocation=()" };
@@ -193,6 +194,18 @@ export default {
 
         if (url.pathname === "/api/setup-owner" && request.method === "POST") {
           if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+
+          // Fail closed: never allow owner bootstrap without the configured secret.
+          const expectedToken = env.OWNER_BOOTSTRAP_TOKEN || "";
+          const suppliedToken = request.headers.get("X-Owner-Bootstrap-Token") || "";
+          if (!expectedToken || suppliedToken.length !== expectedToken.length) {
+            return reply({ error: "Token bootstrap tidak valid atau setup tidak diaktifkan." }, 403);
+          }
+          let tokenDiff = 0;
+          for (let i = 0; i < expectedToken.length; i++) {
+            tokenDiff |= expectedToken.charCodeAt(i) ^ suppliedToken.charCodeAt(i);
+          }
+          if (tokenDiff !== 0) return reply({ error: "Token bootstrap tidak valid atau setup tidak diaktifkan." }, 403);
 
           const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM admins").first<{ n: number }>();
           if (!count || count.n !== 0) return reply({ error: "Setup awal sudah ditutup karena akun admin sudah ada." }, 409);
