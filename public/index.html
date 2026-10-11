@@ -289,7 +289,6 @@ function setAppView(view){
  Object.entries(views).forEach(([key,node])=>{if(node)node.hidden=key!==view;});
  document.querySelectorAll('#appNavigation [data-view]').forEach(button=>{if(button.dataset.view===view)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
  if(view==='news'&&!newsItems.length)loadNews();
- if(view==='questionnaire')
 }
 document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button)setAppView(button.dataset.view);});
 
