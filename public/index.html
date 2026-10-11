@@ -13,7 +13,7 @@
 .respondent-photo{display:block;width:112px;height:112px;max-width:100%;object-fit:contain;border:1px solid #d4e2f0;border-radius:8px;background:#fff}.photo-unavailable{display:inline-block;min-width:90px;color:#8a4b08;font-size:12px}.datatable td{vertical-align:middle}
 .owner-card{display:flex;align-items:center;gap:14px;margin:0 0 18px;padding:14px;text-align:left;border:1px solid rgba(255,255,255,.28);border-radius:16px;background:rgba(0,35,90,.34)}
 .owner-avatar{width:76px;height:76px;flex:0 0 76px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.8);background:#fff}
-.owner-summary{min-width:0;flex:1}.owner-summary h3{margin:0 0 4px;font-size:1.02rem}.owner-summary p{margin:2px 0;color:#e1edff;font-size:.82rem;overflow-wrap:anywhere}
+.owner-summary{min-width:0;flex:1}.owner-summary h3{margin:0 0 4px;font-size:1.02rem}.owner-summary p{margin:2px 0;color:#e1edff;font-size:.82rem;overflow-wrap:anywhere}.owner-details{margin-top:5px}.owner-details summary{cursor:pointer;color:#fff;font-size:.8rem;font-weight:700}.owner-details p{margin:3px 0!important}
 .owner-edit{border:1px solid rgba(255,255,255,.42);border-radius:9px;padding:9px 11px;background:#0757a5;color:#fff;font:inherit;font-weight:700;cursor:pointer;white-space:nowrap}
 .top-actions{display:flex;align-items:center;gap:8px}.bell-button{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:42px;height:42px;border:1px solid rgba(255,255,255,.38);border-radius:11px;background:rgba(4,48,110,.7);color:#fff;cursor:pointer}.bell-count{position:absolute;top:-6px;right:-5px;min-width:18px;height:18px;padding:0 4px;border-radius:99px;background:#f04452;color:#fff;font-size:.68rem;font-weight:800;line-height:18px}.notification-panel{position:relative;margin:0 0 16px;padding:14px;border:1px solid rgba(255,255,255,.3);border-radius:14px;background:rgba(0,31,78,.75);text-align:left}.notification-panel h3{margin:0 0 10px;font-size:1rem}.notification-list{display:grid;gap:8px;max-height:260px;overflow:auto}.notification-item{padding:10px;border-radius:9px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}.notification-item strong{display:block;font-size:.88rem}.notification-item p{margin:4px 0;font-size:.82rem;color:#e1edff}.notification-item small{font-size:.72rem;color:#c7dcf5}.notification-empty{font-size:.85rem;color:#dcecff}
 .owner-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.owner-form-grid .dashfield{min-width:0}.owner-form-grid .dashfield input{min-width:0}.owner-photo-input{color:#fff!important;height:auto!important;padding:10px!important;background:rgba(0,35,90,.3)!important}.owner-form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
@@ -60,7 +60,7 @@
   <section id="dashboard" hidden aria-labelledby="dashboardTitle">
     <div class="owner-card" id="ownerCard">
       <img class="owner-avatar" id="ownerAvatar" alt="Foto owner" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' rx='40' fill='%23e8f2ff'/%3E%3Ccircle cx='40' cy='29' r='14' fill='%237d9bb8'/%3E%3Cpath d='M13 75c2-18 13-27 27-27s25 9 27 27' fill='%237d9bb8'/%3E%3C/svg%3E">
-      <div class="owner-summary"><h3 id="ownerName">Profil Owner</h3><p id="ownerInstitutionSummary">Instansi belum diisi</p><p id="ownerContact">Lengkapi profil owner agar mudah dikenali.</p></div>
+      <div class="owner-summary"><h3 id="ownerName">Profil Owner</h3><p id="ownerInstitutionSummary">Instansi belum diisi</p><p id="ownerContact">Lengkapi profil owner agar mudah dikenali.</p><details class="owner-details"><summary>Lihat detail profil</summary><p id="ownerNipSummary">NIP: —</p><p id="ownerAddressSummary">Alamat: —</p><p id="ownerPhoneSummary">Nomor HP: —</p><p id="ownerEmailSummary">Email: —</p></details></div>
       <button class="owner-edit" id="editOwnerProfile" type="button">Edit profil</button>
     </div>
     <div class="dashhead">
@@ -138,6 +138,10 @@ function renderOwnerProfile(profile){
  document.getElementById('ownerInstitutionSummary').textContent=safeText(profile.institution)||'Instansi belum diisi';
  const contact=[safeText(profile.phone),safeText(profile.email)].filter(Boolean).join(' · ');
  document.getElementById('ownerContact').textContent=contact||'Nomor HP dan email belum diisi';
+ document.getElementById('ownerNipSummary').textContent='NIP: '+(safeText(profile.nip)||'—');
+ document.getElementById('ownerAddressSummary').textContent='Alamat: '+(safeText(profile.address)||'—');
+ document.getElementById('ownerPhoneSummary').textContent='Nomor HP: '+(safeText(profile.phone)||'—');
+ document.getElementById('ownerEmailSummary').textContent='Email: '+(safeText(profile.email)||'—');
  const avatar=document.getElementById('ownerAvatar');
  if(profile.photo_data&&/^data:image\/(?:jpeg|png|webp);base64,/.test(profile.photo_data))avatar.src=profile.photo_data;
  document.getElementById('ownerEmployeeName').value=safeText(profile.employee_name);
