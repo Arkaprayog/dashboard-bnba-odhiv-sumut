@@ -240,8 +240,8 @@ async function loadRespondents(){
               ['Foto Rumah Tampak Depan',findHeader([v=>v.includes('fotorumahtampakdepan')])]
             ].filter(([,header])=>header);
             const imageUrl=value=>{const textValue=String(value??'').trim();if(!/^https:\/\//i.test(textValue))return '';if(/drive\.google\.com\/file\/d\/([^/]+)/i.test(textValue))return textValue.replace(/https:\/\/drive\.google\.com\/file\/d\/([^/]+)\/.*/i,'https://drive.google.com/uc?export=view&id=$1');return textValue;};
-            const win=window.open('','_blank','noopener,noreferrer');
-            if(!win){dashboardMessage.textContent='Izinkan pop-up untuk membuka pratinjau cetak.';return;}
+            const win=window.open('','_blank');
+            if(!win){dashboardMessage.textContent='Pratinjau cetak diblokir browser. Izinkan pop-up untuk situs dashboard, lalu tekan Print kembali.';return;}
             const valueFor=header=>{let value=item[header]??'';if(timestampHeader&&header===timestampHeader)value=formatTimestamp(value,false);return value;};
             const details=fields.map(([label,header])=>'<tr><th>'+escapeHtml(label)+'</th><td>'+escapeHtml(valueFor(header))+'</td></tr>').join('');
             const photoMarkup=photos.map(([label,header])=>{const src=imageUrl(item[header]);return '<div class="photo">'+(src?'<img src="'+escapeHtml(src)+'" alt="'+escapeHtml(label)+'">':'<div class="missing">Foto belum tersedia sebagai gambar langsung</div>')+'<b>'+escapeHtml(label)+'</b></div>';}).join('');
