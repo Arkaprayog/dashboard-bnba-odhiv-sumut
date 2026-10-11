@@ -8,6 +8,8 @@ interface AdminRow {
   active: number;
 }
 
+import { buildPushPayload, type PushSubscription, type VapidKeys } from "@block65/webcrypto-web-push";
+
 interface Env {
   ASSETS: Fetcher;
   DB: D1Database;
@@ -18,6 +20,9 @@ interface Env {
   GOOGLE_SHEET_ID?: string;
   GOOGLE_SHEET_TAB?: string;
   OWNER_BOOTSTRAP_TOKEN?: string;
+  VAPID_PRIVATE_KEY?: string;
+  VAPID_PUBLIC_KEY?: string;
+  VAPID_SUBJECT?: string;
 }
 
 const NO_STORE = { "cache-control": "no-store", "x-content-type-options": "nosniff", "x-frame-options": "DENY", "referrer-policy": "no-referrer", "permissions-policy": "camera=(), microphone=(), geolocation=()" };
@@ -141,8 +146,97 @@ async function googleAccessToken(env: Env): Promise<string> {
   return data.access_token;
 }
 
+async function ensureFeatureSchema(env: Env) {
+  await env.DB.batch([
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS owner_profile (
+      id INTEGER PRIMARY KEY CHECK (id=1),
+      photo_data TEXT NOT NULL DEFAULT '',
+      photo_mime TEXT NOT NULL DEFAULT '',
+      employee_name TEXT NOT NULL DEFAULT '',
+      nip TEXT NOT NULL DEFAULT '',
+      address TEXT NOT NULL DEFAULT '',
+      phone TEXT NOT NULL DEFAULT '',
+      email TEXT NOT NULL DEFAULT '',
+      institution TEXT NOT NULL DEFAULT '',
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_by TEXT
+    )`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS push_subscriptions (
+      endpoint_hash TEXT PRIMARY KEY,
+      endpoint TEXT NOT NULL,
+      p256dh TEXT NOT NULL,
+      auth TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS dashboard_notifications (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      body TEXT NOT NULL,
+      action TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      read_at TEXT
+    )`),
+  ]);
+}
+
+function base64UrlBytes(value: string): Uint8Array {
+  const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
+  const binary = atob(padded);
+  return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+}
+
+async function sendPushToAll(env: Env, title: string, body: string, tag: string) {
+  if (!env.VAPID_PRIVATE_KEY || !env.VAPID_PUBLIC_KEY || !env.VAPID_SUBJECT) return;
+  const rows = await env.DB.prepare("SELECT endpoint_hash,endpoint,p256dh,auth FROM push_subscriptions").all<{
+    endpoint_hash: string; endpoint: string; p256dh: string; auth: string;
+  }>();
+  const vapid: VapidKeys = {
+    subject: env.VAPID_SUBJECT,
+    publicKey: env.VAPID_PUBLIC_KEY,
+    privateKey: env.VAPID_PRIVATE_KEY,
+  };
+  await Promise.all((rows.results || []).map(async (row) => {
+    try {
+      const subscription: PushSubscription = {
+        endpoint: row.endpoint,
+        expirationTime: null,
+        keys: { p256dh: row.p256dh, auth: row.auth },
+      };
+      const payload = await buildPushPayload({ data: JSON.stringify({ title, body, tag, url: "/" }), options: { ttl: 300 } }, subscription, vapid);
+      const response = await fetch(row.endpoint, payload);
+      if (response.status === 404 || response.status === 410) {
+        await env.DB.prepare("DELETE FROM push_subscriptions WHERE endpoint_hash=?").bind(row.endpoint_hash).run();
+      } else if (!response.ok) {
+        console.warn("push_delivery_failed", { status: response.status });
+      }
+    } catch (error) {
+      console.warn("push_delivery_failed", { message: error instanceof Error ? error.message : "unknown_error" });
+    }
+  }));
+}
+
+async function recordNotification(env: Env, title: string, body: string, action: string) {
+  await ensureFeatureSchema(env);
+  await env.DB.prepare("INSERT INTO dashboard_notifications(title,body,action) VALUES(?,?,?)")
+    .bind(title.slice(0, 120), body.slice(0, 240), action.slice(0, 80)).run();
+  await sendPushToAll(env, title, body, action);
+}
+
 async function audit(env: Env, adminId: string, action: string) {
   await env.DB.prepare("INSERT INTO audit_log(admin_id,action) VALUES(?,?)").bind(adminId, action).run();
+  const labels: Record<string, { title: string; body: string }> = {
+    workflow_update: { title: "Perubahan data workflow", body: "Status workflow dashboard telah diperbarui." },
+    password_change: { title: "Password owner/admin diubah", body: "Password akun dashboard baru saja diubah." },
+    respondent_update: { title: "Data responden diperbarui", body: "Ada perubahan data pada dashboard. Masuk untuk memeriksanya." },
+    owner_profile_update: { title: "Profil owner diperbarui", body: "Informasi profil owner dashboard telah disimpan." },
+  };
+  const notification = labels[action];
+  if (notification) {
+    try { await recordNotification(env, notification.title, notification.body, action); }
+    catch (error) { console.warn("notification_record_failed", { action, message: error instanceof Error ? error.message : "unknown_error" }); }
+  }
 }
 
 export default {
@@ -593,6 +687,106 @@ export default {
           const template = body.templateChoice === undefined ? null : body.templateChoice;
           await env.DB.prepare("INSERT INTO respondent_workflow(respondent_key,report_status,desil,template_choice,updated_by,updated_at) VALUES(?,?,?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(respondent_key) DO UPDATE SET report_status=excluded.report_status,desil=excluded.desil,template_choice=excluded.template_choice,updated_by=excluded.updated_by,updated_at=CURRENT_TIMESTAMP").bind(key, body.reportStatus, desil, template, admin.id).run();
           await audit(env, admin.id, "workflow_update");
+          return reply({ ok: true });
+        }
+
+        if (url.pathname === "/api/push-config" && request.method === "GET") {
+          return reply({ ok: true, enabled: !!env.VAPID_PUBLIC_KEY, publicKey: env.VAPID_PUBLIC_KEY || "" });
+        }
+
+        if (url.pathname === "/api/owner-profile" && (request.method === "GET" || request.method === "POST")) {
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          if (admin.role !== "owner") return reply({ error: "Hanya owner yang dapat mengakses profil owner." }, 403);
+          await ensureFeatureSchema(env);
+          if (request.method === "GET") {
+            const profile = await env.DB.prepare("SELECT photo_data,photo_mime,employee_name,nip,address,phone,email,institution,updated_at FROM owner_profile WHERE id=1").first<Record<string, string>>();
+            return reply({ ok: true, profile: profile || { photo_data: "", photo_mime: "", employee_name: admin.display_name || "", nip: "", address: "", phone: "", email: "", institution: "" } });
+          }
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          let body: { photoData?: string; photoMime?: string; employeeName?: string; nip?: string; address?: string; phone?: string; email?: string; institution?: string };
+          try { body = await request.json() as typeof body; } catch { return reply({ error: "Format permintaan tidak valid." }, 400); }
+          const textField = (value: unknown, max: number) => typeof value === "string" ? value.trim().slice(0, max) : "";
+          const photoData = textField(body.photoData, 420000);
+          const photoMime = textField(body.photoMime, 40);
+          if (photoData && (!/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(photoData) || !["image/jpeg","image/png","image/webp"].includes(photoMime) || photoData.length > 420000)) {
+            return reply({ error: "Foto harus berupa JPEG, PNG, atau WebP dengan ukuran maksimal sekitar 300 KB." }, 400);
+          }
+          const employeeName = textField(body.employeeName, 100);
+          const nip = textField(body.nip, 40);
+          const address = textField(body.address, 300);
+          const phone = textField(body.phone, 40);
+          const email = textField(body.email, 160);
+          const institution = textField(body.institution, 160);
+          if (employeeName.length < 2) return reply({ error: "Nama Pegawai wajib diisi minimal 2 karakter." }, 400);
+          if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return reply({ error: "Format email belum valid." }, 400);
+          await env.DB.prepare(`INSERT INTO owner_profile(id,photo_data,photo_mime,employee_name,nip,address,phone,email,institution,updated_at,updated_by)
+            VALUES(1,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)
+            ON CONFLICT(id) DO UPDATE SET photo_data=excluded.photo_data,photo_mime=excluded.photo_mime,employee_name=excluded.employee_name,nip=excluded.nip,address=excluded.address,phone=excluded.phone,email=excluded.email,institution=excluded.institution,updated_at=CURRENT_TIMESTAMP,updated_by=excluded.updated_by`)
+            .bind(photoData, photoMime, employeeName, nip, address, phone, email, institution, admin.id).run();
+          await audit(env, admin.id, "owner_profile_update");
+          return reply({ ok: true, message: "Profil owner berhasil disimpan." });
+        }
+
+        if (url.pathname === "/api/notifications" && request.method === "GET") {
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          await ensureFeatureSchema(env);
+          const rows = await env.DB.prepare("SELECT id,title,body,action,created_at,read_at FROM dashboard_notifications ORDER BY id DESC LIMIT 30").all();
+          const unread = await env.DB.prepare("SELECT COUNT(*) AS count FROM dashboard_notifications WHERE read_at IS NULL").first<{ count: number }>();
+          return reply({ ok: true, items: rows.results || [], unread: unread?.count || 0 });
+        }
+
+        if (url.pathname === "/api/notifications/read" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          await ensureFeatureSchema(env);
+          await env.DB.prepare("UPDATE dashboard_notifications SET read_at=CURRENT_TIMESTAMP WHERE read_at IS NULL").run();
+          return reply({ ok: true });
+        }
+
+        if (url.pathname === "/api/push-subscriptions" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          if (admin.role !== "owner") return reply({ error: "Hanya owner yang dapat mengaktifkan notifikasi perangkat." }, 403);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY || !env.VAPID_SUBJECT) return reply({ error: "Push notification belum dikonfigurasi di Cloudflare." }, 503);
+          await ensureFeatureSchema(env);
+          let body: { endpoint?: string; keys?: { p256dh?: string; auth?: string } };
+          try { body = await request.json() as typeof body; } catch { return reply({ error: "Format langganan notifikasi tidak valid." }, 400); }
+          const endpoint = typeof body.endpoint === "string" ? body.endpoint : "";
+          const p256dh = typeof body.keys?.p256dh === "string" ? body.keys.p256dh : "";
+          const auth = typeof body.keys?.auth === "string" ? body.keys.auth : "";
+          let endpointUrl: URL;
+          try { endpointUrl = new URL(endpoint); } catch { return reply({ error: "Alamat push tidak valid." }, 400); }
+          if (endpointUrl.protocol !== "https:" || endpoint.length > 2048 || p256dh.length > 256 || auth.length > 128 || !p256dh || !auth) return reply({ error: "Data langganan push tidak valid." }, 400);
+          const endpointHash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(endpoint)));
+          await env.DB.prepare(`INSERT INTO push_subscriptions(endpoint_hash,endpoint,p256dh,auth) VALUES(?,?,?,?)
+            ON CONFLICT(endpoint_hash) DO UPDATE SET endpoint=excluded.endpoint,p256dh=excluded.p256dh,auth=excluded.auth,updated_at=CURRENT_TIMESTAMP`)
+            .bind(endpointHash, endpoint, p256dh, auth).run();
+          return reply({ ok: true, message: "Notifikasi perangkat berhasil diaktifkan." });
+        }
+
+        if (url.pathname === "/api/push-subscriptions" && request.method === "DELETE") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          await ensureFeatureSchema(env);
+          let body: { endpoint?: string };
+          try { body = await request.json() as typeof body; } catch { return reply({ error: "Format permintaan tidak valid." }, 400); }
+          const endpoint = typeof body.endpoint === "string" ? body.endpoint : "";
+          if (!endpoint) return reply({ error: "Alamat langganan tidak valid." }, 400);
+          const endpointHash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(endpoint)));
+          await env.DB.prepare("DELETE FROM push_subscriptions WHERE endpoint_hash=?").bind(endpointHash).run();
           return reply({ ok: true });
         }
 
