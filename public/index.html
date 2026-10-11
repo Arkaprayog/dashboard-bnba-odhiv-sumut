@@ -107,6 +107,7 @@ async function loadRespondents(){
  respondentData.replaceChildren();
  dashboardMessage.textContent='';
  try{
+  if(csrfToken){const cleanup=await fetch('/api/remove-status-pesan',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:'{}'});const cleanupData=await parseResponse(cleanup);if(!cleanup.ok||!cleanupData.ok)dashboardMessage.textContent=cleanupData.error||'Kolom Status Pesan belum dapat dihapus dari Google Sheets.';else if(cleanupData.removed)dashboardMessage.textContent=cleanupData.message;}
   const response=await fetch('/api/respondents',{method:'GET',credentials:'same-origin',cache:'no-store'});
   const data=await parseResponse(response);
   if(!response.ok) throw new Error(data.error||'Data responden tidak dapat dimuat.');
