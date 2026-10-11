@@ -424,6 +424,9 @@ document.getElementById('newsSearch').addEventListener('input',renderNews);
 
 function showDashboard(admin,csrf){
  csrfToken=csrf||'';
+ currentDashboardRole=String(admin?.role||'').toLowerCase();
+ const ownerQuestionnaireButton=document.querySelector('#appNavigation [data-view="questionnaire"]');
+ if(ownerQuestionnaireButton)ownerQuestionnaireButton.hidden=currentDashboardRole!=='owner';
  document.body.classList.add('authenticated');
  form.hidden=true;
  dashboard.hidden=false;
@@ -437,6 +440,8 @@ function showDashboard(admin,csrf){
 }
 function showLogin(text){
  dashboard.hidden=true;
+ currentDashboardRole='';
+ const ownerQuestionnaireButton=document.querySelector('#appNavigation [data-view="questionnaire"]');if(ownerQuestionnaireButton)ownerQuestionnaireButton.hidden=true;
  document.body.classList.remove('authenticated');
  if(document.getElementById('appNavigation'))setAppView('home');
  form.hidden=false;
