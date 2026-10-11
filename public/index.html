@@ -349,7 +349,7 @@ form.addEventListener('submit',async e=>{
  const controller=new AbortController();
  const timeout=setTimeout(()=>controller.abort(),20000);
  try{
-  const response=await fetch('/api/login',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','accept':'application/json'},body:JSON.stringify({username:username.value.trim(),password:password.value}),signal:controller.signal});
+  const response=await fetch('/api/login',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','accept':'application/json'},body:JSON.stringify({password:password.value}),signal:controller.signal});
   const data=await parseResponse(response);
   if(!response.ok||!data.ok){message.textContent=data.error||('Login gagal (HTTP '+response.status+'). Coba lagi.');return;}
   // Reveal the authenticated view before clearing credentials; keep the
