@@ -239,7 +239,7 @@ async function loadRespondents(){
               ['Foto KK',findHeader([v=>v.includes('fotokk')||v.includes('fotokartukeluarga')])],
               ['Foto Rumah Tampak Depan',findHeader([v=>v.includes('fotorumahtampakdepan')])]
             ].filter(([,header])=>header);
-            const imageUrl=value=>{const textValue=String(value??'').trim();if(!/^https:\/\//i.test(textValue))return '';if(/drive\.google\.com\/file\/d\/([^/]+)/i.test(textValue))return textValue.replace(/https:\/\/drive\.google\.com\/file\/d\/([^/]+)\/.*/i,'https://drive.google.com/uc?export=view&id=$1');return textValue;};
+            const imageUrl=value=>{const textValue=String(value??'').trim();if(!textValue.startsWith('https://'))return '';const match=textValue.match(/drive\\.google\\.com\\/(?:file\\/d\\/|open\\?id=|uc\\?id=)([A-Za-z0-9_-]+)/i)||textValue.match(/[?&]id=([A-Za-z0-9_-]+)/i);if(match)return '/api/respondent-photo?id='+encodeURIComponent(match[1]);return textValue;}
             const win=window.open('','_blank');
             if(!win){dashboardMessage.textContent='Pratinjau cetak diblokir browser. Izinkan pop-up untuk situs dashboard, lalu tekan Print kembali.';return;}
             const valueFor=header=>{let value=item[header]??'';if(timestampHeader&&header===timestampHeader)value=formatTimestamp(value,false);return value;};
