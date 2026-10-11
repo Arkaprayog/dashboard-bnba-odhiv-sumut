@@ -116,7 +116,7 @@
     <nav class="app-nav" id="appNavigation" aria-label="Menu utama">
       <button type="button" data-view="home" aria-current="page">▦ Beranda Statistik</button>
       <button type="button" data-view="database">▤ Database Responden</button>
-      <button type="button" data-view="questionnaire">▧ Kuesioner</button>
+      <button type="button" data-view="questionnaire">▧ Kuesioner · Segera</button>
       <button type="button" data-view="news">▤ Berita</button>
     </nav>
     <section class="app-view" id="homeView" aria-label="Beranda Statistik">
@@ -135,7 +135,7 @@
       </div>
     </section>
     <section class="app-view" id="questionnaireView" hidden aria-label="Kuesioner Lapangan">
-      <div class="overview-panel"><h3>Kuesioner Lapangan</h3><p>Buka formulir saat bertemu calon responden baru. Pastikan calon responden memahami tujuan pengumpulan data dan menyetujui pengisian.</p><div class="dashactions"><button class="dashbtn" id="openQuestionnaire" type="button">Buka Kuesioner</button></div><p>Formulir dibuka melalui halaman publik resmi; data responden tidak ditampilkan di menu ini.</p></div>
+      <div class="overview-panel"><h3>Kuesioner Lapangan</h3><p>Menu ini disiapkan untuk sesi pembangunan berikutnya. Besok kita akan mengerjakan alur kuesioner khusus, jadi untuk sementara fitur ini belum aktif.</p><p>Database responden yang sudah ada tetap tersedia pada menu Database Responden.</p></div>
     </section>
     <section class="app-view" id="newsView" hidden aria-label="Berita HIV dan Kesejahteraan Sosial">
       <div class="dashhead"><div><h2>Berita & Informasi</h2><p>Informasi publik dari RSS sumber kesehatan dan berita Sumatera Utara</p></div><button class="dashbtn" id="refreshNews" type="button">Perbarui berita</button></div>
@@ -289,10 +289,10 @@ function setAppView(view){
  Object.entries(views).forEach(([key,node])=>{if(node)node.hidden=key!==view;});
  document.querySelectorAll('#appNavigation [data-view]').forEach(button=>{if(button.dataset.view===view)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
  if(view==='news'&&!newsItems.length)loadNews();
- if(view==='questionnaire')document.getElementById('openQuestionnaire').focus({preventScroll:true});
+ if(view==='questionnaire')
 }
 document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button)setAppView(button.dataset.view);});
-document.getElementById('openQuestionnaire').addEventListener('click',()=>window.open(NEWS_QUESTIONNAIRE_URL,'_blank','noopener,noreferrer'));
+
 document.getElementById('refreshOverview').addEventListener('click',()=>{if(overviewRows.length)renderOverview(overviewRows,overviewHeaders);else loadRespondents();});
 function normalizedFieldName(value){return String(value??'').normalize('NFKD').toLocaleLowerCase().replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');}
 function findField(headers, patterns){
