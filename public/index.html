@@ -133,7 +133,7 @@ async function loadRespondents(){
   addStat('Memiliki nomor HP/WA',phoneHeader?phoneCount+' dari '+items.length:'Kolom tidak ditemukan');
   const reportStatusHeader=allHeaders.find(name=>String(name).trim().toLocaleLowerCase()==='status laporan');
   const statusCounts={'Sudah Dilaporkan':0,'Belum Dilaporkan':0,'Proses Verifikasi':0,'Belum diisi':0};
-  if(reportStatusHeader)items.forEach(item=>{const value=String(item[reportStatusHeader]??'').trim();const match=Object.keys(statusCounts).find(key=>key.toLocaleLowerCase()===value.toLocaleLowerCase());statusCounts[match||'Belum diisi']++;});
+  if(reportStatusHeader)items.forEach(item=>{const value=String(item[reportStatusHeader]??'').trim();const normalized=value.toLocaleLowerCase();const match=Object.keys(statusCounts).find(key=>key!=='Belum diisi'&&normalized.includes(key.toLocaleLowerCase()));statusCounts[match||'Belum diisi']++;});
   if(reportStatusHeader){
     addStat('Sudah Dilaporkan',statusCounts['Sudah Dilaporkan']);
     addStat('Belum Dilaporkan',statusCounts['Belum Dilaporkan']+statusCounts['Belum diisi']);
