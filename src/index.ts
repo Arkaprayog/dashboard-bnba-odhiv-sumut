@@ -592,6 +592,11 @@ export default {
     assetHeaders.set("x-frame-options", "DENY");
     assetHeaders.set("referrer-policy", "no-referrer");
     assetHeaders.set("permissions-policy", "camera=(), microphone=(), geolocation=()");
+    if (url.pathname === "/" || url.pathname.endsWith(".html")) {
+      assetHeaders.set("cache-control", "no-store, no-cache, must-revalidate, max-age=0");
+      assetHeaders.set("pragma", "no-cache");
+      assetHeaders.set("expires", "0");
+    }
     return new Response(assetResponse.body, {
       status: assetResponse.status,
       statusText: assetResponse.statusText,
