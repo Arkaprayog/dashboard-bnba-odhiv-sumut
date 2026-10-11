@@ -42,3 +42,16 @@ Open Actions → **Build Sahabat ODHIV Sumut Android APK** → Run workflow. Dow
 ## Current limitation
 
 Background push notifications use the existing browser Web Push implementation. The APK wrapper does not yet bundle Firebase Cloud Messaging (FCM); push enrollment opens the dashboard in the system browser. A fully native push channel inside the APK would require an FCM project, package registration, and securely configured credentials.
+
+## Android device permissions (staged for native features)
+
+The manifest declares camera, microphone, coarse/fine location, notifications, vibration, and network permissions for the planned native UI. These declarations do not mean Android has granted access: runtime permission prompts and feature-specific handling must be implemented and tested when each native feature is added.
+
+- Camera/video: request camera permission only when recording/capturing is used; microphone permission only when audio capture is used.
+- Gallery: use Android Photo Picker for selected photos/videos rather than broad access to all media.
+- Location: request foreground location only when a real feature needs it; background location is not declared.
+- Notifications: Android 13+ requires runtime notification permission for app notifications.
+- Calls/SMS: prefer opening the user's dialer or SMS app with an intent. The app does not request CALL_PHONE, SEND_SMS, READ_SMS, or call-log access.
+- Do not collect location, audio, video, SMS, or call data silently. Explain the purpose and allow the user to deny access.
+
+These are groundwork declarations only. The current APK remains a WebView prototype; native feature screens, runtime permission flows, and native push still need implementation and device testing.
