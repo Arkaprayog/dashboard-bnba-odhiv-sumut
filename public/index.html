@@ -117,7 +117,8 @@ async function loadRespondents(){
   respondentSummary.textContent='Sumber: '+(data.source||'Google Sheets')+' · Total: '+items.length+' responden';
   let stats=document.getElementById('respondentStats');
   if(!stats){stats=document.createElement('div');stats.id='respondentStats';stats.className='respondent-stats';respondentSummary.insertAdjacentElement('afterend',stats);}
-  const phoneHeader=allHeaders.find(name=>/^(no\s*hp\s*\/\s*wa|no\.?\s*hp|nomor\s*(hp|wa)|whatsapp)$/i.test(String(name).trim()));
+  const normalizeHeader=name=>String(name??'').normalize('NFKD').toLocaleLowerCase().replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+  const phoneHeader=allHeaders.find(name=>{const h=normalizeHeader(name);return ['nohpwa','nohp','nomorhp','nomorwa','whatsapp','nohpwaaktif'].includes(h)||((h.includes('hp')||h.includes('wa'))&&(h.startsWith('no')||h.startsWith('nomor')));});
   const phoneCount=phoneHeader?items.filter(item=>String(item[phoneHeader]??'').trim()!=='').length:0;
   const timestampStatHeader=allHeaders.find(name=>String(name).trim().toLocaleLowerCase()==='timestamp');
   const latestValue=timestampStatHeader&&items.length?String(items[items.length-1][timestampStatHeader]??'').trim():'—';
