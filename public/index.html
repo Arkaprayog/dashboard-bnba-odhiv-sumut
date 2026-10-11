@@ -412,10 +412,10 @@ async function loadRespondents(){
           const whatsapp=document.createElement('button');whatsapp.type='button';whatsapp.className='workflow-save whatsapp-open';whatsapp.textContent='WhatsApp';
           whatsapp.setAttribute('aria-label','Buka WhatsApp untuk responden baris '+item._row);
           const rawPhone=phoneHeader?String(item[phoneHeader]??'').trim():'';
-          let waNumber=rawPhone.replace(/\\D/g,'');
+          let waNumber=rawPhone.replace(/\D/g,'');
           if(waNumber.startsWith('0'))waNumber='62'+waNumber.slice(1);
           else if(waNumber.startsWith('8'))waNumber='62'+waNumber;
-          const validWaNumber=/^62[1-9]\\d{7,13}$/.test(waNumber);
+          const validWaNumber=/^62[1-9]\d{7,13}$/.test(waNumber);
           if(!validWaNumber){
             whatsapp.disabled=true;
             whatsapp.title=rawPhone?'Format nomor HP/WA tidak valid':'Nomor HP/WA tidak tersedia';
