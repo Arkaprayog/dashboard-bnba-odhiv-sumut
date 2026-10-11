@@ -409,6 +409,25 @@ async function loadRespondents(){
           td.append(print);tr.appendChild(td);return;
         }
         if(name==='AKSI'){
+          const whatsapp=document.createElement('button');whatsapp.type='button';whatsapp.className='workflow-save whatsapp-open';whatsapp.textContent='WhatsApp';
+          whatsapp.setAttribute('aria-label','Buka WhatsApp untuk responden baris '+item._row);
+          const rawPhone=phoneHeader?String(item[phoneHeader]??'').trim():'';
+          let waNumber=rawPhone.replace(/\\D/g,'');
+          if(waNumber.startsWith('0'))waNumber='62'+waNumber.slice(1);
+          else if(waNumber.startsWith('8'))waNumber='62'+waNumber;
+          const validWaNumber=/^62[1-9]\\d{7,13}$/.test(waNumber);
+          if(!validWaNumber){
+            whatsapp.disabled=true;
+            whatsapp.title=rawPhone?'Format nomor HP/WA tidak valid':'Nomor HP/WA tidak tersedia';
+            whatsapp.setAttribute('aria-label',rawPhone?'Nomor WhatsApp tidak valid':'Nomor WhatsApp tidak tersedia');
+          }else{
+            whatsapp.addEventListener('click',()=>{
+              const initialMessage='Halo, saya menghubungi Anda terkait tindak lanjut dukungan yang Anda perlukan. Apakah saat ini waktu yang tepat untuk berbicara?';
+              const url='https://wa.me/'+waNumber+'?text='+encodeURIComponent(initialMessage);
+              const opened=window.open(url,'_blank','noopener,noreferrer');
+              if(!opened)dashboardMessage.textContent='WhatsApp diblokir browser. Izinkan pop-up untuk dashboard atau buka tautan kembali.';
+            });
+          }
           const save=document.createElement('button');save.type='button';save.className='workflow-save';save.textContent='Simpan';
           const state=document.createElement('span');state.className='workflow-state';state.textContent=Object.keys(pendingChanges).length?'Belum disimpan':'';
           workflowSaveButton=save;
@@ -428,7 +447,7 @@ async function loadRespondents(){
             }catch(error){state.textContent='Gagal menyimpan';dashboardMessage.textContent=error instanceof Error?error.message:'Gagal menyimpan perubahan.';}
             finally{save.disabled=false;}
           });
-          td.append(save,state);tr.appendChild(td);return;
+          td.append(whatsapp,save,state);tr.appendChild(td);return;
         }
         let value=item[name]??'';
         const columnLabel=tableColumns.find(column=>column.key===name)?.label||String(name);
