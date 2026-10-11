@@ -119,7 +119,9 @@ async function loadRespondents(){
     const searchWrap=document.createElement('div');searchWrap.className='respondent-search';
     const searchLabel=document.createElement('label');searchLabel.htmlFor='respondentSearch';searchLabel.textContent='Cari responden';
     searchBox=document.createElement('input');searchBox.id='respondentSearch';searchBox.type='search';searchBox.placeholder='Nama, nomor HP/WA, atau kata kunci';searchBox.autocomplete='off';searchBox.setAttribute('aria-label','Cari responden berdasarkan isi data');
-    searchWrap.append(searchLabel,searchBox);respondentSummary.insertAdjacentElement('afterend',searchWrap);
+    const searchActions=document.createElement('div');searchActions.className='respondent-search-actions';
+    const exportButton=document.createElement('button');exportButton.type='button';exportButton.className='dashbtn export-btn';exportButton.textContent='Unduh CSV';exportButton.setAttribute('aria-label','Unduh data responden yang ditampilkan ke CSV');
+    searchActions.appendChild(exportButton);searchWrap.append(searchLabel,searchBox,searchActions);respondentSummary.insertAdjacentElement('afterend',searchWrap);
   }
   searchBox.value='';
   if(!headers.length){respondentData.textContent='Belum ada data untuk ditampilkan.';return;}
@@ -175,6 +177,32 @@ async function loadRespondents(){
   let countLabel=document.getElementById('respondentFilteredCount');
   if(!countLabel){countLabel=document.createElement('p');countLabel.id='respondentFilteredCount';countLabel.className='filter-count';respondentData.insertAdjacentElement('beforebegin',countLabel);}
   searchBox.oninput=renderRows;renderRows();
+  const exportButton=document.querySelector('.respondent-search-actions .export-btn');
+  exportButton.onclick=()=>{
+    const query=searchBox.value.trim().toLocaleLowerCase();
+    const csvCell=value=>{
+      let textValue=String(value??'');
+      if(/^[=+@]/.test(textValue)||/^-/.test(textValue))textValue="'"+textValue;
+      return '"'+textValue.replace(/"/g,'""')+'"';
+    };
+    const lines=[headers.map(csvCell).join(',')];
+    let convertForExport=false;
+    rows.forEach(({item,name})=>{
+      if(name==='yanti lim bong'||name==='yanti limbong')convertForExport=true;
+      const searchable=allHeaders.map(header=>String(item[header]??'')).join(' ').toLocaleLowerCase();
+      if(query&&!searchable.includes(query))return;
+      lines.push(headers.map(header=>{
+        let value=item[header]??'';
+        if(timestampHeader&&String(header)===String(timestampHeader))value=formatTimestamp(value,convertForExport);
+        return csvCell(value);
+      }).join(','));
+    });
+    if(lines.length===1){dashboardMessage.textContent='Tidak ada data yang cocok untuk diunduh.';return;}
+    const blob=new Blob(['\\uFEFF'+lines.join('\\r\\n')],{type:'text/csv;charset=utf-8;'});
+    const url=URL.createObjectURL(blob);const link=document.createElement('a');
+    link.href=url;link.download='data-responden-'+new Date().toISOString().slice(0,10)+'.csv';
+    document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  };
   const hint=document.getElementById("tableScrollHint");hint.hidden=headers.length<3;respondentData.scrollLeft=0;
  }catch(error){
   respondentSummary.textContent='Data responden belum dapat dimuat.';
