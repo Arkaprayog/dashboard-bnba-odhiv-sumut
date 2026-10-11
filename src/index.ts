@@ -448,6 +448,18 @@ export default {
       }
     }
 
-    return env.ASSETS.fetch(request);
+    // Apply browser security headers to the HTML/CSS/JS and other static assets too,
+    // not only JSON API responses. Preserve existing asset headers and body.
+    const assetResponse = await env.ASSETS.fetch(request);
+    const assetHeaders = new Headers(assetResponse.headers);
+    assetHeaders.set("x-content-type-options", "nosniff");
+    assetHeaders.set("x-frame-options", "DENY");
+    assetHeaders.set("referrer-policy", "no-referrer");
+    assetHeaders.set("permissions-policy", "camera=(), microphone=(), geolocation=()");
+    return new Response(assetResponse.body, {
+      status: assetResponse.status,
+      statusText: assetResponse.statusText,
+      headers: assetHeaders,
+    });
   },
 };
