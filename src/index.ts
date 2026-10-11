@@ -231,6 +231,8 @@ async function audit(env: Env, adminId: string, action: string) {
     owner_profile_update: { title: "Profil owner diperbarui", body: "Informasi profil owner dashboard telah disimpan." },
     respondent_field_update: { title: "Data responden diperbarui", body: "Desil atau Status Laporan telah diubah di dashboard." },
     login_success: { title: "Login dashboard berhasil", body: "Ada sesi login baru ke dashboard. Jika ini bukan Anda, segera ganti password." },
+    owner_bootstrap: { title: "Penyiapan owner selesai", body: "Akun owner dashboard telah dibuat atau disiapkan." },
+    remove_status_pesan_column: { title: "Struktur data dashboard diperbarui", body: "Ada perubahan konfigurasi data dashboard." },
   };
   const notification = labels[action];
   if (notification) {
