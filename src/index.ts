@@ -302,10 +302,6 @@ export default {
 
     // Public news feed: only metadata and short excerpts from publisher RSS feeds.
     if (url.pathname === "/api/news" && request.method === "GET") {
-      const cacheKey = new Request(new URL("/api/news?cache=public-v1", url.origin).toString(), { method: "GET" });
-      const cache = caches.default;
-      const cached = await cache.match(cacheKey);
-      if (cached) return cached;
       const feeds = [
         { name: "Kementerian Kesehatan RI", url: "https://kemkes.go.id/id/rss/article/rilis-berita", priority: "health" },
         { name: "Artikel Kesehatan Kemenkes", url: "https://kemkes.go.id/id/rss/article/artikel-kesehatan", priority: "health" },
@@ -360,7 +356,6 @@ export default {
       }).sort((a, b) => (Date.parse(b.publishedAt) || 0) - (Date.parse(a.publishedAt) || 0)).slice(0, 60);
       const payload = { ok: true, items: unique, updatedAt: new Date().toISOString(), sourcesChecked: feeds.length, sourcesSucceeded: results.filter(result => result.status === "fulfilled").length };
       const response = new Response(JSON.stringify(payload), { headers: { ...NO_STORE, "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=900, s-maxage=900" } });
-      await cache.put(cacheKey, response.clone());
       return response;
     }
 
