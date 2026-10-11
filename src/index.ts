@@ -501,7 +501,7 @@ export default {
             const driveUrl = "https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(fileId);
             // Check Drive metadata first: the media response may use a generic content type,
             // while the authoritative file MIME type is returned by files.get metadata.
-            const metadataResponse = await fetch(driveUrl + "?fields=id,name,mimeType&supportsAllDrives=true", { headers: { authorization: "Bearer " + token } });
+            const metadataResponse = await fetch(driveUrl + "?fields=id,name,mimeType,size&supportsAllDrives=true", { headers: { authorization: "Bearer " + token } });
             if (!metadataResponse.ok) {
               let driveReason = "";
               try {
@@ -510,8 +510,12 @@ export default {
               } catch {}
               return reply({ error: "Google Drive gagal membaca metadata foto (HTTP " + metadataResponse.status + "). " + (driveReason || "Periksa izin file dan akses API Drive.") }, 502);
             }
-            const metadata = await metadataResponse.json() as { name?: string; mimeType?: string };
+            const metadata = await metadataResponse.json() as { name?: string; mimeType?: string; size?: string };
             const type = (metadata.mimeType || "").toLowerCase();
+            const photoSize = Number(metadata.size || 0);
+            if (Number.isFinite(photoSize) && photoSize > 10 * 1024 * 1024) {
+              return reply({ error: "Foto responden melebihi batas 10 MB per foto. Pilih foto yang lebih kecil atau unggah ulang dengan ukuran yang sesuai." }, 413);
+            }
             if (!type.startsWith("image/")) {
               return reply({ error: "File di Google Sheets bukan file gambar yang bisa ditampilkan. Jenis file: " + (type || "tidak diketahui") + (metadata.name ? "; nama file: " + metadata.name : "") + ". Pastikan sel berisi tautan file foto asli (JPEG, PNG, atau WebP), bukan folder, PDF, atau shortcut." }, 415);
             }
@@ -737,10 +741,10 @@ export default {
           let body: { photoData?: string; photoMime?: string; employeeName?: string; nip?: string; address?: string; phone?: string; email?: string; institution?: string };
           try { body = await request.json() as typeof body; } catch { return reply({ error: "Format permintaan tidak valid." }, 400); }
           const textField = (value: unknown, max: number) => typeof value === "string" ? value.trim().slice(0, max) : "";
-          const photoData = textField(body.photoData, 420000);
+          const photoData = typeof body.photoData === "string" ? body.photoData : "";
           const photoMime = textField(body.photoMime, 40);
           if (photoData && (!/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(photoData) || !["image/jpeg","image/png","image/webp"].includes(photoMime) || photoData.length > 420000)) {
-            return reply({ error: "Foto harus berupa JPEG, PNG, atau WebP dengan ukuran maksimal sekitar 300 KB." }, 400);
+            return reply({ error: "Foto profil harus JPEG, PNG, atau WebP. Pilih file asli maksimal 10 MB; dashboard akan mengoptimalkannya sebelum disimpan." }, 400);
           }
           const employeeName = textField(body.employeeName, 100);
           const nip = textField(body.nip, 40);
