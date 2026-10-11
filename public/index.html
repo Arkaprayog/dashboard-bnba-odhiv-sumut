@@ -293,22 +293,48 @@ async function loadRespondents(){
         const isReportStatus=normalizedHeader==='statuslaporan';
         const isPhoto=/^foto(?:diri|ktp|kk|rumah)/.test(normalizedHeader);
         if(isPhoto){
+          // A Google Forms upload cell can contain one Drive URL, multiple URLs
+          // separated by commas/newlines, or a bare Drive file ID. Resolve only
+          // Drive IDs so each image is fetched through the authenticated backend.
           const textValue=String(value??'').trim();
-          let imageSource='';
-          if(/^https:\/\//i.test(textValue)){
-            try{
-              const parsed=new URL(textValue);
-              const filePath=parsed.pathname.match(/\/file\/d\/([A-Za-z0-9_-]+)/i);
-              const fileId=filePath?.[1]||parsed.searchParams.get('id');
-              if((parsed.hostname==='drive.google.com'||parsed.hostname==='docs.google.com')&&fileId)imageSource='/api/respondent-photo?id='+encodeURIComponent(fileId);
-              else imageSource=textValue;
-            }catch{}
-          }else if(/^[A-Za-z0-9_-]{10,200}$/.test(textValue)){imageSource='/api/respondent-photo?id='+encodeURIComponent(textValue);}
-          if(imageSource){
-            const img=document.createElement('img');img.className='respondent-photo';img.loading='lazy';img.decoding='async';img.alt=columnLabel+' responden';
-            img.src=imageSource;img.onerror=async()=>{const missing=document.createElement('span');missing.className='photo-unavailable';missing.textContent='Memeriksa akses foto…';img.replaceWith(missing);try{const check=await fetch(imageSource,{credentials:'same-origin',cache:'no-store'});let detail='';try{const payload=await check.json();detail=String(payload.error||'');}catch{}missing.textContent=check.status===401?'Sesi login berakhir. Login kembali.':check.status===403?'Akses foto ditolak (403). Periksa izin folder unggahan Google Drive.':check.status===404?'Foto tidak ditemukan (404). Periksa tautan file di Google Sheets.':check.status===415?(detail||'File yang ditautkan bukan gambar (415).'):check.status===502?(detail||'Google Drive gagal mengirim foto (502).'):('Foto gagal dimuat (HTTP '+check.status+').');}catch{missing.textContent='Foto gagal dimuat. Periksa koneksi lalu muat ulang.';}};
-            td.appendChild(img);
-          }else{td.textContent=textValue?'Tautan foto tidak dikenali':'Foto belum tersedia';}
+          const resolveDriveIds=raw=>{
+            const parts=String(raw??'').split(/[\\n\\r,;]+/).map(part=>part.trim()).filter(Boolean);
+            const ids=[];
+            for(const part of parts){
+              if(/^[A-Za-z0-9_-]{10,200}$/.test(part)){ids.push(part);continue;}
+              try{
+                const parsed=new URL(part);
+                if(!/^https?:$/.test(parsed.protocol))continue;
+                if(!/(^|\\.)drive\\.google\\.com$/i.test(parsed.hostname)&&!/(^|\\.)docs\\.google\\.com$/i.test(parsed.hostname))continue;
+                const pathMatch=parsed.pathname.match(/\\/file\\/d\\/([A-Za-z0-9_-]{10,200})(?:\\/|$)/i);
+                const id=pathMatch?.[1]||parsed.searchParams.get('id');
+                if(id&&/^[A-Za-z0-9_-]{10,200}$/.test(id))ids.push(id);
+              }catch{}
+            }
+            return [...new Set(ids)];
+          };
+          const fileIds=resolveDriveIds(textValue);
+          if(fileIds.length){
+            const gallery=document.createElement('div');
+            gallery.style.display='flex';gallery.style.flexWrap='wrap';gallery.style.gap='6px';gallery.style.alignItems='flex-start';
+            for(const fileId of fileIds){
+              const imageSource='/api/respondent-photo?id='+encodeURIComponent(fileId);
+              const img=document.createElement('img');img.className='respondent-photo';img.loading='lazy';img.decoding='async';img.alt=columnLabel+' responden';img.title='Foto dari unggahan responden ini';
+              img.src=imageSource;
+              img.onerror=async()=>{
+                const missing=document.createElement('span');missing.className='photo-unavailable';missing.textContent='Memeriksa akses foto…';img.replaceWith(missing);
+                try{
+                  const check=await fetch(imageSource,{credentials:'same-origin',cache:'no-store'});let detail='';
+                  try{const payload=await check.json();detail=String(payload.error||'');}catch{}
+                  missing.textContent=check.status===401?'Sesi login berakhir. Login kembali.':check.status===403?'Akses foto ditolak (403). Periksa izin file unggahan Google Drive.':check.status===404?'Foto tidak ditemukan (404). Periksa tautan file di Google Sheets.':check.status===415?(detail||'File yang ditautkan bukan gambar (415).'):check.status===502?(detail||'Google Drive gagal mengirim foto (502).'):('Foto gagal dimuat (HTTP '+check.status+').');
+                }catch{missing.textContent='Foto gagal dimuat. Periksa koneksi lalu muat ulang.';}
+              };
+              gallery.appendChild(img);
+            }
+            td.appendChild(gallery);
+          }else{
+            td.textContent=textValue?'Tautan foto tidak dikenali. Gunakan tautan/ID file Google Drive.':'Foto belum tersedia';
+          }
         }else if(isDesil||isReportStatus){
           const control=document.createElement('select');
           control.className='workflow-control';
