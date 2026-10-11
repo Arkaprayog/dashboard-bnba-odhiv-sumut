@@ -328,10 +328,32 @@ export default {
 
           try {
             const token = await googleAccessToken(env);
-            const tab = (env.GOOGLE_SHEET_TAB || "From Response 1").replace(/'/g, "''");
-            const range = "'" + tab + "'!A1:AZ1000";
+            const spreadsheetBase = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID);
+            const metadataResponse = await fetch(spreadsheetBase + "?fields=sheets.properties.title", { headers: { authorization: "Bearer " + token } });
+            if (!metadataResponse.ok) {
+              let detail = "";
+              try { const payload = await metadataResponse.json() as { error?: { status?: string; message?: string } }; detail = [payload.error?.status, payload.error?.message].filter(Boolean).join(": "); } catch { /* Abaikan respons error yang bukan JSON. */ }
+              return reply({ error: "Tidak dapat membaca daftar tab Google Sheets (HTTP " + metadataResponse.status + "). " + (detail || "Periksa ID spreadsheet dan izin service account.") }, 502);
+            }
+            const metadata = await metadataResponse.json() as { sheets?: Array<{ properties?: { title?: string } }> };
+            const sheetTitles = (metadata.sheets || []).map((sheet) => sheet.properties?.title || "").filter(Boolean);
+            const configuredTab = (env.GOOGLE_SHEET_TAB || "From Response 1").trim();
+            const normalizeTab = (value: string) => value.toLocaleLowerCase().replace(/[^a-z0-9]/g, "");
+            let tab = sheetTitles.find((title) => title === configuredTab);
+            if (!tab) {
+              const normalizedConfigured = normalizeTab(configuredTab);
+              tab = sheetTitles.find((title) => normalizeTab(title) === normalizedConfigured);
+            }
+            if (!tab) {
+              const responseTabCandidates = sheetTitles.filter((title) => /^(formresponses?1|fromresponses?1)$/.test(normalizeTab(title)));
+              if (responseTabCandidates.length === 1) tab = responseTabCandidates[0];
+            }
+            if (!tab) {
+              return reply({ error: "Nama tab respons tidak cocok. Tab yang tersedia: " + (sheetTitles.join(", ") || "(tidak ada)") + ". Atur GOOGLE_SHEET_TAB sesuai nama tab yang benar." }, 502);
+            }
+            const range = "'" + tab.replace(/'/g, "''") + "'!A1:AZ1000";
             const encodedRange = encodeURIComponent(range).replace(/[\x27!()*]/g, (char) => "%" + char.charCodeAt(0).toString(16).toUpperCase());
-            const sheetUrl = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID) + "/values/" + encodedRange + "?valueRenderOption=FORMATTED_VALUE";
+            const sheetUrl = spreadsheetBase + "/values/" + encodedRange + "?valueRenderOption=FORMATTED_VALUE";
             const response = await fetch(sheetUrl, { headers: { authorization: "Bearer " + token } });
             if (!response.ok) {
               let detail = "";
