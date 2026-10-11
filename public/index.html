@@ -131,6 +131,14 @@ async function loadRespondents(){
   };
   addStat('Total responden',items.length);
   addStat('Memiliki nomor HP/WA',phoneHeader?phoneCount+' dari '+items.length:'Kolom tidak ditemukan');
+  const reportStatusHeader=allHeaders.find(name=>String(name).trim().toLocaleLowerCase()==='status laporan');
+  const statusCounts={'Sudah Dilaporkan':0,'Belum Dilaporkan':0,'Proses Verifikasi':0,'Belum diisi':0};
+  if(reportStatusHeader)items.forEach(item=>{const value=String(item[reportStatusHeader]??'').trim();const match=Object.keys(statusCounts).find(key=>key.toLocaleLowerCase()===value.toLocaleLowerCase());statusCounts[match||'Belum diisi']++;});
+  if(reportStatusHeader){
+    addStat('Sudah Dilaporkan',statusCounts['Sudah Dilaporkan']);
+    addStat('Belum Dilaporkan',statusCounts['Belum Dilaporkan']+statusCounts['Belum diisi']);
+    addStat('Proses Verifikasi',statusCounts['Proses Verifikasi']);
+  }
   addStat('Timestamp baris terakhir',latestValue);
   let searchBox=document.getElementById('respondentSearch');
   if(!searchBox){
@@ -203,7 +211,7 @@ async function loadRespondents(){
         const td=document.createElement('td');
         if(name==='AKSI'){
           const save=document.createElement('button');save.type='button';save.className='workflow-save';save.textContent='Simpan';
-          const state=document.createElement('span');state.className='workflow-state';state.textContent='';
+          const state=document.createElement('span');state.className='workflow-state';state.textContent=Object.keys(pendingChanges).length?'Belum disimpan':'';
           save.addEventListener('click',async()=>{
             const changes=Object.entries(pendingChanges);
             if(!changes.length){state.textContent='Tidak ada perubahan';return;}
@@ -215,7 +223,7 @@ async function loadRespondents(){
                 if(!response.ok||!payload.ok)throw new Error(payload.error||('Gagal menyimpan '+field));
                 item[field]=value;delete pendingChanges[field];
               }
-              state.textContent='Tersimpan';dashboardMessage.textContent='Perubahan responden tersimpan ke Google Sheets.';
+              state.textContent='Tersimpan';save.textContent='Simpan';dashboardMessage.textContent='Perubahan responden tersimpan ke Google Sheets.';
             }catch(error){state.textContent='Gagal menyimpan';dashboardMessage.textContent=error instanceof Error?error.message:'Gagal menyimpan perubahan.';}
             finally{save.disabled=false;}
           });
@@ -234,7 +242,7 @@ async function loadRespondents(){
           if(current&&!choices.includes(current))choices.push(current);
           choices.forEach(choice=>{const option=document.createElement('option');option.value=choice;option.textContent=choice||(isDesil?'Pilih desil':'Pilih status');control.appendChild(option);});
           control.value=current;
-          control.addEventListener('change',()=>{pendingChanges[name]=control.value;});
+          control.addEventListener('change',()=>{pendingChanges[name]=control.value;state.textContent='Belum disimpan';save.textContent='Simpan perubahan';});
           td.appendChild(control);
         }else{
           if(timestampHeader&&String(name)===String(timestampHeader))value=formatTimestamp(value,convertMDY);
