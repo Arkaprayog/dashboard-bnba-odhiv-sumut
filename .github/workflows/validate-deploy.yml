@@ -30,6 +30,8 @@ jobs:
         run: npm install
       - name: Typecheck
         run: npm run typecheck
+      - name: Validate production Wrangler configuration (dry run)
+        run: npx wrangler deploy --dry-run --env production
 
   deploy:
     name: Deploy and health-check production Worker

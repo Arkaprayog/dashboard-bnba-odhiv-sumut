@@ -7,11 +7,23 @@ workers_dev = true
 [build]
 command = "npm install && npm run build"
 cwd = "./"
-watch_paths = ["src/**/*.ts"]
 
 [env.production]
 name = "dashboard-bnba-odhiv-sumut-prod"
 workers_dev = true
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "ppks-odhiv-auth"
+database_id = "c0b05571-c0ac-48a7-ac58-d600f7c7e5cb"
+
+[env.production.vars]
+APP_NAME = "Data Base PPKS ODHIV Sumut"
+APP_ORIGIN = "https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev"
+WEBAUTHN_RP_NAME = "Data Base PPKS ODHIV Sumut"
+WEBAUTHN_RP_ID = "dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev"
+SESSION_TTL_SECONDS = "28800"
+LOG_LEVEL = "info"
 
 [env.staging]
 name = "dashboard-bnba-odhiv-sumut-staging"
@@ -35,8 +47,11 @@ SESSION_TTL_SECONDS = "28800"
 LOG_LEVEL = "info"
 
 [env.staging.vars]
+APP_NAME = "Data Base PPKS ODHIV Sumut"
 APP_ORIGIN = "https://staging-dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev"
+WEBAUTHN_RP_NAME = "Data Base PPKS ODHIV Sumut"
 WEBAUTHN_RP_ID = "staging-dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev"
+SESSION_TTL_SECONDS = "28800"
 LOG_LEVEL = "debug"
 
 [triggers]
