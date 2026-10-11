@@ -113,7 +113,7 @@ async function googleAccessToken(env: Env): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const enc = (v: unknown) => b64(new TextEncoder().encode(JSON.stringify(v)));
   const header = enc({ alg: "RS256", typ: "JWT" });
-  const claim = enc({ iss: email, scope: "https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.readonly", aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600 });
+  const claim = enc({ iss: email, scope: "https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file", aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600 });
   const unsigned = header + "." + claim;
 
   const normalizedPem = pem.replace(/\\n/g, "\n").trim();
@@ -550,6 +550,104 @@ export default {
           });
         }
 
+        if (url.pathname === "/api/respondent-photo-upload" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengunggah foto responden." }, 403);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          if (!env.GOOGLE_SHEET_ID) return reply({ error: "Integrasi Google Sheets belum dikonfigurasi." }, 503);
+
+          let form: FormData;
+          try { form = await request.formData(); } catch { return reply({ error: "Form upload tidak valid." }, 400); }
+          const rowText = String(form.get("row") || "");
+          const field = String(form.get("field") || "").trim();
+          const file = form.get("file");
+          const row = Number(rowText);
+          if (!Number.isInteger(row) || row < 2 || row > 1001) return reply({ error: "Baris responden tidak valid." }, 400);
+          if (!(file instanceof File)) return reply({ error: "Pilih foto yang akan diunggah." }, 400);
+          if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) return reply({ error: "Format foto harus JPEG, PNG, atau WebP." }, 415);
+          if (!file.size || file.size > 8 * 1024 * 1024) return reply({ error: "Ukuran foto harus lebih dari 0 dan maksimal 8 MB." }, 413);
+          const normalized = (v: string) => v.normalize("NFKD").toLocaleLowerCase().replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+          if (!/^foto(?:diri|ktp|kk|rumah)/.test(normalized(field))) return reply({ error: "Upload hanya diizinkan untuk kolom foto responden." }, 400);
+
+          let uploadedId = "";
+          try {
+            const token = await googleAccessToken(env);
+            const base = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID);
+            const metaRes = await fetch(base + "?fields=sheets.properties.title", { headers: { authorization: "Bearer " + token } });
+            if (!metaRes.ok) throw new Error("Tidak dapat membaca metadata spreadsheet (HTTP " + metaRes.status + ").");
+            const meta = await metaRes.json() as { sheets?: Array<{ properties?: { title?: string } }> };
+            const titles = (meta.sheets || []).map(x => x.properties?.title || "").filter(Boolean);
+            const configured = (env.GOOGLE_SHEET_TAB || "From Response 1").trim();
+            const tabNorm = (v: string) => v.toLocaleLowerCase().replace(/[^a-z0-9]/g, "");
+            const tab = titles.find(x => x === configured) || titles.find(x => tabNorm(x) === tabNorm(configured)) || titles.find(x => /^(formresponses?1|fromresponses?1)$/.test(tabNorm(x)));
+            if (!tab) throw new Error("Tab respons tidak ditemukan.");
+            const quotedTab = "'" + tab.replace(/'/g, "''") + "'";
+            const headerRange = encodeURIComponent(quotedTab + "!A1:AZ1");
+            const headerRes = await fetch(base + "/values/" + headerRange, { headers: { authorization: "Bearer " + token } });
+            if (!headerRes.ok) throw new Error("Gagal membaca judul kolom Google Sheets (HTTP " + headerRes.status + ").");
+            const headerJson = await headerRes.json() as { values?: string[][] };
+            const headers = (headerJson.values?.[0] || []).map(v => String(v || "").trim());
+            const colIndex = headers.findIndex(v => v === field);
+            if (colIndex < 0) throw new Error("Kolom foto tidak ditemukan di Google Sheets.");
+            const currentRange = encodeURIComponent(quotedTab + "!A" + row + ":AZ" + row);
+            const currentRes = await fetch(base + "/values/" + currentRange, { headers: { authorization: "Bearer " + token } });
+            if (!currentRes.ok) throw new Error("Gagal memeriksa data foto saat ini (HTTP " + currentRes.status + ").");
+            const currentJson = await currentRes.json() as { values?: string[][] };
+            const currentValue = String(currentJson.values?.[0]?.[colIndex] || "").trim();
+            const currentIdMatch = currentValue.match(/(?:\/file\/d\/|[?&]id=)([A-Za-z0-9_-]{10,200})/i);
+            const bareId = /^[A-Za-z0-9_-]{10,200}$/.test(currentValue) ? currentValue : "";
+            const existingId = currentIdMatch?.[1] || bareId;
+            if (existingId) {
+              const existingMeta = await fetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(existingId) + "?fields=id,mimeType&supportsAllDrives=true", { headers: { authorization: "Bearer " + token } });
+              if (existingMeta.ok) {
+                const existingFile = await existingMeta.json() as { mimeType?: string };
+                if ((existingFile.mimeType || "").toLowerCase().startsWith("image/")) return reply({ error: "Foto pada kolom ini masih dapat diakses. Upload pengganti hanya tersedia jika foto kosong atau foto lama gagal diakses." }, 409);
+              }
+            } else if (currentValue && !/^https?:\/\//i.test(currentValue)) {
+              return reply({ error: "Kolom foto sudah berisi nilai yang tidak kosong. Periksa tautan lama sebelum menggantinya." }, 409);
+            }
+
+            const safeName = (file.name || "foto-responden").replace(/[^A-Za-z0-9._-]/g, "_").slice(0, 100) || "foto-responden";
+            const metadata = { name: "SahabatODHIV-" + row + "-" + Date.now() + "-" + safeName, mimeType: file.type };
+            const uploadForm = new FormData();
+            uploadForm.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json; charset=UTF-8" }));
+            uploadForm.append("file", file, safeName);
+            const uploadRes = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,mimeType", { method: "POST", headers: { authorization: "Bearer " + token }, body: uploadForm });
+            if (!uploadRes.ok) {
+              let detail = "";
+              try { const payload = await uploadRes.json() as { error?: { message?: string } }; detail = payload.error?.message || ""; } catch {}
+              throw new Error("Google Drive gagal menyimpan foto (HTTP " + uploadRes.status + "). " + detail);
+            }
+            const uploaded = await uploadRes.json() as { id?: string; mimeType?: string };
+            uploadedId = uploaded.id || "";
+            if (!uploadedId || uploaded.mimeType !== file.type) throw new Error("Google Drive tidak mengembalikan identitas foto yang valid.");
+            let col = ""; let n = colIndex + 1;
+            while (n > 0) { const rem = (n - 1) % 26; col = String.fromCharCode(65 + rem) + col; n = Math.floor((n - 1) / 26); }
+            const cellRange = encodeURIComponent(quotedTab + "!" + col + row);
+            const urlValue = "https://drive.google.com/file/d/" + uploadedId + "/view";
+            const put = await fetch(base + "/values/" + cellRange + "?valueInputOption=RAW", { method: "PUT", headers: { authorization: "Bearer " + token, "content-type": "application/json" }, body: JSON.stringify({ values: [[urlValue]] }) });
+            if (!put.ok) {
+              let detail = "";
+              try { const payload = await put.json() as { error?: { message?: string } }; detail = payload.error?.message || ""; } catch {}
+              throw new Error("Foto terunggah, tetapi Google Sheets gagal menyimpan tautannya (HTTP " + put.status + "). " + detail);
+            }
+            await audit(env, admin.id, "respondent_photo_upload");
+            return reply({ ok: true, url: urlValue, message: "Foto berhasil diunggah dan ditautkan ke Google Sheets." });
+          } catch (error) {
+            if (uploadedId) {
+              try {
+                const token = await googleAccessToken(env);
+                await fetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(uploadedId), { method: "DELETE", headers: { authorization: "Bearer " + token } });
+              } catch {}
+            }
+            const incidentId = logIncident("respondent_photo_upload_failed", error, { path: url.pathname, stage: requestStage });
+            return reply({ error: (error instanceof Error ? error.message : "Foto gagal diunggah.") + " (ID insiden: " + incidentId + ")" }, 503);
+          }
+        }
+
         if (url.pathname === "/api/respondent-photo" && request.method === "GET") {
           const admin = await sessionAdmin(request, env);
           if (!admin) return reply({ error: "Silakan login." }, 401);
@@ -637,7 +735,7 @@ export default {
             const values = sheet.values || [];
             if (values.length < 1) return reply({ items: [], headers: [] });
             const headers = values[0].map((v) => String(v || "").trim());
-            const items = await Promise.all(values.slice(1).filter((row) => row.some((v) => String(v || "").trim())).map(async (row, index) => {
+            const items = await Promise.all(values.slice(1).map(async (row, index) => {
               const record: Record<string, string> = {};
               headers.forEach((header, i) => {
                 if (header) record[header] = String(row[i] || "");
@@ -651,8 +749,8 @@ export default {
               const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(identity.replace(/\u001f/g, "") ? identity : fallback));
               record["_key"] = await digestHex(digest);
               record["_row"] = String(index + 2);
-              return record;
-            }));
+              return row.some((v) => String(v || "").trim()) ? record : null;
+            })).then(records => records.filter((record): record is Record<string, string> => record !== null));
             return reply({ headers, items, source: "Google Sheets", count: items.length });
           } catch (error) {
             const incidentId = logIncident("respondents_error", error, { path: url.pathname, stage: requestStage });
