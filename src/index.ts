@@ -109,7 +109,7 @@ async function googleAccessToken(env: Env): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const enc = (v: unknown) => b64(new TextEncoder().encode(JSON.stringify(v)));
   const header = enc({ alg: "RS256", typ: "JWT" });
-  const claim = enc({ iss: email, scope: "https://www.googleapis.com/auth/spreadsheets", aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600 });
+  const claim = enc({ iss: email, scope: "https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.readonly", aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600 });
   const unsigned = header + "." + claim;
 
   const normalizedPem = pem.replace(/\\n/g, "\n").trim();
@@ -348,6 +348,25 @@ export default {
           return reply({ ok: true, message: "Password berhasil diganti. Silakan login kembali dengan password baru." }, 200, {
             "set-cookie": "ppks_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0",
           });
+        }
+
+        if (url.pathname === "/api/respondent-photo" && request.method === "GET") {
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengakses foto responden." }, 403);
+          const fileId = (url.searchParams.get("id") || "").trim();
+          if (!/^[A-Za-z0-9_-]{10,200}$/.test(fileId)) return reply({ error: "ID foto tidak valid." }, 400);
+          try {
+            const token = await googleAccessToken(env);
+            const response = await fetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(fileId) + "?alt=media", { headers: { authorization: "Bearer " + token } });
+            if (!response.ok) return reply({ error: "Foto tidak dapat diakses. Pastikan akun layanan memiliki akses Pelihat ke folder unggahan foto (HTTP " + response.status + ")." }, 502);
+            const type = response.headers.get("content-type") || "application/octet-stream";
+            if (!type.startsWith("image/")) return reply({ error: "Berkas yang dituju bukan gambar." }, 415);
+            return new Response(response.body, { status: 200, headers: { ...NO_STORE, "content-type": type, "cache-control": "private, no-store", "content-disposition": "inline", "x-content-type-options": "nosniff" } });
+          } catch (error) {
+            const incidentId = logIncident("respondent_photo_error", error, { path: url.pathname, stage: requestStage });
+            return reply({ error: "Foto responden gagal dimuat. ID insiden: " + incidentId }, 502);
+          }
         }
 
         if (url.pathname === "/api/respondents" && request.method === "GET") {
