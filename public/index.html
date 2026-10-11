@@ -298,15 +298,15 @@ async function loadRespondents(){
           // Drive IDs so each image is fetched through the authenticated backend.
           const textValue=String(value??'').trim();
           const resolveDriveIds=raw=>{
-            const parts=String(raw??'').split(/[\\n\\r,;]+/).map(part=>part.trim()).filter(Boolean);
+            const parts=String(raw??'').split(/[\n\r,;]+/).map(part=>part.trim()).filter(Boolean);
             const ids=[];
             for(const part of parts){
               if(/^[A-Za-z0-9_-]{10,200}$/.test(part)){ids.push(part);continue;}
               try{
                 const parsed=new URL(part);
                 if(!/^https?:$/.test(parsed.protocol))continue;
-                if(!/(^|\\.)drive\\.google\\.com$/i.test(parsed.hostname)&&!/(^|\\.)docs\\.google\\.com$/i.test(parsed.hostname))continue;
-                const pathMatch=parsed.pathname.match(/\\/file\\/d\\/([A-Za-z0-9_-]{10,200})(?:\\/|$)/i);
+                if(!/(^|\.)drive\.google\.com$/i.test(parsed.hostname)&&!/(^|\.)docs\.google\.com$/i.test(parsed.hostname))continue;
+                const pathMatch=parsed.pathname.match(/\/file\/d\/([A-Za-z0-9_-]{10,200})(?:\/|$)/i);
                 const id=pathMatch?.[1]||parsed.searchParams.get('id');
                 if(id&&/^[A-Za-z0-9_-]{10,200}$/.test(id))ids.push(id);
               }catch{}
