@@ -419,6 +419,39 @@ export default {
           }
         }
 
+        if (url.pathname === "/api/remove-status-pesan" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan." }, 403);
+          try {
+            const token=await googleAccessToken(env);
+            const base="https://sheets.googleapis.com/v4/spreadsheets/"+encodeURIComponent(env.GOOGLE_SHEET_ID||"");
+            const metaRes=await fetch(base+"?fields=sheets.properties(title,sheetId)",{headers:{authorization:"Bearer "+token}});
+            if(!metaRes.ok)throw new Error("Tidak dapat membaca spreadsheet (HTTP "+metaRes.status+").");
+            const meta=await metaRes.json() as {sheets?:Array<{properties?:{title?:string;sheetId?:number}} >};
+            const configured=(env.GOOGLE_SHEET_TAB||"From Response 1").trim();
+            const norm=(v:string)=>v.toLocaleLowerCase().replace(/[^a-z0-9]/g,"");
+            const tab=(meta.sheets||[]).find(x=>x.properties?.title===configured)|| (meta.sheets||[]).find(x=>norm(x.properties?.title||"")===norm(configured)) || (meta.sheets||[]).find(x=>/^(formresponses?1|fromresponses?1)$/.test(norm(x.properties?.title||"")));
+            if(!tab||typeof tab.properties?.sheetId!=="number")throw new Error("Tab respons tidak ditemukan.");
+            const headRange=encodeURIComponent("'"+(tab.properties.title||"").replace(/'/g,"''")+"'!A1:AZ1");
+            const headRes=await fetch(base+"/values/"+headRange,{headers:{authorization:"Bearer "+token}});
+            if(!headRes.ok)throw new Error("Gagal membaca judul kolom.");
+            const heads=await headRes.json() as {values?:string[][]};
+            const idx=(heads.values?.[0]||[]).findIndex(x=>String(x||"").trim().toLocaleLowerCase()==="status pesan");
+            if(idx<0)return reply({ok:true,removed:false,message:"Kolom Status Pesan tidak ditemukan; tidak ada kolom yang dihapus."});
+            const del=await fetch(base+":batchUpdate",{method:"POST",headers:{authorization:"Bearer "+token,"content-type":"application/json"},body:JSON.stringify({requests:[{deleteDimension:{range:{sheetId:tab.properties.sheetId,dimension:"COLUMNS",startIndex:idx,endIndex:idx+1}}}]})});
+            if(!del.ok)throw new Error("Google Sheets menolak penghapusan kolom Status Pesan (HTTP "+del.status+").");
+            await audit(env,admin.id,"remove_status_pesan_column");
+            return reply({ok:true,removed:true,message:"Kolom Status Pesan dihapus. Kolom lainnya dipertahankan."});
+          } catch(error) {
+            const incidentId=logIncident("remove_status_pesan_failed",error,{path:url.pathname});
+            return reply({error:(error instanceof Error?error.message:"Gagal menghapus kolom.")+" (ID insiden: "+incidentId+")"},503);
+          }
+        }
+
         if (url.pathname === "/api/respondent-field" && request.method === "POST") {
           if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
           const admin = await sessionAdmin(request, env);
