@@ -198,7 +198,7 @@ async function loadRespondents(){
     const query=searchBox.value.trim().toLocaleLowerCase();
     const csvCell=value=>{
       let textValue=String(value??'');
-      // Prevent spreadsheet formula injection, including payloads prefixed by whitespace/control characters.\n      if(/^[\\u0000-\\u0020]*[=+@-]/.test(textValue))textValue="'"+textValue;
+      // Prevent spreadsheet formula injection, including payloads prefixed by whitespace/control characters.\n      if(/^[\u0000-\u0020]*[=+@-]/.test(textValue))textValue="'"+textValue;
       return '"'+textValue.replace(/"/g,'""')+'"';
     };
     const lines=[headers.map(csvCell).join(',')];
