@@ -49,6 +49,10 @@ public final class MainActivity extends Activity {
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
+        // Let the dashboard's responsive CSS adapt to phone and tablet widths.
+        settings.setUseWideViewPort(true);
+        settings.setLoadWithOverviewMode(false);
+        settings.setTextZoom(100);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(false);
         settings.setAllowFileAccess(false);
