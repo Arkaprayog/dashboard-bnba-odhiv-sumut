@@ -110,8 +110,9 @@ async function loadRespondents(){
   const response=await fetch('/api/respondents',{method:'GET',credentials:'same-origin',cache:'no-store'});
   const data=await parseResponse(response);
   if(!response.ok) throw new Error(data.error||'Data responden tidak dapat dimuat.');
-  const headers=Array.isArray(data.headers)?data.headers:[];
+  const allHeaders=Array.isArray(data.headers)?data.headers:[];
   const items=Array.isArray(data.items)?data.items:[];
+  const headers=allHeaders.filter(name=>String(name).trim().toLowerCase()!=='score');
   respondentSummary.textContent='Sumber: '+(data.source||'Google Sheets')+' · Total: '+items.length+' responden';
   if(!headers.length){respondentData.textContent='Belum ada data untuk ditampilkan.';return;}
   const table=document.createElement('table');table.className='datatable';
@@ -119,7 +120,34 @@ async function loadRespondents(){
   headers.forEach(name=>{const th=document.createElement('th');th.textContent=String(name);headRow.appendChild(th);});
   thead.appendChild(headRow);table.appendChild(thead);
   const tbody=document.createElement('tbody');
-  items.forEach(item=>{const tr=document.createElement('tr');headers.forEach(name=>{const td=document.createElement('td');td.textContent=String(item[name]??'');tr.appendChild(td);});tbody.appendChild(tr);});
+  let normalizeDatesFromYanti=false;
+  const nameHeader=allHeaders.find(name=>String(name).trim().toLocaleLowerCase()==='nama lengkap');
+  const timestampHeader=allHeaders.find(name=>String(name).trim().toLocaleLowerCase()==='timestamp');
+  const formatTimestamp=(value,convertMDY)=>{
+    const raw=String(value??'');
+    const match=raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(.*)$/);
+    if(!match)return raw;
+    const first=Number(match[1]),second=Number(match[2]),year=match[3],tail=match[4];
+    // Sebelum Yanti, pertahankan tanggal yang sudah tampil dalam format DD/MM/YYYY.
+    // Mulai dari Yanti, data tanggal bergaya M/D/YYYY dikonversi ke DD/MM/YYYY.
+    let day=first,month=second;
+    if(convertMDY){month=first;day=second;}
+    if(day<1||day>31||month<1||month>12)return raw;
+    return String(day).padStart(2,'0')+'/'+String(month).padStart(2,'0')+'/'+year+tail;
+  };
+  items.forEach(item=>{
+    const respondentName=String(nameHeader?item[nameHeader]??'':'').trim().toLocaleLowerCase();
+    if(respondentName==='yanti lim bong'||respondentName==='yanti limbong')normalizeDatesFromYanti=true;
+    const tr=document.createElement('tr');
+    headers.forEach(name=>{
+      const td=document.createElement('td');
+      let value=item[name]??'';
+      if(timestampHeader&&String(name)===String(timestampHeader))value=formatTimestamp(value,normalizeDatesFromYanti);
+      td.textContent=String(value);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
   table.appendChild(tbody);respondentData.appendChild(table);const hint=document.getElementById("tableScrollHint");hint.hidden=headers.length<3;respondentData.scrollLeft=0;
  }catch(error){
   respondentSummary.textContent='Data responden belum dapat dimuat.';
