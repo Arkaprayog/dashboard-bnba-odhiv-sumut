@@ -299,6 +299,71 @@ export default {
       }
     }
 
+
+    // Public news feed: only metadata and short excerpts from publisher RSS feeds.
+    if (url.pathname === "/api/news" && request.method === "GET") {
+      const cacheKey = new Request(new URL("/api/news?cache=public-v1", url.origin).toString(), { method: "GET" });
+      const cache = caches.default;
+      const cached = await cache.match(cacheKey);
+      if (cached) return cached;
+      const feeds = [
+        { name: "Kementerian Kesehatan RI", url: "https://kemkes.go.id/id/rss/article/rilis-berita", priority: "health" },
+        { name: "Artikel Kesehatan Kemenkes", url: "https://kemkes.go.id/id/rss/article/artikel-kesehatan", priority: "health" },
+        { name: "ANTARA Sumatera Utara", url: "https://sumut.antaranews.com/rss/terkini.xml", priority: "sumut" },
+        { name: "ANTARA Sumatera Utara", url: "https://sumut.antaranews.com/rss/berita-sumut.xml", priority: "sumut" },
+        { name: "ANTARA Nasional", url: "https://www.antaranews.com/rss/terkini.xml", priority: "national" },
+      ];
+      const decodeXml = (value: string) => value
+        .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+        .replace(/<[^>]*>/g, " ")
+        .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
+        .replace(/&#(\d+);/g, (_m, n) => String.fromCodePoint(Number(n)))
+        .replace(/&#x([\da-f]+);/gi, (_m, n) => String.fromCodePoint(parseInt(n, 16)))
+        .replace(/\s+/g, " ").trim();
+      const getTag = (block: string, tag: string) => {
+        const match = block.match(new RegExp("<" + tag + "(?:\\s[^>]*)?>([\\s\\S]*?)<\\/" + tag + ">", "i"));
+        return match ? decodeXml(match[1]) : "";
+      };
+      const topicFor = (title: string, description: string, priority: string) => {
+        const text = (title + " " + description).toLocaleLowerCase("id");
+        if (/hiv|aids|odhiv|od.?hiv|antiretroviral|antiretroviral|tes hiv|stigma/.test(text)) return "HIV/AIDS";
+        if (/kemensos|kementerian sosial|menteri sosial|rehabilitasi sosial/.test(text)) return "Kemensos";
+        if (/bansos|bantuan sosial|perlindungan sosial|pkh|bpnt|kebijakan sosial/.test(text)) return "Bansos dan Kebijakan";
+        if (/kemenkes|kementerian kesehatan|layanan kesehatan|puskesmas|rumah sakit|kesehatan/.test(text)) return "Kemenkes dan Layanan Kesehatan";
+        if (priority === "sumut" || /sumatera utara|sumut|medan|deli serdang|pematangsiantar|tapanuli|simalungun|binjai|nias/.test(text)) return "Sumatera Utara";
+        return priority === "health" ? "Kemenkes dan Layanan Kesehatan" : priority === "sumut" ? "Sumatera Utara" : "";
+      };
+      const results = await Promise.allSettled(feeds.map(async feed => {
+        const response = await fetch(feed.url, { headers: { "accept": "application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8", "user-agent": "Sahabat-ODHIV-Sumut-News/1.0 (+public RSS reader)" }, signal: AbortSignal.timeout(8000) });
+        if (!response.ok) throw new Error(feed.name + " RSS HTTP " + response.status);
+        const xml = await response.text();
+        if (xml.length > 2_000_000) throw new Error(feed.name + " RSS terlalu besar");
+        const blocks = [...xml.matchAll(/<(item|entry)(?:\s[^>]*)?>([\s\S]*?)<\/\1>/gi)].map(match => match[2]);
+        return blocks.map(block => {
+          const title = getTag(block, "title");
+          const linkMatch = block.match(/<link(?:\s[^>]*)?href=["']([^"']+)["'][^>]*\/?\s*>/i);
+          const link = getTag(block, "link") || linkMatch?.[1] || "";
+          const description = getTag(block, "description") || getTag(block, "summary") || getTag(block, "content:encoded") || getTag(block, "content");
+          const published = getTag(block, "pubDate") || getTag(block, "published") || getTag(block, "updated") || getTag(block, "dc:date");
+          const date = published && !Number.isNaN(Date.parse(published)) ? new Date(published).toISOString() : "";
+          const category = topicFor(title, description, feed.priority);
+          return { title: title.slice(0, 300), summary: description.slice(0, 320), url: link, publishedAt: date, source: feed.name, category };
+        }).filter(item => item.title && /^https:\/\//i.test(item.url) && item.category);
+      }));
+      const articles = results.flatMap(result => result.status === "fulfilled" ? result.value : []);
+      const seen = new Set<string>();
+      const unique = articles.filter(item => {
+        const key = item.url.replace(/[?#].*$/, "").toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key); return true;
+      }).sort((a, b) => (Date.parse(b.publishedAt) || 0) - (Date.parse(a.publishedAt) || 0)).slice(0, 60);
+      const payload = { ok: true, items: unique, updatedAt: new Date().toISOString(), sourcesChecked: feeds.length, sourcesSucceeded: results.filter(result => result.status === "fulfilled").length };
+      const response = new Response(JSON.stringify(payload), { headers: { ...NO_STORE, "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=900, s-maxage=900" } });
+      await cache.put(cacheKey, response.clone());
+      return response;
+    }
+
     if (url.pathname.startsWith("/api/")) {
       let requestStage = "route_dispatch";
       try {
