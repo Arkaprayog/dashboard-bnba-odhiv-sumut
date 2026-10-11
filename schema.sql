@@ -112,3 +112,9 @@ CREATE TABLE IF NOT EXISTS dashboard_notifications (
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   read_at TEXT
 );
+
+CREATE TABLE IF NOT EXISTS notification_state (
+  state_key TEXT PRIMARY KEY,
+  state_value TEXT NOT NULL,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
