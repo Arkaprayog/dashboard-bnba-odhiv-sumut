@@ -33,8 +33,6 @@ function normalizeOrigin(value: string): string {
 }
 
 function isAllowedOrigin(request: Request, env: Env): boolean {
-  // All callers are state-changing POST routes. Reject requests without Origin
-  // rather than treating a missing header as trusted, reducing CSRF exposure.
   const originHeader = request.headers.get("Origin");
   if (!originHeader) return false;
 
@@ -147,8 +145,6 @@ async function audit(env: Env, adminId: string, action: string) {
 }
 
 export default {
-  // Scheduled housekeeping keeps authentication metadata bounded without
-  // deleting respondent data, admin accounts, or audit history.
   async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
     ctx.waitUntil((async () => {
       const now = Math.floor(Date.now() / 1000);
@@ -230,20 +226,20 @@ export default {
         if (url.pathname === "/api/login" && request.method === "POST") {
           if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
 
-          let body: { password?: string };
+          let body: { username?: string; password?: string };
           try {
             body = await request.json() as typeof body;
           } catch {
             return reply({ error: "Format permintaan tidak valid." }, 400);
           }
 
+          const username = typeof body.username === "string" ? body.username.trim().toLowerCase() : "";
           const password = typeof body.password === "string" ? body.password : "";
-          if (password.length < 1 || password.length > 1024) {
-            return reply({ error: "Password salah." }, 401);
+          if (!/^[a-z0-9._-]{3,64}$/.test(username) || password.length < 1 || password.length > 1024) {
+            return reply({ error: "Username atau password tidak valid." }, 401);
           }
 
-          // One shared rate limit prevents bypass by changing usernames.
-          const loginKey = "password-only";
+          const loginKey = username;
           requestStage = "login_rate_limit_check";
           const now = Math.floor(Date.now() / 1000);
           const recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM login_attempts WHERE username_key=? AND attempted_at>? AND succeeded=0").bind(loginKey, now - 900).first<{ n: number }>();
@@ -254,20 +250,28 @@ export default {
           const attemptId = attempt.meta.last_row_id;
 
           requestStage = "login_lookup_admin";
-          const admins = await env.DB.prepare("SELECT id,username,display_name,password_hash,password_salt,role,active FROM admins WHERE active=1 ORDER BY CASE role WHEN 'owner' THEN 0 WHEN 'admin' THEN 1 ELSE 2 END, id LIMIT 50").all<AdminRow>();
-          const matches: AdminRow[] = [];
-          requestStage = "login_verify_password";
-          for (const candidate of admins.results || []) {
-            const salt = unhex(candidate.password_salt);
-            const expected = unhex(candidate.password_hash);
-            if (salt.length < 16 || expected.length === 0) continue;
-            const actual = await passwordHash(password, salt);
-            let diff = actual.length ^ expected.length;
-            for (let i = 0; i < Math.max(actual.length, expected.length); i++) diff |= (actual[i] || 0) ^ (expected[i] || 0);
-            if (diff === 0) matches.push(candidate);
+          const adminCount = await env.DB.prepare("SELECT COUNT(*) AS n FROM admins WHERE active=1").first<{ n: number }>();
+          if (!adminCount || adminCount.n === 0) {
+            return reply({ error: "Akun admin belum dibuat. Lakukan setup owner terlebih dahulu." }, 401);
           }
-          if (matches.length !== 1) return reply({ error: "Password salah atau tidak unik. Hubungi pengelola untuk mengatur password yang berbeda." }, 401);
-          const admin = matches[0];
+
+          const admin = await env.DB.prepare("SELECT id,username,display_name,password_hash,password_salt,role,active FROM admins WHERE username=? AND active=1").bind(username).first<AdminRow>();
+          if (!admin) {
+            return reply({ error: "Username atau password salah." }, 401);
+          }
+
+          requestStage = "login_verify_password";
+          const salt = unhex(admin.password_salt);
+          const expected = unhex(admin.password_hash);
+          if (salt.length < 16 || expected.length === 0) {
+            return reply({ error: "Data akun tidak valid atau terenkripsi dengan format yang tidak didukung." }, 401);
+          }
+          const actual = await passwordHash(password, salt);
+          let diff = actual.length ^ expected.length;
+          for (let i = 0; i < Math.max(actual.length, expected.length); i++) diff |= (actual[i] || 0) ^ (expected[i] || 0);
+          if (diff !== 0) {
+            return reply({ error: "Username atau password salah." }, 401);
+          }
 
           requestStage = "login_create_session";
           await env.DB.prepare("UPDATE login_attempts SET succeeded=1 WHERE id=?").bind(attemptId).run();
@@ -277,12 +281,8 @@ export default {
           const sessionNow = Math.floor(Date.now() / 1000);
           const ttl = Math.max(900, Math.min(28800, Number(env.SESSION_TTL_SECONDS) || 28800));
 
-          // Keep the session table bounded without touching any valid active session.
-          // Expired sessions can be removed immediately; revoked records are retained
-          // for 30 days to preserve a useful audit/revocation window.
           requestStage = "login_session_cleanup";
-          await env.DB.prepare("DELETE FROM sessions WHERE expires_at<=? OR (revoked_at IS NOT NULL AND revoked_at<=?)")
-            .bind(sessionNow, sessionNow - 30 * 24 * 60 * 60).run();
+          await env.DB.prepare("DELETE FROM sessions WHERE expires_at<=? OR (revoked_at IS NOT NULL AND revoked_at<=?)").bind(sessionNow, sessionNow - 30 * 24 * 60 * 60).run();
 
           requestStage = "login_insert_session";
           await env.DB.prepare("INSERT INTO sessions(id_hash,admin_id,csrf_token,created_at,expires_at) VALUES(?,?,?,?,?)").bind(idHash, admin.id, csrf, sessionNow, sessionNow + ttl).run();
@@ -381,7 +381,7 @@ export default {
             const metadataResponse = await fetch(spreadsheetBase + "?fields=sheets.properties.title", { headers: { authorization: "Bearer " + token } });
             if (!metadataResponse.ok) {
               let detail = "";
-              try { const payload = await metadataResponse.json() as { error?: { status?: string; message?: string } }; detail = [payload.error?.status, payload.error?.message].filter(Boolean).join(": "); } catch { /* Abaikan respons error yang bukan JSON. */ }
+              try { const payload = await metadataResponse.json() as { error?: { status?: string; message?: string } }; detail = [payload.error?.status, payload.error?.message].filter(Boolean).join(": "); } catch {}
               return reply({ error: "Tidak dapat membaca daftar tab Google Sheets (HTTP " + metadataResponse.status + "). " + (detail || "Periksa ID spreadsheet dan izin service account.") }, 502);
             }
             const metadata = await metadataResponse.json() as { sheets?: Array<{ properties?: { title?: string } }> };
@@ -406,7 +406,7 @@ export default {
             const response = await fetch(sheetUrl, { headers: { authorization: "Bearer " + token } });
             if (!response.ok) {
               let detail = "";
-              try { const payload = await response.json() as { error?: { status?: string; message?: string } }; detail = [payload.error?.status, payload.error?.message].filter(Boolean).join(": "); } catch { /* Abaikan respons error yang bukan JSON. */ }
+              try { const payload = await response.json() as { error?: { status?: string; message?: string } }; detail = [payload.error?.status, payload.error?.message].filter(Boolean).join(": "); } catch {}
               return reply({ error: "Google Sheets menolak permintaan (HTTP " + response.status + "). " + (detail || "Periksa izin spreadsheet, ID spreadsheet, dan nama tab.") }, 502);
             }
             const sheet = await response.json() as { values?: string[][] };
@@ -418,7 +418,6 @@ export default {
               headers.forEach((header, i) => {
                 if (header) record[header] = String(row[i] || "");
               });
-              // Opaque workflow identity derived from respondent fields, never from a mutable sheet row number.
               const field = (pattern: RegExp) => headers.find((header) => pattern.test(header.trim().toLocaleLowerCase())) || "";
               const timestampHeader = field(/^timestamp$/);
               const nameHeader = field(/^(nama lengkap|nama)$/);
@@ -454,14 +453,14 @@ export default {
             const configured=(env.GOOGLE_SHEET_TAB||"From Response 1").trim();
             const norm=(v:string)=>v.toLocaleLowerCase().replace(/[^a-z0-9]/g,"");
             const tab=(meta.sheets||[]).find(x=>x.properties?.title===configured)|| (meta.sheets||[]).find(x=>norm(x.properties?.title||"")===norm(configured)) || (meta.sheets||[]).find(x=>/^(formresponses?1|fromresponses?1)$/.test(norm(x.properties?.title||"")));
-            if(!tab||typeof tab.properties?.sheetId!=="number")throw new Error("Tab respons tidak ditemukan.");
+            if(!tab||typeof tab.properties?.sheetId!="number")throw new Error("Tab respons tidak ditemukan.");
             const headRange=encodeURIComponent("'"+(tab.properties.title||"").replace(/'/g,"''")+"'!A1:AZ1");
             const headRes=await fetch(base+"/values/"+headRange,{headers:{authorization:"Bearer "+token}});
             if(!headRes.ok)throw new Error("Gagal membaca judul kolom.");
             const heads=await headRes.json() as {values?:string[][]};
             const idx=(heads.values?.[0]||[]).findIndex(x=>String(x||"").trim().toLocaleLowerCase()==="status pesan");
             if(idx<0)return reply({ok:true,removed:false,message:"Kolom Status Pesan tidak ditemukan; tidak ada kolom yang dihapus."});
-            const del=await fetch(base+":batchUpdate",{method:"POST",headers:{authorization:"Bearer "+token,"content-type":"application/json"},body:JSON.stringify({requests:[{deleteDimension:{range:{sheetId:tab.properties.sheetId,dimension:"COLUMNS",startIndex:idx,endIndex:idx+1}}}]})});
+            const del=await fetch(base+":batchUpdate",{method:"POST",headers:{authorization:"Bearer "+token,"content-type":"application/json"},body:JSON.stringify({requests:[{deleteDimension:{range:{sheetId:tab.properties.sheetId,startIndex:idx,endIndex:idx+1,dimension:"COLUMNS"}}}]})});
             if(!del.ok)throw new Error("Google Sheets menolak penghapusan kolom Status Pesan (HTTP "+del.status+").");
             await audit(env,admin.id,"remove_status_pesan_column");
             return reply({ok:true,removed:true,message:"Kolom Status Pesan dihapus. Kolom lainnya dipertahankan."});
@@ -495,7 +494,7 @@ export default {
             const meta = await metaRes.json() as { sheets?: Array<{properties?:{title?:string;sheetId?:number}}> };
             const titles = (meta.sheets || []).map(x => x.properties?.title || "");
             const configured = (env.GOOGLE_SHEET_TAB || "From Response 1").trim();
-            const norm = (v:string) => v.toLocaleLowerCase().replace(/[^a-z0-9]/g, "");
+            const norm = (v:string) => v.toLowerCase().replace(/[^a-z0-9]/g, "");
             const tab = titles.find(x => x === configured) || titles.find(x => norm(x) === norm(configured)) || titles.find(x => /^(formresponses?1|fromresponses?1)$/.test(norm(x)));
             if (!tab) throw new Error("Tab respons tidak ditemukan.");
             const headRange = encodeURIComponent("'" + tab.replace(/'/g,"''") + "'!A1:AZ1");
@@ -550,7 +549,7 @@ export default {
 
           const desil = body.desil === undefined ? null : body.desil;
           const template = body.templateChoice === undefined ? null : body.templateChoice;
-          await env.DB.prepare("INSERT INTO respondent_workflow(respondent_key,report_status,desil,template_choice,updated_by,updated_at) VALUES(?,?,?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(respondent_key) DO UPDATE SET report_status=excluded.report_status, desil=excluded.desil, template_choice=excluded.template_choice, updated_by=excluded.updated_by, updated_at=CURRENT_TIMESTAMP").bind(key, body.reportStatus, desil, template, admin.id).run();
+          await env.DB.prepare("INSERT INTO respondent_workflow(respondent_key,report_status,desil,template_choice,updated_by,updated_at) VALUES(?,?,?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(respondent_key) DO UPDATE SET report_status=excluded.report_status,desil=excluded.desil,template_choice=excluded.template_choice,updated_by=excluded.updated_by,updated_at=CURRENT_TIMESTAMP").bind(key, body.reportStatus, desil, template, admin.id).run();
           await audit(env, admin.id, "workflow_update");
           return reply({ ok: true });
         }
@@ -584,8 +583,6 @@ export default {
       }
     }
 
-    // Apply browser security headers to the HTML/CSS/JS and other static assets too,
-    // not only JSON API responses. Preserve existing asset headers and body.
     const assetResponse = await env.ASSETS.fetch(request);
     const assetHeaders = new Headers(assetResponse.headers);
     assetHeaders.set("x-content-type-options", "nosniff");
