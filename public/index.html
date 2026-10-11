@@ -96,7 +96,7 @@ function showLogin(text){
  document.body.classList.remove('authenticated');
  form.hidden=false;
  message.textContent=text||'';
- password.value='';
+ // Preserve the entered password after a failed login so the user can retry.
  password.focus();
 }
 async function parseResponse(response){
