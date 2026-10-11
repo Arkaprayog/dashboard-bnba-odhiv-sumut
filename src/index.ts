@@ -257,6 +257,15 @@ export default {
           const idHash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw)));
           const sessionNow = Math.floor(Date.now() / 1000);
           const ttl = Math.max(900, Math.min(28800, Number(env.SESSION_TTL_SECONDS) || 28800));
+
+          // Keep the session table bounded without touching any valid active session.
+          // Expired sessions can be removed immediately; revoked records are retained
+          // for 30 days to preserve a useful audit/revocation window.
+          requestStage = "login_session_cleanup";
+          await env.DB.prepare("DELETE FROM sessions WHERE expires_at<=? OR (revoked_at IS NOT NULL AND revoked_at<=?)")
+            .bind(sessionNow, sessionNow - 30 * 24 * 60 * 60).run();
+
+          requestStage = "login_insert_session";
           await env.DB.prepare("INSERT INTO sessions(id_hash,admin_id,csrf_token,created_at,expires_at) VALUES(?,?,?,?,?)").bind(idHash, admin.id, csrf, sessionNow, sessionNow + ttl).run();
 
           requestStage = "login_update_admin";
