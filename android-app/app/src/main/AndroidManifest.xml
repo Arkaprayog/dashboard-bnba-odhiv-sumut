@@ -4,6 +4,21 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Ask only when a related native feature is used. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- Hardware is optional so devices without these features can still install the app. -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <uses-feature android:name="android.hardware.location" android:required="false" />
+
+    <!-- Gallery access should use Android Photo Picker; no broad media/storage permission. -->
+    <!-- Calls and SMS should open the user's dialer/messaging app; no direct call/SMS permission. -->
+
     <application
         android:allowBackup="false"
         android:usesCleartextTraffic="false"
