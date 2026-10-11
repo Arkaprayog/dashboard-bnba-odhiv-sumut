@@ -336,17 +336,31 @@ async function loadRespondents(){
   dashboardMessage.textContent=(error instanceof Error?error.message:'Terjadi kesalahan saat memuat data.')+' Anda tetap berhasil login; periksa konfigurasi Google Sheets bila masalah berlanjut.';
  }
 }
+// Give immediate visible feedback even on slow mobile browsers.
+submit.addEventListener('click',()=>{
+ if(password.value){message.textContent='Menyiapkan proses login…';}
+});
 form.addEventListener('submit',async e=>{
  e.preventDefault();
- message.textContent='Memeriksa akun…';submit.disabled=true;
+ if(submit.dataset.busy==='1')return;
+ submit.dataset.busy='1';
+ message.textContent='Memeriksa akun…';
+ submit.disabled=true;
+ const controller=new AbortController();
+ const timeout=setTimeout(()=>controller.abort(),20000);
  try{
-  const response=await fetch('/api/login',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json'},body:JSON.stringify({password:password.value})});
+  const response=await fetch('/api/login',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','accept':'application/json'},body:JSON.stringify({password:password.value}),signal:controller.signal});
   const data=await parseResponse(response);
-  if(!response.ok||!data.ok){message.textContent=data.error||'Login gagal. Periksa password.';return;}
+  if(!response.ok||!data.ok){message.textContent=data.error||('Login gagal (HTTP '+response.status+'). Coba lagi.');return;}
   password.value='';
   showDashboard(data.admin,data.csrfToken);
- }catch(err){message.textContent='Tidak dapat menghubungi server. Periksa koneksi lalu coba lagi.';}
- finally{submit.disabled=false;}
+ }catch(err){
+  message.textContent=err&&err.name==='AbortError'?'Server terlalu lama merespons. Periksa koneksi lalu coba lagi.':'Tidak dapat menghubungi server. Periksa koneksi lalu coba lagi.';
+ }finally{
+  clearTimeout(timeout);
+  submit.dataset.busy='0';
+  submit.disabled=false;
+ }
 });
 document.getElementById('refreshButton').addEventListener('click',loadRespondents);
 document.getElementById('showChangePassword').addEventListener('click',()=>{
