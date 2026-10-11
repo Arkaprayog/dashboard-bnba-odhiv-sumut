@@ -363,8 +363,15 @@ export default {
           if (!/^[A-Za-z0-9_-]{10,200}$/.test(fileId)) return reply({ error: "ID foto tidak valid." }, 400);
           try {
             const token = await googleAccessToken(env);
-            const response = await fetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(fileId) + "?alt=media", { headers: { authorization: "Bearer " + token } });
-            if (!response.ok) return reply({ error: "Foto tidak dapat diakses. Pastikan akun layanan memiliki akses Pelihat ke folder unggahan foto (HTTP " + response.status + ")." }, 502);
+            const response = await fetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(fileId) + "?alt=media&supportsAllDrives=true", { headers: { authorization: "Bearer " + token } });
+            if (!response.ok) {
+              let driveReason = "";
+              try {
+                const payload = await response.json() as { error?: { status?: string; message?: string; errors?: Array<{ reason?: string }> } };
+                driveReason = [payload.error?.status, payload.error?.errors?.[0]?.reason, payload.error?.message].filter(Boolean).join(" — ");
+              } catch {}
+              return reply({ error: "Google Drive menolak akses foto (HTTP " + response.status + "). " + (driveReason || "Periksa izin file dan akses API Drive.") }, 502);
+            }
             const type = response.headers.get("content-type") || "application/octet-stream";
             if (!type.startsWith("image/")) return reply({ error: "Berkas yang dituju bukan gambar." }, 415);
             return new Response(response.body, { status: 200, headers: { ...NO_STORE, "content-type": type, "cache-control": "private, no-store", "content-disposition": "inline", "x-content-type-options": "nosniff" } });
