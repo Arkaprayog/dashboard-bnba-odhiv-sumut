@@ -1,10 +1,11 @@
 # Catatan Versi — Dashboard BNBA ODHIV Sumut
 
-## v0.3.0 — 12 Oktober 2026
-- Menambahkan penomoran versi aplikasi yang ditampilkan di halaman akses.
-- Menetapkan kebijakan pembaruan nomor versi dan catatan perubahan.
-- Menyusun menu utama: Beranda, Database, Kuesioner, Asesmen, dan Berita.
+## v1.0.0 — 12 Oktober 2026
+- Menetapkan nomor versi utama aplikasi menjadi v1.0.0.
+- Menampilkan nomor versi pada halaman akses.
+- Menu utama: Beranda, Database, Kuesioner, Asesmen, dan Berita.
 - Menu Asesmen masih berupa placeholder; formulir belum diaktifkan dan belum menyimpan data.
+- **Catatan kesiapan:** penetapan nomor versi bukan sertifikasi keamanan atau bukti bahwa seluruh fitur sudah lolos uji produksi. Validasi keamanan, alur data sensitif, integrasi, dan deployment tetap harus diperiksa sebelum aplikasi dipakai untuk mengelola data responden nyata.
 
 ## Kebijakan versi
 - **MAJOR** (x.0.0): perubahan besar yang dapat mengubah alur atau kompatibilitas.
