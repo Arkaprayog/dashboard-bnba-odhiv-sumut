@@ -112,12 +112,6 @@ async function loadRespondents(){
   if(!response.ok) throw new Error(data.error||'Data responden tidak dapat dimuat.');
   const allHeaders=Array.isArray(data.headers)?data.headers:[];
   const items=Array.isArray(data.items)?data.items:[];
-  let workflowByKey={};
-  try{
-    const workflowResponse=await fetch('/api/workflow',{method:'GET',credentials:'same-origin',cache:'no-store'});
-    const workflowData=await parseResponse(workflowResponse);
-    if(workflowResponse.ok&&Array.isArray(workflowData.items))workflowData.items.forEach(entry=>{workflowByKey[entry.respondent_key]=entry;});
-  }catch(error){/* Metadata workflow tetap opsional agar data responden tetap tampil. */}
   const headers=allHeaders.filter(name=>String(name).trim().toLowerCase()!=='score');
   respondentSummary.textContent='Sumber: '+(data.source||'Google Sheets')+' · Total: '+items.length+' responden';
   let stats=document.getElementById('respondentStats');
@@ -150,7 +144,7 @@ async function loadRespondents(){
   const table=document.createElement('table');table.className='datatable';
   const thead=document.createElement('thead');const headRow=document.createElement('tr');
   headers.forEach(name=>{const th=document.createElement('th');th.textContent=String(name);headRow.appendChild(th);});
-  ['Status laporan','Desil','Template pesan','Aksi'].forEach(name=>{const th=document.createElement('th');th.textContent=name;headRow.appendChild(th);});
+
   thead.appendChild(headRow);table.appendChild(thead);
   const tbody=document.createElement('tbody');
   const nameHeader=allHeaders.find(name=>String(name).trim().toLocaleLowerCase()==='nama lengkap');
@@ -190,37 +184,11 @@ async function loadRespondents(){
         td.textContent=String(value);
         tr.appendChild(td);
       });
-      const key=String(item._key||'');
-      const saved=workflowByKey[key]||{};
-      const makeSelect=(label,options,current)=>{
-        const select=document.createElement('select');select.className='workflow-control';select.setAttribute('aria-label',label);
-        options.forEach(option=>{const opt=document.createElement('option');opt.value=option.value;opt.textContent=option.label;if(option.value===String(current??''))opt.selected=true;select.appendChild(opt);});
-        return select;
-      };
-      const status=makeSelect('Status laporan',[{value:'Belum Dilaporkan',label:'Belum Dilaporkan'},{value:'Proses Verifikasi',label:'Proses Verifikasi'},{value:'Sudah Dilaporkan',label:'Sudah Dilaporkan'}],saved.report_status||'Belum Dilaporkan');
-      const desil=makeSelect('Desil',[{value:'',label:'Pilih desil'},...Array.from({length:10},(_,i)=>({value:String(i+1),label:'Desil '+(i+1)}))],saved.desil==null?'':String(saved.desil));
-      const template=makeSelect('Template pesan',[{value:'',label:'Pilih template'},{value:'Template 1',label:'Template 1'},{value:'Template 2',label:'Template 2'}],saved.template_choice||'');
-      [status,desil,template].forEach(control=>{const td=document.createElement('td');td.appendChild(control);tr.appendChild(td);});
-      const actionCell=document.createElement('td');const save=document.createElement('button');save.type='button';save.className='dashbtn workflow-save';save.textContent='Simpan';
-      const state=document.createElement('span');state.className='workflow-state';state.setAttribute('role','status');
-      save.addEventListener('click',async()=>{
-        if(!key){state.textContent='Kunci responden tidak tersedia';return;}
-        save.disabled=true;state.textContent='Menyimpan…';
-        try{
-          const result=await fetch('/api/workflow',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify({respondentKey:key,reportStatus:status.value,desil:desil.value===''?null:Number(desil.value),templateChoice:template.value||null})});
-          const payload=await parseResponse(result);
-          if(!result.ok||!payload.ok)throw new Error(payload.error||'Metadata belum tersimpan.');
-          workflowByKey[key]={respondent_key:key,report_status:status.value,desil:desil.value===''?null:Number(desil.value),template_choice:template.value||null};
-          state.textContent='Tersimpan';
-        }catch(error){state.textContent=error instanceof Error?error.message:'Gagal menyimpan';}
-        finally{save.disabled=false;}
-      });
-      actionCell.append(save,state);tr.appendChild(actionCell);
       tbody.appendChild(tr);shown++;
     });
     const countLabel=document.getElementById('respondentFilteredCount');
     if(countLabel)countLabel.textContent=query?'Menampilkan '+shown+' dari '+items.length+' responden':'';
-    if(query&&shown===0){const tr=document.createElement('tr');const td=document.createElement('td');td.colSpan=headers.length+4;td.textContent='Tidak ada responden yang cocok dengan pencarian.';tr.appendChild(td);tbody.appendChild(tr);}
+    if(query&&shown===0){const tr=document.createElement('tr');const td=document.createElement('td');td.colSpan=headers.length;td.textContent='Tidak ada responden yang cocok dengan pencarian.';tr.appendChild(td);tbody.appendChild(tr);}
   };
   table.appendChild(tbody);respondentData.appendChild(table);
   let countLabel=document.getElementById('respondentFilteredCount');
