@@ -99,6 +99,20 @@
       <p class="scroll-hint" id="pushHelp">Aktifkan notifikasi perangkat agar pemberitahuan dapat muncul saat dashboard berada di latar belakang.</p>
     </div>
 
+    <form id="ownerProfileForm" class="dashpanel" hidden>
+      <h3>Profil Owner</h3>
+      <div class="owner-form-grid">
+        <div class="dashfield"><label for="ownerPhoto">Foto profil (JPEG/PNG/WebP, file asli maks. 10 MB; dioptimalkan otomatis)</label><input class="owner-photo-input" id="ownerPhoto" type="file" accept="image/jpeg,image/png,image/webp"></div>
+        <div class="dashfield"><label for="ownerEmployeeName">Nama Pegawai *</label><input id="ownerEmployeeName" maxlength="100" required></div>
+        <div class="dashfield"><label for="ownerNip">NIP</label><input id="ownerNip" maxlength="40"></div>
+        <div class="dashfield"><label for="ownerPhone">Nomor HP</label><input id="ownerPhone" maxlength="40" inputmode="tel"></div>
+        <div class="dashfield"><label for="ownerEmail">Email</label><input id="ownerEmail" type="email" maxlength="160"></div>
+        <div class="dashfield"><label for="ownerInstitution">Instansi</label><input id="ownerInstitution" maxlength="160"></div>
+        <div class="dashfield" style="grid-column:1/-1"><label for="ownerAddress">Alamat</label><input id="ownerAddress" maxlength="300"></div>
+      </div>
+      <div class="owner-form-actions"><button class="dashbtn" id="saveOwnerProfile" type="submit">Simpan profil</button><button class="dashbtn" id="cancelOwnerProfile" type="button">Batal</button></div>
+      <p class="dashmsg" id="ownerProfileMessage" role="status" aria-live="polite"></p>
+    </form>
     <nav class="app-nav" id="appNavigation" aria-label="Menu utama">
       <button type="button" data-view="home" aria-current="page">▦ Beranda Statistik</button>
       <button type="button" data-view="database">▤ Database Responden</button>
@@ -131,20 +145,7 @@
       <p class="scroll-hint">Berita menampilkan judul, ringkasan singkat, sumber, tanggal, dan tautan artikel asli. Ketersediaan berita bergantung pada sumber RSS.</p>
     </section>
     <div id="databaseView" class="app-view" hidden aria-label="Database Responden">
-    <form id="ownerProfileForm" class="dashpanel" hidden>
-      <h3>Profil Owner</h3>
-      <div class="owner-form-grid">
-        <div class="dashfield"><label for="ownerPhoto">Foto profil (JPEG/PNG/WebP, file asli maks. 10 MB; dioptimalkan otomatis)</label><input class="owner-photo-input" id="ownerPhoto" type="file" accept="image/jpeg,image/png,image/webp"></div>
-        <div class="dashfield"><label for="ownerEmployeeName">Nama Pegawai *</label><input id="ownerEmployeeName" maxlength="100" required></div>
-        <div class="dashfield"><label for="ownerNip">NIP</label><input id="ownerNip" maxlength="40"></div>
-        <div class="dashfield"><label for="ownerPhone">Nomor HP</label><input id="ownerPhone" maxlength="40" inputmode="tel"></div>
-        <div class="dashfield"><label for="ownerEmail">Email</label><input id="ownerEmail" type="email" maxlength="160"></div>
-        <div class="dashfield"><label for="ownerInstitution">Instansi</label><input id="ownerInstitution" maxlength="160"></div>
-        <div class="dashfield" style="grid-column:1/-1"><label for="ownerAddress">Alamat</label><input id="ownerAddress" maxlength="300"></div>
-      </div>
-      <div class="owner-form-actions"><button class="dashbtn" id="saveOwnerProfile" type="submit">Simpan profil</button><button class="dashbtn" id="cancelOwnerProfile" type="button">Batal</button></div>
-      <p class="dashmsg" id="ownerProfileMessage" role="status" aria-live="polite"></p>
-    </form>
+
     <div class="dashactions">
       <button class="dashbtn" id="refreshButton" type="button">Muat data responden</button>
       <button class="dashbtn" id="showChangePassword" type="button">Ganti password</button>
