@@ -848,6 +848,21 @@ notificationBell.addEventListener('click',async()=>{
  notificationPanel.hidden=!notificationPanel.hidden;notificationBell.setAttribute('aria-expanded',String(!notificationPanel.hidden));
  if(!notificationPanel.hidden){await loadNotifications();try{await fetch('/api/notifications/read',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken}});await loadNotifications();}catch{}}
 });
+async function testPushNotification(){
+ const button=document.getElementById('testPushButton');
+ const help=document.getElementById('pushHelp');
+ button.disabled=true;const original=button.textContent;button.textContent='Mengirim tes…';
+ try{
+  const response=await fetch('/api/push-test',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken}});
+  const data=await parseResponse(response);
+  if(!response.ok||!data.ok)throw new Error(data.error||'Tes notifikasi gagal dikirim.');
+  help.textContent='Permintaan tes berhasil dikirim. Periksa notifikasi ponsel; pengiriman push dapat memerlukan beberapa detik.';
+  await loadNotifications();
+ }catch(error){
+  help.textContent=error instanceof Error?error.message:'Tes notifikasi belum berhasil. Periksa izin ponsel dan konfigurasi push.';
+ }finally{button.disabled=false;button.textContent=original;}
+}
+document.getElementById('testPushButton').addEventListener('click',testPushNotification);
 document.getElementById('enablePushButton').addEventListener('click',enablePushNotifications);
 document.getElementById('refreshButton').addEventListener('click',loadRespondents);
 document.getElementById('showChangePassword').addEventListener('click',()=>{
