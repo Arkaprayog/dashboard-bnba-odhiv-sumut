@@ -19,7 +19,7 @@ interface Env {
   GOOGLE_SHEET_TAB?: string;
 }
 
-const NO_STORE = { "cache-control": "no-store", "x-content-type-options": "nosniff" };
+const NO_STORE = { "cache-control": "no-store", "x-content-type-options": "nosniff", "x-frame-options": "DENY", "referrer-policy": "no-referrer", "permissions-policy": "camera=(), microphone=(), geolocation=()" };
 
 function reply(data: unknown, status = 200, extra: Record<string, string> = {}) {
   return new Response(JSON.stringify(data), {
