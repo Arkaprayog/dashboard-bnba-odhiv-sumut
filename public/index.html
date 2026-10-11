@@ -18,6 +18,27 @@
 .top-actions{display:flex;align-items:center;gap:8px}.bell-button{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:42px;height:42px;border:1px solid rgba(255,255,255,.38);border-radius:11px;background:rgba(4,48,110,.7);color:#fff;cursor:pointer}.bell-count{position:absolute;top:-6px;right:-5px;min-width:18px;height:18px;padding:0 4px;border-radius:99px;background:#f04452;color:#fff;font-size:.68rem;font-weight:800;line-height:18px}.notification-panel{position:relative;margin:0 0 16px;padding:14px;border:1px solid rgba(255,255,255,.3);border-radius:14px;background:rgba(0,31,78,.75);text-align:left}.notification-panel h3{margin:0 0 10px;font-size:1rem}.notification-list{display:grid;gap:8px;max-height:260px;overflow:auto}.notification-item{padding:10px;border-radius:9px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}.notification-item strong{display:block;font-size:.88rem}.notification-item p{margin:4px 0;font-size:.82rem;color:#e1edff}.notification-item small{font-size:.72rem;color:#c7dcf5}.notification-empty{font-size:.85rem;color:#dcecff}
 .owner-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.owner-form-grid .dashfield{min-width:0}.owner-form-grid .dashfield input{min-width:0}.owner-photo-input{color:#fff!important;height:auto!important;padding:10px!important;background:rgba(0,35,90,.3)!important}.owner-form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 @media(max-width:600px){.owner-card{align-items:flex-start;gap:10px;padding:10px}.owner-avatar{width:58px;height:58px;flex-basis:58px}.owner-edit{font-size:.8rem;padding:8px}.owner-summary h3{font-size:.92rem}.owner-summary p{font-size:.76rem}.top-actions{gap:6px}.bell-button{min-width:40px;height:40px}.owner-form-grid{grid-template-columns:minmax(0,1fr)}}
+
+.app-nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0;padding:8px;border:1px solid rgba(255,255,255,.22);border-radius:14px;background:rgba(0,30,80,.24)}
+.app-nav button{flex:1 1 140px;min-height:44px;border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:10px 12px;background:rgba(0,35,90,.28);color:#fff;font:inherit;font-weight:750;cursor:pointer}
+.app-nav button[aria-current="page"]{background:#fff;color:#07366f;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.app-view{min-width:0}.overview-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
+.overview-card{min-width:0;padding:14px;border:1px solid rgba(255,255,255,.25);border-radius:13px;background:rgba(255,255,255,.08)}
+.overview-card small{display:block;color:#dcecff;font-size:.8rem}.overview-card strong{display:block;margin-top:5px;font-size:1.4rem;overflow-wrap:anywhere}
+.overview-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.overview-panel{min-width:0;margin-top:12px;padding:15px;border:1px solid rgba(255,255,255,.25);border-radius:15px;background:rgba(0,35,90,.24);text-align:left}
+.overview-panel h3{margin:0 0 5px;font-size:1rem}.overview-panel p{margin:4px 0;color:#dcecff;font-size:.82rem;line-height:1.5}
+.region-bars{display:grid;gap:8px;margin-top:12px}.region-row{display:grid;grid-template-columns:minmax(90px,1fr) minmax(70px,2fr) auto;gap:8px;align-items:center;font-size:.8rem}
+.region-name{overflow-wrap:anywhere;color:#f0f6ff}.region-track{height:10px;border-radius:99px;background:rgba(255,255,255,.15);overflow:hidden}.region-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#26c4e3,#23c781)}
+.chart-legend{display:grid;gap:9px;margin-top:12px}.legend-row{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:8px;align-items:center;font-size:.85rem}.legend-dot{width:11px;height:11px;border-radius:50%}
+.news-tools{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.news-tools select,.news-tools input{min-height:42px;min-width:0;flex:1 1 180px;border:1px solid #dce8f7;border-radius:9px;padding:8px 10px;background:#fff;color:#123b67;font:inherit}
+.news-status{color:#dcecff;font-size:.82rem;margin:8px 0}.news-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.news-card{min-width:0;padding:15px;border:1px solid rgba(255,255,255,.22);border-radius:14px;background:rgba(0,35,90,.32);text-align:left}
+.news-card .news-category{display:inline-block;margin-bottom:8px;padding:4px 7px;border-radius:99px;background:rgba(38,196,227,.18);color:#baf2ff;font-size:.72rem;font-weight:750}
+.news-card h3{font-size:1rem;line-height:1.4;margin:0 0 8px;overflow-wrap:anywhere}.news-card p{font-size:.85rem;line-height:1.5;color:#e1edff;margin:0 0 10px;overflow-wrap:anywhere}
+.news-meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:#c7dcf5;font-size:.75rem;margin-bottom:10px}
+.news-link{display:inline-block;color:#9de8ff;font-weight:750;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:850px){.overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-panels,.news-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.app-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.app-nav button{min-width:0;padding:9px 5px;font-size:.86rem}.overview-card{padding:11px}.overview-card strong{font-size:1.2rem}.overview-panel{padding:11px}.region-row{grid-template-columns:minmax(80px,1fr) minmax(45px,1fr) auto;gap:6px}.news-card{padding:12px}}
 </style>
 </head>
 <body>
@@ -77,6 +98,39 @@
       <div class="notification-list" id="notificationList"><p class="notification-empty">Memuat notifikasi…</p></div>
       <p class="scroll-hint" id="pushHelp">Aktifkan notifikasi perangkat agar pemberitahuan dapat muncul saat dashboard berada di latar belakang.</p>
     </div>
+
+    <nav class="app-nav" id="appNavigation" aria-label="Menu utama">
+      <button type="button" data-view="home" aria-current="page">▦ Beranda Statistik</button>
+      <button type="button" data-view="database">▤ Database Responden</button>
+      <button type="button" data-view="questionnaire">▧ Kuesioner</button>
+      <button type="button" data-view="news">▤ Berita</button>
+    </nav>
+    <section class="app-view" id="homeView" aria-label="Beranda Statistik">
+      <div class="dashhead"><div><h2>Beranda Statistik</h2><p>Ringkasan data responden dari kuesioner</p></div><button class="dashbtn" id="refreshOverview" type="button">Perbarui statistik</button></div>
+      <div class="overview-grid">
+        <div class="overview-card"><small>Total responden</small><strong id="overviewTotal">—</strong></div>
+        <div class="overview-card"><small>Kabupaten/kota terdata</small><strong id="overviewRegions">—</strong></div>
+        <div class="overview-card"><small>Kelompok usia terdata</small><strong id="overviewAges">—</strong></div>
+        <div class="overview-card"><small>Data gender terisi</small><strong id="overviewGender">—</strong></div>
+      </div>
+      <div class="overview-panels">
+        <section class="overview-panel"><h3>Persebaran responden per kabupaten/kota</h3><p>Jumlah dihitung dari kolom wilayah yang tersedia pada kuesioner.</p><div id="regionBars" class="region-bars"><p>Memuat statistik wilayah…</p></div><p id="mapBoundaryNote">Peta batas kabupaten/kota akan ditampilkan setelah pencocokan data batas administrasi dengan nama wilayah kuesioner selesai diverifikasi. Tidak ada wilayah atau angka yang direka.</p></section>
+        <section class="overview-panel"><h3>Jenis kelamin</h3><p>Laki-laki navy · Perempuan pink. Kategori mengikuti data formulir.</p><div id="genderChart" class="chart-legend"><p>Memuat statistik gender…</p></div></section>
+        <section class="overview-panel"><h3>Distribusi usia</h3><p>Kelompok usia dibentuk dari nilai usia yang benar-benar tersedia.</p><div id="ageChart" class="chart-legend"><p>Memuat statistik usia…</p></div></section>
+        <section class="overview-panel"><h3>Catatan data</h3><p id="overviewDataNote">Statistik hanya ditampilkan secara agregat untuk menjaga kerahasiaan responden.</p><p id="overviewUpdated">Belum ada data statistik yang dimuat.</p></section>
+      </div>
+    </section>
+    <section class="app-view" id="questionnaireView" hidden aria-label="Kuesioner Lapangan">
+      <div class="overview-panel"><h3>Kuesioner Lapangan</h3><p>Buka formulir saat bertemu calon responden baru. Pastikan calon responden memahami tujuan pengumpulan data dan menyetujui pengisian.</p><div class="dashactions"><button class="dashbtn" id="openQuestionnaire" type="button">Buka Kuesioner</button></div><p>Formulir dibuka melalui halaman publik resmi; data responden tidak ditampilkan di menu ini.</p></div>
+    </section>
+    <section class="app-view" id="newsView" hidden aria-label="Berita HIV dan Kesejahteraan Sosial">
+      <div class="dashhead"><div><h2>Berita & Informasi</h2><p>Informasi publik dari RSS sumber kesehatan dan berita Sumatera Utara</p></div><button class="dashbtn" id="refreshNews" type="button">Perbarui berita</button></div>
+      <div class="news-tools"><select id="newsCategory" aria-label="Filter kategori berita"><option value="">Semua kategori</option><option>HIV/AIDS</option><option>Kemensos</option><option>Bansos dan Kebijakan</option><option>Kemenkes dan Layanan Kesehatan</option><option>Sumatera Utara</option></select><input id="newsSearch" type="search" placeholder="Cari judul berita…" aria-label="Cari berita"></div>
+      <p class="news-status" id="newsStatus" role="status" aria-live="polite">Berita belum dimuat.</p>
+      <div class="news-grid" id="newsGrid"><p>Tekan “Perbarui berita” untuk mengambil berita terbaru.</p></div>
+      <p class="scroll-hint">Berita menampilkan judul, ringkasan singkat, sumber, tanggal, dan tautan artikel asli. Ketersediaan berita bergantung pada sumber RSS.</p>
+    </section>
+    <div id="databaseView" class="app-view" hidden aria-label="Database Responden">
     <form id="ownerProfileForm" class="dashpanel" hidden>
       <h3>Profil Owner</h3>
       <div class="owner-form-grid">
@@ -104,6 +158,7 @@
     </form>
     <p class="dashmsg" id="dashboardMessage" role="status" aria-live="polite"></p>
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
+    </div>
   </section>
   <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI</p>
   <div class="rule"></div>
@@ -223,6 +278,102 @@ function startNotificationPolling(){
 }
 let csrfToken='';
 toggle.addEventListener('click',()=>{const show=password.type==='password';password.type=show?'text':'password';toggle.setAttribute('aria-label',show?'Sembunyikan password':'Tampilkan password');});
+
+const NEWS_QUESTIONNAIRE_URL='https://sahabatodhiv-sumut.aryprayoga139.workers.dev/kuesioner.html';
+let overviewRows=[];
+let overviewHeaders=[];
+let newsItems=[];
+function setAppView(view){
+ const views={home:document.getElementById('homeView'),database:document.getElementById('databaseView'),questionnaire:document.getElementById('questionnaireView'),news:document.getElementById('newsView')};
+ Object.entries(views).forEach(([key,node])=>{if(node)node.hidden=key!==view;});
+ document.querySelectorAll('#appNavigation [data-view]').forEach(button=>{if(button.dataset.view===view)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
+ if(view==='news'&&!newsItems.length)loadNews();
+ if(view==='questionnaire')document.getElementById('openQuestionnaire').focus({preventScroll:true});
+}
+document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button)setAppView(button.dataset.view);});
+document.getElementById('openQuestionnaire').addEventListener('click',()=>window.open(NEWS_QUESTIONNAIRE_URL,'_blank','noopener,noreferrer'));
+document.getElementById('refreshOverview').addEventListener('click',()=>{if(overviewRows.length)renderOverview(overviewRows,overviewHeaders);else loadRespondents();});
+function normalizedFieldName(value){return String(value??'').normalize('NFKD').toLocaleLowerCase().replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');}
+function findField(headers, patterns){
+ return headers.find(header=>{const normalized=normalizedFieldName(header);return patterns.some(pattern=>pattern.test(normalized));});
+}
+function renderLegend(container,counts,colors){
+ container.replaceChildren();
+ const total=Object.values(counts).reduce((sum,value)=>sum+value,0);
+ if(!total){container.textContent='Belum ada data yang dapat dihitung dari kolom formulir.';return;}
+ Object.entries(counts).forEach(([label,count],index)=>{
+  const row=document.createElement('div');row.className='legend-row';
+  const dot=document.createElement('span');dot.className='legend-dot';dot.style.background=colors[index%colors.length];
+  const text=document.createElement('span');text.textContent=label;
+  const value=document.createElement('strong');value.textContent=count+' ('+Math.round(count/total*100)+'%)';
+  row.append(dot,text,value);container.append(row);
+ });
+}
+function renderOverview(items,headers){
+ overviewRows=items;overviewHeaders=headers;
+ const total=items.length;
+ document.getElementById('overviewTotal').textContent=String(total);
+ const regionField=findField(headers,[/kabupaten/,/kota/,/domisili/,/wilayah/,/tempattinggal/,/alamatkab/]);
+ const genderField=findField(headers,[/^jeniskelamin$/, /^gender$/, /jeniskelaminresponden/]);
+ const ageField=findField(headers,[/^usia$/, /^umur$/, /usiaresponden/, /umurresponden/]);
+ const regionCounts={};
+ if(regionField)items.forEach(item=>{const v=String(item[regionField]??'').trim();if(v)regionCounts[v]=(regionCounts[v]||0)+1;});
+ const regions=Object.keys(regionCounts).length;
+ document.getElementById('overviewRegions').textContent=regionField?String(regions):'Kolom tidak ditemukan';
+ document.getElementById('overviewAges').textContent=ageField?String(items.filter(item=>String(item[ageField]??'').trim()).length):'Kolom tidak ditemukan';
+ document.getElementById('overviewGender').textContent=genderField?String(items.filter(item=>String(item[genderField]??'').trim()).length):'Kolom tidak ditemukan';
+ const regionBars=document.getElementById('regionBars');regionBars.replaceChildren();
+ const sorted=Object.entries(regionCounts).sort((a,b)=>b[1]-a[1]).slice(0,12);
+ if(!regionField||!sorted.length){const p=document.createElement('p');p.textContent=regionField?'Belum ada nilai wilayah terisi.':'Kolom kabupaten/kota belum dapat dikenali dari judul kolom formulir.';regionBars.append(p);}
+ else{
+  const max=Math.max(...sorted.map(row=>row[1]),1);
+  sorted.forEach(([name,count])=>{const row=document.createElement('div');row.className='region-row';const label=document.createElement('span');label.className='region-name';label.textContent=name;const track=document.createElement('span');track.className='region-track';const fill=document.createElement('span');fill.className='region-fill';fill.style.display='block';fill.style.width=(count/max*100)+'%';track.append(fill);const value=document.createElement('strong');value.textContent=String(count);row.append(label,track,value);regionBars.append(row);});
+ }
+ const genders={'Laki-laki':0,'Perempuan':0,'Lainnya/tidak disebutkan':0};
+ if(genderField)items.forEach(item=>{const raw=String(item[genderField]??'').trim().toLocaleLowerCase('id');if(!raw)return;if(/laki|pria|male/.test(raw))genders['Laki-laki']++;else if(/perempuan|wanita|female/.test(raw))genders['Perempuan']++;else genders['Lainnya/tidak disebutkan']++;});
+ renderLegend(document.getElementById('genderChart'),genderField?genders:{},['#173B73','#F06B9A','#8C9DB8']);
+ const ages={'Di bawah 18':0,'18–24 tahun':0,'25–34 tahun':0,'35–44 tahun':0,'45 tahun ke atas':0};
+ if(ageField)items.forEach(item=>{const raw=String(item[ageField]??'').trim();if(!raw)return;const age=Number(raw.match(/\d{1,3}/)?.[0]);if(!Number.isFinite(age))return;if(age<18)ages['Di bawah 18']++;else if(age<=24)ages['18–24 tahun']++;else if(age<=34)ages['25–34 tahun']++;else if(age<=44)ages['35–44 tahun']++;else ages['45 tahun ke atas']++;});
+ renderLegend(document.getElementById('ageChart'),ageField?ages:{},['#23C781','#39A9F7','#9B70D6','#F3A41B','#E67B5D']);
+ document.getElementById('overviewUpdated').textContent='Statistik terakhir dimuat: '+new Date().toLocaleString('id-ID');
+ document.getElementById('overviewDataNote').textContent='Statistik agregat saja. Wilayah terbanyak yang tercatat: '+(sorted[0]?.[0]||'belum tersedia')+'. Tidak ada identitas responden yang ditampilkan.';
+}
+function escapeNewsText(value){return String(value??'').replace(/[&<>"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]));}
+function renderNews(){
+ const grid=document.getElementById('newsGrid');grid.replaceChildren();
+ const category=document.getElementById('newsCategory').value;
+ const query=document.getElementById('newsSearch').value.trim().toLocaleLowerCase('id');
+ const filtered=newsItems.filter(item=>(!category||item.category===category)&&(!query||(item.title+' '+item.summary+' '+item.source).toLocaleLowerCase('id').includes(query)));
+ if(!filtered.length){const p=document.createElement('p');p.textContent=newsItems.length?'Tidak ada berita yang cocok dengan filter ini.':'Belum ada berita yang berhasil diambil. Coba muat ulang nanti.';grid.append(p);return;}
+ filtered.forEach(item=>{
+  const card=document.createElement('article');card.className='news-card';
+  const cat=document.createElement('span');cat.className='news-category';cat.textContent=item.category||'Berita';
+  const title=document.createElement('h3');title.textContent=item.title||'Tanpa judul';
+  const meta=document.createElement('div');meta.className='news-meta';const source=document.createElement('span');source.textContent=item.source||'Sumber berita';const date=document.createElement('time');date.textContent=item.publishedAt?new Date(item.publishedAt).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}):'Tanggal tidak tersedia';meta.append(source,date);
+  const summary=document.createElement('p');summary.textContent=item.summary||'Buka artikel sumber untuk membaca informasi selengkapnya.';
+  const link=document.createElement('a');link.className='news-link';link.href=item.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Baca artikel asli ↗';
+  card.append(cat,title,meta,summary,link);grid.append(card);
+ });
+}
+async function loadNews(){
+ const status=document.getElementById('newsStatus');const button=document.getElementById('refreshNews');
+ button.disabled=true;status.textContent='Memeriksa sumber berita publik…';
+ try{
+  const response=await fetch('/api/news',{credentials:'same-origin',cache:'no-store'});
+  const data=await parseResponse(response);
+  if(!response.ok||!data.ok)throw new Error(data.error||'Sumber berita belum dapat diakses.');
+  newsItems=Array.isArray(data.items)?data.items:[];
+  renderNews();
+  status.textContent=newsItems.length+' berita tersedia · '+(data.sourcesSucceeded||0)+' dari '+(data.sourcesChecked||0)+' sumber berhasil diperiksa · Diperbarui '+new Date(data.updatedAt||Date.now()).toLocaleString('id-ID');
+ }catch(error){
+  status.textContent='Berita belum dapat diperbarui. '+(error instanceof Error?error.message:'Periksa koneksi dan coba lagi.');
+  if(!newsItems.length){const grid=document.getElementById('newsGrid');grid.replaceChildren();const p=document.createElement('p');p.textContent='Sumber RSS mungkin sedang tidak tersedia. Coba lagi nanti.';grid.append(p);}
+ }finally{button.disabled=false;}
+}
+document.getElementById('refreshNews').addEventListener('click',loadNews);
+document.getElementById('newsCategory').addEventListener('change',renderNews);
+document.getElementById('newsSearch').addEventListener('input',renderNews);
+
 function showDashboard(admin,csrf){
  csrfToken=csrf||'';
  document.body.classList.add('authenticated');
@@ -233,11 +384,13 @@ function showDashboard(admin,csrf){
  loadOwnerProfile();
  loadNotifications();
  startNotificationPolling();
+ setAppView('home');
  loadRespondents();
 }
 function showLogin(text){
  dashboard.hidden=true;
  document.body.classList.remove('authenticated');
+ if(document.getElementById('appNavigation'))setAppView('home');
  form.hidden=false;
  message.textContent=text||'';
  // Preserve the entered password after a failed login so the user can retry.
@@ -257,6 +410,7 @@ async function loadRespondents(){
   if(!response.ok) throw new Error(data.error||'Data responden tidak dapat dimuat.');
   const allHeaders=Array.isArray(data.headers)?data.headers:[];
   const items=Array.isArray(data.items)?data.items:[];
+  renderOverview(items,allHeaders);
   const headers=allHeaders.filter(name=>{const h=String(name).trim().toLowerCase();return h!=='score'&&!/^status\s*pesan$/.test(h);});
   respondentSummary.textContent='Sumber: '+(data.source||'Google Sheets')+' · Total: '+items.length+' responden';
   let stats=document.getElementById('respondentStats');
