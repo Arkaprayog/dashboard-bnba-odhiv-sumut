@@ -106,7 +106,9 @@ jobs:
           api_status="$(curl --silent --show-error --output /tmp/sahabat-respondents.json --write-out '%{http_code}' "$APP_URL/api/respondents")"
           test "$api_status" = "401" || (echo "::error::Sahabat respondent API should require authentication (HTTP 401), got $api_status." && cat /tmp/sahabat-respondents.json && exit 1)
           node -e 'const fs=require("fs");const d=JSON.parse(fs.readFileSync("/tmp/sahabat-respondents.json","utf8"));if(!d.error)process.exit(1);'
-          echo "Sahabat ODHIV smoke checks passed."
+          bootstrap_status="$(curl --silent --show-error --output /tmp/sahabat-bootstrap.json --write-out '%{http_code}' -X POST -H "Origin: $APP_URL" -H "Content-Type: application/json" --data '{}' "$APP_URL/api/setup-owner")"
+          test "$bootstrap_status" = "403" || (echo "::error::Sahabat bootstrap endpoint must reject requests without a token (HTTP 403), got $bootstrap_status." && cat /tmp/sahabat-bootstrap.json && exit 1)
+          echo "Sahabat ODHIV smoke checks passed: public page available, respondent API protected, bootstrap rejects missing token."
       - name: Verify production backend health
         env:
           HEALTH_URL: https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev/api/health
@@ -143,4 +145,6 @@ jobs:
           api_status="$(curl --silent --show-error --output /tmp/respondents.json --write-out '%{http_code}' "$APP_URL/api/respondents")"
           test "$api_status" = "401" || (echo "::error::Unauthenticated respondent endpoint should return HTTP 401, got $api_status." && cat /tmp/respondents.json && exit 1)
           node -e 'const fs=require("fs");const d=JSON.parse(fs.readFileSync("/tmp/respondents.json","utf8"));if(!d.error)process.exit(1);'
-          echo "Production smoke checks passed: dashboard HTML is available and respondent API requires authentication."
+          bootstrap_status="$(curl --silent --show-error --output /tmp/production-bootstrap.json --write-out '%{http_code}' -X POST -H "Origin: $APP_URL" -H "Content-Type: application/json" --data '{}' "$APP_URL/api/setup-owner")"
+          test "$bootstrap_status" = "403" || (echo "::error::Production bootstrap endpoint must reject requests without a token (HTTP 403), got $bootstrap_status." && cat /tmp/production-bootstrap.json && exit 1)
+          echo "Production smoke checks passed: dashboard HTML available, respondent API protected, bootstrap rejects missing token."
