@@ -394,14 +394,23 @@ export default {
             const values = sheet.values || [];
             if (values.length < 1) return reply({ items: [], headers: [] });
             const headers = values[0].map((v) => String(v || "").trim());
-            const items = values.slice(1).filter((row) => row.some((v) => String(v || "").trim())).map((row, index) => {
+            const items = await Promise.all(values.slice(1).filter((row) => row.some((v) => String(v || "").trim())).map(async (row, index) => {
               const record: Record<string, string> = {};
               headers.forEach((header, i) => {
                 if (header) record[header] = String(row[i] || "");
               });
+              // Opaque workflow identity derived from respondent fields, never from a mutable sheet row number.
+              const field = (pattern: RegExp) => headers.find((header) => pattern.test(header.trim().toLocaleLowerCase())) || "";
+              const timestampHeader = field(/^timestamp$/);
+              const nameHeader = field(/^(nama lengkap|nama)$/);
+              const phoneHeader = field(/^(no\s*hp\s*\/\s*wa|no\.?\s*hp|nomor\s*(hp|wa)|whatsapp)$/);
+              const identity = [record[timestampHeader] || "", record[nameHeader] || "", record[phoneHeader] || ""].map((v) => v.trim().toLocaleLowerCase()).join("\u001f");
+              const fallback = headers.map((header) => record[header] || "").join("\u001f");
+              const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(identity.replace(/\u001f/g, "") ? identity : fallback));
+              record["_key"] = await digestHex(digest);
               record["_row"] = String(index + 2);
               return record;
-            });
+            }));
             return reply({ headers, items, source: "Google Sheets", count: items.length });
           } catch (error) {
             const incidentId = logIncident("respondents_error", error, { path: url.pathname, stage: requestStage });
