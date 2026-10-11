@@ -24,7 +24,7 @@ WEBAUTHN_RP_NAME = "Data Base PPKS ODHIV Sumut"
 WEBAUTHN_RP_ID = "dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev"
 SESSION_TTL_SECONDS = "28800"
 LOG_LEVEL = "info"
-VAPID_SUBJECT = "mailto:admin@sahabatodhiv-sumut.org"
+VAPID_SUBJECT = "mailto:aryprayoga139@gmail.com"
 
 [env.sahabatodhiv-sumut]
 name = "sahabatodhiv-sumut"
@@ -42,10 +42,10 @@ WEBAUTHN_RP_NAME = "Data Base PPKS ODHIV Sumut"
 WEBAUTHN_RP_ID = "sahabatodhiv-sumut.aryprayoga139.workers.dev"
 SESSION_TTL_SECONDS = "28800"
 LOG_LEVEL = "info"
-VAPID_SUBJECT = "mailto:admin@sahabatodhiv-sumut.org"
+VAPID_SUBJECT = "mailto:aryprayoga139@gmail.com"
 
 [env.sahabatodhiv-sumut.triggers]
-crons = ["0 2 * * *"]
+crons = ["*/5 * * * *"]
 
 [env.staging]
 name = "dashboard-bnba-odhiv-sumut-staging"
@@ -75,9 +75,10 @@ WEBAUTHN_RP_NAME = "Data Base PPKS ODHIV Sumut"
 WEBAUTHN_RP_ID = "staging-dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev"
 SESSION_TTL_SECONDS = "28800"
 LOG_LEVEL = "debug"
+VAPID_SUBJECT = "mailto:aryprayoga139@gmail.com"
 
 [triggers]
-crons = ["0 2 * * *"]
+crons = ["*/5 * * * *"]
 
 [observability]
 enabled = true
