@@ -81,3 +81,34 @@ CREATE TABLE IF NOT EXISTS login_attempts (
   succeeded INTEGER NOT NULL DEFAULT 0 CHECK (succeeded IN (0,1))
 );
 CREATE INDEX IF NOT EXISTS idx_login_attempts_user_time ON login_attempts(username_key, attempted_at);
+
+-- Owner profile and private dashboard push notifications.
+CREATE TABLE IF NOT EXISTS owner_profile (
+  id INTEGER PRIMARY KEY CHECK (id=1),
+  photo_data TEXT NOT NULL DEFAULT '',
+  photo_mime TEXT NOT NULL DEFAULT '',
+  employee_name TEXT NOT NULL DEFAULT '',
+  nip TEXT NOT NULL DEFAULT '',
+  address TEXT NOT NULL DEFAULT '',
+  phone TEXT NOT NULL DEFAULT '',
+  email TEXT NOT NULL DEFAULT '',
+  institution TEXT NOT NULL DEFAULT '',
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_by TEXT
+);
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+  endpoint_hash TEXT PRIMARY KEY,
+  endpoint TEXT NOT NULL,
+  p256dh TEXT NOT NULL,
+  auth TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS dashboard_notifications (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  body TEXT NOT NULL,
+  action TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  read_at TEXT
+);
