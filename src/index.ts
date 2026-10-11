@@ -691,6 +691,122 @@ export default {
           }
         }
 
+
+        if (url.pathname === "/api/owner-questionnaire" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          if (admin.role !== "owner") return reply({ error: "Kuesioner ini hanya dapat digunakan oleh owner." }, 403);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          if (!env.GOOGLE_SHEET_ID || !env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !env.GOOGLE_PRIVATE_KEY) {
+            return reply({ error: "Integrasi Google Sheets/Drive belum dikonfigurasi." }, 503);
+          }
+
+          let form: FormData;
+          try { form = await request.formData(); } catch { return reply({ error: "Data formulir tidak valid." }, 400); }
+          const get = (key: string, max: number) => String(form.get(key) || "").trim().slice(0, max);
+          const nama = get("namaLengkap", 160);
+          const nik = get("nik", 16);
+          const usiaText = get("usia", 3);
+          const usia = Number(usiaText);
+          const gender = get("jenisKelamin", 20);
+          const alamat = get("alamatDomisili", 400);
+          const kota = get("kotaDomisili", 120);
+          const pekerjaan = get("pekerjaan", 160);
+          const phone = get("noHpWa", 30);
+          const bantuan = get("jenisBantuan", 40);
+          const timestamp = get("timestamp", 40) || new Intl.DateTimeFormat("id-ID", { timeZone: "Asia/Jakarta", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
+          const selfPhoto = form.get("fotoDiri");
+          const ktpPhoto = form.get("fotoKtp");
+          const validPhoto = (value: FormDataEntryValue | null): value is File =>
+            value instanceof File && ["image/jpeg", "image/png", "image/webp"].includes(value.type) && value.size > 0 && value.size <= 8 * 1024 * 1024;
+          if (!nama || !/^\d{16}$/.test(nik) || !Number.isInteger(usia) || usia < 0 || usia > 120 ||
+              !["Laki-laki", "Perempuan"].includes(gender) || !alamat || !kota || !pekerjaan ||
+              !/^\+?[0-9 ()-]{8,30}$/.test(phone) || !["BANTUAN NUTRISI", "BANTUAN KEWIRAUSAHAAN"].includes(bantuan)) {
+            return reply({ error: "Periksa kembali isian wajib. NIK harus 16 digit dan usia harus 0–120." }, 400);
+          }
+          if (!validPhoto(selfPhoto) || !validPhoto(ktpPhoto)) {
+            return reply({ error: "Foto diri dan foto KTP wajib diunggah dalam format JPEG, PNG, atau WebP, maksimal 8 MB per foto." }, 400);
+          }
+
+          const uploadedIds: string[] = [];
+          try {
+            const token = await googleAccessToken(env);
+            const uploadPrivatePhoto = async (photo: File, label: string) => {
+              const safeName = (photo.name || label).replace(/[^A-Za-z0-9._-]/g, "_").slice(0, 80) || label;
+              const metadata = { name: "KuisionerOwner-" + Date.now() + "-" + label + "-" + safeName, mimeType: photo.type };
+              const uploadForm = new FormData();
+              uploadForm.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json; charset=UTF-8" }));
+              uploadForm.append("file", photo, safeName);
+              const response = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,mimeType", {
+                method: "POST", headers: { authorization: "Bearer " + token }, body: uploadForm,
+              });
+              if (!response.ok) {
+                let detail = "";
+                try { const payload = await response.json() as { error?: { message?: string } }; detail = payload.error?.message || ""; } catch {}
+                throw new Error("Google Drive gagal menyimpan " + label + " (HTTP " + response.status + "). " + detail);
+              }
+              const uploaded = await response.json() as { id?: string; mimeType?: string };
+              if (!uploaded.id || uploaded.mimeType !== photo.type) throw new Error("Google Drive tidak mengembalikan identitas file yang valid untuk " + label + ".");
+              uploadedIds.push(uploaded.id);
+              return "https://drive.google.com/file/d/" + uploaded.id + "/view";
+            };
+
+            const selfPhotoUrl = await uploadPrivatePhoto(selfPhoto, "foto-diri");
+            const ktpPhotoUrl = await uploadPrivatePhoto(ktpPhoto, "foto-ktp");
+            const spreadsheetBase = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID);
+            const metadataResponse = await fetch(spreadsheetBase + "?fields=sheets.properties.title,sheets.properties.sheetId", { headers: { authorization: "Bearer " + token } });
+            if (!metadataResponse.ok) throw new Error("Tidak dapat membaca metadata Google Sheets (HTTP " + metadataResponse.status + ").");
+            let metadata = await metadataResponse.json() as { sheets?: Array<{ properties?: { title?: string; sheetId?: number } }> };
+            let ownerTab = (metadata.sheets || []).find(sheet => sheet.properties?.title === "Kuisioner Owner");
+            if (!ownerTab) {
+              const createResponse = await fetch(spreadsheetBase + ":batchUpdate", {
+                method: "POST", headers: { authorization: "Bearer " + token, "content-type": "application/json" },
+                body: JSON.stringify({ requests: [{ addSheet: { properties: { title: "Kuisioner Owner" } } }] }),
+              });
+              if (!createResponse.ok) {
+                let detail = "";
+                try { const payload = await createResponse.json() as { error?: { message?: string } }; detail = payload.error?.message || ""; } catch {}
+                throw new Error("Gagal membuat tab Kuisioner Owner (HTTP " + createResponse.status + "). " + detail);
+              }
+              const created = await createResponse.json() as { replies?: Array<{ addSheet?: { properties?: { sheetId?: number; title?: string } } }> };
+              ownerTab = { properties: created.replies?.[0]?.addSheet?.properties || { title: "Kuisioner Owner" } };
+            }
+            const tabName = "'Kuisioner Owner'";
+            const headers = ["Timestamp", "NAMA LENGKAP", "NIK", "USIA", "JENIS KELAMIN", "ALAMAT DOMISILI SAAT INI", "KOTA DOMISILI SAAT INI", "PEKERJAAN", "NO HP/WA", "FOTO DIRI", "FOTO KTP", "JENIS BANTUAN"];
+            const headerRange = encodeURIComponent(tabName + "!A1:L1");
+            const headerCheck = await fetch(spreadsheetBase + "/values/" + headerRange, { headers: { authorization: "Bearer " + token } });
+            if (!headerCheck.ok) throw new Error("Gagal memeriksa judul kolom tab Kuisioner Owner (HTTP " + headerCheck.status + ").");
+            const headerData = await headerCheck.json() as { values?: string[][] };
+            if (!(headerData.values?.[0] || []).some(value => String(value || "").trim())) {
+              const writeHeader = await fetch(spreadsheetBase + "/values/" + headerRange + "?valueInputOption=RAW", {
+                method: "PUT", headers: { authorization: "Bearer " + token, "content-type": "application/json" },
+                body: JSON.stringify({ values: [headers] }),
+              });
+              if (!writeHeader.ok) throw new Error("Gagal menyiapkan judul kolom tab Kuisioner Owner.");
+            }
+            const appendRange = encodeURIComponent(tabName + "!A:L");
+            const appendResponse = await fetch(spreadsheetBase + "/values/" + appendRange + ":append?valueInputOption=RAW&insertDataOption=INSERT_ROWS", {
+              method: "POST", headers: { authorization: "Bearer " + token, "content-type": "application/json" },
+              body: JSON.stringify({ majorDimension: "ROWS", values: [[timestamp, nama, nik, String(usia), gender, alamat, kota, pekerjaan, phone, selfPhotoUrl, ktpPhotoUrl, bantuan]] }),
+            });
+            if (!appendResponse.ok) {
+              let detail = "";
+              try { const payload = await appendResponse.json() as { error?: { message?: string } }; detail = payload.error?.message || ""; } catch {}
+              throw new Error("Google Sheets gagal menyimpan baris kuesioner (HTTP " + appendResponse.status + "). " + detail);
+            }
+            await audit(env, admin.id, "owner_questionnaire_submit");
+            return reply({ ok: true, message: "Kuesioner tersimpan.", tab: "Kuisioner Owner" });
+          } catch (error) {
+            for (const id of uploadedIds) {
+              try { await fetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(id), { method: "DELETE", headers: { authorization: "Bearer " + token } }); } catch {}
+            }
+            const incidentId = logIncident("owner_questionnaire_submit_failed", error, { path: url.pathname, stage: requestStage });
+            return reply({ error: (error instanceof Error ? error.message : "Kuesioner gagal disimpan.") + " (ID insiden: " + incidentId + ")" }, 503);
+          }
+        }
+
         if (url.pathname === "/api/respondents" && request.method === "GET") {
           const admin = await sessionAdmin(request, env);
           if (!admin) return reply({ error: "Silakan login." }, 401);
