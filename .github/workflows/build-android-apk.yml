@@ -42,6 +42,15 @@ jobs:
           for path in paths:
               ET.parse(path)
               print(f'XML OK: {path}')
+          manifest = ET.parse(paths[0]).getroot()
+          android = '{http://schemas.android.com/apk/res/android}'
+          permissions = {node.attrib.get(android + 'name') for node in manifest.findall('uses-permission')}
+          assert 'android.permission.CAMERA' not in permissions, 'External camera intent should not request direct CAMERA permission.'
+          queries = manifest.find('queries')
+          assert queries is not None and any(node.attrib.get(android + 'name') == 'android.media.action.IMAGE_CAPTURE' for node in queries.findall('./intent/action')), 'Camera intent visibility query is missing.'
+          app = manifest.find('application')
+          assert app is not None and app.attrib.get(android + 'resizeableActivity') == 'true', 'Application must support resizing on tablets.'
+          print('Android manifest behavior checks passed.')
           PY
       - name: Run Android lint
         working-directory: android-app
