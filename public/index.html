@@ -114,9 +114,10 @@
       <p class="dashmsg" id="ownerProfileMessage" role="status" aria-live="polite"></p>
     </form>
     <nav class="app-nav" id="appNavigation" aria-label="Menu utama">
-      <button type="button" data-view="home" aria-current="page">▦ Beranda Statistik</button>
-      <button type="button" data-view="database">▤ Database Responden</button>
-      <button type="button" data-view="questionnaire">▧ Kuesioner Owner</button>
+      <button type="button" data-view="home" aria-current="page">▦ Beranda</button>
+      <button type="button" data-view="database">▤ Database</button>
+      <button type="button" data-view="questionnaire">▧ Kuesioner</button>
+      <button type="button" data-view="assessment">▧ Asesmen</button>
       <button type="button" data-view="news">▤ Berita</button>
     </nav>
     <section class="app-view" id="homeView" aria-label="Beranda Statistik">
@@ -190,6 +191,10 @@
         <div class="owner-form-actions"><button class="dashbtn" id="submitOwnerQuestionnaire" type="submit">Simpan Kuesioner</button><button class="dashbtn" id="resetOwnerQuestionnaire" type="reset">Kosongkan Form</button></div>
         <p class="dashmsg" id="ownerQuestionnaireMessage" role="status" aria-live="polite"></p>
       </form>
+    </section>
+    <section class="app-view" id="assessmentView" hidden aria-label="Asesmen">
+      <div class="dashhead"><div><h2>Asesmen</h2><p>Menu asesmen disiapkan untuk tahap berikutnya.</p></div></div>
+      <div class="dashpanel"><h3>Asesmen</h3><p>Bagian ini belum diaktifkan. Struktur dan alur asesmen akan ditentukan sebelum formulir atau penyimpanan data dibuat.</p></div>
     </section>
     <section class="app-view" id="newsView" hidden aria-label="Berita HIV dan Kesejahteraan Sosial">
       <div class="dashhead"><div><h2>Berita & Informasi</h2><p>Informasi publik dari RSS sumber kesehatan dan berita Sumatera Utara</p></div><button class="dashbtn" id="refreshNews" type="button">Perbarui berita</button></div>
@@ -339,7 +344,7 @@ let overviewRows=[];
 let overviewHeaders=[];
 let newsItems=[];
 function setAppView(view){
- const views={home:document.getElementById('homeView'),database:document.getElementById('databaseView'),questionnaire:document.getElementById('questionnaireView'),news:document.getElementById('newsView')};
+ const views={home:document.getElementById('homeView'),database:document.getElementById('databaseView'),questionnaire:document.getElementById('questionnaireView'),assessment:document.getElementById('assessmentView'),news:document.getElementById('newsView')};
  Object.entries(views).forEach(([key,node])=>{if(node)node.hidden=key!==view;});
  document.querySelectorAll('#appNavigation [data-view]').forEach(button=>{if(button.dataset.view===view)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
  if(view==='news'&&!newsItems.length)loadNews();
