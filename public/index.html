@@ -641,19 +641,10 @@ body:not(.authenticated) .setup{font-size:.7rem!important;line-height:1.4!import
       </div>
       <div class="owner-summary"><h3 id="ownerName">Profil Owner</h3><p id="ownerNipSummary">NIP belum diisi</p><p id="ownerInstitutionSummary">Direktorat Rehabilitasi Sosial Korban Penyalahgunaan Narkoba &amp; ODHIV</p><p id="ownerContact" hidden></p><details class="owner-details"><summary>Lihat detail profil</summary><p id="ownerNipDetail">NIP: —</p><p id="ownerAddressSummary">Alamat: —</p><p id="ownerPhoneSummary">Nomor HP: —</p><p id="ownerEmailSummary">Email: —</p></details></div>
       <div class="owner-header-actions">
-        <button class="bell-button" id="notificationBell" type="button" aria-label="Notifikasi" aria-expanded="false" title="Notifikasi">
-          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bell-count" id="notificationCount" hidden>0</span>
-        </button>
         <button class="dashbtn" id="logoutButton" type="button">Keluar</button>
       </div>
     </div>
     <div class="dashhead" hidden><div><h2 id="dashboardTitle">Dashboard</h2><p id="welcome"></p></div></div>
-    <div class="notification-panel" id="notificationPanel" hidden>
-      <div class="dashhead"><h3>Notifikasi aktivitas</h3><div class="top-actions"><button class="dashbtn" id="enablePushButton" type="button">Aktifkan notifikasi HP</button><button class="dashbtn" id="testPushButton" type="button">Uji notifikasi</button></div></div>
-      <div class="notification-list" id="notificationList"><p class="notification-empty">Memuat notifikasi…</p></div>
-      <p class="scroll-hint" id="pushHelp">Aktifkan notifikasi perangkat agar pemberitahuan dapat muncul saat dashboard berada di latar belakang.</p>
-    </div>
-
     <form id="ownerProfileForm" class="dashpanel" hidden>
       <h3>Profil Owner</h3>
       <div class="owner-form-grid">
@@ -1556,8 +1547,7 @@ async function testPushNotification(){
   help.textContent=error instanceof Error?error.message:'Tes notifikasi belum berhasil. Periksa izin ponsel dan konfigurasi push.';
  }finally{button.disabled=false;button.textContent=original;}
 }
-document.getElementById('testPushButton').addEventListener('click',testPushNotification);
-document.getElementById('enablePushButton').addEventListener('click',enablePushNotifications);
+// Panel notifikasi aktivitas dinonaktifkan sesuai permintaan pemilik aplikasi.
 
 function updateOwnerQuestionnaireTimestamp(){
  const input=document.getElementById('oqTimestamp');
