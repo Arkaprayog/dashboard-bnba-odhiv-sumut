@@ -1,23 +1,33 @@
-name: Deploy Sahabat ODHIV Sumut Worker
+name: Deploy dashboard and Sahabat ODHIV Workers
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'schema.sql'
+      - 'wrangler.toml'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/deploy-sahabatodhiv-sumut.yml'
 
 permissions:
   contents: read
 
 concurrency:
-  group: deploy-sahabatodhiv-sumut-production
+  group: deploy-dashboard-and-sahabat-workers
   cancel-in-progress: false
 
 jobs:
   validate-and-deploy:
-    name: Validate and deploy sahabatodhiv-sumut
+    name: Validate and deploy both Workers
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -30,7 +40,14 @@ jobs:
       - name: Type-check and build
         run: npm run build
 
-      - name: Deploy the active Sahabat Worker only
+      - name: Deploy dashboard Worker
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+
+      - name: Deploy Sahabat ODHIV Worker
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
