@@ -1,5 +1,11 @@
 # Catatan Versi — Dashboard BNBA ODHIV Sumut
 
+## v1.0.13 — 12 Oktober 2026
+- Memperbaiki logo Kemensos yang gagal dimuat karena URL gambar lama tidak tersedia.
+- Mengalihkan gambar lambang ke berkas PNG langsung dari Wikimedia Commons; gambar tidak dibuat ulang dengan AI.
+- Menyinkronkan nomor versi aplikasi dan paket menjadi 1.0.13.
+
+
 ## v1.0.12 — 12 Oktober 2026
 - Memperbaiki aturan grid kepala formulir asesmen pada mode cetak agar susunan logo Kemensos, lambang Sumatera Utara, judul, dan logo Kemenkes tetap konsisten di kertas A4.
 - Menyinkronkan nomor versi tampilan dan paket menjadi 1.0.12.
