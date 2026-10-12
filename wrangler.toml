@@ -104,6 +104,7 @@ crons = ["* * * * *"]
 
 [observability]
 enabled = true
+redact_query_string = true
 
 [observability.logs]
 enabled = true
