@@ -1,7 +1,7 @@
 self.addEventListener('push',event=>{
  let data={title:'Sahabat ODHIV Sumut',body:'Ada aktivitas penting di dashboard.',tag:'dashboard-activity',url:'/'};
  try{if(event.data){const incoming=event.data.json();data={...data,...incoming};}}catch{}
- const options={body:String(data.body||'Ada aktivitas penting di dashboard.'),tag:String(data.tag||'dashboard-activity'),data:{url:String(data.url||'/')},vibrate:[250,120,250,120,350],renotify:true,requireInteraction:true,icon:'/icon-192.png',badge:'/badge-72.png'};
+ const options={body:String(data.body||'Ada aktivitas penting di dashboard.'),tag:String(data.tag||'dashboard-activity'),data:{url:String(data.url||'/')},vibrate:[250,120,250,120,350],renotify:true,requireInteraction:true};
  event.waitUntil((async()=>{
   await self.registration.showNotification(String(data.title||'Sahabat ODHIV Sumut'),options);
   try{if(self.registration.navigationPreload){} if(self.navigator&&self.navigator.setAppBadge)await self.navigator.setAppBadge(1);}catch{}
