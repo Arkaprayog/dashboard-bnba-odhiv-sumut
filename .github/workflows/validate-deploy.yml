@@ -41,8 +41,9 @@ jobs:
           NODE
           node --check /tmp/dashboard-inline.js
           test -s public/sw.js
-      - name: Validate production Wrangler configuration (dry run)
-        run: npx wrangler deploy --dry-run --env production
+      - name: Validate dashboard Wrangler configuration (dry run)
+        # Deployment targets the default Worker name used by the public dashboard URL.
+        run: npx wrangler deploy --dry-run
       - name: Validate Sahabat ODHIV Wrangler configuration (dry run)
         run: npx wrangler deploy --dry-run --env sahabatodhiv-sumut
 
