@@ -1,3 +1,9 @@
+## v1.0.15 — 12 Oktober 2026
+- Memusatkan logo Kemensos pada halaman login dan menyembunyikan logo instansi lain.
+- Mempertahankan kalimat sinergi Kemensos, Kemenkes, dan Pemprov Sumut.
+- Menyegarkan halaman login dan dashboard dengan panel transparan yang tidak menggunakan blur, agar teks tetap tajam dan terbaca.
+- Menyelaraskan nomor versi tampilan dan paket.
+
 ## v1.0.14 — 12 Oktober 2026
 - Menyempurnakan halaman akses awal dengan kartu putih, kontras teks yang lebih jelas, aksen biru navy, dan tata letak responsif.
 - Menambahkan ringkasan akses aman, pendataan terintegrasi, dan wilayah layanan pada halaman login.
