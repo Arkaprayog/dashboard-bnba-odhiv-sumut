@@ -7,6 +7,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.content.ActivityNotFoundException;
+import android.provider.MediaStore;
+import androidx.core.content.FileProvider;
+import java.io.File;
+import java.io.IOException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,6 +36,7 @@ public class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST = 2401;
     private WebView webView;
     private ValueCallback<Uri[]> uploadCallback;
+    private Uri cameraOutputUri;
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setStatusBarColor(Color.rgb(56,75,56));
@@ -61,9 +67,77 @@ public class MainActivity extends Activity {
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request){ Uri uri=request.getUrl(); String host=uri.getHost(); if(host!=null&&(host.equals("dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev")||host.equals("sahabatodhiv-sumut.aryprayoga139.workers.dev")||host.equals("docs.google.com")||host.equals("forms.gle")||host.equals("accounts.google.com")||host.endsWith("googleusercontent.com")||host.endsWith("google.com"))) return false; startActivity(new Intent(Intent.ACTION_VIEW,uri)); return true; }
             @Override public void onReceivedError(WebView view,WebResourceRequest request,android.webkit.WebResourceError error){ if(request.isForMainFrame()) Toast.makeText(MainActivity.this,"Koneksi bermasalah. Periksa internet lalu muat ulang.",Toast.LENGTH_LONG).show(); }
         });
-        webView.setWebChromeClient(new WebChromeClient(){ @Override public boolean onShowFileChooser(WebView view,ValueCallback<Uri[]> callback,FileChooserParams params){ if(uploadCallback!=null) uploadCallback.onReceiveValue(null); uploadCallback=callback; Intent intent=params.createIntent(); try{startActivityForResult(intent,FILE_CHOOSER_REQUEST);return true;}catch(Exception e){uploadCallback=null;Toast.makeText(MainActivity.this,"Pemilih berkas tidak tersedia.",Toast.LENGTH_SHORT).show();return false;} } });
+        webView.setWebChromeClient(new WebChromeClient(){
+            @Override public boolean onShowFileChooser(WebView view,ValueCallback<Uri[]> callback,FileChooserParams params){
+                if(uploadCallback!=null) uploadCallback.onReceiveValue(null);
+                uploadCallback=callback;
+                cameraOutputUri=null;
+                Intent picker=params.createIntent();
+                try {
+                    if(acceptsImagesOnly(params)) {
+                        Intent camera=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if(camera.resolveActivity(getPackageManager())!=null) {
+                            File directory=new File(getCacheDir(),"selected-photos");
+                            if(!directory.exists()&&!directory.mkdirs()) throw new IOException("Tidak dapat menyiapkan cache foto.");
+                            File photo=File.createTempFile("upload_photo_",".jpg",directory);
+                            cameraOutputUri=FileProvider.getUriForFile(MainActivity.this,getPackageName()+".fileprovider",photo);
+                            camera.putExtra(MediaStore.EXTRA_OUTPUT,cameraOutputUri);
+                            camera.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                            Intent chooser=Intent.createChooser(picker,"Pilih foto");
+                            chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS,new Intent[]{camera});
+                            startActivityForResult(chooser,FILE_CHOOSER_REQUEST);
+                        } else {
+                            startActivityForResult(picker,FILE_CHOOSER_REQUEST);
+                        }
+                    } else {
+                        startActivityForResult(picker,FILE_CHOOSER_REQUEST);
+                    }
+                    return true;
+                } catch(ActivityNotFoundException e) {
+                    if(uploadCallback!=null) uploadCallback.onReceiveValue(null);
+                    uploadCallback=null; cameraOutputUri=null;
+                    Toast.makeText(MainActivity.this,"Pemilih foto/berkas tidak tersedia.",Toast.LENGTH_SHORT).show();
+                    return false;
+                } catch(IOException|IllegalArgumentException e) {
+                    if(uploadCallback!=null) uploadCallback.onReceiveValue(null);
+                    uploadCallback=null; cameraOutputUri=null;
+                    Toast.makeText(MainActivity.this,"Kamera tidak dapat disiapkan. Coba pilih foto dari galeri.",Toast.LENGTH_LONG).show();
+                    return false;
+                }
+            }
+        });
         root.addView(webView,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0,1)); setContentView(root); webView.loadUrl(DASHBOARD);
     }
-    @Override protected void onActivityResult(int requestCode,int resultCode,Intent data){ super.onActivityResult(requestCode,resultCode,data); if(requestCode==FILE_CHOOSER_REQUEST&&uploadCallback!=null){ Uri[] results=WebChromeClient.FileChooserParams.parseResult(resultCode,data); uploadCallback.onReceiveValue(results); uploadCallback=null; } }
+    private boolean acceptsImagesOnly(WebChromeClient.FileChooserParams params) {
+        String[] types=params.getAcceptTypes();
+        if(types==null||types.length==0) return false;
+        boolean found=false;
+        for(String type:types) {
+            if(type==null||type.trim().isEmpty()) continue;
+            for(String part:type.split(",")) {
+                String normalized=part.trim().toLowerCase(java.util.Locale.ROOT);
+                if(normalized.isEmpty()) continue;
+                found=true;
+                if(!normalized.startsWith("image/")&&!normalized.equals(".jpg")&&!normalized.equals(".jpeg")&&!normalized.equals(".png")&&!normalized.equals(".webp")) return false;
+            }
+        }
+        return found;
+    }
+    @Override protected void onActivityResult(int requestCode,int resultCode,Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        if(requestCode==FILE_CHOOSER_REQUEST&&uploadCallback!=null){
+            Uri[] results=null;
+            if(resultCode==RESULT_OK&&cameraOutputUri!=null&&data!=null&&data.getData()!=null) {
+                results=WebChromeClient.FileChooserParams.parseResult(resultCode,data);
+            } else if(resultCode==RESULT_OK&&cameraOutputUri!=null) {
+                results=new Uri[]{cameraOutputUri};
+            } else if(resultCode==RESULT_OK) {
+                results=WebChromeClient.FileChooserParams.parseResult(resultCode,data);
+            }
+            uploadCallback.onReceiveValue(results);
+            uploadCallback=null;
+            cameraOutputUri=null;
+        }
+    }
     @Override public void onBackPressed(){ if(webView!=null&&webView.canGoBack()) webView.goBack(); else new AlertDialog.Builder(this).setMessage("Keluar dari Sahabat ODHIV?").setNegativeButton("Batal",(d,w)->{}).setPositiveButton("Keluar",(d,w)->finish()).show(); }
 }
