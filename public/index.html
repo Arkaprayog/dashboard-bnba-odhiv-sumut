@@ -231,6 +231,48 @@ main{width:min(100%,760px);margin:0 auto;padding:clamp(22px,4vw,42px) clamp(18px
 .trust-icon{width:23px;height:23px;flex:0 0 auto;color:#2a679e}
 @media(max-width:480px){body{padding:16px 10px 20px}main{padding:24px 16px 20px;border-radius:22px}.brand{gap:9px;margin:21px auto}.brand h1{font-size:clamp(1.45rem,6vw,1.9rem)}.login-trust{gap:6px}.trust-item{display:block;text-align:center;font-size:.68rem}.trust-icon{display:block;margin:0 auto 5px}.kemensos-logo{width:clamp(145px,45vw,210px);height:clamp(112px,34vw,160px)}}
 
+
+/* v1.0.16 — photographic Sumatera landing page matching approved reference */
+html,body{min-height:100%;background:#dceeff}
+body{min-height:100svh;padding:clamp(16px,3vh,32px) 12px 30px;color:#17456f;background-image:linear-gradient(180deg,rgba(228,244,255,.94) 0%,rgba(229,244,255,.79) 38%,rgba(206,231,251,.42) 70%,rgba(0,62,123,.64) 100%),url("https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Rumah_Gadang_-_Rumah_Adat_Minangkabau.jpg/960px-Rumah_Gadang_-_Rumah_Adat_Minangkabau.jpg");background-position:center top,center bottom;background-size:cover,cover;background-repeat:no-repeat,no-repeat;background-attachment:scroll,fixed;isolation:isolate}
+body:before{position:fixed;inset:0;border:0;border-radius:0;background:linear-gradient(155deg,#07549a 0 7%,#239b55 7% 7.7%,#f4c51c 7.7% 8.3%,transparent 8.3%);clip-path:polygon(0 0,100% 0,100% 1.2%,0 11%);opacity:1;z-index:-1}
+body:after{position:fixed;width:100%;height:18vh;left:0;bottom:0;transform:none;background:linear-gradient(180deg,rgba(8,73,135,0),rgba(4,65,126,.97));clip-path:none;opacity:1;z-index:-1}
+.corner{display:none}
+main{width:min(100%,760px);margin:0 auto;padding:clamp(22px,4vw,40px) clamp(18px,5vw,48px) 25px;text-align:center;color:#17456f;background:rgba(245,251,255,.72);border:1px solid rgba(255,255,255,.95);border-radius:30px;box-shadow:0 22px 65px rgba(18,76,128,.18);backdrop-filter:none;-webkit-backdrop-filter:none}
+.agency-logos{display:flex;align-items:center;justify-content:center;max-width:100%;margin:0 auto 12px}
+.kemensos-logo{display:block;width:clamp(155px,28vw,220px);height:clamp(110px,19vw,155px);object-fit:contain}
+.sumut-logo,.kemenkes-logo{display:none!important}
+.ministry{display:none}
+.directorate{max-width:560px;margin:12px auto 0;color:#496b8e;font-size:clamp(.95rem,2.8vw,1.2rem);font-weight:550;line-height:1.5}
+.brand{justify-content:center;margin:22px auto 25px;gap:12px;text-align:center}
+.separator{height:46px;background:#8ebbe5}
+.brand h1{font-size:clamp(1.7rem,5.2vw,2.7rem);line-height:1.12;letter-spacing:-.025em;color:#064b8a}
+.ribbon{color:#e52c43}
+.form{max-width:540px;margin:0 auto;gap:15px}
+.field input{height:62px;border:1px solid #b8d7f3;background:rgba(248,252,255,.84);border-radius:15px;color:#183d64;box-shadow:none}
+.field input:focus{border-color:#1685d4;box-shadow:0 0 0 3px rgba(22,133,212,.13)}
+.lock{color:#31628e}.toggle{color:#7289a2}
+.submit{height:62px;background:linear-gradient(180deg,#0877cf,#064d9c);border:0;border-radius:15px;box-shadow:0 7px 16px rgba(5,75,145,.2)}
+.foot{margin:23px auto 0;color:#315d86;max-width:540px;line-height:1.8}
+.shield{color:#168b72}
+.rule{height:1px;max-width:540px;margin:18px auto 12px;background:#d2e4f5}
+.setup{color:#486d91}
+.login-trust{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:540px;margin:23px auto 0;padding-top:18px;border-top:1px solid rgba(132,177,216,.55);color:#315d86}
+.trust-item{display:flex;align-items:center;justify-content:center;gap:8px;font-size:.78rem;line-height:1.4}
+.trust-icon{width:23px;height:23px;flex:0 0 auto;color:#205d94}
+.authenticated main{width:min(100%,1200px);color:#173e66;background:rgba(245,251,255,.84);border-color:rgba(255,255,255,.95);box-shadow:0 18px 60px rgba(27,83,135,.15);backdrop-filter:none;-webkit-backdrop-filter:none}
+.authenticated .dashhead p,.authenticated .dashfield label,.authenticated .scroll-hint,.authenticated .respondent-search label,.authenticated .filter-count,.authenticated .workflow-state{color:#426587}
+.authenticated .dashpanel{background:rgba(244,249,255,.92);border-color:#d7e5f3;color:#173e66}
+.authenticated .datatable{color:#173e66}
+.authenticated .datatable th{background:#e1effb;color:#123e67}
+.authenticated .datatable td,.authenticated .datatable th{border-color:#cbdceb}
+.authenticated .datatable th:first-child,.authenticated .datatable td:first-child{background:#edf5fc;box-shadow:2px 0 5px rgba(0,0,0,.07)}
+.authenticated .respondent-stat{background:rgba(244,249,255,.95);border-color:#d7e5f3}
+.authenticated .respondent-stat-label{color:#426587}.authenticated .respondent-stat-value{color:#123e67}
+.authenticated .dashbtn{background:#07549a}
+.authenticated .dashfield input,.authenticated .respondent-search input{border-color:#cbdceb}
+@media(max-width:480px){body{padding:14px 10px 24px;background-position:center top,58% bottom;background-size:cover,auto 100%;background-attachment:scroll,scroll}main{padding:23px 16px 20px;border-radius:23px}.agency-logos{margin-bottom:8px}.kemensos-logo{width:clamp(145px,43vw,190px);height:clamp(105px,31vw,135px)}.brand{gap:9px;margin:20px auto}.brand h1{font-size:clamp(1.4rem,6vw,1.9rem)}.login-trust{gap:6px}.trust-item{display:block;text-align:center;font-size:.68rem}.trust-icon{display:block;margin:0 auto 5px}}
+
 </style>
 </head>
 <body>
@@ -430,7 +472,7 @@ main{width:min(100%,760px);margin:0 auto;padding:clamp(22px,4vw,42px) clamp(18px
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.0.15</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.0.16</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi</p>
 </main>
