@@ -19,6 +19,7 @@ import android.os.Looper;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -61,12 +62,24 @@ public final class MainActivity extends FragmentActivity {
     private ValueCallback<Uri[]> pendingFileCallback;
     private Uri cameraOutputUri;
 
+    private void setSplashImmersiveMode() {
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+    }
+
+    private void restoreSystemBars() {
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        getWindow().setStatusBarColor(android.graphics.Color.rgb(6, 58, 125));
+        getWindow().setNavigationBarColor(android.graphics.Color.rgb(6, 58, 125));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setStatusBarColor(android.graphics.Color.rgb(6, 58, 125));
-        getWindow().setNavigationBarColor(android.graphics.Color.rgb(6, 58, 125));
         if (getActionBar() != null) getActionBar().hide();
+        setSplashImmersiveMode();
         setContentView(new AnimatedSplashView(this));
         createNotificationChannel();
 
@@ -129,7 +142,7 @@ public final class MainActivity extends FragmentActivity {
             } else {
                 initializeDashboard();
             }
-        }, 3000L);
+        }, 4000L);
     }
 
     private void initializeDashboard() {
@@ -137,6 +150,7 @@ public final class MainActivity extends FragmentActivity {
         startupPending = false;
         started = true;
         needsReauth = false;
+        restoreSystemBars();
         if (getActionBar() != null) getActionBar().show();
         setTitle(R.string.app_name);
         setContentView(webView);
