@@ -228,7 +228,7 @@
       </form>
     </section>
     <section class="app-view" id="assessmentView" hidden aria-label="Asesmen">
-      <div class="dashhead assessment-no-print"><div><h2>Form Asesmen Terintegrasi</h2><p>Direktorat Jenderal Rehabilitasi Sosial · Semua jawaban opsional</p></div><div class="assessment-actions"><button class="dashbtn" type="button" id="assessmentPrint">Cetak / Simpan PDF</button><button class="dashbtn" type="button" id="assessmentReset">Kosongkan Form</button></div></div>
+      <div class="dashhead assessment-no-print"><div><h2>Form Asesmen Terintegrasi</h2><p>Direktorat Jenderal Rehabilitasi Sosial · Semua jawaban opsional</p></div><div class="assessment-actions"><button class="dashbtn" type="button" id="assessmentSave">Simpan ke Database</button><select id="assessmentSavedList" aria-label="Pilih asesmen tersimpan"><option value="">Pilih asesmen tersimpan</option></select><button class="dashbtn" type="button" id="assessmentLoad">Muat Asesmen</button><button class="dashbtn" type="button" id="assessmentPrint">Cetak / Simpan PDF</button><button class="dashbtn" type="button" id="assessmentReset">Kosongkan Form</button></div></div>
       <div class="assessment-paper" id="assessmentPaper">
         <header class="assessment-brand"><div class="assessment-logo">KEMENTERIAN SOSIAL<br><small>REPUBLIK INDONESIA</small></div><div class="assessment-heading"><h2>FORM ASESMEN TERINTEGRASI</h2><h3>DIREKTORAT JENDERAL REHABILITASI SOSIAL</h3></div><div class="assessment-logo atensi">ATENSI</div></header>
         <div class="assessment-number"><strong>Nomor Kuesioner</strong><div><label>No Urutan Satker<input name="nomorSatker" autocomplete="off"></label><span>.</span><label>Tahun<input name="tahun" inputmode="numeric"></label><span>.</span><label>Nomor Urut<input name="nomorUrut" inputmode="numeric"></label></div></div>
@@ -236,7 +236,7 @@
         <p class="assessment-footnote">** Perlu melampirkan foto/dokumen. Foto PPKS dapat dilakukan dengan closeup.</p>
         <div class="assessment-signature"><p>Petugas</p><div class="signature-space"></div><p>( ........................................ )</p></div>
       </div>
-      <p class="dashmsg assessment-no-print" id="assessmentMessage" role="status" aria-live="polite">Form ini dapat dicetak atau disimpan sebagai PDF. Jawaban tidak disimpan ke server pada versi awal ini.</p>
+      <p class="dashmsg assessment-no-print" id="assessmentMessage" role="status" aria-live="polite">Simpan ke database hanya tersedia setelah login dengan peran owner/admin. Data asesmen bersifat rahasia.</p>
     </section>
     <section class="app-view" id="newsView" hidden aria-label="Berita HIV dan Kesejahteraan Sosial">
       <div class="dashhead"><div><h2>Berita & Informasi</h2><p>Informasi publik dari RSS sumber kesehatan dan berita Sumatera Utara</p></div><button class="dashbtn" id="refreshNews" type="button">Perbarui berita</button></div>
@@ -722,8 +722,63 @@ const groups=[
 const host=document.getElementById('assessmentFields');const form=document.getElementById('assessmentForm');
 function el(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n}
 groups.forEach(group=>{if(group.title)host.append(el('div','assessment-section-title',group.title));if(group.subtitle)host.append(el('div','assessment-subtitle',group.subtitle));(group.items||[]).forEach(([num,label,type='text',options=[]])=>{const row=el('div','assessment-row');row.append(el('div','assessment-no',num));row.append(el('div','assessment-label',label));const answer=el('div','assessment-answer');if(type==='fixed'){answer.textContent='-';answer.dataset.fixed='true'}else if(type==='radio'||type==='checks'){const wrap=el('div','assessment-options');options.forEach((option,i)=>{const lab=el('label','assessment-choice');const input=document.createElement('input');input.type=type==='radio'?'radio':'checkbox';input.name='q'+num+(type==='checks'?'_'+i:'');input.value=option;input.dataset.question=String(num);const check=el('span','print-check','✓');const txt=el('span','choice-text',String(i+1)+'. '+option);lab.append(input,check,txt);wrap.append(lab)});answer.append(wrap)}else{const input=document.createElement(type==='textarea'?'textarea':'input');if(type!=='textarea')input.type=type==='date'?'date':type==='number'?'number':'text';input.name='q'+num;input.dataset.question=String(num);input.setAttribute('aria-label',num+'. '+label);answer.append(input)}row.append(answer);host.append(row)})});
+let currentAssessmentId=null;
+const assessmentMessage=document.getElementById('assessmentMessage');
+const savedList=document.getElementById('assessmentSavedList');
+const saveAssessmentButton=document.getElementById('assessmentSave');
+function collectAssessmentAnswers(){
+ const answers={};
+ document.querySelectorAll('#assessmentPaper input, #assessmentPaper textarea, #assessmentPaper select').forEach(input=>{
+   if(input.type==='radio'){if(input.checked)answers[input.name]=input.value;return;}
+   if(input.type==='checkbox'){if(!answers[input.dataset.question])answers[input.dataset.question]=[];if(input.checked)answers[input.dataset.question].push(input.value);return;}
+   if(input.dataset.fixed==='true')return;
+   if(input.name)answers[input.name]=input.value;
+ });
+ return answers;
+}
+function applyAssessmentAnswers(answers){
+ form.reset();
+ document.querySelectorAll('.assessment-number input').forEach(input=>input.value=answers[input.name]||'');
+ document.querySelectorAll('#assessmentFields input, #assessmentFields textarea, #assessmentFields select').forEach(input=>{
+   const value=answers[input.dataset.question||input.name];
+   if(input.type==='radio')input.checked=value===input.value;
+   else if(input.type==='checkbox')input.checked=Array.isArray(value)&&value.includes(input.value);
+   else if(value!==undefined)input.value=String(value);
+ });
+}
+async function refreshSavedAssessments(){
+ const response=await fetch('/api/assessments',{credentials:'same-origin',cache:'no-store'});
+ const payload=await response.json().catch(()=>({}));
+ if(!response.ok)throw new Error(payload.error||'Gagal memuat daftar asesmen.');
+ savedList.replaceChildren(new Option('Pilih asesmen tersimpan',''));
+ (payload.items||[]).forEach(item=>savedList.add(new Option('Asesmen '+item.id.slice(0,8)+' · '+item.updated_at,item.id)));
+}
+saveAssessmentButton.addEventListener('click',async()=>{
+ saveAssessmentButton.disabled=true;assessmentMessage.textContent='Menyimpan asesmen ke database…';
+ try{
+   const response=await fetch('/api/assessments',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify({id:currentAssessmentId,answers:collectAssessmentAnswers()})});
+   const payload=await response.json().catch(()=>({}));
+   if(!response.ok||!payload.ok)throw new Error(payload.error||'Gagal menyimpan asesmen.');
+   currentAssessmentId=payload.id;
+   await refreshSavedAssessments();
+   savedList.value=currentAssessmentId;
+   assessmentMessage.textContent='Asesmen berhasil disimpan ke database. ID: '+currentAssessmentId;
+ }catch(error){assessmentMessage.textContent=error instanceof Error?error.message:'Gagal menyimpan asesmen.'}
+ finally{saveAssessmentButton.disabled=false}
+});
+document.getElementById('assessmentLoad').addEventListener('click',async()=>{
+ const id=savedList.value;if(!id){assessmentMessage.textContent='Pilih asesmen yang akan dimuat.';return}
+ try{
+   const response=await fetch('/api/assessments/item?id='+encodeURIComponent(id),{credentials:'same-origin',cache:'no-store'});
+   const payload=await response.json().catch(()=>({}));
+   if(!response.ok||!payload.item)throw new Error(payload.error||'Gagal memuat asesmen.');
+   currentAssessmentId=payload.item.id;applyAssessmentAnswers(payload.item.answers||{});
+   assessmentMessage.textContent='Asesmen tersimpan berhasil dimuat.';
+ }catch(error){assessmentMessage.textContent=error instanceof Error?error.message:'Gagal memuat asesmen.'}
+});
 document.getElementById('assessmentPrint').addEventListener('click',()=>window.print());
-document.getElementById('assessmentReset').addEventListener('click',()=>{if(confirm('Kosongkan semua jawaban asesmen?')){form.reset();document.querySelectorAll('.assessment-number input').forEach(i=>i.value='')}});
+document.getElementById('assessmentReset').addEventListener('click',()=>{if(confirm('Kosongkan semua jawaban asesmen?')){form.reset();document.querySelectorAll('.assessment-number input').forEach(i=>i.value='');currentAssessmentId=null;assessmentMessage.textContent='Form kosong. Data tersimpan di database tidak dihapus.'}});
+refreshSavedAssessments().catch(error=>{assessmentMessage.textContent='Daftar asesmen hanya dapat dimuat setelah login owner/admin. '+(error instanceof Error?error.message:'')});
 })();
 </script>
 </body></html>');
