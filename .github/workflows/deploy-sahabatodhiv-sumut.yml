@@ -1,4 +1,4 @@
-name: Deploy dashboard and Sahabat ODHIV Workers
+name: Deploy dashboard Worker
 
 on:
   workflow_dispatch:
@@ -17,12 +17,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: deploy-dashboard-and-sahabat-workers
+  group: deploy-dashboard-worker
   cancel-in-progress: false
 
 jobs:
   validate-and-deploy:
-    name: Validate and deploy both Workers
+    name: Validate and deploy dashboard Worker
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -34,8 +34,8 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install locked dependencies
+        run: npm ci
 
       - name: Type-check and build
         run: npm run build
@@ -46,10 +46,3 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy
-
-      - name: Deploy Sahabat ODHIV Worker
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --env sahabatodhiv-sumut
