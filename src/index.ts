@@ -433,8 +433,15 @@ export default {
             return reply({ error: "Password tidak valid." }, 401);
           }
 
-          // Password-only login: no username field is required.
-          const loginKey = "password-only";
+          // Rate-limit by a one-way hash of the connecting IP, not one shared key.
+          // This prevents one source from locking every administrator out while
+          // avoiding storage of raw IP addresses in the login_attempts table.
+          const clientIp = request.headers.get("CF-Connecting-IP") || "unknown";
+          const ipHash = await digestHex(await crypto.subtle.digest(
+            "SHA-256",
+            new TextEncoder().encode(clientIp),
+          ));
+          const loginKey = "ip:" + ipHash;
           requestStage = "login_rate_limit_check";
           const now = Math.floor(Date.now() / 1000);
           const recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM login_attempts WHERE username_key=? AND attempted_at>? AND succeeded=0").bind(loginKey, now - 900).first<{ n: number }>();
