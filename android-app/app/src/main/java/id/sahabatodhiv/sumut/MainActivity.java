@@ -1,14 +1,22 @@
 package id.sahabatodhiv.sumut;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +30,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
@@ -29,13 +40,22 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.Executor;
 
 public final class MainActivity extends Activity {
     private static final String DASHBOARD_URL = "https://sahabatodhiv-sumut.aryprayoga139.workers.dev/";
     private static final String DASHBOARD_HOST = "sahabatodhiv-sumut.aryprayoga139.workers.dev";
+    private static final String PREFS = "sahabat_odhiv_preferences";
+    private static final String CHANNEL_ID = "sahabat_odhiv_notifications";
     private static final int REQUEST_IMAGE_CHOOSER = 4107;
+
     private WebView webView;
     private boolean showingOfflineShell = false;
+    private boolean started = false;
+    private boolean authInProgress = false;
+    private boolean waitingForBiometric = false;
+    private boolean needsReauth = false;
+    private boolean startupPending = false;
     private ValueCallback<Uri[]> pendingFileCallback;
     private Uri cameraOutputUri;
 
@@ -44,13 +64,12 @@ public final class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         getWindow().setStatusBarColor(android.graphics.Color.rgb(6, 58, 125));
         getWindow().setNavigationBarColor(android.graphics.Color.rgb(6, 58, 125));
-        // Tampilkan animasi pembuka native sebelum dashboard/login dimuat.
         setContentView(new AnimatedSplashView(this));
-        webView = new WebView(this);
+        createNotificationChannel();
 
+        webView = new WebView(this);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
-        // Let the dashboard's responsive CSS adapt to phone and tablet widths.
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(false);
         settings.setTextZoom(100);
@@ -65,13 +84,12 @@ public final class MainActivity extends Activity {
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         CookieManager.getInstance().setAcceptCookie(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, false);
+
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> filePathCallback,
                                              FileChooserParams fileChooserParams) {
-                if (pendingFileCallback != null) {
-                    pendingFileCallback.onReceiveValue(null);
-                }
+                if (pendingFileCallback != null) pendingFileCallback.onReceiveValue(null);
                 pendingFileCallback = filePathCallback;
                 launchImagePicker();
                 return true;
@@ -81,9 +99,7 @@ public final class MainActivity extends Activity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri uri = request.getUrl();
-                if ("https".equalsIgnoreCase(uri.getScheme()) && DASHBOARD_HOST.equalsIgnoreCase(uri.getHost())) {
-                    return false;
-                }
+                if ("https".equalsIgnoreCase(uri.getScheme()) && DASHBOARD_HOST.equalsIgnoreCase(uri.getHost())) return false;
                 if ("https".equalsIgnoreCase(uri.getScheme()) || "mailto".equalsIgnoreCase(uri.getScheme()) || "tel".equalsIgnoreCase(uri.getScheme())) {
                     try { startActivity(new Intent(Intent.ACTION_VIEW, uri)); }
                     catch (Exception ignored) { Toast.makeText(MainActivity.this, "Tautan tidak dapat dibuka.", Toast.LENGTH_SHORT).show(); }
@@ -98,20 +114,48 @@ public final class MainActivity extends Activity {
 
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                if (request.isForMainFrame() && !showingOfflineShell && !hasInternet()) {
-                    showOfflineShell();
-                }
+                if (request.isForMainFrame() && !showingOfflineShell && !hasInternet()) showOfflineShell();
             }
         });
 
-        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-            setContentView(webView);
-            if (hasInternet()) {
-                webView.loadUrl(DASHBOARD_URL);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (isFinishing()) return;
+            if (getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean("biometric_enabled", false)) {
+                startupPending = true;
+                authenticateBiometric(false);
             } else {
-                showOfflineShell();
+                initializeDashboard();
             }
         }, 3000L);
+    }
+
+    private void initializeDashboard() {
+        if (isFinishing() || webView == null) return;
+        startupPending = false;
+        started = true;
+        needsReauth = false;
+        setContentView(webView);
+        if (hasInternet()) webView.loadUrl(DASHBOARD_URL);
+        else showOfflineShell();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (started && needsReauth && !authInProgress &&
+                getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean("biometric_enabled", false)) {
+            needsReauth = false;
+            authenticateBiometric(false);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        if (started && !authInProgress &&
+                getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean("biometric_enabled", false)) {
+            needsReauth = true;
+        }
+        super.onPause();
     }
 
     private void launchImagePicker() {
@@ -123,24 +167,19 @@ public final class MainActivity extends Activity {
         if (cameraIntent.resolveActivity(getPackageManager()) != null) {
             try {
                 File photoFile = createTemporaryPhoto();
-                cameraOutputUri = FileProvider.getUriForFile(
-                    this, getPackageName() + ".fileprovider", photoFile);
+                cameraOutputUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", photoFile);
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraOutputUri);
                 cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             } catch (IOException exception) {
                 cameraOutputUri = null;
+                cameraIntent = null;
             }
-        } else {
-            cameraIntent = null;
-        }
+        } else cameraIntent = null;
 
         Intent chooser = Intent.createChooser(galleryIntent, "Pilih foto atau ambil foto");
-        if (cameraIntent != null) {
-            chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{cameraIntent});
-        }
-        try {
-            startActivityForResult(chooser, REQUEST_IMAGE_CHOOSER);
-        } catch (Exception exception) {
+        if (cameraIntent != null) chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{cameraIntent});
+        try { startActivityForResult(chooser, REQUEST_IMAGE_CHOOSER); }
+        catch (Exception exception) {
             finishFileChooser(null);
             Toast.makeText(this, "Kamera atau galeri tidak dapat dibuka.", Toast.LENGTH_LONG).show();
         }
@@ -149,9 +188,7 @@ public final class MainActivity extends Activity {
     private File createTemporaryPhoto() throws IOException {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         File directory = new File(getCacheDir(), "selected-photos");
-        if (!directory.exists() && !directory.mkdirs()) {
-            throw new IOException("Tidak dapat membuat folder foto sementara");
-        }
+        if (!directory.exists() && !directory.mkdirs()) throw new IOException("Tidak dapat membuat folder foto sementara");
         return File.createTempFile("IMG_" + timestamp + "_", ".jpg", directory);
     }
 
@@ -159,14 +196,10 @@ public final class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode != REQUEST_IMAGE_CHOOSER) return;
-
         Uri selected = null;
         if (resultCode == RESULT_OK) {
-            if (data != null && data.getData() != null) {
-                selected = data.getData();
-            } else {
-                selected = cameraOutputUri;
-            }
+            if (data != null && data.getData() != null) selected = data.getData();
+            else selected = cameraOutputUri;
         }
         finishFileChooser(selected == null ? null : new Uri[]{selected});
     }
@@ -193,6 +226,13 @@ public final class MainActivity extends Activity {
         webView.loadUrl("file:///android_asset/offline.html");
     }
 
+    private int allowedAuthenticators() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return BiometricManager.Authenticators.BIOMETRIC_WEAK | BiometricManager.Authenticators.DEVICE_CREDENTIAL;
+        }
+        return BiometricManager.Authenticators.BIOMETRIC_WEAK;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         boolean enabled = getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean("biometric_enabled", false);
@@ -208,85 +248,87 @@ public final class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == 1) {
             SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
-            boolean enabled = prefs.getBoolean("biometric_enabled", false);
-            if (enabled) {
+            if (prefs.getBoolean("biometric_enabled", false)) {
                 prefs.edit().putBoolean("biometric_enabled", false).apply();
+                needsReauth = false;
                 Toast.makeText(this, "Kunci biometrik dinonaktifkan.", Toast.LENGTH_LONG).show();
+                invalidateOptionsMenu();
             } else {
-                int status = BiometricManager.from(this).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK | BiometricManager.Authenticators.DEVICE_CREDENTIAL);
-                if (status != BiometricManager.BIOMETRIC_SUCCESS) {
-                    new AlertDialog.Builder(this).setTitle("Biometrik belum tersedia")
-                        .setMessage("Daftarkan sidik jari atau wajah di Pengaturan Android terlebih dahulu. Perangkat juga dapat menggunakan kunci layar sebagai pilihan cadangan.")
-                        .setPositiveButton("Mengerti", (d, w) -> {}).show();
-                } else {
-                    waitingForBiometric = true;
-                    authenticateBiometric();
-                }
+                waitingForBiometric = true;
+                authenticateBiometric(true);
             }
-            invalidateOptionsMenu();
             return true;
         }
-        if (item.getItemId() == 2) {
-            showTestNotification();
-            return true;
-        }
+        if (item.getItemId() == 2) { showTestNotification(); return true; }
         if (item.getItemId() == 3) {
             new AlertDialog.Builder(this).setTitle("Status notifikasi push native")
-                .setMessage("Izin notifikasi dan saluran notifikasi perangkat sudah disiapkan. Pengiriman push otomatis ke APK belum aktif karena aplikasi Firebase Cloud Messaging dan kredensial server belum dikonfigurasi. Notifikasi uji di menu ini hanya menguji notifikasi lokal perangkat.")
+                .setMessage("Notifikasi lokal perangkat tersedia. Pengiriman push otomatis belum aktif karena Firebase Cloud Messaging dan kredensial server belum dikonfigurasi.")
                 .setPositiveButton("Mengerti", (dialog, which) -> {}).show();
             return true;
         }
-        if (item.getItemId() == 4) {
-            openExternal(DASHBOARD_URL);
-            return true;
-        }
+        if (item.getItemId() == 4) { openExternal(DASHBOARD_URL); return true; }
         if (item.getItemId() == 5) {
-            new AlertDialog.Builder(this)
-                .setTitle("Sahabat ODHIV Sumut")
-                .setMessage("Aplikasi Android untuk mengakses dashboard yang ada. Sinkronisasi data memerlukan internet. Data responden tidak disimpan oleh layar offline aplikasi.")
-                .setPositiveButton("Tutup", (dialog, which) -> {})
-                .show();
+            new AlertDialog.Builder(this).setTitle("Sahabat ODHIV Sumut")
+                .setMessage("Aplikasi Android untuk mengakses dashboard. Sinkronisasi data memerlukan internet.")
+                .setPositiveButton("Tutup", (dialog, which) -> {}).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void authenticateBiometric() {
-        int status = BiometricManager.from(this).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK | BiometricManager.Authenticators.DEVICE_CREDENTIAL);
+    private void authenticateBiometric(boolean enabling) {
+        if (authInProgress) return;
+        int authenticators = allowedAuthenticators();
+        int status = BiometricManager.from(this).canAuthenticate(authenticators);
         if (status != BiometricManager.BIOMETRIC_SUCCESS) {
-            getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean("biometric_enabled", false).apply();
-            initializeDashboard();
-            Toast.makeText(this, "Biometrik tidak tersedia. Silakan login lewat dashboard.", Toast.LENGTH_LONG).show();
+            if (enabling) {
+                waitingForBiometric = false;
+                Toast.makeText(this, "Perangkat belum memiliki biometrik yang siap digunakan. Periksa Pengaturan Android.", Toast.LENGTH_LONG).show();
+            } else if (startupPending) {
+                new AlertDialog.Builder(this).setTitle("Kunci biometrik tidak tersedia")
+                    .setMessage("Biometrik tidak dapat digunakan saat ini. Aktifkan kembali sidik jari/wajah di Pengaturan Android, atau hapus data aplikasi untuk menonaktifkan kunci.")
+                    .setPositiveButton("Tutup aplikasi", (d, w) -> finish()).setCancelable(false).show();
+            } else {
+                Toast.makeText(this, "Biometrik tidak tersedia. Aplikasi tetap terkunci.", Toast.LENGTH_LONG).show();
+                finish();
+            }
             return;
         }
+
+        authInProgress = true;
         Executor executor = command -> new Handler(Looper.getMainLooper()).post(command);
         BiometricPrompt prompt = new BiometricPrompt(this, executor, new BiometricPrompt.AuthenticationCallback() {
             @Override public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
                 super.onAuthenticationSucceeded(result);
-                if (waitingForBiometric) getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean("biometric_enabled", true).apply();
-                waitingForBiometric = false;
-                initializeDashboard();
+                authInProgress = false;
+                if (waitingForBiometric) {
+                    getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean("biometric_enabled", true).apply();
+                    waitingForBiometric = false;
+                    invalidateOptionsMenu();
+                    Toast.makeText(MainActivity.this, "Kunci sidik jari/wajah berhasil diaktifkan.", Toast.LENGTH_LONG).show();
+                }
+                if (startupPending || !started) initializeDashboard();
+                else needsReauth = false;
             }
+
             @Override public void onAuthenticationError(int errorCode, CharSequence errString) {
                 super.onAuthenticationError(errorCode, errString);
+                authInProgress = false;
                 if (waitingForBiometric) {
                     waitingForBiometric = false;
-                    getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean("biometric_enabled", false).apply();
-                    Toast.makeText(MainActivity.this, "Kunci biometrik belum diaktifkan.", Toast.LENGTH_LONG).show();
-                    initializeDashboard();
+                    Toast.makeText(MainActivity.this, "Aktivasi biometrik dibatalkan.", Toast.LENGTH_LONG).show();
                 } else {
-                    new AlertDialog.Builder(MainActivity.this).setTitle("Aplikasi terkunci")
-                        .setMessage("Autentikasi tidak berhasil. Coba buka aplikasi kembali dan gunakan biometrik atau kunci layar.")
-                        .setPositiveButton("Tutup aplikasi", (d, w) -> finish()).show();
+                    Toast.makeText(MainActivity.this, "Autentikasi tidak berhasil. Aplikasi tetap terkunci.", Toast.LENGTH_LONG).show();
+                    finish();
                 }
             }
         });
-        BiometricPrompt.PromptInfo info = new BiometricPrompt.PromptInfo.Builder()
-            .setTitle(waitingForBiometric ? "Aktifkan kunci biometrik" : "Buka Sahabat ODHIV")
-            .setSubtitle("Gunakan sidik jari, wajah, atau kunci layar perangkat")
-            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_WEAK | BiometricManager.Authenticators.DEVICE_CREDENTIAL)
-            .build();
-        prompt.authenticate(info);
+        BiometricPrompt.PromptInfo.Builder builder = new BiometricPrompt.PromptInfo.Builder()
+            .setTitle(enabling ? "Aktifkan kunci biometrik" : "Buka Sahabat ODHIV")
+            .setSubtitle("Gunakan sidik jari, wajah, atau kunci layar perangkat");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) builder.setAllowedAuthenticators(authenticators);
+        else builder.setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_WEAK);
+        prompt.authenticate(builder.build());
     }
 
     private void createNotificationChannel() {
@@ -323,11 +365,8 @@ public final class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (webView != null && webView.canGoBack() && !showingOfflineShell) {
-            webView.goBack();
-        } else {
-            super.onBackPressed();
-        }
+        if (webView != null && webView.canGoBack() && !showingOfflineShell) webView.goBack();
+        else super.onBackPressed();
     }
 
     @Override
