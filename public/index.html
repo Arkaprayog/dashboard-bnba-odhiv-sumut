@@ -116,6 +116,27 @@
 #assessmentView .assessment-logo.kementerian small{font-size:8px}
 #assessmentView .assessment-logo.atensi svg{max-width:90px;height:86px}
 @media(max-width:650px){#assessmentView .assessment-brand{grid-template-columns:72px minmax(0,1fr) 64px;gap:6px}#assessmentView .assessment-logo svg{height:54px}#assessmentView .assessment-logo.kementerian span{font-size:6px}#assessmentView .assessment-logo.kementerian small{font-size:5px}#assessmentView .assessment-logo.atensi svg{height:60px}}
+
+/* v1.0.7: requested three-row assessment action layout and photo attachments */
+#assessmentView .assessment-action-rows{display:flex;flex-direction:column;gap:10px;margin:12px 0 18px}
+#assessmentView .assessment-action-row{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px}
+#assessmentView .assessment-photo-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+#assessmentView .assessment-upload{position:relative;display:flex;align-items:center;justify-content:center;min-height:46px;padding:10px 12px;border:1px solid #45b4ec;border-radius:9px;background:linear-gradient(135deg,#07549b,#0879c5);color:#fff;font-weight:800;text-align:center;cursor:pointer}
+#assessmentView .assessment-upload input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+#assessmentView .assessment-action-row .dashbtn{min-height:44px}
+#assessmentView .assessment-action-row select{min-height:44px;min-width:190px;flex:1;padding:8px;border-radius:8px}
+#assessmentView .assessment-photo-previews{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#assessmentView .assessment-photo-preview{min-width:0;border:1px solid #c8d3dc;border-radius:8px;padding:6px;color:#222;background:#fff;font-size:12px}
+#assessmentView .assessment-photo-preview img{display:block;width:100%;height:110px;object-fit:cover;border-radius:5px}
+#assessmentView .assessment-photo-preview span{display:block;overflow-wrap:anywhere;margin-top:4px}
+@media(max-width:650px){
+ #assessmentView .assessment-photo-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #assessmentView .assessment-action-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ #assessmentView .assessment-action-row .dashbtn{width:100%;font-size:13px;padding:10px 8px}
+ #assessmentView .assessment-action-row select{min-width:0;width:100%;grid-column:1/-1}
+ #assessmentView .assessment-photo-previews{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media print{#assessmentView .assessment-action-rows{display:none!important}}
 </style>
 </head>
 <body>
@@ -270,7 +291,24 @@
       </form>
     </section>
     <section class="app-view" id="assessmentView" hidden aria-label="Asesmen">
-      <div class="dashhead assessment-no-print"><div><h2>Form Asesmen Terintegrasi</h2><p>Direktorat Jenderal Rehabilitasi Sosial · Semua jawaban opsional</p></div><div class="assessment-actions"><button class="dashbtn" type="button" id="assessmentSave">Simpan ke Database</button><select id="assessmentSavedList" aria-label="Pilih asesmen tersimpan"><option value="">Pilih asesmen tersimpan</option></select><button class="dashbtn" type="button" id="assessmentLoad">Muat Asesmen</button><button class="dashbtn" type="button" id="assessmentPrint">Cetak / Simpan PDF</button><button class="dashbtn" type="button" id="assessmentReset">Kosongkan Form</button></div></div>
+      <div class="dashhead assessment-no-print"><div><h2>Form Asesmen Terintegrasi</h2><p>Direktorat Jenderal Rehabilitasi Sosial · Semua jawaban opsional</p></div><div class="assessment-actions assessment-action-rows">
+          <div class="assessment-action-row assessment-photo-row" aria-label="Foto pendukung">
+            <label class="assessment-upload">FOTO DIRI<input type="file" id="assessmentPhotoSelf" accept="image/*" capture="user"></label>
+            <label class="assessment-upload">FOTO KTP<input type="file" id="assessmentPhotoKtp" accept="image/*"></label>
+            <label class="assessment-upload">FOTO KK<input type="file" id="assessmentPhotoKk" accept="image/*"></label>
+            <label class="assessment-upload">FOTO RUMAH<input type="file" id="assessmentPhotoHome" accept="image/*" capture="environment"></label>
+          </div>
+          <div class="assessment-action-row">
+            <button class="dashbtn" type="button" id="assessmentSave">SIMPAN ASESMEN</button>
+            <button class="dashbtn" type="button" id="assessmentReset">KOSONGKAN FORM</button>
+            <select id="assessmentSavedList" aria-label="Pilih asesmen tersimpan"><option value="">Pilih asesmen tersimpan</option></select>
+            <button class="dashbtn" type="button" id="assessmentLoad">Muat Asesmen</button>
+          </div>
+          <div class="assessment-action-row">
+            <button class="dashbtn" type="button" id="assessmentPrint">CETAK / SIMPAN PDF</button>
+          </div>
+          <div id="assessmentPhotoPreviews" class="assessment-photo-previews" aria-live="polite"></div>
+        </div></div>
       <div class="assessment-paper" id="assessmentPaper">
         <header class="assessment-brand">
           <div class="assessment-logo kementerian" aria-label="Logo Kementerian Sosial">
@@ -328,7 +366,7 @@
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.0.6</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.0.7</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi</p>
 </main>
@@ -1131,6 +1169,34 @@ document.getElementById('logoutButton').addEventListener('click',async()=>{
 </script>
 <script id="assessmentLogic">
 (()=>{
+const photoInputs=[
+["assessmentPhotoSelf","FOTO DIRI"],
+["assessmentPhotoKtp","FOTO KTP"],
+["assessmentPhotoKk","FOTO KK"],
+["assessmentPhotoHome","FOTO RUMAH"]
+];
+const photoPreview=document.getElementById("assessmentPhotoPreviews");
+photoInputs.forEach(([id,label])=>{
+ const input=document.getElementById(id);
+ if(!input||!photoPreview)return;
+ input.addEventListener("change",()=>{
+  const file=input.files&&input.files[0];
+  const prior=photoPreview.querySelector('[data-photo-id="'+id+'"]');
+  if(prior)prior.remove();
+  if(!file)return;
+  if(!file.type.startsWith("image/")){input.value="";alert("Pilih berkas gambar untuk "+label+".");return;}
+  if(file.size>8*1024*1024){input.value="";alert("Ukuran gambar "+label+" maksimal 8 MB.");return;}
+  const reader=new FileReader();
+  reader.onload=()=>{
+   const card=document.createElement("div");card.className="assessment-photo-preview";card.dataset.photoId=id;
+   const img=document.createElement("img");img.src=String(reader.result);img.alt=label;
+   const name=document.createElement("span");name.textContent=label+" — "+file.name;
+   card.append(img,name);photoPreview.append(card);
+  };
+  reader.readAsDataURL(file);
+ });
+});
+
 const groups=[
 {title:"A. ASESMEN CEPAT (RAPID ASSESSMENT)",items:[
 [1,"Tanggal/Bulan/Tahun Asesmen","date"],[2,"Nama Petugas Asesmen"],[3,"Unit Kerja Petugas Asesmen (nama sentra terpadu/sentra)"]]},
