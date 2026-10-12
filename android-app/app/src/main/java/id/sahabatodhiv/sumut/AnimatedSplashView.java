@@ -27,6 +27,16 @@ public final class AnimatedSplashView extends View {
         float w=getWidth(), h=getHeight();
         p.setShader(new LinearGradient(0,0,w,h, new int[]{Color.rgb(12,69,130),cyan,blue}, null, Shader.TileMode.CLAMP));
         c.drawRect(0,0,w,h,p); p.setShader(null);
+        android.graphics.drawable.Drawable logo = getResources().getDrawable(R.drawable.ic_atensi_symbol, getContext().getTheme());
+        int logoSize = (int)Math.min(w * 0.22f, dp(88));
+        logo.setBounds((int)(w/2-logoSize/2), (int)(h*0.035f), (int)(w/2+logoSize/2), (int)(h*0.035f)+logoSize);
+        logo.draw(c);
+        p.setShader(null);
+        p.setColor(Color.rgb(48,53,140));
+        p.setTextAlign(Paint.Align.CENTER);
+        p.setTypeface(android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.BOLD));
+        p.setTextSize(dp(12));
+        c.drawText("ATENSI", w/2, h*0.035f+logoSize+dp(13), p);
         float t=((System.currentTimeMillis()-started)%2400L)/2400f;
         float cx=w*(0.55f+0.06f*(float)Math.sin(t*Math.PI*2));
         float ky=h*0.27f+ (float)Math.sin(t*Math.PI*2)*h*0.018f;
