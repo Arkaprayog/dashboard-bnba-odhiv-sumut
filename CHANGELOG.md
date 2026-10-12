@@ -1,3 +1,11 @@
+## 1.2.2 — 2026-10-12
+
+- Updated Android app versionCode to 5 and versionName to 1.2.2.
+- Made the launch splash immersive fullscreen for the opening animation, then restored system bars when the dashboard appears.
+- Extended splash timing to 4 seconds and added a smoother fade-out.
+- Replaced the hand-drawn launcher/splash symbol with the supplied ATENSI logo asset (rasterized from the user-provided source; not AI-generated).
+- Enabled the Android APK workflow to build on the android-native-mvp branch.
+
 # Changelog
 
 ## 1.0.18 — 2026-10-12
