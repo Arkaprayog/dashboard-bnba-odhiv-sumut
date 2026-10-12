@@ -76,7 +76,7 @@ jobs:
           const intro = fs.readFileSync('public/kuisioner-responden.html', 'utf8');
           const dashboard = fs.readFileSync('public/index.html', 'utf8');
           const checks = [
-            ['redirect after 3 seconds', intro.includes('window.setTimeout(()=>{window.location.replace(FORM_URL)},3000);')],
+            ['redirect after 3 seconds', intro.includes('window.setTimeout(()=>{document.getElementById(\'status\').textContent=\'Mengalihkan ke Google Forms…\';window.location.replace(FORM_URL)},5200)')],
             ['canonical Google Form URL', intro.includes('1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw')],
             ['Kemensos logo', intro.includes('alt="Kementerian Sosial"')],
             ['Sumatera Utara logo', intro.includes('alt="Provinsi Sumatera Utara"')],
