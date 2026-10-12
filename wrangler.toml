@@ -50,6 +50,7 @@ invocation_logs = true
 persist = true
 
 [env.sahabatodhiv-sumut.vars]
+APP_VERSION = "1.1.1"
 APP_NAME = "Data Base PPKS ODHIV Sumut"
 APP_ORIGIN = "https://sahabatodhiv-sumut.aryprayoga139.workers.dev"
 WEBAUTHN_RP_NAME = "Data Base PPKS ODHIV Sumut"
