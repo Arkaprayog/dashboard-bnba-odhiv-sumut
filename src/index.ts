@@ -597,8 +597,9 @@ export default {
           const row = Number(rowText);
           if (!Number.isInteger(row) || row < 2 || row > 1001) return reply({ error: "Baris responden tidak valid." }, 400);
           if (!(file instanceof File)) return reply({ error: "Pilih foto yang akan diunggah." }, 400);
-          if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) return reply({ error: "Format foto harus JPEG, PNG, atau WebP." }, 415);
-          if (!file.size || file.size > 8 * 1024 * 1024) return reply({ error: "Ukuran foto harus lebih dari 0 dan maksimal 8 MB." }, 413);
+          const allowedFileTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+          if (!allowedFileTypes.includes(file.type)) return reply({ error: "Format berkas harus JPEG, PNG, WebP, PDF, DOC, atau DOCX." }, 415);
+          if (!file.size || file.size > 8 * 1024 * 1024) return reply({ error: "Ukuran berkas harus lebih dari 0 dan maksimal 8 MB." }, 413);
           const normalized = (v: string) => v.normalize("NFKD").toLocaleLowerCase().replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
           if (!/^foto(?:diri|ktp|kk|rumah)/.test(normalized(field))) return reply({ error: "Upload hanya diizinkan untuk kolom foto responden." }, 400);
 
@@ -634,7 +635,7 @@ export default {
               const existingMeta = await fetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(existingId) + "?fields=id,mimeType&supportsAllDrives=true", { headers: { authorization: "Bearer " + token } });
               if (existingMeta.ok) {
                 const existingFile = await existingMeta.json() as { mimeType?: string };
-                if ((existingFile.mimeType || "").toLowerCase().startsWith("image/")) return reply({ error: "Foto pada kolom ini masih dapat diakses. Upload pengganti hanya tersedia jika foto kosong atau foto lama gagal diakses." }, 409);
+                if (allowedFileTypes.includes((existingFile.mimeType || "").toLowerCase())) return reply({ error: "Berkas pada kolom ini masih dapat diakses. Upload pengganti hanya tersedia jika berkas lama kosong atau tidak dapat diakses." }, 409);
               }
             } else if (currentValue && !/^https?:\/\//i.test(currentValue)) {
               return reply({ error: "Kolom foto sudah berisi nilai yang tidak kosong. Periksa tautan lama sebelum menggantinya." }, 409);
@@ -653,7 +654,7 @@ export default {
             }
             const uploaded = await uploadRes.json() as { id?: string; mimeType?: string };
             uploadedId = uploaded.id || "";
-            if (!uploadedId || uploaded.mimeType !== file.type) throw new Error("Google Drive tidak mengembalikan identitas foto yang valid.");
+            if (!uploadedId || uploaded.mimeType !== file.type) throw new Error("Google Drive tidak mengembalikan identitas berkas yang valid.");
             let col = ""; let n = colIndex + 1;
             while (n > 0) { const rem = (n - 1) % 26; col = String.fromCharCode(65 + rem) + col; n = Math.floor((n - 1) / 26); }
             const cellRange = encodeURIComponent(quotedTab + "!" + col + row);
@@ -665,7 +666,7 @@ export default {
               throw new Error("Foto terunggah, tetapi Google Sheets gagal menyimpan tautannya (HTTP " + put.status + "). " + detail);
             }
             await audit(env, admin.id, "respondent_photo_upload");
-            return reply({ ok: true, url: urlValue, message: "Foto berhasil diunggah dan ditautkan ke Google Sheets." });
+            return reply({ ok: true, url: urlValue, message: "Berkas berhasil diunggah dan ditautkan ke Google Sheets." });
           } catch (error) {
             if (uploadedId) {
               try {
@@ -675,6 +676,33 @@ export default {
             }
             const incidentId = logIncident("respondent_photo_upload_failed", error, { path: url.pathname, stage: requestStage });
             return reply({ error: (error instanceof Error ? error.message : "Foto gagal diunggah.") + " (ID insiden: " + incidentId + ")" }, 503);
+          }
+        }
+
+        if (url.pathname === "/api/respondent-file" && request.method === "GET") {
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengakses berkas responden." }, 403);
+          const fileId = (url.searchParams.get("id") || "").trim();
+          if (!/^[A-Za-z0-9_-]{10,200}$/.test(fileId)) return reply({ error: "ID berkas tidak valid." }, 400);
+          try {
+            const token = await googleAccessToken(env);
+            const driveUrl = "https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(fileId);
+            const metaResponse = await fetch(driveUrl + "?fields=id,name,mimeType,size&supportsAllDrives=true", { headers: { authorization: "Bearer " + token } });
+            if (!metaResponse.ok) return reply({ error: "Google Drive tidak dapat membaca metadata berkas (HTTP " + metaResponse.status + ")." }, 502);
+            const metadata = await metaResponse.json() as { name?: string; mimeType?: string; size?: string };
+            const mime = (metadata.mimeType || "").toLowerCase();
+            const allowed = ["image/jpeg", "image/png", "image/webp", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+            if (!allowed.includes(mime)) return reply({ error: "Jenis berkas tidak diizinkan." }, 415);
+            if (metadata.size && Number(metadata.size) > 8 * 1024 * 1024) return reply({ error: "Berkas melebihi batas 8 MB." }, 413);
+            const fileResponse = await fetch(driveUrl + "?alt=media&supportsAllDrives=true", { headers: { authorization: "Bearer " + token } });
+            if (!fileResponse.ok || !fileResponse.body) return reply({ error: "Google Drive gagal mengirim berkas (HTTP " + fileResponse.status + ")." }, 502);
+            const safeName = (metadata.name || "berkas-responden").replace(/[\\r\\n"]/g, "_").slice(0, 140);
+            const disposition = mime.startsWith("image/") || mime === "application/pdf" ? "inline" : "attachment";
+            return new Response(fileResponse.body, { status: 200, headers: { ...NO_STORE, "content-type": mime, "content-disposition": disposition + '; filename="' + safeName + '"', "content-security-policy": "default-src 'none'; sandbox", "x-content-type-options": "nosniff" } });
+          } catch (error) {
+            const incidentId = logIncident("respondent_file_error", error, { path: url.pathname });
+            return reply({ error: "Berkas responden gagal dimuat. ID insiden: " + incidentId }, 502);
           }
         }
 
@@ -749,15 +777,16 @@ export default {
           const timestamp = get("timestamp", 40) || new Intl.DateTimeFormat("id-ID", { timeZone: "Asia/Jakarta", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
           const selfPhoto = form.get("fotoDiri");
           const ktpPhoto = form.get("fotoKtp");
-          const validPhoto = (value: FormDataEntryValue | null): value is File =>
-            value instanceof File && ["image/jpeg", "image/png", "image/webp"].includes(value.type) && value.size > 0 && value.size <= 8 * 1024 * 1024;
           if (!nama || !/^\d{16}$/.test(nik) || !Number.isInteger(usia) || usia < 0 || usia > 120 ||
               !["Laki-laki", "Perempuan"].includes(gender) || !alamat || !kota || !pekerjaan ||
               !/^\+?[0-9 ()-]{8,30}$/.test(phone) || !["BANTUAN NUTRISI", "BANTUAN KEWIRAUSAHAAN"].includes(bantuan)) {
             return reply({ error: "Periksa kembali isian wajib. NIK harus 16 digit dan usia harus 0–120." }, 400);
           }
-          if (!validPhoto(selfPhoto) || !validPhoto(ktpPhoto)) {
-            return reply({ error: "Foto diri dan foto KTP wajib diunggah dalam format JPEG, PNG, atau WebP, maksimal 8 MB per foto." }, 400);
+          const allowedQuestionnaireFiles = ["image/jpeg", "image/png", "image/webp", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+          const validQuestionnaireFile = (value: FormDataEntryValue | null): value is File =>
+            value instanceof File && allowedQuestionnaireFiles.includes(value.type) && value.size > 0 && value.size <= 8 * 1024 * 1024;
+          if (!validQuestionnaireFile(selfPhoto) || !validQuestionnaireFile(ktpPhoto)) {
+            return reply({ error: "Berkas foto diri dan KTP wajib JPEG, PNG, WebP, PDF, DOC, atau DOCX, maksimal 8 MB per berkas." }, 400);
           }
 
           const uploadedIds: string[] = [];
@@ -1228,7 +1257,8 @@ export default {
     assetHeaders.set("x-content-type-options", "nosniff");
     assetHeaders.set("x-frame-options", "DENY");
     assetHeaders.set("referrer-policy", "no-referrer");
-    assetHeaders.set("permissions-policy", "camera=(), microphone=(), geolocation=()");
+    assetHeaders.set("permissions-policy", "camera=(self), microphone=(), geolocation=()");
+    assetHeaders.set("content-security-policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://upload.wikimedia.org https://commons.wikimedia.org https://sumutprov.go.id https://api.qrserver.com; connect-src 'self' https://raw.githubusercontent.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https://docs.google.com");
     if (url.pathname === "/" || url.pathname.endsWith(".html")) {
       assetHeaders.set("cache-control", "no-store, no-cache, must-revalidate, max-age=0");
       assetHeaders.set("pragma", "no-cache");
