@@ -76,12 +76,11 @@ jobs:
           const intro = fs.readFileSync('public/kuisioner-responden.html', 'utf8');
           const dashboard = fs.readFileSync('public/index.html', 'utf8');
           const checks = [
-            ['redirect after 3 seconds', intro.includes('window.setTimeout(()=>{document.getElementById(\'status\').textContent=\'Mengalihkan ke Google Forms…\';window.location.replace(FORM_URL)},5200)')],
+            ['redirect status message and 5.2-second timer', intro.includes("window.setTimeout(()=>{document.getElementById('status').textContent='Mengalihkan ke Google Forms…';window.location.replace(FORM_URL)},5200)")],
             ['canonical Google Form URL', intro.includes('1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw')],
-            ['Kemensos logo', intro.includes('alt="Kementerian Sosial"')],
-            ['Sumatera Utara logo', intro.includes('alt="Provinsi Sumatera Utara"')],
-            ['Kemenkes logo', intro.includes('alt="Kementerian Kesehatan"')],
-            ['solidarity ribbon', intro.includes('class="logo ribbon"')],
+            ['accessible animated kite illustration', intro.includes('aria-label="Layangan merah terbang"') && intro.includes('aria-label="Dua anak laki-laki berlari mengejar layangan"')],
+            ['reduced-motion accessibility support', intro.includes('@media(prefers-reduced-motion:reduce)')],
+            ['brand and loading status content', intro.includes('Sahabat ODHIV Sumut') && intro.includes('id="status"')],
             ['dashboard link and QR target intro page', dashboard.includes('kuisioner-responden.html')],
             ['old short form link removed', !dashboard.includes('9YuWSVtgpcSed5St5')],
           ];
