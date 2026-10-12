@@ -52,15 +52,38 @@ function isAllowedOrigin(request: Request, env: Env): boolean {
   return allowedOrigins.has(requestOrigin);
 }
 
-function logIncident(scope: string, error: unknown, context: Record<string, unknown> = {}) {
+function logIncident(scope: string, _error: unknown, context: Record<string, unknown> = {}) {
   const incidentId = crypto.randomUUID();
-  console.error(scope, {
+  // Never persist exception messages/stacks: provider errors can contain URLs,
+  // query parameters, request data, or credentials. Keep only allowlisted metadata.
+  const safeContext: Record<string, string | number | boolean> = {};
+  for (const key of ["path", "method", "stage", "task"]) {
+    const value = context[key];
+    if (typeof value === "string" && value.length <= 80 && /^[a-zA-Z0-9_./:-]+$/.test(value)) {
+      safeContext[key] = value;
+    }
+  }
+  console.error("application_incident", {
     incidentId,
-    ...context,
-    message: error instanceof Error ? error.message : "unknown_error",
-    stack: error instanceof Error ? error.stack : undefined,
+    scope: /^[a-zA-Z0-9_:-]{1,80}$/.test(scope) ? scope : "unknown_incident",
+    ...safeContext,
   });
   return incidentId;
+}
+
+function isAllowedPushEndpoint(value: string): boolean {
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" || url.username || url.password || url.port || url.hash) return false;
+    const host = url.hostname.toLowerCase();
+    return host === "fcm.googleapis.com"
+      || host === "updates.push.services.mozilla.com"
+      || host === "web.push.apple.com"
+      || host.endsWith(".push.apple.com")
+      || host.endsWith(".notify.windows.com");
+  } catch {
+    return false;
+  }
 }
 
 function cookieValue(request: Request, name: string): string | null {
@@ -1147,7 +1170,7 @@ export default {
           const auth = typeof body.keys?.auth === "string" ? body.keys.auth : "";
           let endpointUrl: URL;
           try { endpointUrl = new URL(endpoint); } catch { return reply({ error: "Alamat push tidak valid." }, 400); }
-          if (endpointUrl.protocol !== "https:" || endpoint.length > 2048 || p256dh.length > 256 || auth.length > 128 || !p256dh || !auth) return reply({ error: "Data langganan push tidak valid." }, 400);
+          if (!isAllowedPushEndpoint(endpoint) || endpoint.length > 2048 || p256dh.length > 256 || auth.length > 128 || !/^[A-Za-z0-9_-]+$/.test(p256dh) || !/^[A-Za-z0-9_-]+$/.test(auth)) return reply({ error: "Data langganan push tidak valid." }, 400);
           const endpointHash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(endpoint)));
           await env.DB.prepare(`INSERT INTO push_subscriptions(endpoint_hash,endpoint,p256dh,auth) VALUES(?,?,?,?)
             ON CONFLICT(endpoint_hash) DO UPDATE SET endpoint=excluded.endpoint,p256dh=excluded.p256dh,auth=excluded.auth,updated_at=CURRENT_TIMESTAMP`)
