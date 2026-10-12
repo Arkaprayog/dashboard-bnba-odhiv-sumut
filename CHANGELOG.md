@@ -1,5 +1,10 @@
 # Catatan Versi — Dashboard BNBA ODHIV Sumut
 
+## v1.0.6 — 12 Oktober 2026
+- Judul halaman asesmen diselaraskan menjadi Form Asesmen Terintegrasi.
+- Logo visual Kementerian Sosial ditempatkan di kiri dan logo ATENSI di kanan pada kepala lembar; tulisan ATENSI di tengah dihapus.
+- Tata letak logo responsif diperbaiki untuk layar ponsel dan cetak.
+
 ## v1.0.5 — 12 Oktober 2026
 - Menata ulang tampilan Form Asesmen Terintegrasi agar menyerupai dokumen formal cetak: latar putih, teks hitam, tabel berbingkai, judul terpusat, dan pemisah bagian abu-abu/krem.
 - Memperbaiki konsistensi tampilan pada layar kecil dan saat cetak/PDF agar gaya dashboard biru tidak menimpa lembar asesmen.
