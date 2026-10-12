@@ -352,7 +352,7 @@ body:not(.authenticated) .setup{font-size:.76rem!important}
         <img class="owner-avatar" id="ownerAvatar" alt="Foto owner" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' rx='40' fill='%23e8f2ff'/%3E%3Ccircle cx='40' cy='29' r='14' fill='%237d9bb8'/%3E%3Cpath d='M13 75c2-18 13-27 27-27s25 9 27 27' fill='%237d9bb8'/%3E%3C/svg%3E">
         <button class="owner-edit" id="editOwnerProfile" type="button">Edit profil</button>
       </div>
-      <div class="owner-summary"><h3 id="ownerName">Profil Owner</h3><p id="ownerNipSummary">199212132019091001</p><p id="ownerInstitutionSummary">Direktorat Rehabilitasi Sosial Korban Penyalahgunaan Narkoba &amp; ODHIV</p><p id="ownerContact" hidden></p><details class="owner-details"><summary>Lihat detail profil</summary><p id="ownerNipDetail">NIP: —</p><p id="ownerAddressSummary">Alamat: —</p><p id="ownerPhoneSummary">Nomor HP: —</p><p id="ownerEmailSummary">Email: —</p></details></div>
+      <div class="owner-summary"><h3 id="ownerName">Profil Owner</h3><p id="ownerNipSummary">NIP belum diisi</p><p id="ownerInstitutionSummary">Direktorat Rehabilitasi Sosial Korban Penyalahgunaan Narkoba &amp; ODHIV</p><p id="ownerContact" hidden></p><details class="owner-details"><summary>Lihat detail profil</summary><p id="ownerNipDetail">NIP: —</p><p id="ownerAddressSummary">Alamat: —</p><p id="ownerPhoneSummary">Nomor HP: —</p><p id="ownerEmailSummary">Email: —</p></details></div>
       <div class="owner-header-actions">
         <button class="bell-button" id="notificationBell" type="button" aria-label="Notifikasi" aria-expanded="false" title="Notifikasi">
           <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bell-count" id="notificationCount" hidden>0</span>
@@ -550,8 +550,8 @@ function renderOwnerProfile(profile){
  document.getElementById('ownerInstitutionSummary').textContent='Direktorat Rehabilitasi Sosial Korban Penyalahgunaan Narkoba & ODHIV';
  const contact=[safeText(profile.phone),safeText(profile.email)].filter(Boolean).join(' · ');
  document.getElementById('ownerContact').textContent=contact||'Nomor HP dan email belum diisi';
- document.getElementById('ownerNipSummary').textContent='199212132019091001';
- document.getElementById('ownerNipDetail').textContent='NIP: '+(safeText(profile.nip)||'199212132019091001');
+ document.getElementById('ownerNipSummary').textContent=safeText(profile.nip)||'NIP belum diisi';
+ document.getElementById('ownerNipDetail').textContent='NIP: '+(safeText(profile.nip)||'—');
  document.getElementById('ownerAddressSummary').textContent='Alamat: '+(safeText(profile.address)||'—');
  document.getElementById('ownerPhoneSummary').textContent='Nomor HP: '+(safeText(profile.phone)||'—');
  document.getElementById('ownerEmailSummary').textContent='Email: '+(safeText(profile.email)||'—');
