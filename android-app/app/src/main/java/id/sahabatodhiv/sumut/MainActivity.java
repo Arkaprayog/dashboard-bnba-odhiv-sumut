@@ -64,6 +64,7 @@ public final class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         getWindow().setStatusBarColor(android.graphics.Color.rgb(6, 58, 125));
         getWindow().setNavigationBarColor(android.graphics.Color.rgb(6, 58, 125));
+        if (getActionBar() != null) getActionBar().hide();
         setContentView(new AnimatedSplashView(this));
         createNotificationChannel();
 
@@ -134,6 +135,8 @@ public final class MainActivity extends Activity {
         startupPending = false;
         started = true;
         needsReauth = false;
+        if (getActionBar() != null) getActionBar().show();
+        setTitle(R.string.app_name);
         setContentView(webView);
         if (hasInternet()) webView.loadUrl(DASHBOARD_URL);
         else showOfflineShell();
