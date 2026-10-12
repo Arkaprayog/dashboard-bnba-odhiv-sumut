@@ -1,3 +1,9 @@
+## v1.0.16 — 12 Oktober 2026
+- Menyesuaikan landing page dengan referensi: latar fotografi rumah adat Minangkabau, nuansa langit biru, serta aksen biru-hijau-kuning.
+- Memusatkan logo Kemensos, mempertahankan kalimat sinergi dan judul Database ODHIV Sumatera Utara.
+- Menggunakan panel login transparan tanpa blur agar teks tetap tajam.
+- Menyelaraskan dashboard dengan panel terang dan tabel berkontras tinggi.
+
 ## v1.0.15 — 12 Oktober 2026
 - Memusatkan logo Kemensos pada halaman login dan menyembunyikan logo instansi lain.
 - Mempertahankan kalimat sinergi Kemensos, Kemenkes, dan Pemprov Sumut.
