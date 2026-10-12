@@ -79,7 +79,7 @@ jobs:
           const html = fs.readFileSync('public/index.html', 'utf8');
           const worker = fs.readFileSync('src/index.ts', 'utf8');
           const checks = [
-            ['compact centered login styles', html.includes('finalPolishStyles') && html.includes('body:not(.authenticated) main{width:min(100%,560px)')],
+            ['final centered login size 2 and version', html.includes('id="final-login-size-2-v1-1-0"') && html.includes('body:not(.authenticated) main{width:min(100%,360px)!important') && html.includes('Versi 1.1.0')],
             ['Kemensos logo centered over QR', html.includes('respondent-quiz-qr-logo') && html.includes('class="respondent-quiz-qr-frame"')],
             ['camera and document upload choices', html.includes('application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document') && html.includes('capture="environment"')],
             ['server validates PDF/DOC/DOCX upload MIME', worker.includes('application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document')],
