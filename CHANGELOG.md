@@ -1,5 +1,11 @@
 # Catatan Versi — Dashboard BNBA ODHIV Sumut
 
+## v1.0.5 — 12 Oktober 2026
+- Menata ulang tampilan Form Asesmen Terintegrasi agar menyerupai dokumen formal cetak: latar putih, teks hitam, tabel berbingkai, judul terpusat, dan pemisah bagian abu-abu/krem.
+- Memperbaiki konsistensi tampilan pada layar kecil dan saat cetak/PDF agar gaya dashboard biru tidak menimpa lembar asesmen.
+- Versi paket dan label versi aplikasi disinkronkan ke 1.0.5.
+
+
 ## v1.0.4 — 12 Oktober 2026
 - Menggabungkan formulir Asesmen terintegrasi dengan 91 butir, simpan/muat data asesmen melalui API, dan tabel D1 `integrated_assessments`.
 - Membatasi akses endpoint asesmen ke owner/admin, memeriksa origin dan token CSRF untuk penyimpanan, serta membatasi payload maksimal 100 KB.
