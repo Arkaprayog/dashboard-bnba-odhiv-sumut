@@ -100,7 +100,7 @@ VAPID_PUBLIC_KEY = "BPv6w9cXv9fpAU8amuIMfe2JZOlbbbJdcSUApTbnBCQGghrFICYoEE41TiHQ
 
 
 [triggers]
-crons = ["*/5 * * * *"]
+crons = ["* * * * *"]
 
 [observability]
 enabled = true

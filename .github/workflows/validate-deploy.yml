@@ -99,7 +99,7 @@ jobs:
           const fs = require('fs');
           const config = fs.readFileSync('wrangler.toml', 'utf8');
           const blocks = [
-            ['root dashboard', '[triggers]\ncrons = ["*/5 * * * *"]'],
+            ['root dashboard', '[triggers]\ncrons = ["* * * * *"]'],
             ['Sahabat', '[env.sahabatodhiv-sumut.triggers]\ncrons = []'],
             ['production alias', '[env.production.triggers]\ncrons = []'],
             ['staging', '[env.staging.triggers]\ncrons = []'],
@@ -107,7 +107,7 @@ jobs:
           for (const [name, text] of blocks) {
             if (!config.includes(text)) throw new Error(name + ' cron configuration is incorrect.');
           }
-          if (config.split('crons = ["*/5 * * * *"]').length - 1 !== 1) throw new Error('Exactly one Worker must own the five-minute poller.');
+          if (config.split('crons = ["* * * * *"]').length - 1 !== 1) throw new Error('Exactly one Worker must own the one-minute poller.');
           if (!fs.readFileSync('.github/workflows/validate-deploy.yml', 'utf8').includes('Clear stale Sahabat cron trigger')) throw new Error('Production workflow must explicitly clear stale Sahabat cron triggers through the Cloudflare API.');
           console.log('PASS one poller runs on dashboard; deployment clears stale Sahabat schedule');
           NODE
