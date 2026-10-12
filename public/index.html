@@ -27,7 +27,17 @@
 .app-nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0;padding:8px;border:1px solid rgba(255,255,255,.22);border-radius:14px;background:rgba(0,30,80,.24)}
 .app-nav button{flex:1 1 140px;min-height:44px;border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:10px 12px;background:rgba(0,35,90,.28);color:#fff;font:inherit;font-weight:750;cursor:pointer}
 .app-nav button[aria-current="page"]{background:#fff;color:#07366f;box-shadow:0 4px 12px rgba(0,0,0,.12)}
-.app-view{min-width:0}.overview-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
+.app-view{min-width:0}
+.respondent-quiz-panel{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,320px);gap:24px;align-items:center}
+.respondent-quiz-panel h3,.respondent-quiz-note h3{margin:0 0 8px}
+.respondent-quiz-panel p,.respondent-quiz-note p{line-height:1.55}
+.respondent-quiz-url{display:block;overflow-wrap:anywhere;color:#fff;font-weight:750;text-decoration:underline;margin:12px 0}
+.respondent-quiz-qr-wrap{text-align:center}
+.respondent-quiz-qr{display:block;width:min(100%,280px);height:auto;aspect-ratio:1;object-fit:contain;margin:8px auto;padding:10px;background:#fff;border-radius:12px}
+.respondent-quiz-qr-wrap p{font-size:.85rem;color:#dcecff}
+.respondent-quiz-note{margin-top:14px}
+@media(max-width:640px){.respondent-quiz-panel{grid-template-columns:minmax(0,1fr)}.respondent-quiz-qr{width:min(100%,240px)}}
+.overview-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
 .overview-card{min-width:0;padding:14px;border:1px solid rgba(255,255,255,.25);border-radius:13px;background:rgba(255,255,255,.08)}
 .overview-card small{display:block;color:#dcecff;font-size:.8rem}.overview-card strong{display:block;margin-top:5px;font-size:1.4rem;overflow-wrap:anywhere}
 .overview-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.overview-panel{min-width:0;margin-top:12px;padding:15px;border:1px solid rgba(255,255,255,.25);border-radius:15px;background:rgba(0,35,90,.24);text-align:left}
@@ -619,6 +629,7 @@ body.authenticated #assessmentPaper{background:#fff!important;border:1px solid r
       <button type="button" data-view="questionnaire">▧ Kuesioner</button>
       <button type="button" data-view="assessment">▧ Asesmen</button>
       <button type="button" data-view="news">▤ Berita</button>
+      <button type="button" data-view="respondentQuiz">▧ Kuisioner Responden</button>
     </nav>
     <section class="app-view" id="homeView" aria-label="Beranda Statistik">
       <div class="dashhead"><div><h2>Beranda Statistik</h2><p>Ringkasan data responden dari kuesioner</p></div><button class="dashbtn" id="refreshOverview" type="button">Perbarui statistik</button></div>
@@ -724,6 +735,32 @@ body.authenticated #assessmentPaper{background:#fff!important;border:1px solid r
         <section id="assessmentPrintPhotos" class="assessment-print-photos" aria-label="Lampiran foto asesmen"></section>
       </div>
       <p class="dashmsg assessment-no-print" id="assessmentMessage" role="status" aria-live="polite">Simpan ke database hanya tersedia setelah login dengan peran owner/admin. Data asesmen bersifat rahasia.</p>
+    </section>
+    <section class="app-view" id="respondentQuizView" hidden aria-label="Kuisioner Responden">
+      <div class="dashhead"><div><h2>Kuisioner Responden</h2><p>Bagikan tautan resmi Google Form kepada responden atau pindai kode QR.</p></div></div>
+      <div class="dashpanel respondent-quiz-panel">
+        <div class="respondent-quiz-copy">
+          <h3>Link Kuisioner Responden</h3>
+          <p>Gunakan tautan ini untuk membuka formulir Google Form.</p>
+          <a id="respondentQuizLink" class="respondent-quiz-url" href="https://forms.gle/9YuWSVtgpcSed5St5" target="_blank" rel="noopener noreferrer">https://forms.gle/9YuWSVtgpcSed5St5</a>
+          <div class="owner-form-actions">
+            <button class="dashbtn" type="button" id="openRespondentQuiz">Buka Kuisioner</button>
+            <button class="dashbtn" type="button" id="copyRespondentQuiz">Salin Link</button>
+          </div>
+          <p class="dashmsg" id="respondentQuizMessage" role="status" aria-live="polite"></p>
+        </div>
+        <div class="respondent-quiz-qr-wrap">
+          <h3>Kode QR Kuisioner</h3>
+          <a href="https://forms.gle/9YuWSVtgpcSed5St5" target="_blank" rel="noopener noreferrer" aria-label="Buka Google Form Kuisioner Responden">
+            <img class="respondent-quiz-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=12&data=https%3A%2F%2Fforms.gle%2F9YuWSVtgpcSed5St5" alt="Kode QR untuk membuka Kuisioner Responden" loading="lazy" decoding="async">
+          </a>
+          <p>Pindai dengan kamera ponsel untuk membuka formulir.</p>
+        </div>
+      </div>
+      <div class="dashpanel respondent-quiz-note">
+        <h3>Penyimpanan jawaban</h3>
+        <p>Jawaban yang dikirim responden disimpan oleh Google Forms. Jika formulir telah ditautkan ke Google Sheets, respons juga tercatat di spreadsheet tersebut. Penyimpanan atau sinkronisasi ke Dashboard dan Data PPKS mengikuti koneksi sumber data yang sudah dikonfigurasi; menu ini menyediakan tautan dan kode QR, bukan koneksi baru ke Drive atau Data PPKS.</p>
+      </div>
     </section>
     <section class="app-view" id="newsView" hidden aria-label="Berita HIV dan Kesejahteraan Sosial">
       <div class="dashhead"><div><h2>Berita & Informasi</h2><p>Informasi publik dari RSS sumber kesehatan dan berita Sumatera Utara</p></div><button class="dashbtn" id="refreshNews" type="button">Perbarui berita</button></div>
@@ -874,12 +911,14 @@ let overviewRows=[];
 let overviewHeaders=[];
 let newsItems=[];
 function setAppView(view){
- const views={home:document.getElementById('homeView'),database:document.getElementById('databaseView'),questionnaire:document.getElementById('questionnaireView'),assessment:document.getElementById('assessmentView'),news:document.getElementById('newsView')};
+ const views={home:document.getElementById('homeView'),database:document.getElementById('databaseView'),questionnaire:document.getElementById('questionnaireView'),assessment:document.getElementById('assessmentView'),news:document.getElementById('newsView'),respondentQuiz:document.getElementById('respondentQuizView')};
  Object.entries(views).forEach(([key,node])=>{if(node)node.hidden=key!==view;});
  document.querySelectorAll('#appNavigation [data-view]').forEach(button=>{if(button.dataset.view===view)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
  if(view==='news'&&!newsItems.length)loadNews();
 }
 document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button)setAppView(button.dataset.view);});
+document.getElementById('openRespondentQuiz').addEventListener('click',()=>window.open('https://forms.gle/9YuWSVtgpcSed5St5','_blank','noopener,noreferrer'));
+document.getElementById('copyRespondentQuiz').addEventListener('click',async()=>{const message=document.getElementById('respondentQuizMessage');try{await navigator.clipboard.writeText('https://forms.gle/9YuWSVtgpcSed5St5');message.textContent='Link kuisioner berhasil disalin.';}catch{message.textContent='Salin link ini secara manual: https://forms.gle/9YuWSVtgpcSed5St5';}});
 
 document.getElementById('refreshOverview').addEventListener('click',()=>{if(overviewRows.length)renderOverview(overviewRows,overviewHeaders);else loadRespondents();});
 function normalizedFieldName(value){return String(value??'').normalize('NFKD').toLocaleLowerCase().replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');}
