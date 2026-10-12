@@ -1,16 +1,6 @@
 name: Deploy Sahabat ODHIV Sumut Worker
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "src/**"
-      - "public/**"
-      - "package.json"
-      - "wrangler.toml"
-      - "tsconfig.json"
-      - ".github/workflows/deploy-sahabatodhiv-sumut.yml"
   workflow_dispatch:
 
 permissions:
