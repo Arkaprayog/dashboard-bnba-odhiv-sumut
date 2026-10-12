@@ -48,6 +48,8 @@ public final class MainActivity extends Activity {
     private static final String PREFS = "sahabat_odhiv_preferences";
     private static final String CHANNEL_ID = "sahabat_odhiv_notifications";
     private static final int REQUEST_IMAGE_CHOOSER = 4107;
+    private static final int REQUEST_CAMERA_TEST = 4108;
+    private static final int REQUEST_GALLERY_TEST = 4109;
 
     private WebView webView;
     private boolean showingOfflineShell = false;
@@ -244,6 +246,8 @@ public final class MainActivity extends Activity {
         menu.add(0, 3, 2, "Status notifikasi push native");
         menu.add(0, 4, 3, "Buka dashboard di browser");
         menu.add(0, 5, 4, "Tentang aplikasi");
+        menu.add(0, 6, 5, "Uji kamera");
+        menu.add(0, 7, 6, "Uji galeri foto");
         return true;
     }
 
@@ -263,6 +267,8 @@ public final class MainActivity extends Activity {
             return true;
         }
         if (item.getItemId() == 2) { showTestNotification(); return true; }
+        if (item.getItemId() == 6) { launchCameraTest(); return true; }
+        if (item.getItemId() == 7) { launchGalleryTest(); return true; }
         if (item.getItemId() == 3) {
             new AlertDialog.Builder(this).setTitle("Status notifikasi push native")
                 .setMessage("Notifikasi lokal perangkat tersedia. Pengiriman push otomatis belum aktif karena Firebase Cloud Messaging dan kredensial server belum dikonfigurasi.")
@@ -332,6 +338,49 @@ public final class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) builder.setAllowedAuthenticators(authenticators);
         else builder.setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_WEAK);
         prompt.authenticate(builder.build());
+    }
+
+    private void launchCameraTest() {
+        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (camera.resolveActivity(getPackageManager()) == null) {
+            new AlertDialog.Builder(this).setTitle("Kamera tidak tersedia")
+                .setMessage("Tidak ditemukan aplikasi kamera yang dapat dibuka pada perangkat ini.")
+                .setPositiveButton("Tutup", (d, w) -> {}).show();
+            return;
+        }
+        try {
+            File photoFile = createTemporaryPhoto();
+            cameraOutputUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", photoFile);
+            camera.putExtra(MediaStore.EXTRA_OUTPUT, cameraOutputUri);
+            camera.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            startActivityForResult(camera, REQUEST_CAMERA_TEST);
+        } catch (Exception exception) {
+            cameraOutputUri = null;
+            Toast.makeText(this, "Kamera gagal dibuka: " + exception.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void launchGalleryTest() {
+        Intent gallery = new Intent(Intent.ACTION_GET_CONTENT);
+        gallery.setType("image/*");
+        gallery.addCategory(Intent.CATEGORY_OPENABLE);
+        try {
+            startActivityForResult(Intent.createChooser(gallery, "Pilih foto untuk menguji galeri"), REQUEST_GALLERY_TEST);
+        } catch (Exception exception) {
+            Toast.makeText(this, "Galeri tidak dapat dibuka.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 701) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showTestNotification();
+            } else {
+                Toast.makeText(this, "Izin notifikasi ditolak; notifikasi uji tidak dapat ditampilkan.", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     private void createNotificationChannel() {
