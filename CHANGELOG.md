@@ -1,5 +1,8 @@
 # Catatan Versi — Dashboard BNBA ODHIV Sumut
 
+## v1.0.10 — 12 Oktober 2026
+- Memperbaiki sintaks JavaScript pada kompresi foto: menambahkan tanda kurung penutup yang hilang agar pemeriksaan sintaks dan proses build dapat berjalan.
+
 ## v1.0.9 — 12 Oktober 2026
 - Memperketat target kompresi foto agar empat lampiran dan jawaban formulir tetap berada dalam batas payload penyimpanan 1,5 MB.
 - Sinkronisasi versi patch untuk perbaikan ukuran lampiran.
