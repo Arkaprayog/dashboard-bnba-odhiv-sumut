@@ -44,6 +44,41 @@
 .news-link{display:inline-block;color:#9de8ff;font-weight:750;text-decoration:underline;text-underline-offset:3px}
 @media(max-width:850px){.overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-panels,.news-grid{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){.app-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.app-nav button{min-width:0;padding:9px 5px;font-size:.86rem}.overview-card{padding:11px}.overview-card strong{font-size:1.2rem}.overview-panel{padding:11px}.region-row{grid-template-columns:minmax(80px,1fr) minmax(45px,1fr) auto;gap:6px}.news-card{padding:12px}}
+
+<style id="assessmentStyles">
+.assessment-paper{background:#fff;color:#171717;max-width:1000px;margin:16px auto;padding:28px;font-family:Arial,sans-serif;font-size:13px;border:1px solid #ddd}
+.assessment-brand{display:grid;grid-template-columns:150px 1fr 100px;gap:12px;align-items:center;text-align:center;margin-bottom:32px}
+.assessment-logo{font-weight:700;font-size:11px;color:#1f3d2d}.assessment-logo small{font-size:8px}.assessment-logo.atensi{font-size:18px;letter-spacing:2px;color:#27496a}
+.assessment-heading h2{font-size:18px;margin:0 0 6px}.assessment-heading h3{font-size:16px;margin:0}
+.assessment-number{text-align:center;max-width:520px;margin:0 auto 32px}.assessment-number>div{display:grid;grid-template-columns:2fr 12px 1fr 12px 2fr;border:1px solid #333}.assessment-number label{font-size:11px;font-style:italic;padding:8px;display:flex;flex-direction:column}.assessment-number input{width:100%;border:0;border-bottom:1px solid #777;color:#111;background:#fff;min-width:0}.assessment-number span{align-self:center}
+.assessment-section-title{background:#d7d7d7;font-weight:700;text-transform:uppercase;padding:7px;border:1px solid #333;margin-top:10px;text-align:left}
+.assessment-subtitle{background:#e8e5ce;font-weight:700;text-align:center;padding:9px;border:1px solid #333}
+.assessment-row{display:grid;grid-template-columns:48px minmax(220px,1fr) minmax(240px,1.35fr);border:1px solid #555;border-top:0;min-height:30px;break-inside:avoid}
+.assessment-row>.assessment-no{padding:6px;text-align:center;border-right:1px solid #555}.assessment-label{padding:6px;border-right:1px solid #555}.assessment-answer{padding:5px 8px;min-width:0}.assessment-answer input[type=text],.assessment-answer input[type=date],.assessment-answer input[type=number],.assessment-answer textarea,.assessment-answer select{width:100%;border:0;border-bottom:1px solid #aaa;border-radius:0;background:#fff;color:#111;font:inherit;min-height:22px}.assessment-answer textarea{min-height:42px;resize:vertical}
+.assessment-options{display:grid;grid-template-columns:1fr;gap:3px}.assessment-choice{display:flex;align-items:flex-start;gap:6px;font-weight:400;line-height:1.25}.assessment-choice input{margin:2px 0 0;accent-color:#000}.assessment-choice .print-check{display:none}
+.assessment-blue{background:#c6d9f0;font-weight:700;padding:5px;border:1px solid #555;text-align:center}.assessment-note{font-size:11px;font-style:italic;padding:10px;border:1px solid #555}.assessment-footnote{font-size:12px;font-style:italic}.assessment-signature{margin:45px 30px 10px auto;width:220px;text-align:center}.signature-space{height:85px}
+.assessment-actions{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:650px){.assessment-paper{padding:12px}.assessment-brand{grid-template-columns:1fr 1fr;gap:10px}.assessment-heading{grid-column:1/-1;grid-row:1}.assessment-row{grid-template-columns:34px minmax(0,1fr)}.assessment-answer{grid-column:2;border-top:1px dotted #aaa}.assessment-label{border-right:0}.assessment-number{margin-bottom:18px}}
+@media print{
+ @page{size:A4;margin:12mm}
+ body{background:#fff!important;color:#111!important;padding:0!important;margin:0!important}
+ body *{visibility:hidden!important}
+ #assessmentView,#assessmentView *{visibility:visible!important}
+ #assessmentView{display:block!important;position:absolute!important;left:0!important;top:0!important;width:100%!important;margin:0!important;padding:0!important}
+ .assessment-no-print,.assessment-actions,.assessment-message{display:none!important}
+ .assessment-paper{max-width:none;margin:0;padding:0;border:0;font-size:10px}
+ .assessment-brand{margin-bottom:18px;grid-template-columns:110px 1fr 70px}.assessment-heading h2{font-size:14px}.assessment-heading h3{font-size:12px}
+ .assessment-section-title,.assessment-subtitle,.assessment-blue{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+ .assessment-row{grid-template-columns:34px minmax(0,1fr) minmax(180px,1.2fr);min-height:22px}
+ .assessment-row>.assessment-no,.assessment-label,.assessment-answer{padding:3px}
+ .assessment-row,.assessment-section-title,.assessment-subtitle,.assessment-blue{break-inside:avoid}
+ .assessment-answer input,.assessment-answer textarea,.assessment-answer select{display:none!important}
+ .assessment-choice input{display:none!important}
+ .assessment-choice input:checked + .print-check{display:inline!important;font-size:17px;font-weight:900;line-height:12px;color:#000}
+ .assessment-choice input:not(:checked) + .print-check{display:none!important}
+ .assessment-choice .choice-text{display:inline}
+ .assessment-signature{break-inside:avoid}
+}
 </style>
 </head>
 <body>
@@ -198,8 +233,15 @@
       </form>
     </section>
     <section class="app-view" id="assessmentView" hidden aria-label="Asesmen">
-      <div class="dashhead"><div><h2>Asesmen</h2><p>Menu asesmen disiapkan untuk tahap berikutnya.</p></div></div>
-      <div class="dashpanel"><h3>Asesmen</h3><p>Bagian ini belum diaktifkan. Struktur dan alur asesmen akan ditentukan sebelum formulir atau penyimpanan data dibuat.</p></div>
+      <div class="dashhead assessment-no-print"><div><h2>Form Asesmen Terintegrasi</h2><p>Direktorat Jenderal Rehabilitasi Sosial · Semua jawaban opsional</p></div><div class="assessment-actions"><button class="dashbtn" type="button" id="assessmentSave">Simpan ke Database</button><select id="assessmentSavedList" aria-label="Pilih asesmen tersimpan"><option value="">Pilih asesmen tersimpan</option></select><button class="dashbtn" type="button" id="assessmentLoad">Muat Asesmen</button><button class="dashbtn" type="button" id="assessmentPrint">Cetak / Simpan PDF</button><button class="dashbtn" type="button" id="assessmentReset">Kosongkan Form</button></div></div>
+      <div class="assessment-paper" id="assessmentPaper">
+        <header class="assessment-brand"><div class="assessment-logo">KEMENTERIAN SOSIAL<br><small>REPUBLIK INDONESIA</small></div><div class="assessment-heading"><h2>FORM ASESMEN TERINTEGRASI</h2><h3>DIREKTORAT JENDERAL REHABILITASI SOSIAL</h3></div><div class="assessment-logo atensi">ATENSI</div></header>
+        <div class="assessment-number"><strong>Nomor Kuesioner</strong><div><label>No Urutan Satker<input name="nomorSatker" autocomplete="off"></label><span>.</span><label>Tahun<input name="tahun" inputmode="numeric"></label><span>.</span><label>Nomor Urut<input name="nomorUrut" inputmode="numeric"></label></div></div>
+        <form id="assessmentForm" autocomplete="off"><div id="assessmentFields"></div></form>
+        <p class="assessment-footnote">** Perlu melampirkan foto/dokumen. Foto PPKS dapat dilakukan dengan closeup.</p>
+        <div class="assessment-signature"><p>Petugas</p><div class="signature-space"></div><p>( ........................................ )</p></div>
+      </div>
+      <p class="dashmsg assessment-no-print" id="assessmentMessage" role="status" aria-live="polite">Simpan ke database hanya tersedia setelah login dengan peran owner/admin. Data asesmen bersifat rahasia.</p>
     </section>
     <section class="app-view" id="newsView" hidden aria-label="Berita HIV dan Kesejahteraan Sosial">
       <div class="dashhead"><div><h2>Berita & Informasi</h2><p>Informasi publik dari RSS sumber kesehatan dan berita Sumatera Utara</p></div><button class="dashbtn" id="refreshNews" type="button">Perbarui berita</button></div>
@@ -1026,5 +1068,90 @@ document.getElementById('logoutButton').addEventListener('click',async()=>{
  }catch(error){}
 })();
 </script>
+<script id="assessmentLogic">
+(()=>{
+const groups=[
+{title:"A. ASESMEN CEPAT (RAPID ASSESSMENT)",items:[
+[1,"Tanggal/Bulan/Tahun Asesmen","date"],[2,"Nama Petugas Asesmen"],[3,"Unit Kerja Petugas Asesmen (nama sentra terpadu/sentra)"]]},
+{subtitle:"PROFILE LENGKAP PPKS"},
+{subtitle:"ALAMAT SESUAI KTP"},
+{items:[[4,"Provinsi"],[5,"Kabupaten/Kota"],[6,"Kecamatan"],[7,"Desa/Kelurahan"],[8,"Dusun, RT/RW"],[9,"Alamat Lengkap (Nama Jalan & No Rumah)"]]},
+{subtitle:"ALAMAT SESUAI DOMISILI"},
+{items:[[10,"Provinsi"],[11,"Kabupaten/Kota"],[12,"Kecamatan"],[13,"Desa/Kelurahan"],[14,"Dusun, RT/RW"],[15,"Alamat Lengkap (Nama Jalan & No Rumah)"]]},
+{subtitle:"IDENTITAS PPKS"},
+{items:[[16,"Nama Lengkap"],[17,"Tempat Lahir"],[18,"Tanggal/bln/th Lahir","date"],[19,"Jenis Kelamin","radio",["Laki-laki","Perempuan"]],[20,"Asal Daerah"],[21,"Suku"],[22,"Agama","radio",["Islam","Kristen","Katolik","Hindu","Budha","Konghuchu","Lainnya"]],[23,"NIK **"],[24,"Nomor Kartu Keluarga **"],[25,"Nomor Akta Lahir **","fixed"],[26,"Apakah sudah masuk DTKS?","radio",["Belum","Sudah"]],[27,"Bantuan yang diterima saat ini","checks",["Belum Menerima Bantuan","PKH","Sembako","KIS PBI JK","KIP","Prokus","Lainnya"]],[28,"Pendidikan Terakhir","radio",["Tidak Sekolah","Belum Sekolah","SD","SMP","SMA","Perguruan Tinggi"]],[29,"Status Kawin","radio",["Belum Kawin","Kawin","Cerai Hidup","Cerai Mati"]]]},
+{subtitle:"PROFIL PENGAMPU PPKS [opsional]"},
+{items:[[30,"Nama Lengkap"],[31,"Nomor Hp/ Telepon"],[32,"Hubungan dengan PPKS","radio",["Ayah","Ibu","Kakek","Nenek","Saudara Kandung","Lainnya"]],[33,"Tempat Lahir"],[34,"Tanggal/bulan/tahun Lahir","date"],[35,"Jenis Kelamin","radio",["Laki-laki","Perempuan"]],[36,"Asal Daerah"],[37,"Suku"],[38,"Agama","radio",["Islam","Kristen","Katolik","Hindu","Budha","Konghuchu","Lainnya"]],[39,"NIK **"],[40,"Nomor KK **"],[41,"Apakah sudah masuk DTKS?","radio",["Belum","Sudah"]],[42,"Bantuan yang diterima saat ini","checks",["Belum Menerima Bantuan","PKH","Sembako","KIS PBI JK","KIP","Prokus","Lainnya"]],[43,"Pendidikan terakhir","radio",["Tidak Sekolah","Belum Sekolah","SD","SMP","SMA","Perguruan Tinggi"]],[44,"Status Kawin","radio",["Belum Kawin","Kawin","Cerai Hidup","Cerai Mati"]],[45,"Pekerjaan"],[46,"Penghasilan per Bulan","radio",["< Rp500.000,-","Rp500.000,- – < Rp1.500.000,-","Rp1.500.000,- – < Rp2.500.000,-","Rp2.500.000,- – < Rp3.500.000,-",">= Rp3.500.000,-"]]]},
+{title:"KONDISI PPKS",items:[[47,"Kategori PPKS","radio",["Anak","Lansia","Disabilitas","Korban Bencana dan Kedaruratan"]],[48,"Ragam Penyandang Disabilitas","checks",["Fisik – amputasi/lumpuh layuh/kaku","Paraplegi, cerebral palsy (CP)","Akibat stroke","Akibat kusta","Dwarfisme (kerdil)","Intelektual – lambat belajar","Disabilitas grahita","Down syndrome","Mental – skizofrenia","Bipolar","Depresi","Ansietas","Gangguan kepribadian","Autis","Hiperaktif","Sensorik – netra","Sensorik – rungu","Sensorik – wicara","Ganda/Multi"]],[49,"Tingkatan Disabilitas","radio",["Ringan","Sedang","Berat"]],[50,"Apakah sudah memiliki kartu penyandang Disabilitas?","radio",["Ya","Tidak"]],[51,"Ragam Anak","checks",["Anak dalam situasi darurat/pengungsi/kerusuhan/bencana/konflik","Anak berhadapan dengan hukum","Anak kelompok minoritas dan terisolasi","Anak dieksploitasi secara ekonomi dan/atau seksual","Korban penyalahgunaan narkotika, alkohol, psikotropika, dan zat adiktif","Korban pornografi","Anak dengan HIV/AIDS","Korban penculikan, penjualan, dan/atau perdagangan","Korban kekerasan fisik dan/atau psikis","Korban kejahatan seksual","Korban jaringan terorisme","Anak penyandang disabilitas","Korban perlakuan salah dan penelantaran","Anak dengan perilaku sosial menyimpang","Korban stigmatisasi terkait kondisi orang tua"]],[52,"Ragam Korban Bencana dan Kedaruratan","checks",["Tuna Susila","Gelandangan","Pengemis","Pemulung","Kelompok Minoritas","Bekas Warga Binaan Lembaga Pemasyarakatan (BWBLP)","Orang dengan HIV/AIDS (ODHA)","Korban Penyalahgunaan NAPZA","Korban trafficking","Korban tindak kekerasan","Pekerja Migran Indonesia Bermasalah (PMIB)","Perempuan rawan sosial ekonomi","Korban bencana alam","Korban bencana sosial"]],[53,"Jika kategori Lansia atau Disabilitas, membutuhkan bantuan dalam aktivitas sehari-hari (Activity Daily Living)?","radio",["Ya","Tidak"]],[54,"Kondisi Fisik PPKS","radio",["Sehat","Sakit"]],[55,"Jelaskan Kondisi Fisik (kesehatan, mobilitas, dll)","textarea"],[56,"Kondisi Psikologis PPKS","textarea"],[57,"Kondisi sosial PPKS","textarea"],[58,"Kondisi Mental Spiritual","textarea"],[59,"Kondisi Keluarga","textarea"]]},
+{title:"KONDISI SOSIAL EKONOMI",items:[[60,"Apakah Kepala Keluarga Bekerja?","radio",["Tidak","Iya"]],[61,"Pekerjaan"],[62,"Penghasilan Keluarga per Bulan","radio",["< Rp500.000,-","Rp500.000,- – < Rp1.500.000,-","Rp1.500.000,- – < Rp2.500.000,-","Rp2.500.000,- – < Rp3.500.000,-",">= Rp3.500.000,-"]],[63,"Jumlah Tanggungan","number"],[64,"Apakah pernah tidak makan dalam sehari?","radio",["Tidak","Pernah khawatir tidak makan","Pernah tidak makan"]],[65,"Pengeluaran Pangan per Bulan (Rp)","number"],[66,"Pengeluaran Total per Bulan (Rp)","number"],[67,"Apakah ada pengeluaran pakaian dalam setahun?","radio",["Tidak","Ya"]]]},
+{title:"KONDISI TEMPAT TINGGAL",items:[[68,"Tempat Tinggal saat ini","radio",["Milik Sendiri","Sewa","Menumpang","Lembaga","Telantar/Menggelandang"]],[69,"Jika milik sendiri; bukti kepemilikan tanah","checks",["Sertifikat Hak Milik","Hak Guna Bangunan","Girik"]],[70,"Tinggal Bersama","checks",["Sendiri","Keluarga Inti","Keluarga Besar","Lainnya"]],[71,"Luas Tempat Tinggal (m²)","number"],[72,"Kondisi Bangunan","radio",["Permanen","Semi Permanen","Lainnya"]],[73,"Atap Tempat Tinggal","radio",["Seng","Genteng","Asbes","Lainnya"]],[74,"Lantai Tempat Tinggal","radio",["Tanah","Ubin","Kayu"]],[75,"Dinding Tempat Tinggal","radio",["Kayu","Bambu","Seng","Kawat","Batu Bata"]],[76,"Apakah memiliki jamban/MCK?","radio",["Tidak","Ya"]],[77,"Sumber Penerangan","radio",["Bukan Listrik","Listrik 450 VA","Listrik 900 VA","Lainnya"]],[78,"Sumber Air Bersih","radio",["PDAM","Mata Air","Sumur","Lainnya"]]]},
+{title:"B. PERMASALAHAN, POTENSI & RENCANA INTERVENSI PPKS",items:[[79,"Permasalahan (Gambaran Kasus)","textarea"],[80,"Pelayanan yang pernah diterima","textarea"],[81,"Potensi Diri (Minat Bakat, Keterampilan, Motivasi, Hasil Test IQ)","textarea"],[82,"Potensi Sumber (Organisasi, Lingkungan, Pendidikan, Ekonomi, Keagamaan, Alam)","textarea"],[83,"Komponen Layanan Yang Dibutuhkan","checks",["Pemenuhan Kebutuhan Hidup Layak","Perawatan dan Pengasuhan Sosial","Dukungan Keluarga","Terapi (Fisik, Psikososial, Mental Spiritual)","Pelatihan Vokasional/Pembinaan Kewirausahaan","Bantuan dan Asistensi Sosial","Dukungan Aksesibilitas"]],[84,"Uraian Komponen Layanan","textarea"],[85,"Pihak yang terlibat dalam rencana intervensi","textarea"]]},
+{title:"C. INTERVENSI PPKS [skip]",items:[[86,"Komponen Layanan yang diberikan","checks",["Pemenuhan Kebutuhan Hidup Layak","Perawatan dan Pengasuhan Sosial","Dukungan Keluarga","Terapi (Fisik, Psikososial, Mental Spiritual)","Pelatihan Vokasional/Pembinaan Kewirausahaan","Bantuan dan Asistensi Sosial","Dukungan Aksesibilitas"]],[87,"Uraian Komponen Layanan","textarea"],[88,"Estimasi Jumlah Total Bantuan (Rp)","number"],[89,"Waktu Pemberian Layanan (Bulan/Tahun)","text"],[90,"Pihak yang terlibat dalam intervensi","textarea"]]},
+{title:"D. RENCANA INTERVENSI LANJUTAN (Komplementaritas)",items:[[91,"Bentuk Layanan (bisa lebih dari 1)","checks",["Program Kewirausahaan","Program Perbaikan Rumah melalui Rumah Usaha Sederhana","Program Keluarga Harapan","Bantuan dari Dana Hibah","Pemberian Alat Bantu","Pelatihan Keterampilan Kerja","Lainnya"]]]},
+{subtitle:"KESIMPULAN/RESUME KASUS",items:[["","Kesimpulan/Resume Kasus","textarea"],["","Rekomendasi/Catatan Petugas","textarea"]]}
+];
+const host=document.getElementById('assessmentFields');const form=document.getElementById('assessmentForm');
+function el(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n}
+groups.forEach(group=>{if(group.title)host.append(el('div','assessment-section-title',group.title));if(group.subtitle)host.append(el('div','assessment-subtitle',group.subtitle));(group.items||[]).forEach(([num,label,type='text',options=[]])=>{const row=el('div','assessment-row');row.append(el('div','assessment-no',num));row.append(el('div','assessment-label',label));const answer=el('div','assessment-answer');if(type==='fixed'){answer.textContent='-';answer.dataset.fixed='true'}else if(type==='radio'||type==='checks'){const wrap=el('div','assessment-options');options.forEach((option,i)=>{const lab=el('label','assessment-choice');const input=document.createElement('input');input.type=type==='radio'?'radio':'checkbox';input.name='q'+num+(type==='checks'?'_'+i:'');input.value=option;input.dataset.question=String(num);const check=el('span','print-check','✓');const txt=el('span','choice-text',String(i+1)+'. '+option);lab.append(input,check,txt);wrap.append(lab)});answer.append(wrap)}else{const input=document.createElement(type==='textarea'?'textarea':'input');if(type!=='textarea')input.type=type==='date'?'date':type==='number'?'number':'text';input.name='q'+num;input.dataset.question=String(num);input.setAttribute('aria-label',num+'. '+label);answer.append(input)}row.append(answer);host.append(row)})});
+let currentAssessmentId=null;
+const assessmentMessage=document.getElementById('assessmentMessage');
+const savedList=document.getElementById('assessmentSavedList');
+const saveAssessmentButton=document.getElementById('assessmentSave');
+function collectAssessmentAnswers(){
+ const answers={};
+ document.querySelectorAll('#assessmentPaper input, #assessmentPaper textarea, #assessmentPaper select').forEach(input=>{
+   if(input.type==='radio'){if(input.checked)answers[input.name]=input.value;return;}
+   if(input.type==='checkbox'){if(!answers[input.dataset.question])answers[input.dataset.question]=[];if(input.checked)answers[input.dataset.question].push(input.value);return;}
+   if(input.dataset.fixed==='true')return;
+   if(input.name)answers[input.name]=input.value;
+ });
+ return answers;
+}
+function applyAssessmentAnswers(answers){
+ form.reset();
+ document.querySelectorAll('.assessment-number input').forEach(input=>input.value=answers[input.name]||'');
+ document.querySelectorAll('#assessmentFields input, #assessmentFields textarea, #assessmentFields select').forEach(input=>{
+   const value=answers[input.dataset.question||input.name];
+   if(input.type==='radio')input.checked=value===input.value;
+   else if(input.type==='checkbox')input.checked=Array.isArray(value)&&value.includes(input.value);
+   else if(value!==undefined)input.value=String(value);
+ });
+}
+async function refreshSavedAssessments(){
+ const response=await fetch('/api/assessments',{credentials:'same-origin',cache:'no-store'});
+ const payload=await response.json().catch(()=>({}));
+ if(!response.ok)throw new Error(payload.error||'Gagal memuat daftar asesmen.');
+ savedList.replaceChildren(new Option('Pilih asesmen tersimpan',''));
+ (payload.items||[]).forEach(item=>savedList.add(new Option('Asesmen '+item.id.slice(0,8)+' · '+item.updated_at,item.id)));
+}
+saveAssessmentButton.addEventListener('click',async()=>{
+ saveAssessmentButton.disabled=true;assessmentMessage.textContent='Menyimpan asesmen ke database…';
+ try{
+   const response=await fetch('/api/assessments',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify({id:currentAssessmentId,answers:collectAssessmentAnswers()})});
+   const payload=await response.json().catch(()=>({}));
+   if(!response.ok||!payload.ok)throw new Error(payload.error||'Gagal menyimpan asesmen.');
+   currentAssessmentId=payload.id;
+   await refreshSavedAssessments();
+   savedList.value=currentAssessmentId;
+   assessmentMessage.textContent='Asesmen berhasil disimpan ke database. ID: '+currentAssessmentId;
+ }catch(error){assessmentMessage.textContent=error instanceof Error?error.message:'Gagal menyimpan asesmen.'}
+ finally{saveAssessmentButton.disabled=false}
+});
+document.getElementById('assessmentLoad').addEventListener('click',async()=>{
+ const id=savedList.value;if(!id){assessmentMessage.textContent='Pilih asesmen yang akan dimuat.';return}
+ try{
+   const response=await fetch('/api/assessments/item?id='+encodeURIComponent(id),{credentials:'same-origin',cache:'no-store'});
+   const payload=await response.json().catch(()=>({}));
+   if(!response.ok||!payload.item)throw new Error(payload.error||'Gagal memuat asesmen.');
+   currentAssessmentId=payload.item.id;applyAssessmentAnswers(payload.item.answers||{});
+   assessmentMessage.textContent='Asesmen tersimpan berhasil dimuat.';
+ }catch(error){assessmentMessage.textContent=error instanceof Error?error.message:'Gagal memuat asesmen.'}
+});
+document.getElementById('assessmentPrint').addEventListener('click',()=>window.print());
+document.getElementById('assessmentReset').addEventListener('click',()=>{if(confirm('Kosongkan semua jawaban asesmen?')){form.reset();document.querySelectorAll('.assessment-number input').forEach(i=>i.value='');currentAssessmentId=null;assessmentMessage.textContent='Form kosong. Data tersimpan di database tidak dihapus.'}});
+refreshSavedAssessments().catch(error=>{assessmentMessage.textContent='Daftar asesmen hanya dapat dimuat setelah login owner/admin. '+(error instanceof Error?error.message:'')});
+})();
+</script>
+
 </body>
 </html>

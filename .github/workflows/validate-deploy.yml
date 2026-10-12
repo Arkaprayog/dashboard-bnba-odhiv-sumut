@@ -30,16 +30,27 @@ jobs:
         run: npm install
       - name: Typecheck
         run: npm run typecheck
-      - name: Check dashboard JavaScript syntax
+      - name: Check all inline JavaScript syntax in dashboard HTML
         run: |
           node - <<'NODE'
           const fs = require('fs');
           const html = fs.readFileSync('public/index.html', 'utf8');
-          const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
-          if (!scripts.length) throw new Error('No inline dashboard script found.');
-          fs.writeFileSync('/tmp/dashboard-inline.js', scripts[scripts.length - 1][1]);
+          // Protect escaped closing tags embedded in JavaScript template literals.
+          const sentinel = '__ESCAPED_SCRIPT_CLOSE__';
+          const protectedHtml = html.replace(/<\\\/script>/gi, sentinel);
+          const scripts = [...protectedHtml.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
+            .filter(match => !/\bsrc\s*=/.test(match[1]));
+          if (!scripts.length) throw new Error('No inline dashboard scripts found.');
+          scripts.forEach((match, index) => {
+            const path = `/tmp/dashboard-inline-${index + 1}.js`;
+            fs.writeFileSync(path, match[2].replaceAll(sentinel, '<\\/script>'));
+            console.log(`Checking inline script ${index + 1}/${scripts.length}: ${path}`);
+            require('child_process').execFileSync(process.execPath, ['--check', path], { stdio: 'inherit' });
+          });
+          const opens = [...html.matchAll(/<script\b/gi)].length;
+          const closes = [...html.matchAll(/(?<!\\)<\/script>/gi)].length;
+          if (opens !== closes) throw new Error(`Mismatched script tags: ${opens} opening vs ${closes} closing.`);
           NODE
-          node --check /tmp/dashboard-inline.js
           test -s public/sw.js
       - name: Validate dashboard Wrangler configuration (dry run)
         # Deployment targets the default Worker name used by the public dashboard URL.
