@@ -44,8 +44,9 @@ public final class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         getWindow().setStatusBarColor(android.graphics.Color.rgb(6, 58, 125));
         getWindow().setNavigationBarColor(android.graphics.Color.rgb(6, 58, 125));
+        // Tampilkan animasi pembuka native sebelum dashboard/login dimuat.
+        setContentView(new AnimatedSplashView(this));
         webView = new WebView(this);
-        setContentView(webView);
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -103,11 +104,14 @@ public final class MainActivity extends Activity {
             }
         });
 
-        if (hasInternet()) {
-            webView.loadUrl(DASHBOARD_URL);
-        } else {
-            showOfflineShell();
-        }
+        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+            setContentView(webView);
+            if (hasInternet()) {
+                webView.loadUrl(DASHBOARD_URL);
+            } else {
+                showOfflineShell();
+            }
+        }, 3000L);
     }
 
     private void launchImagePicker() {
