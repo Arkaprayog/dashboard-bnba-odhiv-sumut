@@ -54,8 +54,11 @@ Background push notifications use the existing browser Web Push implementation. 
 - Camera: the app launches Android's camera app only when a user selects the take-photo option. Android's camera app handles its own camera permission prompt. The app does not record video.
 - Gallery: the system picker returns only the photo the user chooses; no broad media/storage permission is declared.
 - Location: coarse/fine permissions are reserved for a future feature and should only be requested if a feature genuinely needs location. No background location is declared.
-- Notifications: Android 13+ requires runtime notification permission for native app notifications.
-- Calls/SMS: prefer opening the user's dialer or SMS app with an intent. The app does not request CALL_PHONE, SEND_SMS, READ_SMS, or call-log access.
+- Notifications: the wrapper does not currently post native Android notifications, so it does not request POST_NOTIFICATIONS. Browser push enrollment must be enabled separately in a supported browser.
+- Calendar: no calendar feature is implemented; the app does not request READ_CALENDAR or WRITE_CALENDAR.
+- Calls/SMS: no in-app call/SMS action is currently implemented. If added, prefer ACTION_DIAL and ACTION_SENDTO so Android opens the user's dialer/messaging app without requesting direct-call or SMS permissions. The app does not request CALL_PHONE, SEND_SMS, READ_SMS, or call-log access.
+- Camera: when an image field supports capture, the app offers Android's camera app through a FileProvider cache URI. The external camera app handles its own camera permission; the wrapper does not request CAMERA.
+- Storage/gallery: Android's system file picker is used for the file the user chooses. No broad storage or media-library permission is requested.
 - No microphone/audio capture, video capture, silent location collection, or background media collection is implemented.
 
 Camera/gallery chooser behavior is implemented in the WebView upload flow, but it must still be tested on a physical Android device with the actual dashboard photo-upload fields.
