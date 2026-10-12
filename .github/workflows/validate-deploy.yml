@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: cloudflare-worker-production
+  group: deploy-sahabatodhiv-sumut-production
   cancel-in-progress: false
 
 jobs:
@@ -52,9 +52,6 @@ jobs:
           if (opens !== closes) throw new Error(`Mismatched script tags: ${opens} opening vs ${closes} closing.`);
           NODE
           test -s public/sw.js
-      - name: Validate dashboard Wrangler configuration (dry run)
-        # Deployment targets the default Worker name used by the public dashboard URL.
-        run: npx wrangler deploy --dry-run
       - name: Validate Sahabat ODHIV Wrangler configuration (dry run)
         run: npx wrangler deploy --dry-run --env sahabatodhiv-sumut
 
@@ -81,12 +78,6 @@ jobs:
         run: |
           test -n "$CLOUDFLARE_API_TOKEN" || (echo "::error::Missing CLOUDFLARE_API_TOKEN in GitHub Actions secrets/environment." && exit 1)
           test -n "$CLOUDFLARE_ACCOUNT_ID" || (echo "::error::Missing CLOUDFLARE_ACCOUNT_ID in GitHub Actions secrets/environment." && exit 1)
-      - name: Deploy Worker
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
       - name: Deploy Sahabat ODHIV Worker
         uses: cloudflare/wrangler-action@v4
         with:
@@ -140,50 +131,3 @@ jobs:
           bootstrap_status="$(curl --silent --show-error --output /tmp/sahabat-bootstrap.json --write-out '%{http_code}' -X POST -H "Origin: $APP_URL" -H "Content-Type: application/json" --data '{}' "$APP_URL/api/setup-owner")"
           test "$bootstrap_status" = "403" || (echo "::error::Sahabat bootstrap endpoint must reject requests without a token (HTTP 403), got $bootstrap_status." && cat /tmp/sahabat-bootstrap.json && exit 1)
           echo "Sahabat ODHIV smoke checks passed: public page available, respondent API protected, bootstrap rejects missing token."
-      - name: Verify production backend health
-        env:
-          HEALTH_URL: https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev/api/health
-        run: |
-          for attempt in $(seq 1 10); do
-            response="$(curl --fail --silent --show-error "$HEALTH_URL" 2>/dev/null || true)"
-            if printf '%s' "$response" | node -e '
-              let data = "";
-              process.stdin.setEncoding("utf8");
-              process.stdin.on("data", chunk => data += chunk);
-              process.stdin.on("end", () => {
-                try {
-                  const result = JSON.parse(data);
-                  if (result.ok === true && result.database === "connected" && result.mode === "ready") process.exit(0);
-                } catch {}
-                process.exit(1);
-              });
-            '; then
-              echo "Backend health check passed: $response"
-              exit 0
-            fi
-            echo "Health check attempt $attempt/10 failed; retrying in 6 seconds."
-            sleep 6
-          done
-          echo "::error::Backend health check did not confirm ok=true, database=connected, mode=ready."
-          exit 1
-      - name: Verify public page and protected respondent endpoint
-        env:
-          APP_URL: https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev
-        run: |
-          page_status="$(curl --silent --show-error --output /tmp/dashboard.html --write-out '%{http_code}' "$APP_URL/")"
-          test "$page_status" = "200" || (echo "::error::Dashboard page returned HTTP $page_status." && exit 1)
-          grep -qi '<html' /tmp/dashboard.html || (echo "::error::Dashboard response is not HTML." && exit 1)
-          grep -q 'ownerProfileForm' /tmp/dashboard.html || (echo "::error::Owner profile UI is missing." && exit 1)
-          sw_status="$(curl --silent --show-error --output /tmp/dashboard-sw.js --write-out '%{http_code}' "$APP_URL/sw.js")"
-          test "$sw_status" = "200" || (echo "::error::Service worker returned HTTP $sw_status." && exit 1)
-          grep -q "addEventListener('push'" /tmp/dashboard-sw.js || (echo "::error::Push event handler missing." && exit 1)
-          profile_status="$(curl --silent --show-error --output /tmp/dashboard-profile.json --write-out '%{http_code}' "$APP_URL/api/owner-profile")"
-          test "$profile_status" = "401" || (echo "::error::Owner profile API must be protected (HTTP 401), got $profile_status." && exit 1)
-          notifications_status="$(curl --silent --show-error --output /tmp/dashboard-notifications.json --write-out '%{http_code}' "$APP_URL/api/notifications")"
-          test "$notifications_status" = "401" || (echo "::error::Notifications API must be protected (HTTP 401), got $notifications_status." && exit 1)
-          api_status="$(curl --silent --show-error --output /tmp/respondents.json --write-out '%{http_code}' "$APP_URL/api/respondents")"
-          test "$api_status" = "401" || (echo "::error::Unauthenticated respondent endpoint should return HTTP 401, got $api_status." && cat /tmp/respondents.json && exit 1)
-          node -e 'const fs=require("fs");const d=JSON.parse(fs.readFileSync("/tmp/respondents.json","utf8"));if(!d.error)process.exit(1);'
-          bootstrap_status="$(curl --silent --show-error --output /tmp/production-bootstrap.json --write-out '%{http_code}' -X POST -H "Origin: $APP_URL" -H "Content-Type: application/json" --data '{}' "$APP_URL/api/setup-owner")"
-          test "$bootstrap_status" = "403" || (echo "::error::Production bootstrap endpoint must reject requests without a token (HTTP 403), got $bootstrap_status." && cat /tmp/production-bootstrap.json && exit 1)
-          echo "Production smoke checks passed: dashboard HTML available, respondent API protected, bootstrap rejects missing token."
