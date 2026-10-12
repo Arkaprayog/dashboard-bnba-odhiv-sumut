@@ -35,8 +35,8 @@ jobs:
           node - <<'NODE'
           const fs = require('fs');
           const html = fs.readFileSync('public/index.html', 'utf8');
-          const scripts = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)]
-            .filter(match => !/\\bsrc\\s*=/.test(match[1]));
+          const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
+            .filter(match => !/\bsrc\s*=/.test(match[1]));
           if (!scripts.length) throw new Error('No inline dashboard scripts found.');
           scripts.forEach((match, index) => {
             const path = `/tmp/dashboard-inline-${index + 1}.js`;
@@ -44,8 +44,8 @@ jobs:
             console.log(`Checking inline script ${index + 1}/${scripts.length}: ${path}`);
             require('child_process').execFileSync(process.execPath, ['--check', path], { stdio: 'inherit' });
           });
-          const opens = [...html.matchAll(/<script\\b/gi)].length;
-          const closes = [...html.matchAll(/<\\/script>/gi)].length;
+          const opens = [...html.matchAll(/<script\b/gi)].length;
+          const closes = [...html.matchAll(/<\/script>/gi)].length;
           if (opens !== closes) throw new Error(`Mismatched script tags: ${opens} opening vs ${closes} closing.`);
           NODE
           test -s public/sw.js
