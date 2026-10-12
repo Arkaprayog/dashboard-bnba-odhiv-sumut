@@ -906,7 +906,50 @@ async function loadRespondents(){
             const valueFor=header=>{let value=item[header]??'';if(timestampHeader&&header===timestampHeader)value=formatTimestamp(value,false);return value;};
             const details=fields.map(([label,header])=>'<tr><th>'+escapeHtml(label)+'</th><td>'+escapeHtml(valueFor(header))+'</td></tr>').join('');
             const photoMarkup=photos.map(([label,header])=>{const src=imageUrl(item[header]);return '<div class="photo">'+(src?'<img src="'+escapeHtml(src)+'" alt="'+escapeHtml(label)+'">':'<div class="missing">Foto belum tersedia sebagai gambar langsung</div>')+'<b>'+escapeHtml(label)+'</b></div>';}).join('');
-            win.document.write('<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dokumen Responden BNBA</title><style>@page{size:A4 portrait;margin:10mm}*{box-sizing:border-box}body{font:10pt Arial,sans-serif;color:#17365d;margin:0}.head{text-align:center;border-bottom:2px solid #1d69a6;padding:0 0 10px;margin-bottom:12px}.head h1{font-size:15pt;margin:0 0 4px}.head h2{font-size:12pt;margin:0}.section{background:#1769aa;color:white;padding:7px 9px;font-weight:bold;margin:10px 0 5px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #bdd7ee;padding:6px;text-align:left;vertical-align:top}th{width:31%;background:#e8f3fb}.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.photo{border:1px solid #bdd7ee;padding:4px;text-align:center;break-inside:avoid}.photo img{width:100%;height:105px;object-fit:contain}.photo b{display:block;font-size:8pt;padding:4px 0}.missing{height:105px;display:flex;align-items:center;justify-content:center;font-size:8pt;color:#666}.foot{margin-top:16px;border-top:1px solid #8ab9df;padding-top:6px;font-size:8pt;color:#555}@media print{button{display:none}}</style></head><body><div class="head"><h1>DATA RESPONDEN BANTUAN NON TUNAI (BNBA)</h1><h2>Form Asesmen Terintegrasi</h2></div><div class="section">IDENTITAS RESPONDEN</div><table>'+details+'</table><div class="section">DOKUMENTASI</div><div class="photos">'+(photoMarkup||'<p>Dokumentasi belum tersedia.</p>')+'</div><div class="foot">Dicetak dari Dashboard BNBA ODHIV Sumut · Dokumen bersifat rahasia</div><script>window.addEventListener("load",()=>setTimeout(()=>window.print(),700));<\/script></body></html>');
+            win.document.write('<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dokumen Responden BNBA</title><style>@page{size:A4 portrait;margin:10mm}*{box-sizing:border-box}body{font:10pt Arial,sans-serif;color:#17365d;margin:0}.head{text-align:center;border-bottom:2px solid #1d69a6;padding:0 0 10px;margin-bottom:12px}.head h1{font-size:15pt;margin:0 0 4px}.head h2{font-size:12pt;margin:0}.section{background:#1769aa;color:white;padding:7px 9px;font-weight:bold;margin:10px 0 5px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #bdd7ee;padding:6px;text-align:left;vertical-align:top}th{width:31%;background:#e8f3fb}.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.photo{border:1px solid #bdd7ee;padding:4px;text-align:center;break-inside:avoid}.photo img{width:100%;height:105px;object-fit:contain}.photo b{display:block;font-size:8pt;padding:4px 0}.missing{height:105px;display:flex;align-items:center;justify-content:center;font-size:8pt;color:#666}.foot{margin-top:16px;border-top:1px solid #8ab9df;padding-top:6px;font-size:8pt;color:#555}@media print{button{display:none}}
+/* v1.0.17 — corrective visual pass: stronger landscape, compact glass card, clear branding */
+html,body{background-color:#cfe7f9!important}
+body:not(.authenticated){
+  min-height:100svh!important;
+  padding:24px 12px 34px!important;
+  color:#17456f!important;
+  background-image:
+    linear-gradient(180deg,rgba(220,239,253,.10) 0%,rgba(226,242,255,.18) 44%,rgba(202,227,249,.20) 68%,rgba(3,54,106,.16) 100%),
+    url("https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Rumah_Gadang_-_Rumah_Adat_Minangkabau.jpg/960px-Rumah_Gadang_-_Rumah_Adat_Minangkabau.jpg")!important;
+  background-position:center top,center bottom!important;
+  background-size:cover,cover!important;
+  background-repeat:no-repeat,no-repeat!important;
+  background-attachment:scroll,scroll!important;
+}
+body:not(.authenticated):before{background:linear-gradient(145deg,#07549a 0 72%,#239b55 72% 79%,#f4c51c 79% 84%,transparent 84%)!important;clip-path:polygon(0 0,100% 0,100% 1.5%,0 12%)!important;z-index:0!important;pointer-events:none}
+body:not(.authenticated):after{content:""!important;position:fixed!important;inset:auto 0 0!important;width:100%!important;height:23vh!important;transform:none!important;background:linear-gradient(180deg,rgba(207,231,249,0),rgba(5,60,112,.40))!important;clip-path:none!important;opacity:1!important;z-index:0!important;pointer-events:none}
+body:not(.authenticated) main{position:relative;z-index:1;width:min(100%,650px)!important;padding:clamp(20px,3vw,30px) clamp(18px,4vw,36px) 20px!important;background:rgba(246,251,255,.76)!important;border:1px solid rgba(255,255,255,.94)!important;border-radius:26px!important;box-shadow:0 18px 48px rgba(18,76,128,.16)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body:not(.authenticated) .agency-logos{margin:0 auto 4px!important}
+body:not(.authenticated) .kemensos-logo{width:clamp(145px,24vw,185px)!important;height:clamp(96px,16vw,126px)!important;object-fit:contain!important}
+body:not(.authenticated) .directorate{margin:5px auto 0!important;max-width:500px!important;font-size:clamp(.88rem,2.4vw,1.05rem)!important;line-height:1.42!important;color:#4c6985!important}
+body:not(.authenticated) .brand{margin:17px auto 19px!important;gap:10px!important}
+body:not(.authenticated) .brand h1{font-size:clamp(1.45rem,4.8vw,2.15rem)!important;line-height:1.12!important;color:#06477f!important}
+body:not(.authenticated) .ribbon{width:29px!important;height:39px!important}
+body:not(.authenticated) .separator{height:40px!important;background:#c5d9eb!important}
+body:not(.authenticated) .form{max-width:500px!important;gap:12px!important}
+body:not(.authenticated) .field input,body:not(.authenticated) .submit{height:58px!important}
+body:not(.authenticated) .login-trust{margin:18px auto 0!important;padding-top:14px!important}
+body:not(.authenticated) .foot{margin:16px auto 0!important;line-height:1.6!important}
+body:not(.authenticated) .rule{margin:13px auto 8px!important}
+body:not(.authenticated) .setup{font-size:.76rem!important}
+@media(max-width:480px){
+ body:not(.authenticated){padding:12px 9px 22px!important;background-position:center top,center bottom!important;background-size:cover,auto 65vh!important}
+ body:not(.authenticated) main{padding:20px 15px 17px!important;border-radius:22px!important}
+ body:not(.authenticated) .kemensos-logo{width:clamp(138px,40vw,170px)!important;height:clamp(90px,27vw,112px)!important}
+ body:not(.authenticated) .directorate{font-size:.84rem!important}
+ body:not(.authenticated) .brand{margin:16px auto!important}
+ body:not(.authenticated) .brand h1{font-size:clamp(1.3rem,5.8vw,1.7rem)!important}
+ body:not(.authenticated) .field input,body:not(.authenticated) .submit{height:55px!important}
+ body:not(.authenticated) .login-trust{margin-top:16px!important;padding-top:12px!important}
+ body:not(.authenticated) .foot{margin-top:13px!important}
+}
+
+</style></head><body><div class="head"><h1>DATA RESPONDEN BANTUAN NON TUNAI (BNBA)</h1><h2>Form Asesmen Terintegrasi</h2></div><div class="section">IDENTITAS RESPONDEN</div><table>'+details+'</table><div class="section">DOKUMENTASI</div><div class="photos">'+(photoMarkup||'<p>Dokumentasi belum tersedia.</p>')+'</div><div class="foot">Dicetak dari Dashboard BNBA ODHIV Sumut · Dokumen bersifat rahasia</div><script>window.addEventListener("load",()=>setTimeout(()=>window.print(),700));<\/script></body></html>');
             win.document.close();
           });
           td.append(print);tr.appendChild(td);return;
