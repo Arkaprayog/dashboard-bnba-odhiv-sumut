@@ -279,6 +279,17 @@ export default {
         logIncident("scheduled_auth_housekeeping_failed", error);
         throw error;
       }
+      // Process push-test requests queued by the Sahabat Worker. The dashboard Worker
+      // owns the single cron and its VAPID private key; both workers share the same D1.
+      try {
+        const pendingTest = await env.DB.prepare("SELECT state_value FROM notification_state WHERE state_key='pending_push_test'").first<{ state_value: string }>();
+        if (pendingTest) {
+          await sendPushToAll(env, "Tes notifikasi Sahabat ODHIV Sumut", "Tes push dari dashboard. Jika perangkat menampilkan pemberitahuan ini, push latar belakang berfungsi.", "push_test");
+          await env.DB.prepare("DELETE FROM notification_state WHERE state_key='pending_push_test'").run();
+        }
+      } catch (error) {
+        logIncident("scheduled_push_test_failed", error, { task: "push_test_delivery" });
+      }
       if (env.GOOGLE_SHEET_ID && env.GOOGLE_SERVICE_ACCOUNT_EMAIL && env.GOOGLE_PRIVATE_KEY) {
         try {
           await ensureFeatureSchema(env);
@@ -1175,12 +1186,15 @@ export default {
           if (admin.role !== "owner") return reply({ error: "Hanya owner yang dapat menguji notifikasi." }, 403);
           const csrf = request.headers.get("X-CSRF-Token");
           if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
-          if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY || !env.VAPID_SUBJECT) return reply({ error: "Push notification belum dikonfigurasi di Cloudflare." }, 503);
+          if (!env.VAPID_PUBLIC_KEY || !env.VAPID_SUBJECT) return reply({ error: "Konfigurasi kunci publik push belum lengkap di Cloudflare." }, 503);
           await ensureFeatureSchema(env);
           const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM push_subscriptions").first<{ n: number }>();
           if (!count?.n) return reply({ error: "Belum ada perangkat yang berlangganan notifikasi. Aktifkan notifikasi HP terlebih dahulu." }, 409);
-          await recordNotification(env, "Tes notifikasi Sahabat ODHIV Sumut", "Jika pesan ini muncul di ponsel, notifikasi push sudah tersambung.", "push_test");
-          return reply({ ok: true, message: "Notifikasi tes dikirim ke perangkat yang terdaftar." });
+          await env.DB.prepare("INSERT INTO dashboard_notifications(title,body,action) VALUES(?,?,?)")
+            .bind("Tes notifikasi Sahabat ODHIV Sumut", "Tes notifikasi dijadwalkan. Periksa banner dan layar kunci perangkat.", "push_test").run();
+          await env.DB.prepare("INSERT INTO notification_state(state_key,state_value) VALUES('pending_push_test',?) ON CONFLICT(state_key) DO UPDATE SET state_value=excluded.state_value,updated_at=CURRENT_TIMESTAMP")
+            .bind(new Date().toISOString()).run();
+          return reply({ ok: true, message: "Tes notifikasi masuk antrean pengiriman. Worker pengirim akan memprosesnya pada siklus berikutnya." });
         }
 
         if (url.pathname === "/api/push-subscriptions" && request.method === "POST") {
