@@ -526,6 +526,31 @@ body.authenticated #assessmentPaper,
 body.authenticated #assessmentPaper *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 body.authenticated #assessmentPaper{background:#fff!important;border:1px solid rgba(255,255,255,.8)!important}
 
+
+/* v1.0.22 — use repository-local ATENSI mark; robust print layout */
+#assessmentView .assessment-brand{
+ display:grid!important;
+ grid-template-columns:minmax(68px,1fr) minmax(0,3fr) minmax(68px,1fr)!important;
+ grid-template-areas:"kemensos heading atensi"!important;
+ gap:10px!important;align-items:center!important;
+}
+#assessmentView .assessment-kemensos{grid-area:kemensos!important;min-width:0}
+#assessmentView .assessment-heading{grid-area:heading!important;min-width:0;text-align:center!important;overflow-wrap:anywhere}
+#assessmentView .assessment-logo.atensi{grid-area:atensi!important;min-width:0;overflow:hidden}
+#assessmentView .assessment-logo.atensi img{display:block!important;width:100%!important;max-width:112px!important;height:auto!important;max-height:112px!important;object-fit:contain!important;margin:0 auto!important}
+#assessmentView .assessment-paper,#assessmentView .assessment-paper *{color:#111!important;text-shadow:none!important;-webkit-text-fill-color:#111!important}
+#assessmentView .assessment-paper{background:#fff!important}
+@media(max-width:560px){
+ #assessmentView .assessment-brand{grid-template-columns:60px minmax(0,1fr) 60px!important;gap:7px!important}
+ #assessmentView .assessment-brand .assessment-logo img{height:auto!important;max-height:78px!important}
+ #assessmentView .assessment-heading h2{font-size:clamp(12px,3.4vw,18px)!important;line-height:1.2!important}
+ #assessmentView .assessment-heading h3{font-size:clamp(10px,2.8vw,15px)!important;line-height:1.25!important}
+}
+@media print{
+ #assessmentView .assessment-brand{grid-template-columns:85px minmax(0,1fr) 85px!important}
+ #assessmentView .assessment-logo.atensi img{max-height:100px!important}
+}
+
 </style>
 </head>
 <body>
@@ -690,7 +715,7 @@ body.authenticated #assessmentPaper{background:#fff!important;border:1px solid r
         <header class="assessment-brand">
           <div class="assessment-logo kementerian assessment-kemensos"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_the_Ministry_of_Social_Affairs_of_the_Republic_of_Indonesia.svg/960px-Logo_of_the_Ministry_of_Social_Affairs_of_the_Republic_of_Indonesia.svg.png" alt="Logo resmi Kementerian Sosial" decoding="async"></div>
           <div class="assessment-heading"><h2>FORM ASESMEN TERINTEGRASI</h2><h3>DIREKTORAT JENDERAL REHABILITASI SOSIAL</h3></div>
-          <div class="assessment-logo atensi"><img src="https://kemensos.go.id/index.php/get/eyJpdiI6Im9FTDNyQkduYnc4OElwb0JLbnY5SlE9PSIsInZhbHVlIjoiaElJQ2RpaEcrR2JmTXdnVlR5ZFNkaGptREd2US9BUEpReUk0TTVOTWNTcz0iLCJtYWMiOiJlNzZiZWRjZGQ3MWEwYWMzYzZiOGJhMzEwM2U1N2E0Y2M2N2YzMjg4ZTk2ZTFmNGJhZjg0ZDE5YTcyMDU4ODVjIiwidGFnIjoiIn0%3D" alt="Logo ATENSI resmi Kementerian Sosial" decoding="async"></div>
+          <div class="assessment-logo atensi"><img src="/atensi.svg" alt="Logo ATENSI resmi Kementerian Sosial" decoding="async"></div>
         </header>
         <div class="assessment-number"><strong>Nomor Kuesioner</strong><div><label>No Urutan Satker<input name="nomorSatker" autocomplete="off"></label><span>.</span><label>Tahun<input name="tahun" inputmode="numeric"></label><span>.</span><label>Nomor Urut<input name="nomorUrut" inputmode="numeric"></label></div></div>
         <form id="assessmentForm" autocomplete="off"><div id="assessmentFields"></div></form>
