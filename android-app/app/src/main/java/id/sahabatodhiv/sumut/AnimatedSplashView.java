@@ -25,6 +25,9 @@ public final class AnimatedSplashView extends View {
     @Override protected void onDraw(Canvas c) {
         super.onDraw(c);
         float w=getWidth(), h=getHeight();
+        long elapsed = System.currentTimeMillis() - started;
+        // Fade the splash smoothly during the final 350 ms before the dashboard appears.
+        setAlpha(Math.max(0f, Math.min(1f, (4000f - elapsed) / 350f)));
         p.setShader(new LinearGradient(0,0,w,h, new int[]{Color.rgb(12,69,130),cyan,blue}, null, Shader.TileMode.CLAMP));
         c.drawRect(0,0,w,h,p); p.setShader(null);
         android.graphics.drawable.Drawable logo = getResources().getDrawable(R.drawable.ic_atensi_symbol, getContext().getTheme());
@@ -37,7 +40,7 @@ public final class AnimatedSplashView extends View {
         p.setTypeface(android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.BOLD));
         p.setTextSize(dp(12));
         c.drawText("ATENSI", w/2, h*0.035f+logoSize+dp(13), p);
-        float t=((System.currentTimeMillis()-started)%2400L)/2400f;
+        float t=(elapsed % 4000L)/4000f;
         float cx=w*(0.55f+0.06f*(float)Math.sin(t*Math.PI*2));
         float ky=h*0.27f+ (float)Math.sin(t*Math.PI*2)*h*0.018f;
         Path kite=new Path(); kite.moveTo(cx,ky-h*.055f); kite.lineTo(cx+h*.045f,ky); kite.lineTo(cx,ky+h*.055f); kite.lineTo(cx-h*.045f,ky); kite.close();
