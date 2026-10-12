@@ -194,7 +194,7 @@ public final class MainActivity extends Activity {
         boolean enabled = getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean("biometric_enabled", false);
         menu.add(0, 1, 0, enabled ? "Nonaktifkan kunci sidik jari/wajah" : "Aktifkan kunci sidik jari/wajah");
         menu.add(0, 2, 1, "Uji notifikasi perangkat");
-        menu.add(0, 3, 2, "Aktifkan push di browser");
+        menu.add(0, 3, 2, "Status notifikasi push native");
         menu.add(0, 4, 3, "Buka dashboard di browser");
         menu.add(0, 5, 4, "Tentang aplikasi");
         return true;
@@ -227,9 +227,8 @@ public final class MainActivity extends Activity {
             return true;
         }
         if (item.getItemId() == 3) {
-            openExternal(DASHBOARD_URL);
-            new AlertDialog.Builder(this).setTitle("Notifikasi push")
-                .setMessage("Worker saat ini menggunakan Web Push/VAPID melalui browser. Push native langsung ke APK memerlukan registrasi Firebase Cloud Messaging dan konfigurasi server yang aman; itu belum aktif pada build ini.")
+            new AlertDialog.Builder(this).setTitle("Status notifikasi push native")
+                .setMessage("Izin notifikasi dan saluran notifikasi perangkat sudah disiapkan. Pengiriman push otomatis ke APK belum aktif karena aplikasi Firebase Cloud Messaging dan kredensial server belum dikonfigurasi. Notifikasi uji di menu ini hanya menguji notifikasi lokal perangkat.")
                 .setPositiveButton("Mengerti", (dialog, which) -> {}).show();
             return true;
         }
