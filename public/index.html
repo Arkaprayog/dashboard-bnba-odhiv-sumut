@@ -641,18 +641,12 @@ body:not(.authenticated) .setup{font-size:.7rem!important;line-height:1.4!import
       </div>
       <div class="owner-summary"><h3 id="ownerName">Profil Owner</h3><p id="ownerNipSummary">NIP belum diisi</p><p id="ownerInstitutionSummary">Direktorat Rehabilitasi Sosial Korban Penyalahgunaan Narkoba &amp; ODHIV</p><p id="ownerContact" hidden></p><details class="owner-details"><summary>Lihat detail profil</summary><p id="ownerNipDetail">NIP: —</p><p id="ownerAddressSummary">Alamat: —</p><p id="ownerPhoneSummary">Nomor HP: —</p><p id="ownerEmailSummary">Email: —</p></details></div>
       <div class="owner-header-actions">
-        <button class="bell-button" id="notificationBell" type="button" aria-label="Notifikasi" aria-expanded="false" title="Notifikasi">
-          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bell-count" id="notificationCount" hidden>0</span>
-        </button>
+
         <button class="dashbtn" id="logoutButton" type="button">Keluar</button>
       </div>
     </div>
     <div class="dashhead" hidden><div><h2 id="dashboardTitle">Dashboard</h2><p id="welcome"></p></div></div>
-    <div class="notification-panel" id="notificationPanel" hidden>
-      <div class="dashhead"><h3>Notifikasi aktivitas</h3><div class="top-actions"><button class="dashbtn" id="enablePushButton" type="button">Aktifkan notifikasi HP</button><button class="dashbtn" id="testPushButton" type="button">Uji notifikasi</button></div></div>
-      <div class="notification-list" id="notificationList"><p class="notification-empty">Memuat notifikasi…</p></div>
-      <p class="scroll-hint" id="pushHelp">Aktifkan notifikasi perangkat agar pemberitahuan dapat muncul saat dashboard berada di latar belakang.</p>
-    </div>
+
 
     <form id="ownerProfileForm" class="dashpanel" hidden>
       <h3>Profil Owner</h3>
@@ -850,14 +844,10 @@ const respondentData=document.getElementById('respondentData');
 const changePasswordForm=document.getElementById('changePasswordForm');
 
 let ownerProfilePhotoData='';
-let notificationPollHandle=null;
-let notificationRefreshBusy=false;
+
 const ownerProfileForm=document.getElementById('ownerProfileForm');
 const ownerProfileMessage=document.getElementById('ownerProfileMessage');
-const notificationPanel=document.getElementById('notificationPanel');
-const notificationList=document.getElementById('notificationList');
-const notificationCount=document.getElementById('notificationCount');
-const notificationBell=document.getElementById('notificationBell');
+
 function safeText(value){return String(value??'').trim();}
 function renderOwnerProfile(profile){
  const name=safeText(profile.employee_name)||'Profil Owner belum lengkap';
@@ -889,66 +879,7 @@ async function loadOwnerProfile(){
   renderOwnerProfile(data.profile||{});
  }catch(error){ownerProfileMessage.textContent=error instanceof Error?error.message:'Profil owner belum dapat dimuat.';}
 }
-async function loadNotifications(){
- if(notificationRefreshBusy||dashboard.hidden)return;
- notificationRefreshBusy=true;
- try{
-  const response=await fetch('/api/notifications',{credentials:'same-origin',cache:'no-store'});
-  const data=await parseResponse(response);
-  if(!response.ok||!data.ok)return;
-  const unread=Number(data.unread)||0;
-  notificationCount.hidden=unread<1;
-  notificationCount.textContent=unread>99?'99+':String(unread);
-  notificationBell.setAttribute('aria-label',unread?'Notifikasi, '+unread+' belum dibaca':'Notifikasi');
-  notificationList.replaceChildren();
-  if(!data.items?.length){const empty=document.createElement('p');empty.className='notification-empty';empty.textContent='Belum ada notifikasi aktivitas.';notificationList.append(empty);}
-  else data.items.forEach(item=>{
-   const entry=document.createElement('article');entry.className='notification-item';
-   const title=document.createElement('strong');title.textContent=String(item.title||'Aktivitas dashboard');
-   const body=document.createElement('p');body.textContent=String(item.body||'');
-   const time=document.createElement('small');time.textContent=String(item.created_at||'').replace('T',' ').replace('Z','');
-   entry.append(title,body,time);notificationList.append(entry);
-  });
- }catch{}finally{notificationRefreshBusy=false;}
-}
-async function enablePushNotifications(){
- const button=document.getElementById('enablePushButton');
- if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window)){
-  document.getElementById('pushHelp').textContent='Browser ini belum mendukung notifikasi push. Coba Chrome/Edge terbaru dan pastikan situs dibuka melalui HTTPS.';
-  return;
- }
- button.disabled=true;button.textContent='Menyiapkan…';
- try{
-  const configResponse=await fetch('/api/push-config',{credentials:'same-origin',cache:'no-store'});
-  const config=await parseResponse(configResponse);
-  if(!config.enabled||!config.publicKey)throw new Error('Kunci push belum dikonfigurasi di Cloudflare.');
-  const permission=await Notification.requestPermission();
-  if(permission!=='granted')throw new Error('Izin notifikasi belum diberikan. Aktifkan izin notifikasi situs melalui pengaturan browser.');
-  const registration=await navigator.serviceWorker.register('/sw.js',{scope:'/'});
-  await navigator.serviceWorker.ready;
-  const key=base64UrlToBytes(config.publicKey);
-  let subscription=await registration.pushManager.getSubscription();
-  if(!subscription)subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:key});
-  const response=await fetch('/api/push-subscriptions',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify(subscription.toJSON())});
-  const data=await parseResponse(response);
-  if(!response.ok||!data.ok)throw new Error(data.error||'Langganan notifikasi gagal disimpan.');
-  document.getElementById('pushHelp').textContent='Notifikasi perangkat aktif. Suara dan getaran mengikuti dukungan browser serta pengaturan ponsel.';
-  button.textContent='Notifikasi aktif';
- }catch(error){
-  document.getElementById('pushHelp').textContent=error instanceof Error?error.message:'Notifikasi belum dapat diaktifkan.';
-  button.textContent='Coba aktifkan lagi';
- }finally{button.disabled=false;}
-}
-function base64UrlToBytes(value){
- const normalized=String(value).replace(/-/g,'+').replace(/_/g,'/');
- const padded=normalized+'='.repeat((4-normalized.length%4)%4);
- const binary=atob(padded);return Uint8Array.from(binary,c=>c.charCodeAt(0));
-}
-function startNotificationPolling(){
- if(notificationPollHandle)clearInterval(notificationPollHandle);
- loadNotifications();
- notificationPollHandle=setInterval(()=>{if(!document.hidden)loadNotifications();},30000);
-}
+
 let csrfToken='';
 toggle.addEventListener('click',()=>{const show=password.type==='password';password.type=show?'text':'password';toggle.setAttribute('aria-label',show?'Sembunyikan password':'Tampilkan password');});
 
@@ -1087,8 +1018,8 @@ function showDashboard(admin,csrf){
  message.textContent='';
  welcome.textContent='Masuk sebagai '+(admin?.display_name||admin?.username||'admin')+' · Peran: '+(admin?.role||'admin');
  loadOwnerProfile();
- loadNotifications();
- startNotificationPolling();
+
+ 
  if(respondentSyncPollHandle)clearInterval(respondentSyncPollHandle);
  setAppView('home');
  loadRespondents();
@@ -1534,30 +1465,10 @@ ownerProfileForm.addEventListener('submit',async event=>{
  try{
   const response=await fetch('/api/owner-profile',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify(payload)});
   const data=await parseResponse(response);if(!response.ok||!data.ok)throw new Error(data.error||'Profil belum berhasil disimpan.');
-  ownerProfileMessage.textContent='Profil berhasil disimpan.';ownerProfileForm.hidden=true;await loadOwnerProfile();await loadNotifications();
+  ownerProfileMessage.textContent='Profil berhasil disimpan.';ownerProfileForm.hidden=true;await loadOwnerProfile();
  }catch(error){ownerProfileMessage.textContent=error instanceof Error?error.message:'Profil gagal disimpan.';}
  finally{button.disabled=false;}
 });
-notificationBell.addEventListener('click',async()=>{
- notificationPanel.hidden=!notificationPanel.hidden;notificationBell.setAttribute('aria-expanded',String(!notificationPanel.hidden));
- if(!notificationPanel.hidden){await loadNotifications();try{await fetch('/api/notifications/read',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken}});await loadNotifications();}catch{}}
-});
-async function testPushNotification(){
- const button=document.getElementById('testPushButton');
- const help=document.getElementById('pushHelp');
- button.disabled=true;const original=button.textContent;button.textContent='Mengirim tes…';
- try{
-  const response=await fetch('/api/push-test',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken}});
-  const data=await parseResponse(response);
-  if(!response.ok||!data.ok)throw new Error(data.error||'Tes notifikasi gagal dikirim.');
-  help.textContent='Permintaan tes berhasil dikirim. Periksa notifikasi ponsel; pengiriman push dapat memerlukan beberapa detik.';
-  await loadNotifications();
- }catch(error){
-  help.textContent=error instanceof Error?error.message:'Tes notifikasi belum berhasil. Periksa izin ponsel dan konfigurasi push.';
- }finally{button.disabled=false;button.textContent=original;}
-}
-document.getElementById('testPushButton').addEventListener('click',testPushNotification);
-document.getElementById('enablePushButton').addEventListener('click',enablePushNotifications);
 
 function updateOwnerQuestionnaireTimestamp(){
  const input=document.getElementById('oqTimestamp');
@@ -1597,7 +1508,7 @@ document.getElementById('ownerQuestionnaireForm').addEventListener('submit',asyn
   if(!response.ok||!result.ok)throw new Error(result.error||'Kuesioner gagal disimpan.');
   message.textContent='Kuesioner berhasil disimpan ke Google Sheets dan foto tersimpan di Google Drive.';
   form.reset();updateOwnerQuestionnaireTimestamp();
-  await loadNotifications();
+  
  }catch(error){message.textContent=error instanceof Error?error.message:'Kuesioner gagal disimpan. Periksa koneksi dan konfigurasi Google.';}
  finally{button.disabled=false;button.textContent=old;}
 });
@@ -1633,7 +1544,7 @@ document.getElementById('logoutButton').addEventListener('click',async()=>{
   const response=await fetch('/api/logout',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken}});
   const data=await parseResponse(response);
   if(!response.ok){dashboardMessage.textContent=data.error||'Logout belum berhasil.';return;}
-  csrfToken='';if(notificationPollHandle)clearInterval(notificationPollHandle);if(respondentSyncPollHandle){clearInterval(respondentSyncPollHandle);respondentSyncPollHandle=null;}showLogin('Anda sudah keluar dari dashboard.');
+  csrfToken='';if(respondentSyncPollHandle){clearInterval(respondentSyncPollHandle);respondentSyncPollHandle=null;}showLogin('Anda sudah keluar dari dashboard.');
  }catch(error){dashboardMessage.textContent='Tidak dapat menghubungi server untuk logout.';}
 });
 (async()=>{
