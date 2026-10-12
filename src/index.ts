@@ -282,6 +282,7 @@ export default {
       // Process push-test requests queued by the Sahabat Worker. The dashboard Worker
       // owns the single cron and its VAPID private key; both workers share the same D1.
       try {
+        await ensureFeatureSchema(env);
         const pendingTest = await env.DB.prepare("SELECT state_value FROM notification_state WHERE state_key='pending_push_test'").first<{ state_value: string }>();
         if (pendingTest) {
           await sendPushToAll(env, "Tes notifikasi Sahabat ODHIV Sumut", "Tes push dari dashboard. Jika perangkat menampilkan pemberitahuan ini, push latar belakang berfungsi.", "push_test");
