@@ -200,13 +200,42 @@ public final class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode != REQUEST_IMAGE_CHOOSER) return;
-        Uri selected = null;
-        if (resultCode == RESULT_OK) {
-            if (data != null && data.getData() != null) selected = data.getData();
-            else selected = cameraOutputUri;
+        if (requestCode == REQUEST_IMAGE_CHOOSER) {
+            Uri selected = null;
+            if (resultCode == RESULT_OK) {
+                if (data != null && data.getData() != null) selected = data.getData();
+                else selected = cameraOutputUri;
+            }
+            finishFileChooser(selected == null ? null : new Uri[]{selected});
+            return;
         }
-        finishFileChooser(selected == null ? null : new Uri[]{selected});
+        if (requestCode == REQUEST_CAMERA_TEST) {
+            Uri capturedPhoto = cameraOutputUri;
+            cameraOutputUri = null;
+            if (resultCode == RESULT_OK && capturedPhoto != null) {
+                File photoDirectory = new File(getCacheDir(), "selected-photos");
+                File[] candidates = photoDirectory.listFiles((dir, name) -> name.startsWith("IMG_") && name.endsWith(".jpg"));
+                boolean foundPhoto = false;
+                if (candidates != null) {
+                    for (File candidate : candidates) {
+                        if (candidate.isFile() && candidate.length() > 0) { foundPhoto = true; break; }
+                    }
+                }
+                Toast.makeText(this, foundPhoto
+                        ? "Uji kamera berhasil: foto tersimpan sementara."
+                        : "Kamera selesai, tetapi berkas foto belum terverifikasi.", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Uji kamera dibatalkan.", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+        if (requestCode == REQUEST_GALLERY_TEST) {
+            Toast.makeText(this,
+                    resultCode == RESULT_OK && data != null && data.getData() != null
+                            ? "Uji galeri berhasil: foto dipilih."
+                            : "Uji galeri dibatalkan.",
+                    resultCode == RESULT_OK ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void finishFileChooser(Uri[] results) {
@@ -396,7 +425,7 @@ public final class MainActivity extends Activity {
     private void showTestNotification() {
         if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 701);
-            Toast.makeText(this, "Izinkan notifikasi lalu tekan Uji notifikasi perangkat lagi.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Izinkan notifikasi; notifikasi uji akan ditampilkan setelah izin diberikan.", Toast.LENGTH_LONG).show();
             return;
         }
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
