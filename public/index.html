@@ -742,7 +742,7 @@ body.authenticated #assessmentPaper{background:#fff!important;border:1px solid r
         <div class="respondent-quiz-copy">
           <h3>Link Kuisioner Responden</h3>
           <p>Gunakan tautan ini untuk membuka formulir Google Form.</p>
-          <a id="respondentQuizLink" class="respondent-quiz-url" href="https://forms.gle/9YuWSVtgpcSed5St5" target="_blank" rel="noopener noreferrer">https://forms.gle/9YuWSVtgpcSed5St5</a>
+          <a id="respondentQuizLink" class="respondent-quiz-url" href="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform?usp=header" target="_blank" rel="noopener noreferrer">https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform?usp=header</a>
           <div class="owner-form-actions">
             <button class="dashbtn" type="button" id="openRespondentQuiz">Buka Kuisioner</button>
             <button class="dashbtn" type="button" id="copyRespondentQuiz">Salin Link</button>
@@ -751,8 +751,8 @@ body.authenticated #assessmentPaper{background:#fff!important;border:1px solid r
         </div>
         <div class="respondent-quiz-qr-wrap">
           <h3>Kode QR Kuisioner</h3>
-          <a href="https://forms.gle/9YuWSVtgpcSed5St5" target="_blank" rel="noopener noreferrer" aria-label="Buka Google Form Kuisioner Responden">
-            <img class="respondent-quiz-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=12&data=https%3A%2F%2Fforms.gle%2F9YuWSVtgpcSed5St5" alt="Kode QR untuk membuka Kuisioner Responden" loading="lazy" decoding="async">
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform?usp=header" target="_blank" rel="noopener noreferrer" aria-label="Buka Google Form Kuisioner Responden">
+            <img class="respondent-quiz-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=12&data=https%3A%2F%2Fdocs.google.com%2Fforms%2Fd%2Fe%2F1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw%2Fviewform" alt="Kode QR untuk membuka Kuisioner Responden" loading="lazy" decoding="async">
           </a>
           <p>Pindai dengan kamera ponsel untuk membuka formulir.</p>
         </div>
@@ -917,8 +917,8 @@ function setAppView(view){
  if(view==='news'&&!newsItems.length)loadNews();
 }
 document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button)setAppView(button.dataset.view);});
-document.getElementById('openRespondentQuiz').addEventListener('click',()=>window.open('https://forms.gle/9YuWSVtgpcSed5St5','_blank','noopener,noreferrer'));
-document.getElementById('copyRespondentQuiz').addEventListener('click',async()=>{const message=document.getElementById('respondentQuizMessage');try{await navigator.clipboard.writeText('https://forms.gle/9YuWSVtgpcSed5St5');message.textContent='Link kuisioner berhasil disalin.';}catch{message.textContent='Salin link ini secara manual: https://forms.gle/9YuWSVtgpcSed5St5';}});
+document.getElementById('openRespondentQuiz').addEventListener('click',()=>window.open('https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform?usp=header','_blank','noopener,noreferrer'));
+document.getElementById('copyRespondentQuiz').addEventListener('click',async()=>{const message=document.getElementById('respondentQuizMessage');try{await navigator.clipboard.writeText('https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform?usp=header');message.textContent='Link kuisioner berhasil disalin.';}catch{message.textContent='Salin link ini secara manual: https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform?usp=header';}});
 
 document.getElementById('refreshOverview').addEventListener('click',()=>{if(overviewRows.length)renderOverview(overviewRows,overviewHeaders);else loadRespondents();});
 function normalizedFieldName(value){return String(value??'').normalize('NFKD').toLocaleLowerCase().replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');}
