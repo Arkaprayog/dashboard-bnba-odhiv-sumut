@@ -137,6 +137,21 @@
  #assessmentView .assessment-photo-previews{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media print{#assessmentView .assessment-action-rows{display:none!important}}
+
+/* v1.0.8: durable assessment attachments and sequential A4 print pages */
+#assessmentView .assessment-print-photos{display:none}
+#assessmentView .assessment-print-photo-page{break-before:page;page-break-before:always;min-height:240mm;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:12mm 0}
+#assessmentView .assessment-print-photo-page h2{font-size:18pt;text-align:center;margin:0 0 12mm;color:#111}
+#assessmentView .assessment-print-photo-page img{display:block;max-width:100%;max-height:205mm;object-fit:contain}
+#assessmentView .assessment-print-photo-page p{font-size:10pt;color:#444;margin-top:6mm;overflow-wrap:anywhere}
+@media print{
+ @page{size:A4 portrait;margin:12mm}
+ #assessmentView .assessment-print-photos{display:block}
+ #assessmentView .assessment-print-photo-page{height:273mm;min-height:273mm;padding:8mm 0;break-before:page;page-break-before:always}
+ #assessmentView .assessment-print-photo-page img{max-width:180mm;max-height:225mm;object-fit:contain}
+ #assessmentView .assessment-print-photo-page h2{margin-bottom:10mm;font-size:16pt}
+ #assessmentView .assessment-print-photo-page p{font-size:9pt}
+}
 </style>
 </head>
 <body>
@@ -339,6 +354,7 @@
         <form id="assessmentForm" autocomplete="off"><div id="assessmentFields"></div></form>
         <p class="assessment-footnote">** Perlu melampirkan foto/dokumen. Foto PPKS dapat dilakukan dengan closeup.</p>
         <div class="assessment-signature"><p>Petugas</p><div class="signature-space"></div><p>( ........................................ )</p></div>
+        <section id="assessmentPrintPhotos" class="assessment-print-photos" aria-label="Lampiran foto asesmen"></section>
       </div>
       <p class="dashmsg assessment-no-print" id="assessmentMessage" role="status" aria-live="polite">Simpan ke database hanya tersedia setelah login dengan peran owner/admin. Data asesmen bersifat rahasia.</p>
     </section>
@@ -366,7 +382,7 @@
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.0.7</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.0.8</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi</p>
 </main>
@@ -1176,24 +1192,55 @@ const photoInputs=[
 ["assessmentPhotoHome","FOTO RUMAH"]
 ];
 const photoPreview=document.getElementById("assessmentPhotoPreviews");
-photoInputs.forEach(([id,label])=>{
- const input=document.getElementById(id);
- if(!input||!photoPreview)return;
- input.addEventListener("change",()=>{
-  const file=input.files&&input.files[0];
-  const prior=photoPreview.querySelector('[data-photo-id="'+id+'"]');
-  if(prior)prior.remove();
-  if(!file)return;
-  if(!file.type.startsWith("image/")){input.value="";alert("Pilih berkas gambar untuk "+label+".");return;}
-  if(file.size>8*1024*1024){input.value="";alert("Ukuran gambar "+label+" maksimal 8 MB.");return;}
+const printPhotos=document.getElementById("assessmentPrintPhotos");
+const assessmentPhotos={};
+function renderAssessmentPhoto(id,label,dataUrl,fileName){
+ const old=photoPreview?.querySelector('[data-photo-id="'+id+'"]');if(old)old.remove();
+ const printOld=printPhotos?.querySelector('[data-photo-id="'+id+'"]');if(printOld)printOld.remove();
+ if(!dataUrl)return;
+ const card=document.createElement("div");card.className="assessment-photo-preview";card.dataset.photoId=id;
+ const thumb=document.createElement("img");thumb.src=dataUrl;thumb.alt=label;
+ const name=document.createElement("span");name.textContent=label+" — "+(fileName||"foto tersimpan");
+ card.append(thumb,name);photoPreview?.append(card);
+ const page=document.createElement("section");page.className="assessment-print-photo-page";page.dataset.photoId=id;
+ const heading=document.createElement("h2");heading.textContent=label;
+ const image=document.createElement("img");image.src=dataUrl;image.alt=label;
+ const caption=document.createElement("p");caption.textContent=fileName||"Lampiran Form Asesmen Terintegrasi";
+ page.append(heading,image,caption);printPhotos?.append(page);
+ assessmentPhotos[id]={label,dataUrl,fileName:fileName||label};
+}
+function compressAssessmentPhoto(file){
+ return new Promise((resolve,reject)=>{
   const reader=new FileReader();
+  reader.onerror=()=>reject(new Error("Foto tidak dapat dibaca."));
   reader.onload=()=>{
-   const card=document.createElement("div");card.className="assessment-photo-preview";card.dataset.photoId=id;
-   const img=document.createElement("img");img.src=String(reader.result);img.alt=label;
-   const name=document.createElement("span");name.textContent=label+" — "+file.name;
-   card.append(img,name);photoPreview.append(card);
+   const image=new Image();
+   image.onerror=()=>reject(new Error("Berkas bukan gambar yang dapat dibaca."));
+   image.onload=()=>{
+    const scale=Math.min(1,1280/Math.max(image.naturalWidth,image.naturalHeight));
+    const canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
+    const context=canvas.getContext("2d");if(!context){reject(new Error("Pemrosesan gambar tidak tersedia."));return;}
+    context.fillStyle="#fff";context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(image,0,0,canvas.width,canvas.height);
+    let quality=.78;let result=canvas.toDataURL("image/jpeg",quality);
+    while(result.length>360000&&quality>.42){quality-=.08;result=canvas.toDataURL("image/jpeg",quality);}
+    if(result.length>420000){reject(new Error("Foto terlalu besar setelah kompresi. Pilih foto dengan resolusi lebih rendah."));return;}
+    resolve(result);
+   };
+   image.src=String(reader.result);
   };
   reader.readAsDataURL(file);
+ });
+}
+photoInputs.forEach(([id,label])=>{
+ const input=document.getElementById(id);if(!input||!photoPreview)return;
+ input.addEventListener("change",async()=>{
+  const file=input.files&&input.files[0];if(!file)return;
+  if(!file.type.startsWith("image/")){input.value="";alert("Pilih berkas gambar untuk "+label+".");return;}
+  if(file.size>8*1024*1024){input.value="";alert("Ukuran gambar "+label+" maksimal 8 MB.");return;}
+  const saveButton=document.getElementById("assessmentSave");saveButton.disabled=true;
+  try{const dataUrl=await compressAssessmentPhoto(file);renderAssessmentPhoto(id,label,dataUrl,file.name);assessmentMessage.textContent=label+" siap dilampirkan. Tekan SIMPAN ASESMEN agar foto tersimpan bersama data.";}
+  catch(error){input.value="";alert(error instanceof Error?error.message:"Foto gagal diproses.");}
+  finally{saveButton.disabled=false;}
  });
 });
 
@@ -1275,7 +1322,7 @@ document.getElementById('assessmentLoad').addEventListener('click',async()=>{
  }catch(error){assessmentMessage.textContent=error instanceof Error?error.message:'Gagal memuat asesmen.'}
 });
 document.getElementById('assessmentPrint').addEventListener('click',()=>window.print());
-document.getElementById('assessmentReset').addEventListener('click',()=>{if(confirm('Kosongkan semua jawaban asesmen?')){form.reset();document.querySelectorAll('.assessment-number input').forEach(i=>i.value='');currentAssessmentId=null;assessmentMessage.textContent='Form kosong. Data tersimpan di database tidak dihapus.'}});
+document.getElementById('assessmentReset').addEventListener('click',()=>{if(confirm('Kosongkan semua jawaban dan foto pada form? Data yang sudah tersimpan di database tidak dihapus.')){form.reset();document.querySelectorAll('.assessment-number input').forEach(i=>i.value='');Object.keys(assessmentPhotos).forEach(key=>delete assessmentPhotos[key]);photoPreview?.replaceChildren();printPhotos?.replaceChildren();currentAssessmentId=null;assessmentMessage.textContent='Form dan foto dikosongkan. Data tersimpan di database tidak dihapus.'}});
 refreshSavedAssessments().catch(error=>{assessmentMessage.textContent='Daftar asesmen hanya dapat dimuat setelah login owner/admin. '+(error instanceof Error?error.message:'')});
 })();
 </script>
