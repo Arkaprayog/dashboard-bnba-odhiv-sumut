@@ -816,7 +816,7 @@ export default {
         }
 
         if (url.pathname === "/api/assessments" && (request.method === "GET" || request.method === "POST")) {
-      if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+      if (request.method === "POST" && !isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
       const admin = await sessionAdmin(request, env);
       if (!admin) return reply({ error: "Silakan login." }, 401);
       if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengakses data asesmen." }, 403);
@@ -856,7 +856,6 @@ export default {
     }
 
     if (url.pathname === "/api/assessments/item" && request.method === "GET") {
-      if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
       const admin = await sessionAdmin(request, env);
       if (!admin) return reply({ error: "Silakan login." }, 401);
       if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengakses data asesmen." }, 403);
