@@ -67,7 +67,7 @@
  #assessmentView{display:block!important;position:absolute!important;left:0!important;top:0!important;width:100%!important;margin:0!important;padding:0!important}
  .assessment-no-print,.assessment-actions,.assessment-message{display:none!important}
  .assessment-paper{max-width:none;margin:0;padding:0;border:0;font-size:10px}
- .assessment-brand{margin-bottom:18px;grid-template-columns:110px 1fr 70px}.assessment-heading h2{font-size:14px}.assessment-heading h3{font-size:12px}
+ .assessment-brand{margin-bottom:18px;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"kemensos sumut" "heading heading" "kemenkes kemenkes"}.assessment-heading h2{font-size:14px}.assessment-heading h3{font-size:12px}
  .assessment-section-title,.assessment-subtitle,.assessment-blue{print-color-adjust:exact;-webkit-print-color-adjust:exact}
  .assessment-row{grid-template-columns:34px minmax(0,1fr) minmax(180px,1.2fr);min-height:22px}
  .assessment-row>.assessment-no,.assessment-label,.assessment-answer{padding:3px}
@@ -83,7 +83,7 @@
 /* v1.0.5: formal print-first assessment sheet matching the supplied reference */
 #assessmentView{background:transparent!important;color:#171717!important}
 #assessmentView .assessment-paper{background:#fff!important;color:#171717!important;border:1px solid #d4d4d4!important;box-shadow:none!important}
-#assessmentView .assessment-brand{grid-template-columns:120px minmax(0,1fr) 90px;align-items:start;margin-bottom:28px}
+#assessmentView .assessment-brand{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"kemensos sumut" "heading heading" "kemenkes kemenkes";align-items:start;margin-bottom:28px}
 #assessmentView .assessment-logo{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:70px;text-align:center;font-size:10px;line-height:1.25;color:#183c2a}
 #assessmentView .assessment-logo.atensi{font-size:18px;letter-spacing:1.5px;color:#253b72}
 #assessmentView .assessment-heading{text-align:center;align-self:center}
@@ -350,7 +350,7 @@
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.0.11</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.0.12</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi</p>
 </main>
