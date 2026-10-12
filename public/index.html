@@ -571,6 +571,7 @@ async function loadRespondents(){
     {label:'Nama Lengkap',patterns:[/^namalengkap$/]},
     {label:'NIK',patterns:[/^nik$/]},
     {label:'USIA',patterns:[/^usia$/]},
+    {label:'JENIS KELAMIN',patterns:[/^jeniskelamin$/, /^gender$/, /^sex$/]},
     {label:'STATUS PERNIKAHAN',patterns:[/^statuspernikahan$/]},
     {label:'PEKERJAAN',patterns:[/^statuspekerjaancalonpenerimamanfaat(?:saatini)?$/, /^statuspekerjaan$/, /^pekerjaansaatini$/]},
     {label:'ALAMAT DOMISILI SAAT INI',patterns:[/^alamatdomisilisaatini$/, /^alamatdomisili$/]},
@@ -582,7 +583,7 @@ async function loadRespondents(){
     {label:'DESIL',patterns:[/^desil$/]},
     {label:'Status Laporan',patterns:[/^statuslaporan$/]}
   ];
-  const tableColumns=columnSpecs.map(spec=>({label:spec.label,key:findColumn(spec.patterns)})).filter(column=>column.key);
+  const tableColumns=columnSpecs.map(spec=>({label:spec.label,key:findColumn(spec.patterns)|| (spec.label==='JENIS KELAMIN'?'JENIS KELAMIN':'')})).filter(column=>column.key);
   const tableHeaders=tableColumns.map(column=>column.key);
   const statusColumnIndex=tableColumns.findIndex(column=>normalizeColumnName(column.label)==='statuslaporan');
   tableColumns.splice(statusColumnIndex>=0?statusColumnIndex+1:tableColumns.length,0,{label:'AKSI',key:'AKSI'},{label:'PRINT DOKUMEN',key:'PRINT DOKUMEN'});
