@@ -382,7 +382,7 @@
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.0.8</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.0.9</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi</p>
 </main>
@@ -1222,8 +1222,8 @@ function compressAssessmentPhoto(file){
     const context=canvas.getContext("2d");if(!context){reject(new Error("Pemrosesan gambar tidak tersedia."));return;}
     context.fillStyle="#fff";context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(image,0,0,canvas.width,canvas.height);
     let quality=.78;let result=canvas.toDataURL("image/jpeg",quality);
-    while(result.length>360000&&quality>.42){quality-=.08;result=canvas.toDataURL("image/jpeg",quality);}
-    if(result.length>420000){reject(new Error("Foto terlalu besar setelah kompresi. Pilih foto dengan resolusi lebih rendah."));return;}
+    while(result.length>260000&&quality>.35{quality-=.08;result=canvas.toDataURL("image/jpeg",quality);}
+    if(result.length>300000){reject(new Error("Foto terlalu besar setelah kompresi. Pilih foto dengan resolusi lebih rendah."));return;}
     resolve(result);
    };
    image.src=String(reader.result);
