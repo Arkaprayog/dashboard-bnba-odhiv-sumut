@@ -1,5 +1,10 @@
 # Catatan Versi — Dashboard BNBA ODHIV Sumut
 
+## v1.0.2 — 12 Oktober 2026
+- Menata ulang header profil: foto dan tombol Edit profil di sisi kiri, tombol notifikasi dan Keluar di sisi kanan.
+- Menyembunyikan judul “Dashboard” dan teks sesi “Masuk sebagai … · Peran: …” dari tampilan setelah login.
+- Tidak mengubah isi maupun alur Beranda.
+
 ## v1.0.1 — 12 Oktober 2026
 - Memperbaiki rate limit login agar percobaan gagal dibatasi berdasarkan hash IP klien, bukan satu kunci global yang dapat menghambat semua admin.
 - Menyelaraskan dokumentasi keamanan dengan implementasi PBKDF2 yang saat ini digunakan; belum mengubah format hash akun yang sudah ada.
