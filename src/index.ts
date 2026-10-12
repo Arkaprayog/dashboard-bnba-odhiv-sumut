@@ -842,7 +842,7 @@ export default {
         const id = typeof body.id === "string" && /^[0-9a-f-]{36}$/i.test(body.id) ? body.id : crypto.randomUUID();
         if (!body.answers || typeof body.answers !== "object" || Array.isArray(body.answers)) return reply({ error: "Jawaban asesmen tidak valid." }, 400);
         const answersJson = JSON.stringify(body.answers);
-        if (answersJson.length > 100000) return reply({ error: "Data asesmen terlalu besar (maksimal 100 KB)." }, 413);
+        if (answersJson.length > 1500000) return reply({ error: "Data asesmen terlalu besar (maksimal 1,5 MB termasuk foto yang telah dikompresi)." }, 413);
         await env.DB.prepare(`INSERT INTO integrated_assessments(id,answers_json,created_by,updated_by)
           VALUES(?,?,?,?)
           ON CONFLICT(id) DO UPDATE SET answers_json=excluded.answers_json,updated_at=CURRENT_TIMESTAMP,updated_by=excluded.updated_by`)
