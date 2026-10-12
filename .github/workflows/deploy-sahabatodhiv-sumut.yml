@@ -2,6 +2,15 @@ name: Deploy Sahabat ODHIV Sumut Worker
 
 on:
   workflow_dispatch:
+  push:
+    branches: [android-native-mvp]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'wrangler.toml'
+      - '.github/workflows/deploy-sahabatodhiv-sumut.yml'
 
 permissions:
   contents: read
