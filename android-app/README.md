@@ -11,7 +11,10 @@ https://sahabatodhiv-sumut.aryprayoga139.workers.dev/
 - Allows image upload fields in the dashboard to open a chooser for either the device camera or an existing gallery photo. Video selection/capture is intentionally disabled.
 - Uses a temporary cache file for camera photos and Android's system picker for gallery photos; it does not request broad access to all photos.
 - Keeps in-dashboard notifications available while the dashboard is open.
-- Provides a browser hand-off for background push enrollment. The current backend uses the existing Web Push/VAPID subscription endpoints; Android WebView itself is not assumed to support Web Push. The user must open the site in a supported browser (normally Chrome), sign in, and enable phone notifications there.
+- Includes a native Android notification channel, runtime notification permission request, vibration support, and a local notification test.
+- Includes optional Android system biometric unlock (fingerprint/face where the device supports it, with device-credential fallback). This is a local app lock and does not replace dashboard server login.
+- Shows an animated splash with two children chasing a kite, the approved slogan, the app icon colors, and the ATENSI symbol based on the repository's existing `public/atensi.svg` asset.
+- Native remote push is not yet connected to Firebase Cloud Messaging (FCM). The existing Cloudflare Worker Web Push/VAPID service is a separate browser-push system; the APK must not claim to receive background remote push until an FCM project, Android app registration, and server credentials are configured and tested.
 - Blocks cleartext HTTP, mixed content, file access from the remote page, third-party cookies, and navigation to non-dashboard sites inside the WebView.
 
 ## Build locally
@@ -38,7 +41,9 @@ Open Actions → **Build Sahabat ODHIV Sumut Android APK** → Run workflow. Dow
 - Verify image upload can open the camera and gallery, upload a photo, and handle cancel/permission denial.
 - Confirm video files are not offered by the image chooser.
 - Verify respondent APIs remain protected when signed out.
-- Verify notification permission and push enrollment in Chrome separately.
+- Verify notification permission and the local notification test.
+- Verify biometric opt-in, success, cancel, fallback, and session expiry.
+- Native remote push delivery is pending FCM project and server credential configuration; do not mark it complete until tested with the app closed.
 - Verify offline screen appears with airplane mode enabled.
 
 - Check the app in both portrait and landscape on a phone and an Android tablet; the activity is resizeable and the WebView uses the page's responsive viewport. Actual table wrapping and wide-screen layout still depend on the dashboard's web CSS.
@@ -47,7 +52,7 @@ Open Actions → **Build Sahabat ODHIV Sumut Android APK** → Run workflow. Dow
 
 ## Current limitation
 
-Background push notifications use the existing browser Web Push implementation. The APK wrapper does not yet bundle Firebase Cloud Messaging (FCM); push enrollment opens the dashboard in the system browser. A fully native push channel inside the APK would require an FCM project, package registration, and securely configured credentials.
+Background push notifications use the existing browser Web Push implementation. The APK currently implements local Android notifications and biometric unlock. Remote push delivery from the Workers to the native APK remains pending Firebase Cloud Messaging (FCM) setup: register package `id.sahabatodhiv.sumut`, provide the Firebase Android configuration, enable the FCM API, and configure a service account with permission to send messages. Do not commit service-account private keys to the repository. After configuration, build and test notification delivery with the app closed.
 
 ## Android device permissions
 
