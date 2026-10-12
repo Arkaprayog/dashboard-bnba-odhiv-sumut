@@ -1,5 +1,10 @@
 # Catatan Versi — Dashboard BNBA ODHIV Sumut
 
+## v1.0.7 — 12 Oktober 2026
+- Menyusun ulang kontrol asesmen menjadi tiga baris: unggah Foto Diri/KTP/KK/Rumah, simpan/kosongkan beserta pilihan asesmen tersimpan, lalu cetak/simpan PDF.
+- Menambahkan pratinjau gambar yang dipilih dan validasi tipe/ukuran file (maksimum 8 MB per gambar).
+- Versi aplikasi dan catatan rilis disinkronkan ke 1.0.7.
+
 ## v1.0.6 — 12 Oktober 2026
 - Judul halaman asesmen diselaraskan menjadi Form Asesmen Terintegrasi.
 - Logo visual Kementerian Sosial ditempatkan di kiri dan logo ATENSI di kanan pada kepala lembar; tulisan ATENSI di tengah dihapus.
