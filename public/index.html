@@ -1529,10 +1529,7 @@ ownerProfileForm.addEventListener('submit',async event=>{
  }catch(error){ownerProfileMessage.textContent=error instanceof Error?error.message:'Profil gagal disimpan.';}
  finally{button.disabled=false;}
 });
-notificationBell.addEventListener('click',async()=>{
- notificationPanel.hidden=!notificationPanel.hidden;notificationBell.setAttribute('aria-expanded',String(!notificationPanel.hidden));
- if(!notificationPanel.hidden){await loadNotifications();try{await fetch('/api/notifications/read',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken}});await loadNotifications();}catch{}}
-});
+
 async function testPushNotification(){
  const button=document.getElementById('testPushButton');
  const help=document.getElementById('pushHelp');
