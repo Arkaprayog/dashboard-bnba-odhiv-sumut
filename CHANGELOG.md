@@ -1,5 +1,11 @@
 # Catatan Versi — Dashboard BNBA ODHIV Sumut
 
+## v1.0.11 — 12 Oktober 2026
+- Mengganti logo SVG ilustratif pada halaman masuk dan kepala formulir asesmen dengan gambar logo instansi resmi.
+- Menata identitas instansi: Kemensos di kiri, lambang Provinsi Sumatera Utara di kanan, dan Kemenkes di tengah di bawahnya.
+- Menjaga rasio gambar dengan `object-fit: contain`, teks alternatif aksesibel, dan tata letak responsif.
+- Memperbarui nomor versi aplikasi dan paket ke 1.0.11.
+
 ## v1.0.10 — 12 Oktober 2026
 - Memperbaiki sintaks JavaScript pada kompresi foto: menambahkan tanda kurung penutup yang hilang agar pemeriksaan sintaks dan proses build dapat berjalan.
 
