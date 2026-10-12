@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 625" role="img" aria-labelledby="title">
+<title id="title">ATENSI</title>
+<rect width="600" height="625" fill="none"/>
+<g stroke="none">
+<path fill="#397d9d" d="M38 498 180 498 292 287 237 198Z"/>
+<path fill="#56b69e" d="M180 498 237 198 300 95 358 198 247 394Z"/>
+<path fill="#ffe59b" d="M237 198 300 20 358 198 304 291Z"/>
+<path fill="#b6c8f7" d="M358 198 462 385 368 442 304 291Z"/>
+<path fill="#3979a6" d="M368 442 462 385 562 498 438 498Z"/>
+<path fill="#e91f2b" d="M205 448C270 437 390 402 473 326 545 260 561 177 502 118 480 96 453 84 426 78L441 48C488 60 534 88 562 130 618 213 580 308 505 382 424 461 309 503 218 514Z"/>
+<circle cx="433" cy="42" r="43" fill="#e91f2b"/>
+<path fill="#e91f2b" d="M18 395C52 329 116 255 236 187L246 211C145 264 76 334 54 398 42 434 53 459 75 476L59 499C22 479 0 444 18 395Z"/>
+</g>
+<text x="300" y="596" font-family="Arial,Helvetica,sans-serif" font-size="118" font-weight="800" text-anchor="middle" letter-spacing="4" fill="#30358c">ATENSI</text>
+</svg>
