@@ -8,22 +8,11 @@ This document outlines the security measures implemented in the BNBA ODHIV SUMUT
 
 ### Password Security
 - **Hashing Algorithm**: PBKDF2 with SHA-256
-- **Salt Size**: 32 bytes (256 bits)
-- **Iterations**: 310,000 (OWASP recommendation for 2024)
-- **Hash Output Size**: 64 bytes (512 bits)
+- **Salt Size**: 16 bytes (128 bits) for newly created or changed passwords; existing rows are validated to contain at least 16 bytes.
+- **Iterations**: 100,000 in the current implementation.
+- **Hash Output Size**: 32 bytes (256 bits).
 
-Implementation:
-```typescript
-async function passwordHash(password: string, salt: Uint8Array): Promise<Uint8Array> {
-  return new Uint8Array(
-    await crypto.subtle.deriveBits(
-      { name: "PBKDF2", salt, hash: "SHA-256", iterations: 310000 },
-      await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]),
-      512
-    )
-  );
-}
-```
+Implementation note: the live implementation in `src/index.ts` is authoritative. Do not increase the iteration count or output size in documentation alone. A future password-hash upgrade must include a compatible verification/migration strategy and tests so existing accounts are not locked out.
 
 ### Session Management
 - **Session Token**: 32 bytes of cryptographically secure random data (base64url encoded)
@@ -54,7 +43,7 @@ All API inputs are strictly validated:
 **Login Endpoint** (`/api/login`)
 - Username: Must match `^[a-z0-9._-]{3,64}$`, converted to lowercase
 - Password: 1-1024 characters, no format restrictions
-- Rate limited: Maximum 5 failed attempts per 15 minutes per username
+- Rate limited: Maximum 10 failed attempts per 15 minutes per hashed client IP (current implementation; username is not part of the login request)
 
 **Change Password** (`/api/change-password`)
 - Current password: 1-1024 characters
@@ -74,8 +63,8 @@ All API inputs are strictly validated:
 
 ### Rate Limiting
 **Login Attempts:**
-- Tracks failed attempts per username in 15-minute window
-- Blocks accounts after 5 failed attempts
+- Tracks failed attempts per one-way hash of the client IP in a 15-minute window
+- Blocks further login attempts from the same IP after 10 failed attempts
 - Each failed attempt logged with timestamp
 - Timeout: 15 minutes per failed attempt cycle
 
@@ -86,7 +75,7 @@ const recent = await env.DB.prepare(
   "WHERE username_key=? AND attempted_at>? AND succeeded=0"
 ).bind(loginKey, now - 900).first<{ n: number }>();
 
-if (recent!.n >= 5) {
+if ((recent?.n || 0) >= 10) {
   return reply({ error: "Terlalu banyak percobaan login gagal. Coba lagi nanti." }, 429);
 }
 ```
