@@ -12,6 +12,9 @@ cwd = "./"
 name = "dashboard-bnba-odhiv-sumut-prod"
 workers_dev = true
 
+[env.production.triggers]
+crons = []
+
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "ppks-odhiv-auth"
@@ -57,11 +60,14 @@ VAPID_SUBJECT = "mailto:aryprayoga139@gmail.com"
 VAPID_PUBLIC_KEY = "BPv6w9cXv9fpAU8amuIMfe2JZOlbbbJdcSUApTbnBCQGghrFICYoEE41TiHQH84z_4dSihgieAqA4OcB97ArkGA"
 
 [env.sahabatodhiv-sumut.triggers]
-crons = ["*/5 * * * *"]
+crons = []
 
 [env.staging]
 name = "dashboard-bnba-odhiv-sumut-staging"
 workers_dev = true
+
+[env.staging.triggers]
+crons = []
 
 [assets]
 directory = "./public"
@@ -94,7 +100,7 @@ VAPID_PUBLIC_KEY = "BPv6w9cXv9fpAU8amuIMfe2JZOlbbbJdcSUApTbnBCQGghrFICYoEE41TiHQ
 
 
 [triggers]
-crons = []
+crons = ["*/5 * * * *"]
 
 [observability]
 enabled = true

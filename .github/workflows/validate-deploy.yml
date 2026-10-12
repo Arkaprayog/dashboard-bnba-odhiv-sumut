@@ -93,14 +93,22 @@ jobs:
             if (!ok) process.exitCode = 1;
           }
           NODE
-      - name: Validate single scheduled poller configuration
+      - name: Validate single scheduled poller and push-key alignment
         run: |
           node - <<'NODE'
           const fs = require('fs');
           const config = fs.readFileSync('wrangler.toml', 'utf8');
-          if (!config.includes('[triggers]\ncrons = []')) throw new Error('Dashboard Worker must explicitly have no cron triggers.');
-          if (!config.includes('[env.sahabatodhiv-sumut.triggers]\ncrons = ["*/5 * * * *"]')) throw new Error('Sahabat Worker must retain the five-minute scheduled poller.');
-          console.log('PASS only Sahabat owns the five-minute scheduled poller');
+          const blocks = [
+            ['root dashboard', '[triggers]\ncrons = ["*/5 * * * *"]'],
+            ['Sahabat', '[env.sahabatodhiv-sumut.triggers]\ncrons = []'],
+            ['production alias', '[env.production.triggers]\ncrons = []'],
+            ['staging', '[env.staging.triggers]\ncrons = []'],
+          ];
+          for (const [name, text] of blocks) {
+            if (!config.includes(text)) throw new Error(name + ' cron configuration is incorrect.');
+          }
+          if (config.split('crons = ["*/5 * * * *"]').length - 1 !== 1) throw new Error('Exactly one Worker must own the five-minute poller.');
+          console.log('PASS one poller runs on the dashboard Worker with VAPID_PRIVATE_KEY configured');
           NODE
       - name: Validate Sahabat ODHIV Wrangler configuration (dry run)
         run: npx wrangler deploy --dry-run --env sahabatodhiv-sumut
