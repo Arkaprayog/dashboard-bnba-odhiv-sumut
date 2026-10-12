@@ -191,28 +191,53 @@ public final class MainActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 1, 0, "Aktifkan push di browser");
-        menu.add(0, 2, 1, "Buka dashboard di browser");
-        menu.add(0, 3, 2, "Tentang aplikasi");
+        boolean enabled = getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean("biometric_enabled", false);
+        menu.add(0, 1, 0, enabled ? "Nonaktifkan kunci sidik jari/wajah" : "Aktifkan kunci sidik jari/wajah");
+        menu.add(0, 2, 1, "Uji notifikasi perangkat");
+        menu.add(0, 3, 2, "Aktifkan push di browser");
+        menu.add(0, 4, 3, "Buka dashboard di browser");
+        menu.add(0, 5, 4, "Tentang aplikasi");
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == 1) {
-            openExternal(DASHBOARD_URL);
-            new AlertDialog.Builder(this)
-                .setTitle("Aktifkan notifikasi push")
-                .setMessage("Push latar belakang menggunakan layanan Web Push yang sudah ada. Di browser Chrome, masuk ke dashboard, buka Notifikasi, lalu pilih Aktifkan notifikasi HP. Izin notifikasi situs harus diizinkan.")
-                .setPositiveButton("Mengerti", (dialog, which) -> {})
-                .show();
+            SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+            boolean enabled = prefs.getBoolean("biometric_enabled", false);
+            if (enabled) {
+                prefs.edit().putBoolean("biometric_enabled", false).apply();
+                Toast.makeText(this, "Kunci biometrik dinonaktifkan.", Toast.LENGTH_LONG).show();
+            } else {
+                int status = BiometricManager.from(this).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK | BiometricManager.Authenticators.DEVICE_CREDENTIAL);
+                if (status != BiometricManager.BIOMETRIC_SUCCESS) {
+                    new AlertDialog.Builder(this).setTitle("Biometrik belum tersedia")
+                        .setMessage("Daftarkan sidik jari atau wajah di Pengaturan Android terlebih dahulu. Perangkat juga dapat menggunakan kunci layar sebagai pilihan cadangan.")
+                        .setPositiveButton("Mengerti", (d, w) -> {}).show();
+                } else {
+                    waitingForBiometric = true;
+                    authenticateBiometric();
+                }
+            }
+            invalidateOptionsMenu();
             return true;
         }
         if (item.getItemId() == 2) {
-            openExternal(DASHBOARD_URL);
+            showTestNotification();
             return true;
         }
         if (item.getItemId() == 3) {
+            openExternal(DASHBOARD_URL);
+            new AlertDialog.Builder(this).setTitle("Notifikasi push")
+                .setMessage("Worker saat ini menggunakan Web Push/VAPID melalui browser. Push native langsung ke APK memerlukan registrasi Firebase Cloud Messaging dan konfigurasi server yang aman; itu belum aktif pada build ini.")
+                .setPositiveButton("Mengerti", (dialog, which) -> {}).show();
+            return true;
+        }
+        if (item.getItemId() == 4) {
+            openExternal(DASHBOARD_URL);
+            return true;
+        }
+        if (item.getItemId() == 5) {
             new AlertDialog.Builder(this)
                 .setTitle("Sahabat ODHIV Sumut")
                 .setMessage("Aplikasi Android untuk mengakses dashboard yang ada. Sinkronisasi data memerlukan internet. Data responden tidak disimpan oleh layar offline aplikasi.")
@@ -221,6 +246,71 @@ public final class MainActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void authenticateBiometric() {
+        int status = BiometricManager.from(this).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK | BiometricManager.Authenticators.DEVICE_CREDENTIAL);
+        if (status != BiometricManager.BIOMETRIC_SUCCESS) {
+            getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean("biometric_enabled", false).apply();
+            initializeDashboard();
+            Toast.makeText(this, "Biometrik tidak tersedia. Silakan login lewat dashboard.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        Executor executor = command -> new Handler(Looper.getMainLooper()).post(command);
+        BiometricPrompt prompt = new BiometricPrompt(this, executor, new BiometricPrompt.AuthenticationCallback() {
+            @Override public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
+                super.onAuthenticationSucceeded(result);
+                if (waitingForBiometric) getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean("biometric_enabled", true).apply();
+                waitingForBiometric = false;
+                initializeDashboard();
+            }
+            @Override public void onAuthenticationError(int errorCode, CharSequence errString) {
+                super.onAuthenticationError(errorCode, errString);
+                if (waitingForBiometric) {
+                    waitingForBiometric = false;
+                    getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean("biometric_enabled", false).apply();
+                    Toast.makeText(MainActivity.this, "Kunci biometrik belum diaktifkan.", Toast.LENGTH_LONG).show();
+                    initializeDashboard();
+                } else {
+                    new AlertDialog.Builder(MainActivity.this).setTitle("Aplikasi terkunci")
+                        .setMessage("Autentikasi tidak berhasil. Coba buka aplikasi kembali dan gunakan biometrik atau kunci layar.")
+                        .setPositiveButton("Tutup aplikasi", (d, w) -> finish()).show();
+                }
+            }
+        });
+        BiometricPrompt.PromptInfo info = new BiometricPrompt.PromptInfo.Builder()
+            .setTitle(waitingForBiometric ? "Aktifkan kunci biometrik" : "Buka Sahabat ODHIV")
+            .setSubtitle("Gunakan sidik jari, wajah, atau kunci layar perangkat")
+            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_WEAK | BiometricManager.Authenticators.DEVICE_CREDENTIAL)
+            .build();
+        prompt.authenticate(info);
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Notifikasi Sahabat ODHIV", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("Pemberitahuan aplikasi Sahabat ODHIV Sumut");
+            channel.enableVibration(true);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager != null) manager.createNotificationChannel(channel);
+        }
+    }
+
+    private void showTestNotification() {
+        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 701);
+            Toast.makeText(this, "Izinkan notifikasi lalu tekan Uji notifikasi perangkat lagi.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (manager == null) return;
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setContentTitle("Sahabat ODHIV Sumut")
+            .setContentText("Notifikasi perangkat berhasil diuji.")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true);
+        manager.notify(701, notification.build());
     }
 
     private void openExternal(String url) {
