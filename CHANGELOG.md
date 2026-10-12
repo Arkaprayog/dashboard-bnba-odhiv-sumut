@@ -1,5 +1,11 @@
 # Catatan Versi — Dashboard BNBA ODHIV Sumut
 
+## v1.0.4 — 12 Oktober 2026
+- Menggabungkan formulir Asesmen terintegrasi dengan 91 butir, simpan/muat data asesmen melalui API, dan tabel D1 `integrated_assessments`.
+- Membatasi akses endpoint asesmen ke owner/admin, memeriksa origin dan token CSRF untuk penyimpanan, serta membatasi payload maksimal 100 KB.
+- Memperbarui versi tampilan dan paket menjadi 1.0.4. Deployment produksi tetap menunggu build dan verifikasi runtime yang berhasil.
+
+
 ## v1.0.3 — 12 Oktober 2026
 - Menetapkan jalur deployment GitHub Actions khusus Worker aktif `sahabatodhiv-sumut` agar tidak salah menerbitkan ke Worker dashboard lain.
 - Deployment otomatis menjalankan build TypeScript dan menggunakan environment Wrangler `sahabatodhiv-sumut` yang terikat ke D1 produksi yang sudah dikonfigurasi.
