@@ -110,6 +110,28 @@ jobs:
             if (!ok) process.exitCode = 1;
           }
           NODE
+      - name: Validate push notification enrollment and delivery handlers
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const html = fs.readFileSync('public/index.html', 'utf8');
+          const sw = fs.readFileSync('public/sw.js', 'utf8');
+          const worker = fs.readFileSync('src/index.ts', 'utf8');
+          const checks = [
+            ['owner notification panel exists', html.includes('id="pushNotificationPanel"') && html.includes('id="enablePushNotifications"')],
+            ['browser permission and PushManager subscription', html.includes('Notification.requestPermission()') && html.includes('registration.pushManager.subscribe')],
+            ['subscription uses CSRF protection', html.includes("fetch('/api/push-subscriptions',{method:'POST'") && html.includes("'X-CSRF-Token':csrfToken")],
+            ['test button targets actual Worker endpoint', html.includes("fetch('/api/push-test',{method:'POST'") && worker.includes('url.pathname === "/api/push-test"')],
+            ['service worker receives and displays push', sw.includes("addEventListener('push'") && sw.includes('showNotification')],
+            ['push notifications request vibration', sw.includes('vibrate:[250,120,250,120,350]')],
+            ['Worker stores subscriptions and polls form response rows', worker.includes('INSERT INTO push_subscriptions') && worker.includes("state_key='response_row_count'")],
+            ['push enrollment does not require private signing key on receiver', worker.includes('enabled: !!(env.VAPID_PUBLIC_KEY && env.VAPID_SUBJECT)')],
+          ];
+          for (const [name, ok] of checks) {
+            console.log((ok ? 'PASS ' : 'FAIL ') + name);
+            if (!ok) process.exitCode = 1;
+          }
+          NODE
       - name: Validate single scheduled poller and push-key alignment
         run: |
           node - <<'NODE'
