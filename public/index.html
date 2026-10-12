@@ -107,6 +107,15 @@
  #assessmentView .assessment-logo{font-size:8px}
  #assessmentView .assessment-logo.atensi{font-size:14px}
 }
+
+/* v1.0.6 branding: both official marks flank the centered assessment title */
+#assessmentView .assessment-brand{grid-template-columns:140px minmax(0,1fr) 112px;gap:14px;align-items:center}
+#assessmentView .assessment-logo{min-height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+#assessmentView .assessment-logo svg{display:block;width:100%;max-width:100px;height:76px;object-fit:contain}
+#assessmentView .assessment-logo.kementerian span{font-size:9px;line-height:1.2;font-weight:800;color:#203a2c}
+#assessmentView .assessment-logo.kementerian small{font-size:8px}
+#assessmentView .assessment-logo.atensi svg{max-width:90px;height:86px}
+@media(max-width:650px){#assessmentView .assessment-brand{grid-template-columns:72px minmax(0,1fr) 64px;gap:6px}#assessmentView .assessment-logo svg{height:54px}#assessmentView .assessment-logo.kementerian span{font-size:6px}#assessmentView .assessment-logo.kementerian small{font-size:5px}#assessmentView .assessment-logo.atensi svg{height:60px}}
 </style>
 </head>
 <body>
@@ -263,7 +272,31 @@
     <section class="app-view" id="assessmentView" hidden aria-label="Asesmen">
       <div class="dashhead assessment-no-print"><div><h2>Form Asesmen Terintegrasi</h2><p>Direktorat Jenderal Rehabilitasi Sosial · Semua jawaban opsional</p></div><div class="assessment-actions"><button class="dashbtn" type="button" id="assessmentSave">Simpan ke Database</button><select id="assessmentSavedList" aria-label="Pilih asesmen tersimpan"><option value="">Pilih asesmen tersimpan</option></select><button class="dashbtn" type="button" id="assessmentLoad">Muat Asesmen</button><button class="dashbtn" type="button" id="assessmentPrint">Cetak / Simpan PDF</button><button class="dashbtn" type="button" id="assessmentReset">Kosongkan Form</button></div></div>
       <div class="assessment-paper" id="assessmentPaper">
-        <header class="assessment-brand"><div class="assessment-logo">KEMENTERIAN SOSIAL<br><small>REPUBLIK INDONESIA</small></div><div class="assessment-heading"><h2>FORM ASESMEN TERINTEGRASI</h2><h3>DIREKTORAT JENDERAL REHABILITASI SOSIAL</h3></div><div class="assessment-logo atensi">ATENSI</div></header>
+        <header class="assessment-brand">
+          <div class="assessment-logo kementerian" aria-label="Logo Kementerian Sosial">
+            <svg viewBox="0 0 120 100" role="img" aria-label="Lambang Kementerian Sosial" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="34" cy="18" r="9" fill="#164c91"/>
+              <path d="M31 29 Q43 32 49 45 L53 66 Q40 55 33 44 L21 32Z" fill="#164c91"/>
+              <path d="M46 62 C48 34 65 13 91 4 C83 29 66 48 46 62Z" fill="#008f4c"/>
+              <path d="M49 70 C61 43 82 28 108 21 C94 45 72 60 49 70Z" fill="#009b50"/>
+              <path d="M51 76 C70 57 91 51 114 49 C94 67 72 75 51 76Z" fill="#009b50"/>
+              <path d="M21 54 C37 71 56 74 78 67 C66 86 44 93 24 80 C17 75 15 64 21 54Z" fill="#f6c617"/>
+            </svg>
+            <span>KEMENTERIAN SOSIAL<br><small>REPUBLIK INDONESIA</small></span>
+          </div>
+          <div class="assessment-heading"><h2>FORM ASESMEN TERINTEGRASI</h2><h3>DIREKTORAT JENDERAL REHABILITASI SOSIAL</h3></div>
+          <div class="assessment-logo atensi" aria-label="Logo ATENSI">
+            <svg viewBox="0 0 120 100" role="img" aria-label="Lambang ATENSI" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 70 L59 9 L88 70Z" fill="#f5d56a"/>
+              <path d="M24 70 L47 34 L59 56 L48 70Z" fill="#57b5a0"/>
+              <path d="M59 9 L88 70 L71 70 L59 43Z" fill="#b8c8f2"/>
+              <path d="M17 59 C5 33 35 12 58 8" fill="none" stroke="#ed202c" stroke-width="5" stroke-linecap="round"/>
+              <path d="M65 11 C105 18 112 47 85 70" fill="none" stroke="#ed202c" stroke-width="5" stroke-linecap="round"/>
+              <circle cx="65" cy="8" r="7" fill="#ed202c"/>
+              <text x="60" y="91" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="800" letter-spacing="3" fill="#283b86">ATENSI</text>
+            </svg>
+          </div>
+        </header>
         <div class="assessment-number"><strong>Nomor Kuesioner</strong><div><label>No Urutan Satker<input name="nomorSatker" autocomplete="off"></label><span>.</span><label>Tahun<input name="tahun" inputmode="numeric"></label><span>.</span><label>Nomor Urut<input name="nomorUrut" inputmode="numeric"></label></div></div>
         <form id="assessmentForm" autocomplete="off"><div id="assessmentFields"></div></form>
         <p class="assessment-footnote">** Perlu melampirkan foto/dokumen. Foto PPKS dapat dilakukan dengan closeup.</p>
@@ -295,7 +328,7 @@
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.0.5</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.0.6</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi</p>
 </main>
@@ -729,7 +762,7 @@ async function loadRespondents(){
             const valueFor=header=>{let value=item[header]??'';if(timestampHeader&&header===timestampHeader)value=formatTimestamp(value,false);return value;};
             const details=fields.map(([label,header])=>'<tr><th>'+escapeHtml(label)+'</th><td>'+escapeHtml(valueFor(header))+'</td></tr>').join('');
             const photoMarkup=photos.map(([label,header])=>{const src=imageUrl(item[header]);return '<div class="photo">'+(src?'<img src="'+escapeHtml(src)+'" alt="'+escapeHtml(label)+'">':'<div class="missing">Foto belum tersedia sebagai gambar langsung</div>')+'<b>'+escapeHtml(label)+'</b></div>';}).join('');
-            win.document.write('<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dokumen Responden BNBA</title><style>@page{size:A4 portrait;margin:10mm}*{box-sizing:border-box}body{font:10pt Arial,sans-serif;color:#17365d;margin:0}.head{text-align:center;border-bottom:2px solid #1d69a6;padding:0 0 10px;margin-bottom:12px}.head h1{font-size:15pt;margin:0 0 4px}.head h2{font-size:12pt;margin:0}.section{background:#1769aa;color:white;padding:7px 9px;font-weight:bold;margin:10px 0 5px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #bdd7ee;padding:6px;text-align:left;vertical-align:top}th{width:31%;background:#e8f3fb}.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.photo{border:1px solid #bdd7ee;padding:4px;text-align:center;break-inside:avoid}.photo img{width:100%;height:105px;object-fit:contain}.photo b{display:block;font-size:8pt;padding:4px 0}.missing{height:105px;display:flex;align-items:center;justify-content:center;font-size:8pt;color:#666}.foot{margin-top:16px;border-top:1px solid #8ab9df;padding-top:6px;font-size:8pt;color:#555}@media print{button{display:none}}</style></head><body><div class="head"><h1>DATA RESPONDEN BANTUAN NON TUNAI (BNBA)</h1><h2>Dashboard BNBA ODHIV Sumut</h2></div><div class="section">IDENTITAS RESPONDEN</div><table>'+details+'</table><div class="section">DOKUMENTASI</div><div class="photos">'+(photoMarkup||'<p>Dokumentasi belum tersedia.</p>')+'</div><div class="foot">Dicetak dari Dashboard BNBA ODHIV Sumut · Dokumen bersifat rahasia</div><script>window.addEventListener("load",()=>setTimeout(()=>window.print(),700));<\/script></body></html>');
+            win.document.write('<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dokumen Responden BNBA</title><style>@page{size:A4 portrait;margin:10mm}*{box-sizing:border-box}body{font:10pt Arial,sans-serif;color:#17365d;margin:0}.head{text-align:center;border-bottom:2px solid #1d69a6;padding:0 0 10px;margin-bottom:12px}.head h1{font-size:15pt;margin:0 0 4px}.head h2{font-size:12pt;margin:0}.section{background:#1769aa;color:white;padding:7px 9px;font-weight:bold;margin:10px 0 5px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #bdd7ee;padding:6px;text-align:left;vertical-align:top}th{width:31%;background:#e8f3fb}.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.photo{border:1px solid #bdd7ee;padding:4px;text-align:center;break-inside:avoid}.photo img{width:100%;height:105px;object-fit:contain}.photo b{display:block;font-size:8pt;padding:4px 0}.missing{height:105px;display:flex;align-items:center;justify-content:center;font-size:8pt;color:#666}.foot{margin-top:16px;border-top:1px solid #8ab9df;padding-top:6px;font-size:8pt;color:#555}@media print{button{display:none}}</style></head><body><div class="head"><h1>DATA RESPONDEN BANTUAN NON TUNAI (BNBA)</h1><h2>Form Asesmen Terintegrasi</h2></div><div class="section">IDENTITAS RESPONDEN</div><table>'+details+'</table><div class="section">DOKUMENTASI</div><div class="photos">'+(photoMarkup||'<p>Dokumentasi belum tersedia.</p>')+'</div><div class="foot">Dicetak dari Dashboard BNBA ODHIV Sumut · Dokumen bersifat rahasia</div><script>window.addEventListener("load",()=>setTimeout(()=>window.print(),700));<\/script></body></html>');
             win.document.close();
           });
           td.append(print);tr.appendChild(td);return;
