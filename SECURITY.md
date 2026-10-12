@@ -41,9 +41,10 @@ Three user roles with escalating permissions:
 All API inputs are strictly validated:
 
 **Login Endpoint** (`/api/login`)
-- Username: Must match `^[a-z0-9._-]{3,64}$`, converted to lowercase
-- Password: 1-1024 characters, no format restrictions
-- Rate limited: Maximum 10 failed attempts per 15 minutes per hashed client IP (current implementation; username is not part of the login request)
+- The current UI/API accepts a password only; it does not accept a username.
+- The password must be 1-1024 characters. The API checks active admin accounts and rejects login if the same password matches more than one active account.
+- Rate limited: Maximum 10 failed attempts per 15 minutes per SHA-256 hash of the Cloudflare client IP. The raw IP is not stored in the login-attempt key.
+- Security limitation: password-only login makes account identity depend on unique passwords. A future authentication change should add an explicit username or account identifier and corresponding tests without locking out existing administrators.
 
 **Change Password** (`/api/change-password`)
 - Current password: 1-1024 characters
