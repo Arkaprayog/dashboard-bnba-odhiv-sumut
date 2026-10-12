@@ -1,3 +1,8 @@
+## v1.0.14 — 12 Oktober 2026
+- Menyempurnakan halaman akses awal dengan kartu putih, kontras teks yang lebih jelas, aksen biru navy, dan tata letak responsif.
+- Menambahkan ringkasan akses aman, pendataan terintegrasi, dan wilayah layanan pada halaman login.
+- Menjaga alur autentikasi dan tampilan dashboard setelah login tetap terpisah dari penyegaran visual halaman akses.
+
 # Catatan Versi — Dashboard BNBA ODHIV Sumut
 
 ## v1.0.13 — 12 Oktober 2026
