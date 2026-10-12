@@ -815,7 +815,64 @@ export default {
           }
         }
 
-        if (url.pathname === "/api/respondents" && request.method === "GET") {
+        if (url.pathname === "/api/assessments" && (request.method === "GET" || request.method === "POST")) {
+      if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+      const admin = await sessionAdmin(request, env);
+      if (!admin) return reply({ error: "Silakan login." }, 401);
+      if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengakses data asesmen." }, 403);
+      if (request.method === "POST") {
+        const csrf = request.headers.get("X-CSRF-Token");
+        if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+      }
+      try {
+        await env.DB.prepare(`CREATE TABLE IF NOT EXISTS integrated_assessments (
+          id TEXT PRIMARY KEY,
+          answers_json TEXT NOT NULL,
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          created_by TEXT NOT NULL,
+          updated_by TEXT NOT NULL
+        )`).run();
+        if (request.method === "GET") {
+          const rows = await env.DB.prepare("SELECT id,created_at,updated_at,created_by FROM integrated_assessments ORDER BY updated_at DESC LIMIT 100").all<{id:string;created_at:string;updated_at:string;created_by:string}>();
+          return reply({ items: rows.results || [] });
+        }
+        let body: { id?: unknown; answers?: unknown };
+        try { body = await request.json() as typeof body; } catch { return reply({ error: "Format data asesmen tidak valid." }, 400); }
+        const id = typeof body.id === "string" && /^[0-9a-f-]{36}$/i.test(body.id) ? body.id : crypto.randomUUID();
+        if (!body.answers || typeof body.answers !== "object" || Array.isArray(body.answers)) return reply({ error: "Jawaban asesmen tidak valid." }, 400);
+        const answersJson = JSON.stringify(body.answers);
+        if (answersJson.length > 100000) return reply({ error: "Data asesmen terlalu besar (maksimal 100 KB)." }, 413);
+        await env.DB.prepare(`INSERT INTO integrated_assessments(id,answers_json,created_by,updated_by)
+          VALUES(?,?,?,?)
+          ON CONFLICT(id) DO UPDATE SET answers_json=excluded.answers_json,updated_at=CURRENT_TIMESTAMP,updated_by=excluded.updated_by`)
+          .bind(id, answersJson, admin.username, admin.username).run();
+        await audit(env, String((admin as Record<string,string>).id || admin.username), "assessment_saved");
+        return reply({ ok: true, id });
+      } catch (error) {
+        const incidentId = logIncident("assessment_database_error", error, { path: url.pathname });
+        return reply({ error: "Database asesmen gagal memproses permintaan. ID insiden: " + incidentId }, 500);
+      }
+    }
+
+    if (url.pathname === "/api/assessments/item" && request.method === "GET") {
+      if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+      const admin = await sessionAdmin(request, env);
+      if (!admin) return reply({ error: "Silakan login." }, 401);
+      if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengakses data asesmen." }, 403);
+      const id = url.searchParams.get("id") || "";
+      if (!/^[0-9a-f-]{36}$/i.test(id)) return reply({ error: "ID asesmen tidak valid." }, 400);
+      try {
+        const row = await env.DB.prepare("SELECT id,answers_json,created_at,updated_at FROM integrated_assessments WHERE id=?").bind(id).first<{id:string;answers_json:string;created_at:string;updated_at:string}>();
+        if (!row) return reply({ error: "Data asesmen tidak ditemukan." }, 404);
+        return reply({ item: { id: row.id, answers: JSON.parse(row.answers_json), created_at: row.created_at, updated_at: row.updated_at } });
+      } catch (error) {
+        const incidentId = logIncident("assessment_load_error", error, { path: url.pathname });
+        return reply({ error: "Data asesmen gagal dimuat. ID insiden: " + incidentId }, 500);
+      }
+    }
+
+    if (url.pathname === "/api/respondents" && request.method === "GET") {
           const admin = await sessionAdmin(request, env);
           if (!admin) return reply({ error: "Silakan login." }, 401);
           if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengakses data responden." }, 403);
