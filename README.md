@@ -56,3 +56,23 @@ Urutan aman:
 ## Privasi
 
 Data identitas dan informasi kesehatan perlu pembatasan akses, tujuan penggunaan, retensi, backup, dan prosedur insiden yang disetujui organisasi. Jangan gunakan data nyata sebelum kontrol ini selesai ditinjau.
+
+
+## Android release 1.2.0
+
+The Android module now targets release version `1.2.0` (version code `3`). The GitHub Actions workflow builds a **signed release APK**, runs Android lint and verifies the APK signature before publishing a workflow artifact.
+
+### Required release signing setup
+
+Before running the workflow, configure these repository-level GitHub Actions secrets under **Settings → Secrets and variables → Actions**:
+
+- `ANDROID_KEYSTORE_BASE64`: Base64-encoded contents of the release keystore file.
+- `ANDROID_KEYSTORE_PASSWORD`: keystore password.
+- `ANDROID_KEY_ALIAS`: alias of the release key.
+- `ANDROID_KEY_PASSWORD`: password for that key.
+
+Generate the release keystore on a trusted device controlled by the organization and back it up securely. Never commit the keystore or passwords to the repository or send them in chat. Keep the same signing key for future APK updates; losing or replacing it can prevent existing installations from accepting updates.
+
+After configuring the secrets, open **Actions → Build Sahabat ODHIV Sumut Android Release → Run workflow**. Download `Sahabat-ODHIV-Sumut-APK-release-v1.2.0` only after the workflow completes successfully. A workflow artifact is not proof of release readiness by itself: test installation and core flows on supported physical Android devices before wider distribution.
+
+The current app uses local test notifications; remote push delivery is not configured until Firebase Cloud Messaging and its trusted server-side credentials are set up. Biometric, camera, gallery, offline behavior, upload flow, and privacy/access controls still require device and operational testing. Do not use real respondent health data until the access controls and data handling have been reviewed.
