@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.18 — 2026-10-12
+- Added a 3-second collaboration logo transition after successful password verification and before dashboard display.
+- Animated orbit rings with the KOLABORASI title, Kemensos and Kemenkes logos, and HIV red ribbon; the transition closes on the Kemensos logo.
+
 ## 1.0.17 — 2026-10-12
 - Corrected the public landing page proportions and spacing for mobile screens.
 - Increased the visibility of the scenic Rumah Gadang background and removed the old geometric footer overlay.
