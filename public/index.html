@@ -273,6 +273,50 @@ main{width:min(100%,760px);margin:0 auto;padding:clamp(22px,4vw,40px) clamp(18px
 .authenticated .dashfield input,.authenticated .respondent-search input{border-color:#cbdceb}
 @media(max-width:480px){body{padding:14px 10px 24px;background-position:center top,58% bottom;background-size:cover,auto 100%;background-attachment:scroll,scroll}main{padding:23px 16px 20px;border-radius:23px}.agency-logos{margin-bottom:8px}.kemensos-logo{width:clamp(145px,43vw,190px);height:clamp(105px,31vw,135px)}.brand{gap:9px;margin:20px auto}.brand h1{font-size:clamp(1.4rem,6vw,1.9rem)}.login-trust{gap:6px}.trust-item{display:block;text-align:center;font-size:.68rem}.trust-icon{display:block;margin:0 auto 5px}}
 
+/* v1.0.17 — corrective visual pass: stronger landscape, compact glass card, clear branding */
+html,body{background-color:#cfe7f9!important}
+body:not(.authenticated){
+  min-height:100svh!important;
+  padding:24px 12px 34px!important;
+  color:#17456f!important;
+  background-image:
+    linear-gradient(180deg,rgba(220,239,253,.10) 0%,rgba(226,242,255,.18) 44%,rgba(202,227,249,.20) 68%,rgba(3,54,106,.16) 100%),
+    url("https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Rumah_Gadang_-_Rumah_Adat_Minangkabau.jpg/960px-Rumah_Gadang_-_Rumah_Adat_Minangkabau.jpg")!important;
+  background-position:center top,center bottom!important;
+  background-size:cover,cover!important;
+  background-repeat:no-repeat,no-repeat!important;
+  background-attachment:scroll,scroll!important;
+}
+body:not(.authenticated):before{background:linear-gradient(145deg,#07549a 0 72%,#239b55 72% 79%,#f4c51c 79% 84%,transparent 84%)!important;clip-path:polygon(0 0,100% 0,100% 1.5%,0 12%)!important;z-index:0!important;pointer-events:none}
+body:not(.authenticated):after{content:""!important;position:fixed!important;inset:auto 0 0!important;width:100%!important;height:23vh!important;transform:none!important;background:linear-gradient(180deg,rgba(207,231,249,0),rgba(5,60,112,.40))!important;clip-path:none!important;opacity:1!important;z-index:0!important;pointer-events:none}
+body:not(.authenticated) main{position:relative;z-index:1;width:min(100%,650px)!important;padding:clamp(20px,3vw,30px) clamp(18px,4vw,36px) 20px!important;background:rgba(246,251,255,.76)!important;border:1px solid rgba(255,255,255,.94)!important;border-radius:26px!important;box-shadow:0 18px 48px rgba(18,76,128,.16)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body:not(.authenticated) .agency-logos{margin:0 auto 4px!important}
+body:not(.authenticated) .kemensos-logo{width:clamp(145px,24vw,185px)!important;height:clamp(96px,16vw,126px)!important;object-fit:contain!important}
+body:not(.authenticated) .directorate{margin:5px auto 0!important;max-width:500px!important;font-size:clamp(.88rem,2.4vw,1.05rem)!important;line-height:1.42!important;color:#4c6985!important}
+body:not(.authenticated) .brand{margin:17px auto 19px!important;gap:10px!important}
+body:not(.authenticated) .brand h1{font-size:clamp(1.45rem,4.8vw,2.15rem)!important;line-height:1.12!important;color:#06477f!important}
+body:not(.authenticated) .ribbon{width:29px!important;height:39px!important}
+body:not(.authenticated) .separator{height:40px!important;background:#c5d9eb!important}
+body:not(.authenticated) .form{max-width:500px!important;gap:12px!important}
+body:not(.authenticated) .field input,body:not(.authenticated) .submit{height:58px!important}
+body:not(.authenticated) .login-trust{margin:18px auto 0!important;padding-top:14px!important}
+body:not(.authenticated) .foot{margin:16px auto 0!important;line-height:1.6!important}
+body:not(.authenticated) .rule{margin:13px auto 8px!important}
+body:not(.authenticated) .setup{font-size:.76rem!important}
+@media(max-width:480px){
+ body:not(.authenticated){padding:12px 9px 22px!important;background-position:center top,center bottom!important;background-size:cover,auto 65vh!important}
+ body:not(.authenticated) main{padding:20px 15px 17px!important;border-radius:22px!important}
+ body:not(.authenticated) .kemensos-logo{width:clamp(138px,40vw,170px)!important;height:clamp(90px,27vw,112px)!important}
+ body:not(.authenticated) .directorate{font-size:.84rem!important}
+ body:not(.authenticated) .brand{margin:16px auto!important}
+ body:not(.authenticated) .brand h1{font-size:clamp(1.3rem,5.8vw,1.7rem)!important}
+ body:not(.authenticated) .field input,body:not(.authenticated) .submit{height:55px!important}
+ body:not(.authenticated) .login-trust{margin-top:16px!important;padding-top:12px!important}
+ body:not(.authenticated) .foot{margin-top:13px!important}
+}
+
+.collab-intro{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 48%,#0d4b86 0%,#052b56 53%,#03162f 100%);color:#fff;font-family:Arial,sans-serif}.collab-intro[hidden]{display:none!important}.collab-scene{position:relative;width:min(90vw,560px);height:min(68vh,440px);min-height:290px;display:flex;align-items:center;justify-content:center}.collab-word{position:relative;z-index:4;font-size:clamp(1.45rem,5vw,2.55rem);font-weight:800;letter-spacing:.12em;text-shadow:0 0 22px rgba(35,179,255,.7);animation:collab-word-in .45s ease-out both}.collab-orbit{position:absolute;left:50%;top:50%;border:2px solid transparent;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 14px rgba(0,188,255,.18)}.orbit-a{width:94%;height:66%;border-top-color:#00c9ff;border-right-color:#1f8bff;animation:collab-spin 1.25s linear infinite}.orbit-b{width:82%;height:84%;border-bottom-color:#17d58b;border-left-color:#f6c91a;animation:collab-spin-reverse 1.6s linear infinite}.orbit-c{width:70%;height:100%;border-top-color:rgba(255,201,32,.9);border-bottom-color:rgba(0,190,255,.7);animation:collab-spin 2s linear infinite}.collab-logo{position:absolute;z-index:5;object-fit:contain;filter:drop-shadow(0 0 12px rgba(0,190,255,.35));background:rgba(255,255,255,.94);border-radius:14px;padding:8px}.collab-kemensos{width:clamp(76px,18vw,112px);height:clamp(76px,18vw,112px);top:2%;left:50%;transform:translateX(-50%);animation:collab-logo-orbit 3s ease-in-out both}.collab-kemenkes{width:clamp(92px,20vw,132px);height:clamp(52px,12vw,72px);left:1%;bottom:13%;animation:collab-kemenkes 3s ease-in-out both}.collab-ribbon{width:clamp(44px,11vw,68px);height:clamp(62px,14vw,92px);right:2%;top:37%;background:transparent;padding:0;filter:drop-shadow(0 0 14px rgba(255,35,56,.5));animation:collab-ribbon 3s ease-in-out both}.collab-final{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(145deg,#f7fbff,#d8efff);color:#162f4c;opacity:0;transform:scale(.94);animation:collab-final-reveal 3s ease-in-out both;border-radius:22px;box-shadow:0 18px 60px rgba(0,0,0,.24)}.collab-final img{width:clamp(140px,35vw,220px);height:clamp(140px,35vw,220px);object-fit:contain;background:transparent;padding:0;border-radius:0;filter:none}.collab-final strong{font-family:Georgia,serif;font-size:clamp(.9rem,3vw,1.2rem);margin-top:8px}.collab-final span{font-family:Georgia,serif;font-size:clamp(.72rem,2.4vw,1rem);font-weight:700}.collab-caption{margin:0;font-size:clamp(.76rem,2.4vw,.95rem);letter-spacing:.04em;color:#d6efff;text-align:center}@keyframes collab-spin{to{transform:translate(-50%,-50%) rotate(360deg)}}@keyframes collab-spin-reverse{to{transform:translate(-50%,-50%) rotate(-360deg)}}@keyframes collab-word-in{from{opacity:0;transform:scale(.8);letter-spacing:.35em}to{opacity:1;transform:scale(1);letter-spacing:.12em}}@keyframes collab-logo-orbit{0%{top:2%;left:50%;transform:translateX(-50%) rotate(0) scale(.85)}30%{top:8%;left:77%;transform:translateX(-50%) rotate(130deg) scale(1.08)}62%{top:68%;left:50%;transform:translateX(-50%) rotate(300deg) scale(.9)}84%{top:30%;left:25%;transform:translateX(-50%) rotate(520deg) scale(1.02)}100%{top:2%;left:50%;transform:translateX(-50%) rotate(720deg) scale(.82)}}@keyframes collab-kemenkes{0%,8%{transform:translate(-18px,22px) rotate(-15deg);opacity:0}28%{transform:translate(15px,-8px) rotate(12deg);opacity:1}60%{transform:translate(120px,-70px) rotate(210deg);opacity:1}82%{transform:translate(180px,-140px) rotate(350deg);opacity:0}100%{opacity:0}}@keyframes collab-ribbon{0%,18%{transform:translateY(20px) rotate(0) scale(.7);opacity:0}38%{transform:translateY(-10px) rotate(25deg) scale(1);opacity:1}68%{transform:translate(-120px,80px) rotate(190deg) scale(.8);opacity:1}88%,100%{transform:translate(-120px,80px) rotate(360deg) scale(.4);opacity:0}}@keyframes collab-final-reveal{0%,72%{opacity:0;transform:scale(.92)}82%{opacity:1;transform:scale(1.015)}90%,100%{opacity:1;transform:scale(1)}}@media(max-width:420px){.collab-scene{width:92vw;height:58vh;min-height:270px}.collab-final{border-radius:16px}.collab-caption{padding:0 12px}}
+
 </style>
 </head>
 <body>
@@ -909,49 +953,6 @@ async function loadRespondents(){
             const details=fields.map(([label,header])=>'<tr><th>'+escapeHtml(label)+'</th><td>'+escapeHtml(valueFor(header))+'</td></tr>').join('');
             const photoMarkup=photos.map(([label,header])=>{const src=imageUrl(item[header]);return '<div class="photo">'+(src?'<img src="'+escapeHtml(src)+'" alt="'+escapeHtml(label)+'">':'<div class="missing">Foto belum tersedia sebagai gambar langsung</div>')+'<b>'+escapeHtml(label)+'</b></div>';}).join('');
             win.document.write('<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dokumen Responden BNBA</title><style>@page{size:A4 portrait;margin:10mm}*{box-sizing:border-box}body{font:10pt Arial,sans-serif;color:#17365d;margin:0}.head{text-align:center;border-bottom:2px solid #1d69a6;padding:0 0 10px;margin-bottom:12px}.head h1{font-size:15pt;margin:0 0 4px}.head h2{font-size:12pt;margin:0}.section{background:#1769aa;color:white;padding:7px 9px;font-weight:bold;margin:10px 0 5px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #bdd7ee;padding:6px;text-align:left;vertical-align:top}th{width:31%;background:#e8f3fb}.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.photo{border:1px solid #bdd7ee;padding:4px;text-align:center;break-inside:avoid}.photo img{width:100%;height:105px;object-fit:contain}.photo b{display:block;font-size:8pt;padding:4px 0}.missing{height:105px;display:flex;align-items:center;justify-content:center;font-size:8pt;color:#666}.foot{margin-top:16px;border-top:1px solid #8ab9df;padding-top:6px;font-size:8pt;color:#555}@media print{button{display:none}}
-/* v1.0.17 — corrective visual pass: stronger landscape, compact glass card, clear branding */
-html,body{background-color:#cfe7f9!important}
-body:not(.authenticated){
-  min-height:100svh!important;
-  padding:24px 12px 34px!important;
-  color:#17456f!important;
-  background-image:
-    linear-gradient(180deg,rgba(220,239,253,.10) 0%,rgba(226,242,255,.18) 44%,rgba(202,227,249,.20) 68%,rgba(3,54,106,.16) 100%),
-    url("https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Rumah_Gadang_-_Rumah_Adat_Minangkabau.jpg/960px-Rumah_Gadang_-_Rumah_Adat_Minangkabau.jpg")!important;
-  background-position:center top,center bottom!important;
-  background-size:cover,cover!important;
-  background-repeat:no-repeat,no-repeat!important;
-  background-attachment:scroll,scroll!important;
-}
-body:not(.authenticated):before{background:linear-gradient(145deg,#07549a 0 72%,#239b55 72% 79%,#f4c51c 79% 84%,transparent 84%)!important;clip-path:polygon(0 0,100% 0,100% 1.5%,0 12%)!important;z-index:0!important;pointer-events:none}
-body:not(.authenticated):after{content:""!important;position:fixed!important;inset:auto 0 0!important;width:100%!important;height:23vh!important;transform:none!important;background:linear-gradient(180deg,rgba(207,231,249,0),rgba(5,60,112,.40))!important;clip-path:none!important;opacity:1!important;z-index:0!important;pointer-events:none}
-body:not(.authenticated) main{position:relative;z-index:1;width:min(100%,650px)!important;padding:clamp(20px,3vw,30px) clamp(18px,4vw,36px) 20px!important;background:rgba(246,251,255,.76)!important;border:1px solid rgba(255,255,255,.94)!important;border-radius:26px!important;box-shadow:0 18px 48px rgba(18,76,128,.16)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-body:not(.authenticated) .agency-logos{margin:0 auto 4px!important}
-body:not(.authenticated) .kemensos-logo{width:clamp(145px,24vw,185px)!important;height:clamp(96px,16vw,126px)!important;object-fit:contain!important}
-body:not(.authenticated) .directorate{margin:5px auto 0!important;max-width:500px!important;font-size:clamp(.88rem,2.4vw,1.05rem)!important;line-height:1.42!important;color:#4c6985!important}
-body:not(.authenticated) .brand{margin:17px auto 19px!important;gap:10px!important}
-body:not(.authenticated) .brand h1{font-size:clamp(1.45rem,4.8vw,2.15rem)!important;line-height:1.12!important;color:#06477f!important}
-body:not(.authenticated) .ribbon{width:29px!important;height:39px!important}
-body:not(.authenticated) .separator{height:40px!important;background:#c5d9eb!important}
-body:not(.authenticated) .form{max-width:500px!important;gap:12px!important}
-body:not(.authenticated) .field input,body:not(.authenticated) .submit{height:58px!important}
-body:not(.authenticated) .login-trust{margin:18px auto 0!important;padding-top:14px!important}
-body:not(.authenticated) .foot{margin:16px auto 0!important;line-height:1.6!important}
-body:not(.authenticated) .rule{margin:13px auto 8px!important}
-body:not(.authenticated) .setup{font-size:.76rem!important}
-@media(max-width:480px){
- body:not(.authenticated){padding:12px 9px 22px!important;background-position:center top,center bottom!important;background-size:cover,auto 65vh!important}
- body:not(.authenticated) main{padding:20px 15px 17px!important;border-radius:22px!important}
- body:not(.authenticated) .kemensos-logo{width:clamp(138px,40vw,170px)!important;height:clamp(90px,27vw,112px)!important}
- body:not(.authenticated) .directorate{font-size:.84rem!important}
- body:not(.authenticated) .brand{margin:16px auto!important}
- body:not(.authenticated) .brand h1{font-size:clamp(1.3rem,5.8vw,1.7rem)!important}
- body:not(.authenticated) .field input,body:not(.authenticated) .submit{height:55px!important}
- body:not(.authenticated) .login-trust{margin-top:16px!important;padding-top:12px!important}
- body:not(.authenticated) .foot{margin-top:13px!important}
-}
-
-.collab-intro{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 48%,#0d4b86 0%,#052b56 53%,#03162f 100%);color:#fff;font-family:Arial,sans-serif}.collab-intro[hidden]{display:none!important}.collab-scene{position:relative;width:min(90vw,560px);height:min(68vh,440px);min-height:290px;display:flex;align-items:center;justify-content:center}.collab-word{position:relative;z-index:4;font-size:clamp(1.45rem,5vw,2.55rem);font-weight:800;letter-spacing:.12em;text-shadow:0 0 22px rgba(35,179,255,.7);animation:collab-word-in .45s ease-out both}.collab-orbit{position:absolute;left:50%;top:50%;border:2px solid transparent;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 14px rgba(0,188,255,.18)}.orbit-a{width:94%;height:66%;border-top-color:#00c9ff;border-right-color:#1f8bff;animation:collab-spin 1.25s linear infinite}.orbit-b{width:82%;height:84%;border-bottom-color:#17d58b;border-left-color:#f6c91a;animation:collab-spin-reverse 1.6s linear infinite}.orbit-c{width:70%;height:100%;border-top-color:rgba(255,201,32,.9);border-bottom-color:rgba(0,190,255,.7);animation:collab-spin 2s linear infinite}.collab-logo{position:absolute;z-index:5;object-fit:contain;filter:drop-shadow(0 0 12px rgba(0,190,255,.35));background:rgba(255,255,255,.94);border-radius:14px;padding:8px}.collab-kemensos{width:clamp(76px,18vw,112px);height:clamp(76px,18vw,112px);top:2%;left:50%;transform:translateX(-50%);animation:collab-logo-orbit 3s ease-in-out both}.collab-kemenkes{width:clamp(92px,20vw,132px);height:clamp(52px,12vw,72px);left:1%;bottom:13%;animation:collab-kemenkes 3s ease-in-out both}.collab-ribbon{width:clamp(44px,11vw,68px);height:clamp(62px,14vw,92px);right:2%;top:37%;background:transparent;padding:0;filter:drop-shadow(0 0 14px rgba(255,35,56,.5));animation:collab-ribbon 3s ease-in-out both}.collab-final{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(145deg,#f7fbff,#d8efff);color:#162f4c;opacity:0;transform:scale(.94);animation:collab-final-reveal 3s ease-in-out both;border-radius:22px;box-shadow:0 18px 60px rgba(0,0,0,.24)}.collab-final img{width:clamp(140px,35vw,220px);height:clamp(140px,35vw,220px);object-fit:contain;background:transparent;padding:0;border-radius:0;filter:none}.collab-final strong{font-family:Georgia,serif;font-size:clamp(.9rem,3vw,1.2rem);margin-top:8px}.collab-final span{font-family:Georgia,serif;font-size:clamp(.72rem,2.4vw,1rem);font-weight:700}.collab-caption{margin:0;font-size:clamp(.76rem,2.4vw,.95rem);letter-spacing:.04em;color:#d6efff;text-align:center}@keyframes collab-spin{to{transform:translate(-50%,-50%) rotate(360deg)}}@keyframes collab-spin-reverse{to{transform:translate(-50%,-50%) rotate(-360deg)}}@keyframes collab-word-in{from{opacity:0;transform:scale(.8);letter-spacing:.35em}to{opacity:1;transform:scale(1);letter-spacing:.12em}}@keyframes collab-logo-orbit{0%{top:2%;left:50%;transform:translateX(-50%) rotate(0) scale(.85)}30%{top:8%;left:77%;transform:translateX(-50%) rotate(130deg) scale(1.08)}62%{top:68%;left:50%;transform:translateX(-50%) rotate(300deg) scale(.9)}84%{top:30%;left:25%;transform:translateX(-50%) rotate(520deg) scale(1.02)}100%{top:2%;left:50%;transform:translateX(-50%) rotate(720deg) scale(.82)}}@keyframes collab-kemenkes{0%,8%{transform:translate(-18px,22px) rotate(-15deg);opacity:0}28%{transform:translate(15px,-8px) rotate(12deg);opacity:1}60%{transform:translate(120px,-70px) rotate(210deg);opacity:1}82%{transform:translate(180px,-140px) rotate(350deg);opacity:0}100%{opacity:0}}@keyframes collab-ribbon{0%,18%{transform:translateY(20px) rotate(0) scale(.7);opacity:0}38%{transform:translateY(-10px) rotate(25deg) scale(1);opacity:1}68%{transform:translate(-120px,80px) rotate(190deg) scale(.8);opacity:1}88%,100%{transform:translate(-120px,80px) rotate(360deg) scale(.4);opacity:0}}@keyframes collab-final-reveal{0%,72%{opacity:0;transform:scale(.92)}82%{opacity:1;transform:scale(1.015)}90%,100%{opacity:1;transform:scale(1)}}@media(max-width:420px){.collab-scene{width:92vw;height:58vh;min-height:270px}.collab-final{border-radius:16px}.collab-caption{padding:0 12px}}
 </style></head><body><div class="head"><h1>DATA RESPONDEN BANTUAN NON TUNAI (BNBA)</h1><h2>Form Asesmen Terintegrasi</h2></div><div class="section">IDENTITAS RESPONDEN</div><table>'+details+'</table><div class="section">DOKUMENTASI</div><div class="photos">'+(photoMarkup||'<p>Dokumentasi belum tersedia.</p>')+'</div><div class="foot">Dicetak dari Dashboard BNBA ODHIV Sumut · Dokumen bersifat rahasia</div><script>window.addEventListener("load",()=>setTimeout(()=>window.print(),700));<\/script></body></html>');
             win.document.close();
           });
