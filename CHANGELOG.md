@@ -1,5 +1,10 @@
 # Catatan Versi — Dashboard BNBA ODHIV Sumut
 
+## v1.0.8 — 12 Oktober 2026
+- Lampiran FOTO DIRI, FOTO KTP, FOTO KK, dan FOTO RUMAH dikompresi di browser lalu disimpan bersama jawaban asesmen di database D1; lampiran ikut dipulihkan saat asesmen dimuat.
+- Cetak/PDF menyusun Form Asesmen Terintegrasi terlebih dahulu, kemudian satu halaman A4 untuk tiap foto dengan urutan FOTO DIRI, FOTO KTP, FOTO KK, FOTO RUMAH.
+- Batas payload asesmen dinaikkan menjadi 1,5 MB untuk mendukung gambar terkompresi; pembatasan akses owner/admin, origin, dan CSRF tetap berlaku.
+
 ## v1.0.7 — 12 Oktober 2026
 - Menyusun ulang kontrol asesmen menjadi tiga baris: unggah Foto Diri/KTP/KK/Rumah, simpan/kosongkan beserta pilihan asesmen tersimpan, lalu cetak/simpan PDF.
 - Menambahkan pratinjau gambar yang dipilih dan validasi tipe/ukuran file (maksimum 8 MB per gambar).
