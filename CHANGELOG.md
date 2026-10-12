@@ -1,5 +1,11 @@
 # Catatan Versi — Dashboard BNBA ODHIV Sumut
 
+## v1.0.3 — 12 Oktober 2026
+- Menetapkan jalur deployment GitHub Actions khusus Worker aktif `sahabatodhiv-sumut` agar tidak salah menerbitkan ke Worker dashboard lain.
+- Deployment otomatis menjalankan build TypeScript dan menggunakan environment Wrangler `sahabatodhiv-sumut` yang terikat ke D1 produksi yang sudah dikonfigurasi.
+- Mempertahankan menu Asesmen sebagai placeholder sampai formulir dan validasi penyimpanan lolos pengujian; tidak mengaktifkan fitur yang belum terverifikasi.
+- Catatan: workflow memerlukan GitHub Actions secrets `CLOUDFLARE_API_TOKEN` dan `CLOUDFLARE_ACCOUNT_ID`.
+
 ## v1.0.2 — 12 Oktober 2026
 - Menata ulang header profil: foto dan tombol Edit profil di sisi kiri, tombol notifikasi dan Keluar di sisi kanan.
 - Menyembunyikan judul “Dashboard” dan teks sesi “Masuk sebagai … · Peran: …” dari tampilan setelah login.
