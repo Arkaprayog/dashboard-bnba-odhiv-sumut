@@ -1,3 +1,10 @@
+# Changelog
+
+## 1.0.17 — 2026-10-12
+- Corrected the public landing page proportions and spacing for mobile screens.
+- Increased the visibility of the scenic Rumah Gadang background and removed the old geometric footer overlay.
+- Kept the login card translucent without blur and improved text contrast.
+
 ## v1.0.16 — 12 Oktober 2026
 - Menyesuaikan landing page dengan referensi: latar fotografi rumah adat Minangkabau, nuansa langit biru, serta aksen biru-hijau-kuning.
 - Memusatkan logo Kemensos, mempertahankan kalimat sinergi dan judul Database ODHIV Sumatera Utara.
