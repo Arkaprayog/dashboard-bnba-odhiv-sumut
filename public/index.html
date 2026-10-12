@@ -662,7 +662,18 @@ body:not(.authenticated) .setup{font-size:.7rem!important;line-height:1.4!import
       <div class="owner-form-actions"><button class="dashbtn" id="saveOwnerProfile" type="submit">Simpan profil</button><button class="dashbtn" id="cancelOwnerProfile" type="button">Batal</button></div>
       <p class="dashmsg" id="ownerProfileMessage" role="status" aria-live="polite"></p>
     </form>
-    <nav class="app-nav" id="appNavigation" aria-label="Menu utama">
+        <section id="pushNotificationPanel" class="notification-panel" aria-labelledby="pushNotificationHeading" hidden>
+      <h3 id="pushNotificationHeading">Notifikasi responden</h3>
+      <p id="pushNotificationStatus" role="status" aria-live="polite">Aktifkan notifikasi agar mendapat kabar saat ada respons kuesioner baru.</p>
+      <div class="owner-form-actions">
+        <button class="dashbtn" id="enablePushNotifications" type="button">Aktifkan notifikasi HP</button>
+        <button class="dashbtn" id="testPushNotifications" type="button">Tes notifikasi</button>
+        <button class="dashbtn" id="refreshPushNotifications" type="button">Perbarui daftar</button>
+      </div>
+      <div id="pushNotificationList" class="notification-list" aria-live="polite"><p class="notification-empty">Belum ada notifikasi dimuat.</p></div>
+      <p class="notification-empty">Notifikasi hanya menampilkan pemberitahuan umum, tanpa nama atau data sensitif responden.</p>
+    </section>
+<nav class="app-nav" id="appNavigation" aria-label="Menu utama">
       <button type="button" data-view="home" aria-current="page">▦ Beranda</button>
       <button type="button" data-view="database">▤ Database</button>
       <button type="button" data-view="questionnaire">▧ Kuesioner</button>
@@ -1007,6 +1018,100 @@ document.getElementById('newsSearch').addEventListener('input',renderNews);
 let respondentSyncPollHandle=null;
 let statusPesanCleanupDone=false;
 function startCollaborationIntro(){const overlay=document.getElementById('collaborationIntro');if(!overlay)return Promise.resolve();overlay.hidden=false;overlay.setAttribute('aria-hidden','false');return new Promise(resolve=>setTimeout(()=>{overlay.hidden=true;overlay.setAttribute('aria-hidden','true');resolve();},3000));}
+
+let notificationPollHandle=null;
+let lastNotificationId=0;
+function pushStatus(message){const node=document.getElementById('pushNotificationStatus');if(node)node.textContent=message;}
+function setAppBadgeCount(count){
+ const n=Math.max(0,Number(count)||0);
+ try{if(n&&navigator.setAppBadge)navigator.setAppBadge(n);else if(!n&&navigator.clearAppBadge)navigator.clearAppBadge();}catch{}
+}
+async function loadPushNotifications(){
+ if(!csrfToken||currentDashboardRole!=='owner')return;
+ try{
+  const response=await fetch('/api/notifications',{credentials:'same-origin',cache:'no-store'});
+  const data=await parseResponse(response);
+  if(!response.ok||!data.ok)throw new Error(data.error||'Daftar notifikasi tidak dapat dimuat.');
+  setAppBadgeCount(data.unread||0);
+  const list=document.getElementById('pushNotificationList');
+  if(!list)return;
+  list.replaceChildren();
+  const items=Array.isArray(data.items)?data.items:[];
+  if(!items.length){const empty=document.createElement('p');empty.className='notification-empty';empty.textContent='Belum ada notifikasi.';list.append(empty);}
+  for(const item of items){
+   const card=document.createElement('article');card.className='notification-item';
+   const title=document.createElement('strong');title.textContent=String(item.title||'Notifikasi');
+   const body=document.createElement('p');body.textContent=String(item.body||'');
+   const date=document.createElement('small');date.textContent=String(item.created_at||'');
+   card.append(title,body,date);list.append(card);
+  }
+  const newest=Number(items[0]?.id)||0;
+  if(newest>lastNotificationId&&lastNotificationId!==0&&Notification.permission==='granted'&&document.visibilityState==='visible'){
+   // Native push handles background alerts; do not duplicate notifications while this page is open.
+  }
+  lastNotificationId=Math.max(lastNotificationId,newest);
+ }catch(error){pushStatus(error instanceof Error?error.message:'Notifikasi belum dapat dimuat.');}
+}
+function urlBase64ToUint8Array(value){
+ const padding='='.repeat((4-value.length%4)%4);
+ const base64=(value+padding).replace(/-/g,'+').replace(/_/g,'/');
+ const raw=atob(base64);const output=new Uint8Array(raw.length);
+ for(let i=0;i<raw.length;i++)output[i]=raw.charCodeAt(i);
+ return output;
+}
+async function enablePushNotifications(){
+ if(currentDashboardRole!=='owner'){pushStatus('Hanya owner yang dapat mengaktifkan notifikasi perangkat.');return;}
+ if(!('serviceWorker' in navigator)||!('PushManager' in window)){pushStatus('Browser ini tidak mendukung Web Push. Buka dashboard melalui Chrome Android, bukan jendela WebView aplikasi.');return;}
+ if(!('Notification' in window)){pushStatus('Browser ini tidak mendukung notifikasi sistem.');return;}
+ try{
+  pushStatus('Memeriksa konfigurasi notifikasi…');
+  const cfgResponse=await fetch('/api/push-config',{cache:'no-store'});
+  const cfg=await parseResponse(cfgResponse);
+  if(!cfgResponse.ok||!cfg.enabled||!cfg.publicKey)throw new Error('Kunci push belum lengkap di Cloudflare Worker (VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT).');
+  const permission=await Notification.requestPermission();
+  if(permission!=='granted')throw new Error('Izin notifikasi belum diberikan. Periksa izin situs di pengaturan Chrome Android.');
+  const registration=await navigator.serviceWorker.register('/sw.js',{scope:'/'});
+  await navigator.serviceWorker.ready;
+  let subscription=await registration.pushManager.getSubscription();
+  if(!subscription)subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(cfg.publicKey)});
+  const response=await fetch('/api/push-subscriptions',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify(subscription.toJSON())});
+  const data=await parseResponse(response);
+  if(!response.ok||!data.ok)throw new Error(data.error||'Langganan notifikasi gagal disimpan.');
+  pushStatus('Notifikasi aktif pada browser ini. Izinkan suara, getaran, banner, dan layar kunci di pengaturan notifikasi Android.');
+  await loadPushNotifications();
+ }catch(error){pushStatus(error instanceof Error?error.message:'Notifikasi belum berhasil diaktifkan.');}
+}
+async function testPushNotifications(){
+ if(currentDashboardRole!=='owner')return;
+ try{
+  const response=await fetch('/api/notifications/test',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken}});
+  const data=await parseResponse(response);
+  if(!response.ok||!data.ok)throw new Error(data.error||'Tes notifikasi gagal.');
+  pushStatus(data.message||'Notifikasi tes dikirim. Periksa banner dan layar kunci.');
+  await loadPushNotifications();
+ }catch(error){pushStatus(error instanceof Error?error.message:'Tes notifikasi gagal.');}
+}
+async function refreshPushSubscriptionStatus(){
+ const panel=document.getElementById('pushNotificationPanel');
+ if(!panel)return;
+ panel.hidden=currentDashboardRole!=='owner';
+ if(currentDashboardRole!=='owner')return;
+ try{
+  const cfgResponse=await fetch('/api/push-config',{cache:'no-store'});const cfg=await parseResponse(cfgResponse);
+  if(!cfg.enabled)pushStatus('Notifikasi belum siap: konfigurasi VAPID di Cloudflare belum lengkap.');
+  else if(!('PushManager' in window))pushStatus('Web Push tidak tersedia pada lingkungan ini. Untuk notifikasi saat aplikasi ditutup diperlukan integrasi push native.');
+  else {
+   const reg=await navigator.serviceWorker.register('/sw.js',{scope:'/'});
+   const sub=await reg.pushManager.getSubscription();
+   pushStatus(sub?'Perangkat browser ini sudah berlangganan notifikasi.':'Aktifkan notifikasi untuk mendaftarkan perangkat ini.');
+  }
+ }catch{pushStatus('Status notifikasi belum dapat diperiksa. Pastikan dashboard dibuka melalui HTTPS.');}
+ loadPushNotifications();
+}
+document.getElementById('enablePushNotifications')?.addEventListener('click',enablePushNotifications);
+document.getElementById('testPushNotifications')?.addEventListener('click',testPushNotifications);
+document.getElementById('refreshPushNotifications')?.addEventListener('click',loadPushNotifications);
+
 function showDashboard(admin,csrf){
  csrfToken=csrf||'';
  currentDashboardRole=String(admin?.role||'').toLowerCase();
@@ -1028,6 +1133,8 @@ function showDashboard(admin,csrf){
 }
 function showLogin(text){
  if(respondentSyncPollHandle){clearInterval(respondentSyncPollHandle);respondentSyncPollHandle=null;}
+ if(notificationPollHandle){clearInterval(notificationPollHandle);notificationPollHandle=null;}
+ const pushPanel=document.getElementById('pushNotificationPanel');if(pushPanel)pushPanel.hidden=true;
  statusPesanCleanupDone=false;
  dashboard.hidden=true;
  currentDashboardRole='';
