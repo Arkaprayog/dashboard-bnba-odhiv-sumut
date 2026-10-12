@@ -15,6 +15,7 @@ public final class AnimatedSplashView extends View {
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
     private final Bitmap illustration;
     private final long started = System.currentTimeMillis();
+    private static final long DURATION_MS = 4000L;
 
     public AnimatedSplashView(Context context) {
         super(context);
@@ -31,28 +32,34 @@ public final class AnimatedSplashView extends View {
         super.onDraw(canvas);
         float w = getWidth();
         float h = getHeight();
-        long elapsed = System.currentTimeMillis() - started;
+        long elapsed = Math.max(0L, System.currentTimeMillis() - started);
+        float progress = Math.min(1f, elapsed / (float) DURATION_MS);
 
-        // The original supplied portrait illustration replaces the old hand-drawn kite scene.
-        if (illustration != null) {
-            Rect src = new Rect(0, 0, illustration.getWidth(), illustration.getHeight());
+        // Use the current supplied portrait artwork, not the obsolete red-kite vector scene.
+        if (illustration != null && w > 0 && h > 0) {
             float sourceRatio = (float) illustration.getWidth() / illustration.getHeight();
             float targetRatio = w / h;
+            int cropW = illustration.getWidth();
+            int cropH = illustration.getHeight();
             if (sourceRatio > targetRatio) {
-                int cropWidth = (int) (illustration.getHeight() * targetRatio);
-                int left = (illustration.getWidth() - cropWidth) / 2;
-                src.set(left, 0, left + cropWidth, illustration.getHeight());
+                cropW = Math.max(1, Math.round(illustration.getHeight() * targetRatio));
             } else if (sourceRatio < targetRatio) {
-                int cropHeight = (int) (illustration.getWidth() / targetRatio);
-                int top = (illustration.getHeight() - cropHeight) / 2;
-                src.set(0, top, illustration.getWidth(), top + cropHeight);
+                cropH = Math.max(1, Math.round(illustration.getWidth() / targetRatio));
             }
+            // Gentle Ken Burns motion keeps the supplied illustration alive during loading.
+            float zoom = 1f + 0.045f * progress;
+            int drawW = Math.max(1, Math.round(cropW / zoom));
+            int drawH = Math.max(1, Math.round(cropH / zoom));
+            float drift = (float) Math.sin(progress * Math.PI) * cropH * 0.012f;
+            int left = Math.max(0, (illustration.getWidth() - drawW) / 2);
+            int top = Math.max(0, Math.min(illustration.getHeight() - drawH,
+                    Math.round((illustration.getHeight() - drawH) / 2f + drift)));
+            Rect src = new Rect(left, top, left + drawW, top + drawH);
             canvas.drawBitmap(illustration, src, new Rect(0, 0, getWidth(), getHeight()), paint);
         } else {
             canvas.drawColor(Color.rgb(20, 110, 170));
         }
 
-        // A gentle dark footer keeps the title readable over the full-screen artwork.
         paint.setShader(new LinearGradient(0, h * 0.68f, 0, h,
                 new int[]{Color.TRANSPARENT, Color.rgb(17, 83, 83), Color.rgb(17, 83, 83)},
                 new float[]{0f, 0.45f, 1f}, Shader.TileMode.CLAMP));
@@ -71,8 +78,8 @@ public final class AnimatedSplashView extends View {
         paint.setTextSize(dp(11));
         canvas.drawText("Memuat aplikasi…", w / 2f, h * 0.92f, paint);
 
-        // Fade the artwork smoothly as the dashboard opens.
-        setAlpha(Math.max(0f, Math.min(1f, (4000f - elapsed) / 350f)));
-        if (elapsed < 4000L) postInvalidateDelayed(40L);
+        // Fade only at the end of the four-second splash.
+        setAlpha(Math.max(0f, Math.min(1f, (DURATION_MS - elapsed) / 350f)));
+        if (elapsed < DURATION_MS) postInvalidateDelayed(40L);
     }
 }
