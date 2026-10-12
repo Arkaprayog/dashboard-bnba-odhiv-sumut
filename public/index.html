@@ -1222,7 +1222,7 @@ function compressAssessmentPhoto(file){
     const context=canvas.getContext("2d");if(!context){reject(new Error("Pemrosesan gambar tidak tersedia."));return;}
     context.fillStyle="#fff";context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(image,0,0,canvas.width,canvas.height);
     let quality=.78;let result=canvas.toDataURL("image/jpeg",quality);
-    while(result.length>260000&&quality>.35{quality-=.08;result=canvas.toDataURL("image/jpeg",quality);}
+    while(result.length>260000&&quality>.35){quality-=.08;result=canvas.toDataURL("image/jpeg",quality);}
     if(result.length>300000){reject(new Error("Foto terlalu besar setelah kompresi. Pilih foto dengan resolusi lebih rendah."));return;}
     resolve(result);
    };
