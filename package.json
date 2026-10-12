@@ -1,7 +1,7 @@
 {
   "name": "ppks-odhiv-sumut-secure-dashboard",
   "private": true,
-  "version": "1.0.6",
+  "version": "1.0.7",
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
