@@ -48,12 +48,20 @@ public final class AnimatedSplashView extends View {
 
         float ground=h*.72f; fill(c,Color.rgb(24,94,94)); c.drawRect(0,ground,w,h,p);
         float scale=Math.min(w/380f,h/720f);
-        float y=ground-h*.02f;
-        // Taller child leads while holding the smaller child's hand.
-        drawChild(c,w*.43f,y,scale*1.02f,green,true);
-        drawChild(c,w*.60f,y+dp(9),scale*.83f,blue,false);
-        line(c,Color.rgb(255,219,120),dp(2.5f));
-        c.drawLine(w*.44f,y-dp(35)*scale,w*.60f,y-dp(28)*scale,p);
+        float runPhase=(System.currentTimeMillis()-started)/150.0f;
+        float stride=(float)Math.sin(runPhase);
+        float bob=Math.abs((float)Math.sin(runPhase*2.0f))*dp(4)*scale;
+        float y=ground-h*.02f-bob;
+        // Both children visibly run: alternating arms and legs, bouncing bodies and forward movement.
+        float travel=(float)Math.sin(t*Math.PI*2)*w*.018f;
+        float leadX=w*.43f+travel;
+        float smallX=w*.60f+travel;
+        drawChild(c,leadX,y,scale*1.02f,green,true,runPhase);
+        drawChild(c,smallX,y+dp(9),scale*.83f,blue,false,runPhase+1.1f);
+        // Their joined hands move naturally with each running stride.
+        line(c,Color.rgb(226,174,132),dp(3.2f)*scale);
+        c.drawLine(leadX+dp(8)*scale,y-dp(35)*scale+dp(5)*scale*stride,
+                   smallX-dp(8)*scale,y-dp(28)*scale-dp(4)*scale*stride,p);
         fill(c,Color.WHITE);
         p.setTextAlign(Paint.Align.CENTER); p.setTypeface(android.graphics.Typeface.create("sans-serif",android.graphics.Typeface.BOLD));
         p.setTextSize(Math.min(dp(30),w*.075f)); c.drawText("Sahabat ODHIV Sumut",w/2,h*.83f,p);
@@ -63,18 +71,38 @@ public final class AnimatedSplashView extends View {
         postInvalidateDelayed(40);
     }
 
-    private void drawChild(Canvas c,float x,float ground,float s,int shirt,boolean taller) {
+    private void drawChild(Canvas c,float x,float ground,float s,int shirt,boolean taller,float phase) {
         float head=taller?dp(13)*s:dp(12)*s;
         float torso=taller?dp(43)*s:dp(37)*s;
-        fill(c,Color.rgb(226,174,132)); c.drawCircle(x,ground-torso-head,head,p);
-        fill(c,shirt); c.drawRoundRect(x-dp(12)*s,ground-torso,x+dp(12)*s,ground-dp(7)*s,dp(6)*s,dp(6)*s,p);
+        float swing=(float)Math.sin(phase);
+        float opposite=(float)Math.sin(phase+Math.PI);
+        float bounce=Math.abs((float)Math.sin(phase*2))*dp(2.8f)*s;
+        float bodyTop=ground-torso+bounce;
+        float headY=ground-torso-head+bounce;
+        fill(c,Color.rgb(226,174,132));
+        c.drawCircle(x,headY,head,p);
+        // Hair and face details keep the two children distinct.
+        fill(c,Color.rgb(42,31,26));
+        c.drawArc(x-head*1.08f,headY-head*1.05f,x+head*.95f,headY+head*.15f,190,175,true,p);
+        fill(c,shirt);
+        c.drawRoundRect(x-dp(12)*s,bodyTop,x+dp(12)*s,ground-dp(7)*s+bounce,dp(6)*s,dp(6)*s,p);
+        // Arms alternate forward/back as they run.
         line(c,Color.rgb(226,174,132),dp(5)*s);
-        c.drawLine(x-dp(8)*s,ground-torso+dp(7)*s,x-dp(17)*s,ground-torso-dp(7)*s,p);
-        c.drawLine(x+dp(8)*s,ground-torso+dp(7)*s,x+dp(13)*s,ground-torso+dp(14)*s,p);
+        c.drawLine(x-dp(8)*s,bodyTop+dp(7)*s,
+                x-dp(14)*s-dp(8)*s*swing,bodyTop-dp(3)*s+dp(10)*s*swing,p);
+        c.drawLine(x+dp(8)*s,bodyTop+dp(7)*s,
+                x+dp(13)*s+dp(8)*s*swing,bodyTop+dp(12)*s-dp(8)*s*swing,p);
+        // Legs switch between a forward stride and a trailing stride each frame.
         line(c,Color.rgb(35,42,51),dp(6)*s);
-        c.drawLine(x-dp(5)*s,ground-dp(7)*s,x-dp(12)*s,ground+dp(10)*s,p);
-        c.drawLine(x+dp(5)*s,ground-dp(7)*s,x+dp(13)*s,ground+dp(7)*s,p);
-        fill(c,Color.rgb(255,255,255)); c.drawOval(x-dp(8)*s,ground+dp(5)*s,x-dp(1)*s,ground+dp(10)*s,p); c.drawOval(x+dp(9)*s,ground+dp(3)*s,x+dp(16)*s,ground+dp(8)*s,p);
+        c.drawLine(x-dp(5)*s,ground-dp(7)*s+bounce,
+                x-dp(10)*s-dp(9)*s*opposite,ground+dp(3)*s+dp(8)*s*swing,p);
+        c.drawLine(x+dp(5)*s,ground-dp(7)*s+bounce,
+                x+dp(10)*s+dp(9)*s*opposite,ground+dp(3)*s-dp(8)*s*swing,p);
+        fill(c,Color.WHITE);
+        c.drawOval(x-dp(17)*s-dp(9)*s*opposite,ground+dp(1)*s+dp(8)*s*swing,
+                x-dp(5)*s-dp(9)*s*opposite,ground+dp(7)*s+dp(8)*s*swing,p);
+        c.drawOval(x+dp(5)*s+dp(9)*s*opposite,ground+dp(1)*s-dp(8)*s*swing,
+                x+dp(17)*s+dp(9)*s*opposite,ground+dp(7)*s-dp(8)*s*swing,p);
     }
     private float dp(float n) { return n*getResources().getDisplayMetrics().density; }
 }
