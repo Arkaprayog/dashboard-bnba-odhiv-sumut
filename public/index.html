@@ -187,14 +187,58 @@ body:not(.authenticated) .trust-icon{width:23px;height:23px;flex:0 0 auto;color:
 body:not(.authenticated) .message:not(:empty){color:#8a3b13;background:#fff8e9;border-color:#f0d4a7;box-shadow:none}
 @media(max-width:480px){body:not(.authenticated){padding:16px 10px 20px}body:not(.authenticated) main{padding:24px 16px 20px;border-radius:22px}body:not(.authenticated) .agency-logos{gap:8px 12px}body:not(.authenticated) .brand{gap:9px;margin:21px auto}body:not(.authenticated) .brand h1{font-size:clamp(1.35rem,6vw,1.8rem)}body:not(.authenticated) .ribbon{width:27px;height:36px}body:not(.authenticated) .separator{height:36px}body:not(.authenticated) .login-trust{gap:6px}body:not(.authenticated) .trust-item{display:block;text-align:center;font-size:.68rem}body:not(.authenticated) .trust-icon{display:block;margin:0 auto 5px}}
 
+
+/* v1.0.15 — Sumut glass interface */
+:root{--navy:#06457e;--blue:#0874c8;--green:#239b55;--gold:#f4c51c}
+html{background:#eaf4ff}
+body{min-height:100svh;padding:clamp(16px,3vh,34px) 14px 30px;color:#163e65;background:linear-gradient(180deg,rgba(238,247,255,.96),rgba(216,235,252,.92)),radial-gradient(ellipse at 50% 12%,#fff,transparent 70%);isolation:isolate}
+body:before{position:fixed;inset:0;border:0;border-radius:0;background:linear-gradient(145deg,#07549a 0 7%,#2a9a5c 7% 7.6%,#f5c927 7.6% 8%,transparent 8%);clip-path:polygon(0 0,100% 0,100% 2%,0 15%);opacity:1;z-index:-1}
+body:after{position:fixed;inset:auto 0 0;width:100%;height:30vh;left:0;transform:none;background:linear-gradient(180deg,rgba(223,240,255,.15),rgba(171,211,244,.75) 60%,#07549a 61%,#07549a 100%);clip-path:polygon(0 24%,14% 38%,30% 17%,48% 46%,67% 20%,82% 37%,100% 12%,100% 100%,0 100%);opacity:1;z-index:-1}
+.corner{position:fixed;width:190px;height:90px;border:0;opacity:1;z-index:-1}
+.corner.top{top:0;left:0;transform:none;background:linear-gradient(150deg,#07549a 0 62%,#2c9b59 62% 69%,#f5c927 69% 75%,transparent 75%);clip-path:polygon(0 0,100% 0,0 100%)}
+.corner.bottom{display:none}
+main{width:min(100%,760px);margin:0 auto;padding:clamp(22px,4vw,42px) clamp(18px,5vw,48px) 25px;text-align:center;color:#173e66;background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.95);border-radius:30px;box-shadow:0 22px 65px rgba(27,83,135,.16);backdrop-filter:none;-webkit-backdrop-filter:none}
+.agency-logos{display:flex;align-items:center;justify-content:center;max-width:100%;margin:0 auto 14px}
+.kemensos-logo{width:clamp(160px,30vw,250px);height:clamp(125px,24vw,190px);object-fit:contain}
+.sumut-logo,.kemenkes-logo{display:none!important}
+.ministry{display:none}
+.directorate{max-width:520px;margin:12px auto 0;color:#506b86;font-size:clamp(.95rem,2.7vw,1.15rem);font-weight:550;line-height:1.55}
+.brand{justify-content:center;margin:24px auto 26px;gap:12px;text-align:center}
+.separator{height:46px;background:#d1e1f1}
+.brand h1{font-size:clamp(1.7rem,5.2vw,2.7rem);line-height:1.12;letter-spacing:-.025em;color:#07477f}
+.form{max-width:540px;margin:0 auto;gap:15px}
+.field input{height:64px;border:1px solid #cbdceb;background:rgba(255,255,255,.92);border-radius:15px;color:#183d64;box-shadow:0 3px 14px rgba(32,76,120,.06)}
+.field input:focus{border-color:#1685d4;box-shadow:0 0 0 3px rgba(22,133,212,.14)}
+.lock{color:#31628e}.toggle{color:#7289a2}
+.submit{height:64px;background:linear-gradient(180deg,#0877cf,#064d9c);border:0;border-radius:15px;box-shadow:0 7px 16px rgba(5,75,145,.19)}
+.foot{margin:23px auto 0;color:#355b80;max-width:540px}
+.shield{color:#168b72}
+.rule{height:1px;max-width:540px;margin:18px auto 12px;background:#dbe8f5}
+.setup{color:#617b96}
+.authenticated main{width:min(100%,1200px);color:#173e66;background:rgba(255,255,255,.82);border-color:rgba(255,255,255,.95);box-shadow:0 18px 60px rgba(27,83,135,.15);backdrop-filter:none;-webkit-backdrop-filter:none}
+.authenticated .dashhead p,.authenticated .dashfield label,.authenticated .scroll-hint,.authenticated .respondent-search label,.authenticated .filter-count,.authenticated .workflow-state{color:#426587}
+.authenticated .dashpanel{background:rgba(244,249,255,.9);border-color:#d7e5f3;color:#173e66}
+.authenticated .datatable{color:#173e66}
+.authenticated .datatable th{background:#e1effb;color:#123e67}
+.authenticated .datatable td,.authenticated .datatable th{border-color:#cbdceb}
+.authenticated .datatable th:first-child,.authenticated .datatable td:first-child{background:#edf5fc;box-shadow:2px 0 5px rgba(0,0,0,.07)}
+.authenticated .respondent-stat{background:rgba(244,249,255,.94);border-color:#d7e5f3}
+.authenticated .respondent-stat-label{color:#426587}.authenticated .respondent-stat-value{color:#123e67}
+.authenticated .dashbtn{background:#07549a}
+.authenticated .dashfield input,.authenticated .respondent-search input{border-color:#cbdceb}
+.login-trust{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:540px;margin:23px auto 0;padding-top:18px;border-top:1px solid #dbe8f5;color:#41658b}
+.trust-item{display:flex;align-items:center;justify-content:center;gap:8px;font-size:.78rem;line-height:1.4}
+.trust-icon{width:23px;height:23px;flex:0 0 auto;color:#2a679e}
+@media(max-width:480px){body{padding:16px 10px 20px}main{padding:24px 16px 20px;border-radius:22px}.brand{gap:9px;margin:21px auto}.brand h1{font-size:clamp(1.45rem,6vw,1.9rem)}.login-trust{gap:6px}.trust-item{display:block;text-align:center;font-size:.68rem}.trust-icon{display:block;margin:0 auto 5px}.kemensos-logo{width:clamp(145px,45vw,210px);height:clamp(112px,34vw,160px)}}
+
 </style>
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
 <main>
-  <div class="agency-logos" aria-label="Identitas instansi"><img class="agency-logo kemensos-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_the_Ministry_of_Social_Affairs_of_the_Republic_of_Indonesia.svg/960px-Logo_of_the_Ministry_of_Social_Affairs_of_the_Republic_of_Indonesia.svg.png" alt="Logo resmi Kementerian Sosial" decoding="async"><img class="agency-logo sumut-logo" src="https://sumutprov.go.id/images/tentangpemprovsu/Lambang%20Sumut.jpg" alt="Lambang resmi Provinsi Sumatera Utara" decoding="async"><img class="agency-logo kemenkes-logo" src="https://development.mediaciptainformasi.co.id/kemkes/app_asset/file_content_download/167521803963d9cc77150eb0.12067776.png" alt="Logo resmi Kementerian Kesehatan" decoding="async"></div>
+  <div class="agency-logos" aria-label="Logo resmi Kementerian Sosial"><img class="agency-logo kemensos-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_the_Ministry_of_Social_Affairs_of_the_Republic_of_Indonesia.svg/960px-Logo_of_the_Ministry_of_Social_Affairs_of_the_Republic_of_Indonesia.svg.png" alt="Logo resmi Kementerian Sosial Republik Indonesia" decoding="async"></div>
   <div class="ministry">KEMENTERIAN SOSIAL<small>REPUBLIK INDONESIA</small></div>
-  <p class="directorate">Direktorat Rehabilitasi Sosial Korban<br class="wide-break"> Penyalahgunaan Narkoba &amp; ODHIV</p>
+  <p class="directorate">Sinergi Kemensos, Kemenkes dan Pemprov Sumut<br>untuk layanan yang lebih baik</p>
   <div class="brand">
     <svg class="ribbon" viewBox="0 0 36 52" role="img" aria-label="Pita merah solidaritas">
       <path d="M9 3 C1 8 5 18 11 25 L2 43 L9 49 L18 31 L27 49 L34 43 L24 25 C31 16 35 7 27 3 C20 -1 17 5 18 10 C18 5 14 0 9 3Z" fill="#ff3038"/>
@@ -386,7 +430,7 @@ body:not(.authenticated) .message:not(:empty){color:#8a3b13;background:#fff8e9;b
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.0.14</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.0.15</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi</p>
 </main>
