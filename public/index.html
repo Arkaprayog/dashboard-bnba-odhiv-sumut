@@ -669,6 +669,7 @@ body:not(.authenticated) .setup{font-size:.7rem!important;line-height:1.4!import
         <button class="dashbtn" id="enablePushNotifications" type="button">Aktifkan notifikasi HP</button>
         <button class="dashbtn" id="testPushNotifications" type="button">Tes notifikasi</button>
         <button class="dashbtn" id="refreshPushNotifications" type="button">Perbarui daftar</button>
+        <button class="dashbtn" id="markNotificationsRead" type="button">Tandai sudah dibaca</button>
       </div>
       <div id="pushNotificationList" class="notification-list" aria-live="polite"><p class="notification-empty">Belum ada notifikasi dimuat.</p></div>
       <p class="notification-empty">Notifikasi hanya menampilkan pemberitahuan umum, tanpa nama atau data sensitif responden.</p>
@@ -1084,7 +1085,7 @@ async function enablePushNotifications(){
 async function testPushNotifications(){
  if(currentDashboardRole!=='owner')return;
  try{
-  const response=await fetch('/api/notifications/test',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken}});
+  const response=await fetch('/api/push-test',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken}});
   const data=await parseResponse(response);
   if(!response.ok||!data.ok)throw new Error(data.error||'Tes notifikasi gagal.');
   pushStatus(data.message||'Notifikasi tes dikirim. Periksa banner dan layar kunci.');
@@ -1111,6 +1112,13 @@ async function refreshPushSubscriptionStatus(){
 document.getElementById('enablePushNotifications')?.addEventListener('click',enablePushNotifications);
 document.getElementById('testPushNotifications')?.addEventListener('click',testPushNotifications);
 document.getElementById('refreshPushNotifications')?.addEventListener('click',loadPushNotifications);
+document.getElementById('markNotificationsRead')?.addEventListener('click',async()=>{
+ try{
+  const response=await fetch('/api/notifications/read',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken}});
+  const data=await parseResponse(response);if(!response.ok||!data.ok)throw new Error(data.error||'Notifikasi belum dapat ditandai dibaca.');
+  setAppBadgeCount(0);pushStatus('Semua notifikasi ditandai sudah dibaca.');await loadPushNotifications();
+ }catch(error){pushStatus(error instanceof Error?error.message:'Gagal memperbarui status notifikasi.');}
+});
 
 function showDashboard(admin,csrf){
  csrfToken=csrf||'';
