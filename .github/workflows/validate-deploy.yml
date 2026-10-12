@@ -72,6 +72,15 @@ jobs:
             if (!ok) process.exitCode = 1;
           }
           NODE
+      - name: Validate single scheduled poller configuration
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const config = fs.readFileSync('wrangler.toml', 'utf8');
+          if (!config.includes('[triggers]\ncrons = []')) throw new Error('Dashboard Worker must explicitly have no cron triggers.');
+          if (!config.includes('[env.sahabatodhiv-sumut.triggers]\ncrons = ["*/5 * * * *"]')) throw new Error('Sahabat Worker must retain the five-minute scheduled poller.');
+          console.log('PASS only Sahabat owns the five-minute scheduled poller');
+          NODE
       - name: Validate Sahabat ODHIV Wrangler configuration (dry run)
         run: npx wrangler deploy --dry-run --env sahabatodhiv-sumut
 

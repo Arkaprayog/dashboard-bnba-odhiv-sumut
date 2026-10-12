@@ -93,6 +93,9 @@ VAPID_SUBJECT = "mailto:aryprayoga139@gmail.com"
 VAPID_PUBLIC_KEY = "BPv6w9cXv9fpAU8amuIMfe2JZOlbbbJdcSUApTbnBCQGghrFICYoEE41TiHQH84z_4dSihgieAqA4OcB97ArkGA"
 
 
+[triggers]
+crons = []
+
 [observability]
 enabled = true
 
