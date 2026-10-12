@@ -846,7 +846,7 @@ export default {
             if (!tab) {
               return reply({ error: "Nama tab respons tidak cocok. Tab yang tersedia: " + (sheetTitles.join(", ") || "(tidak ada)") + ". Atur GOOGLE_SHEET_TAB sesuai nama tab yang benar." }, 502);
             }
-            const range = "'" + tab.replace(/'/g, "''") + "'!A1:AZ1000";
+            const range = "'" + tab.replace(/'/g, "''") + "'!A1:ZZ1000";
             const encodedRange = encodeURIComponent(range).replace(/[\x27!()*]/g, (char) => "%" + char.charCodeAt(0).toString(16).toUpperCase());
             const sheetUrl = spreadsheetBase + "/values/" + encodedRange + "?valueRenderOption=FORMATTED_VALUE";
             const response = await fetch(sheetUrl, { headers: { authorization: "Bearer " + token } });
