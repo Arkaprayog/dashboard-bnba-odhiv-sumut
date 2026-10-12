@@ -159,7 +159,7 @@ jobs:
             process.stdin.on("end", () => {
               try {
                 const result = JSON.parse(data);
-                if (result.success === true && Array.isArray(result.result) && result.result.length === 0) process.exit(0);
+                if (result.success === true && Array.isArray(result.result?.schedules) && result.result.schedules.length === 0) process.exit(0);
               } catch {}
               process.stderr.write("Cloudflare did not confirm that Sahabat cron schedules are empty.\\n");
               process.exit(1);
