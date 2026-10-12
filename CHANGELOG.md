@@ -1,5 +1,10 @@
 # Catatan Versi — Dashboard BNBA ODHIV Sumut
 
+## v1.0.1 — 12 Oktober 2026
+- Memperbaiki rate limit login agar percobaan gagal dibatasi berdasarkan hash IP klien, bukan satu kunci global yang dapat menghambat semua admin.
+- Menyelaraskan dokumentasi keamanan dengan implementasi PBKDF2 yang saat ini digunakan; belum mengubah format hash akun yang sudah ada.
+- Pembaruan patch ini tidak mengaktifkan Asesmen atau mengubah tampilan Beranda.
+
 ## v1.0.0 — 12 Oktober 2026
 - Menetapkan nomor versi utama aplikasi menjadi v1.0.0.
 - Menampilkan nomor versi pada halaman akses.
