@@ -453,6 +453,79 @@ body.authenticated .assessment-section{
 }
 body.authenticated .app-view{background:transparent!important;border:0!important;box-shadow:none!important}
 
+
+/* v1.0.21 — stronger visible glassmorphism, preserving readable assessment paper */
+body.authenticated{
+ background:
+  radial-gradient(ellipse at 12% 8%,rgba(81,196,211,.34),transparent 36%),
+  radial-gradient(ellipse at 88% 22%,rgba(90,176,255,.30),transparent 38%),
+  radial-gradient(ellipse at 54% 100%,rgba(15,61,122,.24),transparent 48%),
+  linear-gradient(135deg,#0b3672 0%,#147bb7 52%,#1b9cb5 100%)!important;
+ background-attachment:fixed!important;
+}
+body.authenticated:after{
+ background:
+  radial-gradient(ellipse at 16% 16%,rgba(137,231,255,.20),transparent 38%),
+  radial-gradient(ellipse at 82% 72%,rgba(51,160,231,.22),transparent 42%),
+  linear-gradient(135deg,rgba(8,43,91,.42),rgba(24,132,199,.14) 54%,rgba(81,196,211,.18))!important;
+}
+body.authenticated main{
+ background:rgba(220,242,255,.105)!important;
+ border:1px solid rgba(255,255,255,.48)!important;
+ box-shadow:0 24px 70px rgba(2,24,58,.28),inset 0 1px 0 rgba(255,255,255,.32)!important;
+ backdrop-filter:blur(28px) saturate(145%)!important;
+ -webkit-backdrop-filter:blur(28px) saturate(145%)!important;
+}
+body.authenticated .app-nav,
+body.authenticated .dashpanel,
+body.authenticated .overview-panel,
+body.authenticated .overview-card,
+body.authenticated .news-card,
+body.authenticated .assessment-panel,
+body.authenticated .questionnaire-panel,
+body.authenticated .database-panel,
+body.authenticated .notification-card,
+body.authenticated .dashfield,
+body.authenticated .assessment-section,
+body.authenticated .respondent-stat,
+body.authenticated .notification-item{
+ background:rgba(210,239,255,.13)!important;
+ border:1px solid rgba(255,255,255,.43)!important;
+ box-shadow:0 12px 32px rgba(3,35,76,.16),inset 0 1px 0 rgba(255,255,255,.30)!important;
+ backdrop-filter:blur(24px) saturate(150%)!important;
+ -webkit-backdrop-filter:blur(24px) saturate(150%)!important;
+}
+body.authenticated .app-view{background:transparent!important;border:0!important;box-shadow:none!important}
+body.authenticated .app-nav button{
+ background:rgba(184,229,255,.16)!important;
+ border-color:rgba(255,255,255,.36)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.22)!important;
+}
+body.authenticated .app-nav button[aria-current="page"]{
+ background:rgba(166,229,250,.34)!important;
+ border-color:rgba(255,255,255,.7)!important;
+ box-shadow:0 5px 20px rgba(2,35,75,.20),inset 0 1px 0 rgba(255,255,255,.46)!important;
+}
+body.authenticated .overview-card strong,
+body.authenticated .app-view h2,
+body.authenticated .app-view h3,
+body.authenticated .app-view label,
+body.authenticated .dashhead p,
+body.authenticated .overview-panel p,
+body.authenticated .overview-card small,
+body.authenticated .region-name,
+body.authenticated .map-legend{color:#fff!important;text-shadow:0 1px 3px rgba(0,25,56,.58)!important}
+body.authenticated .owner-card,
+body.authenticated .owner-profile-side,
+body.authenticated .owner-header-actions{
+ background:rgba(30,48,32,.84)!important;
+ border-color:rgba(220,255,226,.30)!important;
+ backdrop-filter:blur(24px)!important;-webkit-backdrop-filter:blur(24px)!important;
+}
+body.authenticated #assessmentPaper,
+body.authenticated #assessmentPaper *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body.authenticated #assessmentPaper{background:#fff!important;border:1px solid rgba(255,255,255,.8)!important}
+
 </style>
 </head>
 <body>
