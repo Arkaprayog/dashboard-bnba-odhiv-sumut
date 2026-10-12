@@ -42,7 +42,6 @@ public class MainActivity extends Activity {
         getWindow().setStatusBarColor(Color.rgb(56,75,56));
         getWindow().setNavigationBarColor(Color.rgb(11,45,107));
         showSplash();
-        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1001);
     }
     private int dp(float v) { return (int)(v * getResources().getDisplayMetrics().density + 0.5f); }
     private void showSplash() {
