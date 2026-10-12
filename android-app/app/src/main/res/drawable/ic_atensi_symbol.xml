@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="100dp" android:height="90dp" android:viewportWidth="600" android:viewportHeight="520">
-    <path android:fillColor="#397D9D" android:pathData="M38,498L180,498L292,287L237,198Z"/>
-    <path android:fillColor="#56B69E" android:pathData="M180,498L237,198L300,95L358,198L247,394Z"/>
-    <path android:fillColor="#FFE59B" android:pathData="M237,198L300,20L358,198L304,291Z"/>
-    <path android:fillColor="#B6C8F7" android:pathData="M358,198L462,385L368,442L304,291Z"/>
-    <path android:fillColor="#3979A6" android:pathData="M368,442L462,385L562,498L438,498Z"/>
-    <path android:fillColor="#E91F2B" android:pathData="M205,448C270,437 390,402 473,326C545,260 561,177 502,118C480,96 453,84 426,78L441,48C488,60 534,88 562,130C618,213 580,308 505,382C424,461 309,503 218,514Z"/>
-    <path android:fillColor="#E91F2B" android:pathData="M476,42a43,43 0,1 0,86 0a43,43 0,1 0,-86 0"/>
-    <path android:fillColor="#E91F2B" android:pathData="M18,395C52,329 116,255 236,187L246,211C145,264 76,334 54,398C42,434 53,459 75,476L59,499C22,479 0,444 18,395Z"/>
-</vector>
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/ic_atensi_original"
+    android:gravity="center" />
