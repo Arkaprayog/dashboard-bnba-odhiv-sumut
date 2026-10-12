@@ -1109,7 +1109,7 @@ export default {
         }
 
         if (url.pathname === "/api/push-config" && request.method === "GET") {
-          return reply({ ok: true, enabled: !!(env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT), publicKey: env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT ? env.VAPID_PUBLIC_KEY : "" });
+          return reply({ ok: true, enabled: !!(env.VAPID_PUBLIC_KEY && env.VAPID_SUBJECT), publicKey: env.VAPID_PUBLIC_KEY && env.VAPID_SUBJECT ? env.VAPID_PUBLIC_KEY : "" });
         }
 
         if (url.pathname === "/api/owner-profile" && (request.method === "GET" || request.method === "POST")) {
@@ -1190,7 +1190,7 @@ export default {
           if (admin.role !== "owner") return reply({ error: "Hanya owner yang dapat mengaktifkan notifikasi perangkat." }, 403);
           const csrf = request.headers.get("X-CSRF-Token");
           if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
-          if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY || !env.VAPID_SUBJECT) return reply({ error: "Push notification belum dikonfigurasi di Cloudflare." }, 503);
+          if (!env.VAPID_PUBLIC_KEY || !env.VAPID_SUBJECT) return reply({ error: "Kunci publik push belum dikonfigurasi di Cloudflare." }, 503);
           await ensureFeatureSchema(env);
           let body: { endpoint?: string; keys?: { p256dh?: string; auth?: string } };
           try { body = await request.json() as typeof body; } catch { return reply({ error: "Format langganan notifikasi tidak valid." }, 400); }
