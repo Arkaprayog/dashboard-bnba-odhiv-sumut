@@ -401,6 +401,58 @@ body.authenticated .assessment-brand .kemenkes-print{display:none!important}
  body.authenticated .assessment-heading h3{font-size:clamp(.68rem,2.6vw,.88rem)!important}
 }
 
+
+/* v1.0.20 — correct official ATENSI asset and ensure readable assessment print */
+#assessmentView .assessment-paper,
+#assessmentView .assessment-paper *{
+ color:#000!important;
+ text-shadow:none!important;
+ -webkit-text-fill-color:#000!important;
+}
+#assessmentView .assessment-paper{
+ background:#fff!important;
+}
+#assessmentView .assessment-brand{
+ grid-template-columns:minmax(72px,1fr) minmax(0,3fr) minmax(72px,1fr)!important;
+ grid-template-areas:"kemensos heading atensi"!important;
+ align-items:center!important;
+}
+#assessmentView .assessment-kemensos{grid-area:kemensos!important}
+#assessmentView .assessment-heading{grid-area:heading!important;text-align:center!important}
+#assessmentView .assessment-logo.atensi{grid-area:atensi!important}
+#assessmentView .assessment-brand .assessment-logo img{
+ display:block!important;width:100%!important;max-width:112px!important;height:100px!important;
+ object-fit:contain!important;background:transparent!important;
+}
+@media(max-width:560px){
+ #assessmentView .assessment-brand{grid-template-columns:58px minmax(0,1fr) 58px!important;gap:7px!important}
+ #assessmentView .assessment-brand .assessment-logo img{height:62px!important}
+ #assessmentView .assessment-heading h2{font-size:clamp(.85rem,3.3vw,1.15rem)!important}
+ #assessmentView .assessment-heading h3{font-size:clamp(.68rem,2.6vw,.88rem)!important}
+}
+body.authenticated main{
+ background:rgba(239,249,255,.20)!important;
+ border:1px solid rgba(255,255,255,.38)!important;
+ box-shadow:0 18px 48px rgba(7,43,84,.20)!important;
+ backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important;
+}
+body.authenticated .app-view,
+body.authenticated .dashpanel,
+body.authenticated .overview-panel,
+body.authenticated .overview-card,
+body.authenticated .news-card,
+body.authenticated .assessment-panel,
+body.authenticated .questionnaire-panel,
+body.authenticated .database-panel,
+body.authenticated .notification-card,
+body.authenticated .dashfield,
+body.authenticated .assessment-section{
+ background:rgba(235,247,255,.20)!important;
+ border:1px solid rgba(255,255,255,.30)!important;
+ backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;
+}
+body.authenticated .app-view{background:transparent!important;border:0!important;box-shadow:none!important}
+
 </style>
 </head>
 <body>
@@ -565,7 +617,7 @@ body.authenticated .assessment-brand .kemenkes-print{display:none!important}
         <header class="assessment-brand">
           <div class="assessment-logo kementerian assessment-kemensos"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_the_Ministry_of_Social_Affairs_of_the_Republic_of_Indonesia.svg/960px-Logo_of_the_Ministry_of_Social_Affairs_of_the_Republic_of_Indonesia.svg.png" alt="Logo resmi Kementerian Sosial" decoding="async"></div>
           <div class="assessment-heading"><h2>FORM ASESMEN TERINTEGRASI</h2><h3>DIREKTORAT JENDERAL REHABILITASI SOSIAL</h3></div>
-          <div class="assessment-logo atensi"><img src="https://kemensos.go.id/index.php/en/download/logo/social-rehabilitation-assistance-atensi-logo" alt="Logo ATENSI resmi Kementerian Sosial" decoding="async"></div>
+          <div class="assessment-logo atensi"><img src="https://kemensos.go.id/index.php/get/eyJpdiI6Im9FTDNyQkduYnc4OElwb0JLbnY5SlE9PSIsInZhbHVlIjoiaElJQ2RpaEcrR2JmTXdnVlR5ZFNkaGptREd2US9BUEpReUk0TTVOTWNTcz0iLCJtYWMiOiJlNzZiZWRjZGQ3MWEwYWMzYzZiOGJhMzEwM2U1N2E0Y2M2N2YzMjg4ZTk2ZTFmNGJhZjg0ZDE5YTcyMDU4ODVjIiwidGFnIjoiIn0%3D" alt="Logo ATENSI resmi Kementerian Sosial" decoding="async"></div>
         </header>
         <div class="assessment-number"><strong>Nomor Kuesioner</strong><div><label>No Urutan Satker<input name="nomorSatker" autocomplete="off"></label><span>.</span><label>Tahun<input name="tahun" inputmode="numeric"></label><span>.</span><label>Nomor Urut<input name="nomorUrut" inputmode="numeric"></label></div></div>
         <form id="assessmentForm" autocomplete="off"><div id="assessmentFields"></div></form>
