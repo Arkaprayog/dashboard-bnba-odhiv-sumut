@@ -777,8 +777,6 @@ export default {
           const timestamp = get("timestamp", 40) || new Intl.DateTimeFormat("id-ID", { timeZone: "Asia/Jakarta", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
           const selfPhoto = form.get("fotoDiri");
           const ktpPhoto = form.get("fotoKtp");
-          const validPhoto = (value: FormDataEntryValue | null): value is File =>
-            value instanceof File && ["image/jpeg", "image/png", "image/webp"].includes(value.type) && value.size > 0 && value.size <= 8 * 1024 * 1024;
           if (!nama || !/^\d{16}$/.test(nik) || !Number.isInteger(usia) || usia < 0 || usia > 120 ||
               !["Laki-laki", "Perempuan"].includes(gender) || !alamat || !kota || !pekerjaan ||
               !/^\+?[0-9 ()-]{8,30}$/.test(phone) || !["BANTUAN NUTRISI", "BANTUAN KEWIRAUSAHAAN"].includes(bantuan)) {
