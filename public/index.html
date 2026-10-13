@@ -55,6 +55,7 @@
 @media(max-width:850px){.overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-panels,.news-grid{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){.app-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.app-nav button{min-width:0;padding:9px 5px;font-size:.86rem}.overview-card{padding:11px}.overview-card strong{font-size:1.2rem}.overview-panel{padding:11px}.region-row{grid-template-columns:minmax(80px,1fr) minmax(45px,1fr) auto;gap:6px}.news-card{padding:12px}}
 
+.settings-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:42px;height:42px;padding:0 10px;border:1px solid rgba(255,255,255,.38);border-radius:11px;background:rgba(4,48,110,.7);color:#fff;font:inherit;font-weight:750;cursor:pointer}.settings-panel{margin:0 0 16px;padding:15px;border:1px solid rgba(255,255,255,.3);border-radius:14px;background:rgba(0,31,78,.78);text-align:left}.settings-panel h3{margin:0 0 12px}.settings-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid rgba(255,255,255,.16)}.settings-row label,.settings-row strong{font-weight:750}.settings-row p{margin:4px 0 0;color:#dcecff;font-size:.82rem;line-height:1.4}.settings-row select{max-width:52%;min-height:40px;border:1px solid #dce8f7;border-radius:9px;padding:6px 9px;background:#fff;color:#123b67;font:inherit}.settings-row input[type=checkbox]{width:22px;height:22px;accent-color:#23c781;flex:0 0 auto}.settings-row-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.settings-status{color:#fff0c2;font-size:.83rem;white-space:pre-wrap}.bell-button svg,.settings-button svg{width:21px;height:21px}@media(max-width:380px){.top-actions{gap:4px}.settings-button{min-width:38px;height:40px;padding:0 7px}.bell-button{min-width:38px;height:40px}}
 <style id="assessmentStyles">
 .assessment-paper{background:#fff;color:#171717;max-width:1000px;margin:16px auto;padding:28px;font-family:Arial,sans-serif;font-size:13px;border:1px solid #ddd}
 .assessment-brand{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"kemensos atensi" "heading heading";gap:14px 24px;align-items:center;text-align:center;margin:0 auto 32px;max-width:760px}.assessment-kemensos{grid-area:kemensos}.assessment-brand .assessment-heading{grid-area:heading}.assessment-brand .atensi{grid-area:atensi}.assessment-logo img{display:block;width:100%;height:96px;max-width:180px;margin:0 auto;object-fit:contain}.assessment-brand .assessment-heading{padding-top:2px}.assessment-heading h2{font-size:18px;margin:0 0 6px;font-weight:700}.assessment-heading h3{font-size:16px;margin:0;font-weight:700}
@@ -578,8 +579,8 @@ body:not(.authenticated) .login-trust{margin-top:13px!important;padding-top:10px
 @media(max-height:720px){body:not(.authenticated){align-items:flex-start!important}body:not(.authenticated) main{margin:8px auto!important}}
 </style>
 
-<style id="final-login-size-2-v1-1-4">
-/* v1.1.4 — final approved login card size 2: compact, centered, readable */
+<style id="final-login-size-2-v1-1-5">
+/* v1.1.5 — dashboard notification and settings: compact, centered, readable */
 body:not(.authenticated){display:flex!important;align-items:center!important;justify-content:center!important;min-height:100svh!important;padding:12px 10px!important}
 body:not(.authenticated) main{width:min(100%,360px)!important;max-width:360px!important;margin:auto!important;padding:14px 14px 12px!important;border-radius:22px!important}
 body:not(.authenticated) .agency-logos{gap:6px 14px!important;margin-bottom:6px!important;max-width:245px!important}
@@ -641,8 +642,11 @@ body:not(.authenticated) .setup{font-size:.7rem!important;line-height:1.4!import
       </div>
       <div class="owner-summary"><h3 id="ownerName">Profil Owner</h3><p id="ownerNipSummary">NIP belum diisi</p><p id="ownerInstitutionSummary">Direktorat Rehabilitasi Sosial Korban Penyalahgunaan Narkoba &amp; ODHIV</p><p id="ownerContact" hidden></p><details class="owner-details"><summary>Lihat detail profil</summary><p id="ownerNipDetail">NIP: —</p><p id="ownerAddressSummary">Alamat: —</p><p id="ownerPhoneSummary">Nomor HP: —</p><p id="ownerEmailSummary">Email: —</p></details></div>
       <div class="owner-header-actions">
-
-        <button class="dashbtn" id="logoutButton" type="button">Keluar</button>
+        <div class="top-actions">
+          <button class="bell-button" id="notificationBellButton" type="button" aria-label="Buka notifikasi" aria-expanded="false" title="Notifikasi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="bell-count" id="notificationBellCount" hidden>0</span></button>
+          <button class="settings-button" id="settingsButton" type="button" aria-label="Pengaturan" aria-expanded="false" title="Pengaturan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a8 8 0 0 0 0-6l1.2-1-1.5-2.6-1.5.6a8 8 0 0 0-5.2-1.5L12 3h-3l-.4 1.5a8 8 0 0 0-2.2 1.3l-1.5-.6-1.5 2.6 1.2 1a8 8 0 0 0 0 6l-1.2 1 1.5 2.6 1.5-.6a8 8 0 0 0 2.2 1.3L9 21h3l.4-1.5a8 8 0 0 0 2.2-1.3l1.5.6 1.5-2.6z"/></svg></button>
+          <button class="dashbtn" id="logoutButton" type="button">Keluar</button>
+        </div>
       </div>
     </div>
     <div class="dashhead" hidden><div><h2 id="dashboardTitle">Dashboard</h2><p id="welcome"></p></div></div>
@@ -662,7 +666,10 @@ body:not(.authenticated) .setup{font-size:.7rem!important;line-height:1.4!import
       <div class="owner-form-actions"><button class="dashbtn" id="saveOwnerProfile" type="submit">Simpan profil</button><button class="dashbtn" id="cancelOwnerProfile" type="button">Batal</button></div>
       <p class="dashmsg" id="ownerProfileMessage" role="status" aria-live="polite"></p>
     </form>
-        <section id="pushNotificationPanel" class="notification-panel" aria-labelledby="pushNotificationHeading" hidden>
+    
+    <section class="notification-panel" id="bellNotificationPanel" hidden aria-labelledby="bellPanelHeading"><h3 id="bellPanelHeading">Notifikasi responden baru</h3><p class="notification-empty" id="bellPanelStatus" role="status" aria-live="polite">Memuat notifikasi…</p><div class="notification-list" id="bellNotificationList" aria-live="polite"></div><div class="owner-form-actions"><button class="dashbtn" id="bellRefreshNotifications" type="button">Perbarui</button><button class="dashbtn" id="bellMarkRead" type="button">Tandai dibaca</button></div></section>
+    <section class="settings-panel" id="dashboardSettingsPanel" hidden aria-labelledby="settingsPanelHeading"><h3 id="settingsPanelHeading">Pengaturan</h3><div class="settings-row"><div><label for="dashboardLanguage"><strong>Bahasa</strong></label><p>Bahasa tampilan pengaturan</p></div><select id="dashboardLanguage"><option value="id">Bahasa Indonesia</option><option value="en">English</option></select></div><div class="settings-row"><div><strong>Notifikasi</strong><p id="notificationPreferenceHelp">Aktifkan untuk melihat jumlah notifikasi responden baru.</p></div><input id="notificationPreference" type="checkbox" checked aria-label="Aktifkan notifikasi"/></div><div class="settings-row"><div><strong>Autentikasi biometrik</strong><p>Gunakan autentikasi yang didukung perangkat, seperti sidik jari atau pengenalan wajah.</p></div></div><div class="settings-row-actions"><button class="dashbtn" id="addFingerprintButton" type="button">Tambahkan Sidik Jari</button><button class="dashbtn" id="addFaceIdButton" type="button">Tambahkan Face ID</button></div><p class="settings-status" id="settingsStatus" role="status" aria-live="polite"></p></section>
+    <section id="pushNotificationPanel" class="notification-panel" aria-labelledby="pushNotificationHeading" hidden>
       <h3 id="pushNotificationHeading">Notifikasi responden</h3>
       <p id="pushNotificationStatus" role="status" aria-live="polite">Aktifkan notifikasi agar mendapat kabar saat ada respons kuesioner baru.</p>
       <div class="owner-form-actions">
@@ -1034,6 +1041,7 @@ async function loadPushNotifications(){
   const data=await parseResponse(response);
   if(!response.ok||!data.ok)throw new Error(data.error||'Daftar notifikasi tidak dapat dimuat.');
   setAppBadgeCount(data.unread||0);
+  updateNotificationBell(data.unread||0,itemsForBell(data.items));
   const list=document.getElementById('pushNotificationList');
   if(!list)return;
   list.replaceChildren();
@@ -1053,6 +1061,19 @@ async function loadPushNotifications(){
   lastNotificationId=Math.max(lastNotificationId,newest);
  }catch(error){pushStatus(error instanceof Error?error.message:'Notifikasi belum dapat dimuat.');}
 }
+function itemsForBell(items){return Array.isArray(items)?items:[];}
+function updateNotificationBell(count,items){const n=Math.max(0,Number(count)||0);const badge=document.getElementById('notificationBellCount');const enabled=localStorage.getItem('sahabat_notifications_enabled')!=='false';if(badge){badge.textContent=n>99?'99+':String(n);badge.hidden=!enabled||n===0;}const list=document.getElementById('bellNotificationList');if(!list)return;list.replaceChildren();const fresh=items.filter(item=>!item.read_at&&String(item.action||'').includes('new_form_response'));const selected=fresh.length?fresh:items.filter(item=>!item.read_at).slice(0,10);if(!selected.length){const empty=document.createElement('p');empty.className='notification-empty';empty.textContent=dashboardLanguage()==='en'?'No new respondent notifications.':'Belum ada notifikasi responden baru.';list.append(empty);}for(const item of selected.slice(0,10)){const card=document.createElement('article');card.className='notification-item';const title=document.createElement('strong');title.textContent=String(item.title||'Notifikasi');const body=document.createElement('p');body.textContent=String(item.body||'');const date=document.createElement('small');date.textContent=String(item.created_at||'');card.append(title,body,date);list.append(card);}const status=document.getElementById('bellPanelStatus');if(status)status.textContent=n?(dashboardLanguage()==='en'?n+' unread notification(s).':n+' notifikasi belum dibaca.'):(dashboardLanguage()==='en'?'You are all caught up.':'Tidak ada notifikasi baru.');}
+function dashboardLanguage(){return localStorage.getItem('sahabat_dashboard_language')==='en'?'en':'id';}
+function applyDashboardSettings(){const lang=dashboardLanguage();const selector=document.getElementById('dashboardLanguage');if(selector)selector.value=lang;const pref=document.getElementById('notificationPreference');if(pref)pref.checked=localStorage.getItem('sahabat_notifications_enabled')!=='false';const help=document.getElementById('notificationPreferenceHelp');if(help)help.textContent=lang==='en'?'Show unread respondent notification count and list.':'Tampilkan jumlah dan daftar notifikasi responden yang belum dibaca.';const status=document.getElementById('settingsStatus');if(status)status.textContent=lang==='en'?'Language and notification preferences are saved on this device.':'Bahasa dan preferensi notifikasi tersimpan di perangkat ini.';}
+document.getElementById('notificationBellButton')?.addEventListener('click',()=>{const panel=document.getElementById('bellNotificationPanel');if(!panel)return;panel.hidden=!panel.hidden;document.getElementById('notificationBellButton').setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)loadPushNotifications();});
+document.getElementById('settingsButton')?.addEventListener('click',()=>{const panel=document.getElementById('dashboardSettingsPanel');if(!panel)return;panel.hidden=!panel.hidden;document.getElementById('settingsButton').setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)applyDashboardSettings();});
+document.getElementById('dashboardLanguage')?.addEventListener('change',event=>{localStorage.setItem('sahabat_dashboard_language',event.target.value==='en'?'en':'id');applyDashboardSettings();loadPushNotifications();});
+document.getElementById('notificationPreference')?.addEventListener('change',event=>{localStorage.setItem('sahabat_notifications_enabled',event.target.checked?'true':'false');if(!event.target.checked){setAppBadgeCount(0);pushStatus('Notifikasi dashboard dimatikan pada perangkat ini.');}else{pushStatus('Notifikasi dashboard diaktifkan.');loadPushNotifications();}applyDashboardSettings();});
+document.getElementById('bellRefreshNotifications')?.addEventListener('click',loadPushNotifications);
+document.getElementById('bellMarkRead')?.addEventListener('click',()=>document.getElementById('markNotificationsRead')?.click());
+function showBiometricHelp(kind){const english=dashboardLanguage()==='en';const msg=kind==='face'?(english?'Face unlock is available only if supported by your Android device. Tap the app menu (⋮) and choose “Enable fingerprint/face unlock”; Android selects a supported biometric method.':'Pengenalan wajah hanya tersedia jika didukung perangkat Android. Buka menu aplikasi (⋮), pilih “Aktifkan kunci sidik jari/wajah”; Android memilih metode biometrik yang didukung.'):(english?'Tap the app menu (⋮) and choose “Enable fingerprint/face unlock” to register a supported fingerprint.':'Buka menu aplikasi (⋮), lalu pilih “Aktifkan kunci sidik jari/wajah” untuk mendaftarkan sidik jari.');const node=document.getElementById('settingsStatus');if(node)node.textContent=msg;}
+document.getElementById('addFingerprintButton')?.addEventListener('click',()=>showBiometricHelp('fingerprint'));
+document.getElementById('addFaceIdButton')?.addEventListener('click',()=>showBiometricHelp('face'));
 function urlBase64ToUint8Array(value){
  const padding='='.repeat((4-value.length%4)%4);
  const base64=(value+padding).replace(/-/g,'+').replace(/_/g,'/');
