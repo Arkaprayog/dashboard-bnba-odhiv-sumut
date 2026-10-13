@@ -64,8 +64,8 @@ public final class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setStatusBarColor(android.graphics.Color.rgb(6, 58, 125));
-        getWindow().setNavigationBarColor(android.graphics.Color.rgb(6, 58, 125));
+        getWindow().setStatusBarColor(android.graphics.Color.rgb(18, 60, 84));
+        getWindow().setNavigationBarColor(android.graphics.Color.rgb(18, 60, 84));
         if (getActionBar() != null) getActionBar().hide();
         createNotificationChannel();
 
