@@ -922,7 +922,7 @@ export default {
           const id = (url.searchParams.get("id") || "").trim();
           if (!/^[0-9a-f-]{36}$/i.test(id)) return new Response("Not found", { status: 404, headers: NO_STORE });
           await ensureTeamSchema(env);
-          const petugas = await env.DB.prepare("SELECT profile_photo_id FROM team_petugas_v2 WHERE id=? AND active=1").bind(id).first<{ profile_photo_id: string }>();
+          const petugas = await env.DB.prepare("SELECT profile_photo_id FROM team_petugas_v2 WHERE id=?").bind(id).first<{ profile_photo_id: string }>();
           if (!petugas?.profile_photo_id) return new Response("Not found", { status: 404, headers: NO_STORE });
           try {
             const accessToken = await googleAccessToken(env);
