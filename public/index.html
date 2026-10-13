@@ -1095,7 +1095,7 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
       <button type="button" data-view="database">▤ Database</button>
       <button type="button" data-view="questionnaire">▧ Kuesioner</button>
       <button type="button" data-view="assessment">▧ Asesmen</button>
-      <button type="button" data-view="formats">▤ Format Lainnya</button>
+      <button type="button" data-view="formats">▤ Dokumen</button>
       <button type="button" data-view="respondentQuiz">▧ Kuisioner Responden</button>
     </nav>
     <section class="app-view" id="homeView" aria-label="Beranda Statistik">
@@ -1204,11 +1204,11 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
       <p class="dashmsg assessment-no-print" id="assessmentMessage" role="status" aria-live="polite">Simpan ke database hanya tersedia setelah login dengan peran owner/admin. Data asesmen bersifat rahasia.</p>
     </section>
     <section class="app-view" id="respondentQuizView" hidden aria-label="Kuisioner Responden">
-      <div class="dashhead"><div><h2>Kuisioner Responden</h2><p>Bagikan tautan resmi Google Form kepada responden atau pindai kode QR.</p></div></div>
+      <div class="dashhead"><div><h2>Kuisioner Responden</h2><p>Bagikan tautan resmi pada domain Sahabat ODHIV Sumut kepada responden atau pindai kode QR.</p></div></div>
       <div class="dashpanel respondent-quiz-panel">
         <div class="respondent-quiz-copy">
           <h3>Link Kuisioner Responden</h3>
-          <p>Gunakan tautan ini untuk membuka formulir Google Form.</p>
+          <p>Tautan resmi kuesioner melalui domain Sahabat ODHIV Sumut:</p>
           <a id="respondentQuizLink" class="respondent-quiz-url" href="https://sahabatodhivsumut.web.id/kuisioner-responden.html" target="_blank" rel="noopener noreferrer">https://sahabatodhivsumut.web.id/kuisioner-responden.html</a>
           <div class="owner-form-actions">
             <button class="dashbtn" type="button" id="openRespondentQuiz">Buka Kuisioner</button>
@@ -1219,8 +1219,8 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
         <div class="respondent-quiz-qr-wrap">
           <h3>Kode QR Kuisioner</h3>
           <a class="respondent-quiz-qr-frame" href="https://sahabatodhivsumut.web.id/kuisioner-responden.html" target="_blank" rel="noopener noreferrer" aria-label="Buka Google Form Kuisioner Responden">
-            <img class="respondent-quiz-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=12&data=https%3A%2F%2Fsahabatodhivsumut.web.id%2Fkuisioner-responden.html" alt="Kode QR untuk membuka Kuisioner Responden" loading="lazy" decoding="async">
-            <img class="respondent-quiz-qr-logo" src="/kemensos.svg" alt="Logo Kementerian Sosial" loading="lazy" decoding="async">
+            <img class="respondent-quiz-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=480x480&margin=8&qzone=4&ecc=H&bgcolor=ffffff&color=000000&format=png&data=https%3A%2F%2Fsahabatodhivsumut.web.id%2Fkuisioner-responden.html" alt="Kode QR menuju https://sahabatodhivsumut.web.id/kuisioner-responden.html" loading="lazy" decoding="async">
+            <img class="respondent-quiz-qr-logo" src="/logos/kemensos.png" alt="Logo Kementerian Sosial Republik Indonesia" loading="lazy" decoding="async">
           </a>
           <p>Pindai dengan kamera ponsel untuk membuka formulir.</p>
         </div>
@@ -1231,7 +1231,7 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
       </div>
     </section>
     <section class="app-view" id="formatsView" hidden aria-label="Format dokumen">
-      <div class="dashhead"><div><h2>Format Lainnya</h2><p>Surat yang sudah tersedia dan dapat dibuka, disunting, lalu dicetak atau disimpan sebagai PDF.</p></div></div>
+      <div class="dashhead"><div><h2>Dokumen</h2><p>Surat yang sudah tersedia dan dapat dibuka, disunting, lalu dicetak atau disimpan sebagai PDF.</p></div></div>
       <div class="overview-grid">
         <article class="overview-card">
           <small>Dokumen kedinasan</small>
