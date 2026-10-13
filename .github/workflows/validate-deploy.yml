@@ -44,6 +44,26 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Extract Danau Toba slideshow photos
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import shutil
+          archive = Path('public/danau-toba-landingpage.zip')
+          target = Path('public/danau-toba')
+          if not archive.is_file():
+              raise SystemExit('Missing public/danau-toba-landingpage.zip')
+          target.mkdir(parents=True, exist_ok=True)
+          with ZipFile(archive) as z:
+              photos = [item for item in z.infolist() if not item.is_dir() and item.filename.lower().endswith(('.jpg', '.jpeg'))]
+              if len(photos) != 7:
+                  raise SystemExit(f'Expected exactly 7 JPG photos, found {len(photos)}')
+              for index, item in enumerate(photos, 1):
+                  with z.open(item) as src, (target / f'photo-{index}.jpg').open('wb') as dst:
+                      shutil.copyfileobj(src, dst)
+          print('Extracted 7 Danau Toba slideshow photos.')
+          PY
       - name: Install dependencies
         run: npm install
       - name: Typecheck
@@ -97,7 +117,7 @@ jobs:
           const html = fs.readFileSync('public/index.html', 'utf8');
           const worker = fs.readFileSync('src/index.ts', 'utf8');
           const checks = [
-            ['final centered login size 2 and version', html.includes('id="final-login-size-2-v1-1-5"') && html.includes('body:not(.authenticated) main{width:min(100%,360px)!important') && html.includes('v1.1.5 — dashboard notification and settings: compact, centered, readable')],
+            ['seven-photo Danau Toba slideshow and version', html.includes('id="danau-toba-slideshow-v1-1-7"') && html.includes('setInterval(next,1000)') && html.includes('v1.1.7')],
             ['Kemensos logo centered over QR', html.includes('respondent-quiz-qr-logo') && html.includes('class="respondent-quiz-qr-frame"')],
             ['camera and document upload choices', html.includes('application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document') && html.includes('capture="environment"')],
             ['server validates PDF/DOC/DOCX upload MIME', worker.includes('application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document')],
@@ -174,6 +194,26 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Extract Danau Toba slideshow photos
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import shutil
+          archive = Path('public/danau-toba-landingpage.zip')
+          target = Path('public/danau-toba')
+          if not archive.is_file():
+              raise SystemExit('Missing public/danau-toba-landingpage.zip')
+          target.mkdir(parents=True, exist_ok=True)
+          with ZipFile(archive) as z:
+              photos = [item for item in z.infolist() if not item.is_dir() and item.filename.lower().endswith(('.jpg', '.jpeg'))]
+              if len(photos) != 7:
+                  raise SystemExit(f'Expected exactly 7 JPG photos, found {len(photos)}')
+              for index, item in enumerate(photos, 1):
+                  with z.open(item) as src, (target / f'photo-{index}.jpg').open('wb') as dst:
+                      shutil.copyfileobj(src, dst)
+          print('Extracted 7 Danau Toba slideshow photos.')
+          PY
       - name: Install dependencies
         run: npm install
       - name: Check Cloudflare secrets are configured
