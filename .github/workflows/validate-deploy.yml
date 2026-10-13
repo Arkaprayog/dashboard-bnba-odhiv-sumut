@@ -325,7 +325,7 @@ jobs:
           import sys
           path = Path(sys.argv[1])
           data = path.read_bytes()
-          if len(data) < 1000 or not data.startswith(b'\\x89PNG\\r\\n\\x1a\\n'):
+          if len(data) < 1000 or data[:8] != bytes([137, 80, 78, 71, 13, 10, 26, 10]):
               raise SystemExit(f'Logo asset {sys.argv[2]} is missing, empty, or not a valid PNG.')
           print(f'Verified original logo asset {sys.argv[2]}: {len(data)} bytes.')
           PY
