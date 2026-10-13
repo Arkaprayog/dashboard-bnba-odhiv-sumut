@@ -1,3 +1,9 @@
+## 1.1.13 — 2026-10-14
+- Require a stronger 14-character minimum for first-time owner bootstrap passwords.
+- Reworked the owner setup helper to use the canonical domain, correct Origin/token headers, and the API's camelCase body contract.
+- Prompt for passwords and bootstrap tokens without putting them in CLI arguments; remove temporary request files when done.
+- Corrected obsolete setup/deployment documentation and aligned CI to validate the setup helper.
+
 ## 1.1.12 — 2026-10-14
 - Fixed public questionnaire links, the QR destination, and the related news link to use the canonical HTTPS domain.
 - Fixed the Android offline recovery button and refreshed deployment guidance to use the canonical domain.
