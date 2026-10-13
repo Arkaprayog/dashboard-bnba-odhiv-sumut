@@ -1,7 +1,11 @@
+## 1.1.7 — 2026-10-13
+- Added seven-photo Danau Toba login slideshow, advancing every second and looping while logged out.
+- Pauses after authentication and resumes after logout.
+- Extracts the seven supplied JPG photos from the repository ZIP during validation and deployment for same-origin asset delivery.
+
 ## 1.1.6 — 2026-10-13
-- Removed the username field from the public login screen so the owner can enter the password directly.
+- Removed the username field from the public login screen.
 - Refined the compact translucent login card and centered the Kemensos logo.
-- The requested five-photo, one-second Danau Toba slideshow is not yet included; image assets must be committed before enabling it.
 
 # Changelog
 
