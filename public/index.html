@@ -703,6 +703,40 @@ body.authenticated :is(h1,h2,h3,h4,label,.owner-summary p,.dashhead p,.overview-
 }
 </style>
 
+
+<style id="owner-dashboard-photo-readability-v2">
+/* LOGIN: smaller glass card, no backdrop blur, preserve natural photo colors. */
+html body:not(.authenticated) main{
+  width:min(100%,340px)!important;
+  padding:12px clamp(12px,3vw,18px)!important;
+  background:rgba(2,20,38,.14)!important;
+  border:1px solid rgba(255,255,255,.40)!important;
+  border-radius:20px!important;
+  box-shadow:0 12px 32px rgba(0,14,35,.18)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html body:not(.authenticated) .login-heading h1,
+html body:not(.authenticated) .login-heading p,
+html body:not(.authenticated) .ministry,
+html body:not(.authenticated) .directorate,
+html body:not(.authenticated) .foot,
+html body:not(.authenticated) .setup{
+  color:#fff!important;
+  text-shadow:0 2px 5px rgba(0,12,30,.92)!important;
+}
+html body:not(.authenticated) .message:not(:empty){
+  background:rgba(255,248,229,.97)!important;
+  color:#17324b!important;
+  border:1px solid rgba(22,50,75,.42)!important;
+  text-shadow:none!important;
+  font-weight:800!important;
+}
+html body:not(.authenticated) .field input::placeholder{color:#526b85!important;opacity:1!important}
+/* AUTHENTICATED OWNER DASHBOARD: remove login heading/tagline above profile. */
+html body.authenticated .login-heading{display:none!important}
+</style>
+
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
@@ -1929,13 +1963,13 @@ refreshSavedAssessments().catch(error=>{assessmentMessage.textContent='Daftar as
 })();
 </script>
 
-<script id="danau-toba-slideshow-v1-1-7">
+<script id="danau-toba-slideshow-v1-1-8">
 (() => {
- const photos = Array.from({length:7},(_,i)=>`/danau-toba/photo-${i+1}.jpg`);
+ const photos = [...Array.from({length:7},(_,i)=>`/danau-toba/photo-${i+1}.jpg`), '/owner-background.webp'];
  let timer=null,index=0;
  const isAuthenticated=()=>document.body.classList.contains('authenticated');
- const next=()=>{if(isAuthenticated())return;document.body.style.backgroundImage=`linear-gradient(180deg,rgba(5,24,42,.18),rgba(3,20,36,.28)),url("${photos[index]}")`;index=(index+1)%photos.length;};
- const sync=()=>{if(isAuthenticated()){if(timer!==null)clearInterval(timer);timer=null;document.body.style.backgroundImage='';}else if(timer===null){next();timer=setInterval(next,1000);}};
+ const next=()=>{if(isAuthenticated())return;document.body.style.backgroundImage=`linear-gradient(180deg,rgba(5,24,42,.12),rgba(3,20,36,.18)),url("${photos[index]}")`;index=(index+1)%photos.length;};
+ const sync=()=>{if(isAuthenticated()){if(timer!==null)clearInterval(timer);timer=null;document.body.style.backgroundImage='';}else if(timer===null){next();timer=setInterval(next,5000);}};
  sync();new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['class']});
 })();
 </script>
