@@ -1,3 +1,10 @@
+## 1.1.11 — 2026-10-14
+- Made https://sahabatodhivsumut.web.id the canonical production hostname in Wrangler and the Android WebView.
+- Disabled the parallel workers.dev hostname for the primary Worker and declared the custom domain in the deployment config.
+- Hardened API and asset responses with default-deny API CSP, same-origin resource policy, and cross-domain policy restrictions.
+- Enabled Cloudflare HTTPS redirects, TLS 1.2 minimum, six-month HSTS, High security level, and Cloudflare Managed Free Ruleset at the zone edge.
+- Kept backend per-IP login throttling and the existing leaked-credential rule; the Cloudflare Free rate-limit phase has no extra custom-rule slot.
+
 ## 1.1.10 — 2026-10-13
 - Replaced the assessment form's illustrative ministry mark with the supplied Kemensos logo and refreshed ATENSI from the user-provided logo image.
 - Added an editable Surat Lainnya editor prefilled from the submitted Dinkes letter PDF, including letterhead, recipient, body, date/number fields, and print-to-PDF.
