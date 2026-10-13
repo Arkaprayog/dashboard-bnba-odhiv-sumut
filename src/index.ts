@@ -25,7 +25,7 @@ interface Env {
   VAPID_SUBJECT?: string;
 }
 
-const NO_STORE = { "cache-control": "no-store", "x-content-type-options": "nosniff", "x-frame-options": "DENY", "referrer-policy": "no-referrer", "permissions-policy": "camera=(), microphone=(), geolocation=()" };
+const NO_STORE = { "cache-control": "no-store", "x-content-type-options": "nosniff", "x-frame-options": "DENY", "referrer-policy": "no-referrer", "permissions-policy": "camera=(), microphone=(), geolocation=()", "cross-origin-resource-policy": "same-origin", "x-permitted-cross-domain-policies": "none", "content-security-policy": "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'" };
 
 function reply(data: unknown, status = 200, extra: Record<string, string> = {}) {
   return new Response(JSON.stringify(data), {
@@ -1291,6 +1291,8 @@ export default {
     assetHeaders.set("x-content-type-options", "nosniff");
     assetHeaders.set("x-frame-options", "DENY");
     assetHeaders.set("referrer-policy", "no-referrer");
+    assetHeaders.set("cross-origin-resource-policy", "same-origin");
+    assetHeaders.set("x-permitted-cross-domain-policies", "none");
     assetHeaders.set("permissions-policy", "camera=(self), microphone=(), geolocation=()");
     assetHeaders.set("content-security-policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://upload.wikimedia.org https://commons.wikimedia.org https://sumutprov.go.id https://api.qrserver.com; connect-src 'self' https://raw.githubusercontent.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https://docs.google.com");
     if (url.pathname === "/" || url.pathname.endsWith(".html")) {
