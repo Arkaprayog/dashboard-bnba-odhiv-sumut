@@ -30,6 +30,11 @@ input:focus,select:focus,textarea:focus{outline:3px solid #b8e3fb;border-color:#
 .message{border-radius:10px;padding:12px 14px;margin-top:14px;display:none;overflow-wrap:anywhere}.message.show{display:block}.message.ok{background:#e8f7ef;color:var(--ok);border:1px solid #bce6ce}.message.error{background:#fff0f0;color:var(--bad);border:1px solid #f0c4c4}
 footer{text-align:center;color:var(--muted);font-size:.8rem;padding:0 12px 25px}
 @media(max-width:600px){.grid,.options{grid-template-columns:1fr}.field.full{grid-column:auto}header{padding:12px 16px}.card{border-radius:14px}}
+
+/* High-contrast white typography across the application; keep form values readable. */
+body :where(h1,h2,h3,h4,h5,h6,p,span,small,strong,b,em,i,label,legend,li,dt,dd,th,td,caption,summary,figcaption,blockquote,a,div,section,article,aside,header,footer,main,button,output){color:#fff!important}
+body :where(input,textarea,select,option){color:#123b67}
+.app-nav button[aria-current="page"]{color:#07366f!important}
 </style>
 </head>
 <body>

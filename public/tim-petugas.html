@@ -57,6 +57,11 @@ h1{position:relative;z-index:1;max-width:780px;margin:0;color:#fff;font-size:cla
 @media(max-width:680px){.shell{width:min(100% - 20px,560px);padding-top:10px}.topbar{padding:11px 12px;border-radius:15px}.brand-mark{width:39px;height:39px;flex-basis:39px}.brand-sub{font-size:.71rem}.top-link{font-size:.8rem;padding:8px 10px}.hero{margin:12px 0;padding:23px 19px;border-radius:19px}.menu-grid{grid-template-columns:1fr;gap:11px}.menu-card{min-height:0;padding:19px;border-radius:18px}.menu-card h3{margin-top:15px}.menu-card p{margin-bottom:17px}.section-heading{margin-top:22px}.notice{padding:13px}.footer{margin-top:17px}}
 @media(max-width:420px){.topbar{align-items:flex-start;flex-wrap:wrap}.top-link{width:100%}.brand{width:100%}.hero-meta{gap:7px}.meta-chip{font-size:.74rem;padding:6px 9px}.hero{padding:22px 16px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* High-contrast white typography across the application; keep form values readable. */
+body :where(h1,h2,h3,h4,h5,h6,p,span,small,strong,b,em,i,label,legend,li,dt,dd,th,td,caption,summary,figcaption,blockquote,a,div,section,article,aside,header,footer,main,button,output){color:#fff!important}
+body :where(input,textarea,select,option){color:#123b67}
+.app-nav button[aria-current="page"]{color:#07366f!important}
 </style>
 </head>
 <body>
