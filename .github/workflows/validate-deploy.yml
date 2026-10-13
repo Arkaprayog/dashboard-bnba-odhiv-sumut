@@ -318,7 +318,7 @@ jobs:
           ! grep -q 'Menyiapkan Kuesioner\|>3<\|>2<\|>1<' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire should not show a heading or numeric countdown." && exit 1)
           logo_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-kemensos.svg --write-out '%{http_code}' "$APP_URL/kemensos.svg")"
           test "$logo_status" = "200" || (echo "::error::Local transparent Kemensos logo returned HTTP $logo_status." && exit 1)
-          grep -q 'fill="none"' /tmp/sahabat-kemensos.svg || (echo "::error::Kemensos logo should retain a transparent background." && exit 1)
+          grep -q 'viewBox=' /tmp/sahabat-kemensos.svg && ! grep -Eq '<rect[^>]*fill="#fff"|<rect[^>]*fill="white"' /tmp/sahabat-kemensos.svg || (echo "::error::Kemensos logo must be an SVG with a transparent background." && exit 1)
           sw_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-sw.js --write-out '%{http_code}' "$APP_URL/sw.js")"
           test "$sw_status" = "200" || (echo "::error::Service worker returned HTTP $sw_status." && exit 1)
           grep -q "addEventListener('push'" /tmp/sahabat-sw.js || (echo "::error::Push event handler missing." && exit 1)
