@@ -898,6 +898,11 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
     }
   </style>
 
+
+  <style id="letter-editor-link-v1-1-10">
+    .letter-editor-link{display:inline-flex;align-items:center;justify-content:center;min-height:42px;margin-top:6px;padding:10px 14px;border-radius:9px;text-decoration:none;font-weight:750}
+    body.authenticated .letter-editor-link{color:#163650!important;background:#dceeff!important;border:1px solid #93b8d5!important}
+  </style>
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
@@ -1071,7 +1076,7 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
         </div></div>
       <div class="assessment-paper" id="assessmentPaper">
         <header class="assessment-brand">
-          <div class="assessment-logo kementerian assessment-kemensos"><img src="/kemensos.svg" alt="Logo resmi Kementerian Sosial" decoding="async"></div>
+          <div class="assessment-logo kementerian assessment-kemensos"><img src="/logos/kemensos.png" alt="Logo resmi Kementerian Sosial" decoding="async"></div>
           <div class="assessment-heading"><h2>FORM ASESMEN TERINTEGRASI</h2><h3>DIREKTORAT JENDERAL REHABILITASI SOSIAL</h3></div>
           <div class="assessment-logo atensi"><img src="/atensi.svg" alt="Logo ATENSI resmi Kementerian Sosial" decoding="async"></div>
         </header>
@@ -1111,22 +1116,21 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
       </div>
     </section>
     <section class="app-view" id="formatsView" hidden aria-label="Format dokumen">
-      <div class="dashhead"><div><h2>Format Lainnya</h2><p>Pilih jenis surat yang ingin dibuat. Formulir akan disesuaikan setelah format surat diberikan.</p></div></div>
+      <div class="dashhead"><div><h2>Format Lainnya</h2><p>Surat yang sudah tersedia dan dapat dibuka, disunting, lalu dicetak atau disimpan sebagai PDF.</p></div></div>
       <div class="overview-grid">
         <article class="overview-card">
           <small>Dokumen kedinasan</small>
           <strong style="display:block;font-size:1.15rem;margin:8px 0">Surat Tugas</strong>
-          <p>Tempat untuk formulir dan pembuatan Surat Tugas.</p>
+          <p>Formulir Surat Tugas belum tersedia.</p>
           <button type="button" class="dashbtn" data-document-type="surat-tugas" disabled>Formulir menyusul</button>
         </article>
         <article class="overview-card">
           <small>Dokumen lainnya</small>
-          <strong style="display:block;font-size:1.15rem;margin:8px 0">Surat Lainnya</strong>
-          <p>Tempat untuk format surat lain sesuai contoh yang akan diberikan.</p>
-          <button type="button" class="dashbtn" data-document-type="surat-lainnya" disabled>Formulir menyusul</button>
+          <strong style="display:block;font-size:1.15rem;margin:8px 0">Surat Dinkes Provinsi Sumatera Utara</strong>
+          <p>Isi awal surat diambil langsung dari PDF draf yang Anda kirim. Anda dapat mengubah nomor, tanggal, isi, dan penandatangan, kemudian mencetak atau menyimpan hasilnya sebagai PDF.</p>
+          <a class="dashbtn letter-editor-link" href="/surat-lainnya.html">Buka &amp; Edit Surat</a>
         </article>
       </div>
-      <p class="scroll-hint">Kirimkan contoh atau format surat terlebih dahulu. Formulir akan dibuat mengikuti format tersebut.</p>
     </section>
     <section class="app-view" id="newsView" hidden aria-label="Berita HIV dan Kesejahteraan Sosial">
       <div class="dashhead"><div><h2>Berita & Informasi</h2><p>Informasi publik dari RSS sumber kesehatan dan berita Sumatera Utara</p></div><button class="dashbtn" id="refreshNews" type="button">Perbarui berita</button></div>
@@ -1152,7 +1156,7 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.9</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.10</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi<br>© 2026 Data Base ODHIV Sumatera Utara · Hak cipta dilindungi</p>
 </main>

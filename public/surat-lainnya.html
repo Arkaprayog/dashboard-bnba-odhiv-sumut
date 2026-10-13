@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light">
+<title>Edit Surat Dinkes Provinsi Sumatera Utara</title>
+<style>
+:root{color-scheme:light;--ink:#173650;--muted:#526c80;--line:#c8d7e4;--blue:#0757a5;--paper:#fff;--panel:#f1f7fc}
+*{box-sizing:border-box}
+body{margin:0;background:#eaf2f9;color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+.topbar{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);padding:12px max(14px,calc((100vw - 1120px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.topbar strong{font-size:1rem}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;border:1px solid #8eabc2;border-radius:9px;padding:9px 14px;background:#dceeff;color:#173650;text-decoration:none;font:inherit;font-weight:750;cursor:pointer}
+.btn.primary{background:#0757a5;border-color:#0757a5;color:#fff}
+.wrap{width:min(1120px,calc(100% - 24px));margin:20px auto 40px;display:grid;grid-template-columns:minmax(280px,.85fr) minmax(0,1.15fr);gap:18px;align-items:start}
+.panel{min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 8px 24px rgba(24,55,80,.06)}
+h1{font-size:1.35rem;margin:0 0 4px}h2{font-size:1rem;margin:0 0 14px}.muted{color:var(--muted);font-size:.86rem;margin:0 0 15px}
+.field{display:grid;gap:5px;margin:0 0 12px}.field label{font-weight:750;font-size:.87rem}.field input,.field textarea{width:100%;min-width:0;border:1px solid #b8cad9;border-radius:8px;padding:10px 11px;background:#fff;color:#173650;font:inherit;font-size:16px}.field textarea{min-height:360px;resize:vertical;line-height:1.45}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.paper{background:#fff;color:#111;border:1px solid #d8e1e8;padding:25px;box-shadow:0 8px 24px rgba(24,55,80,.07);font:11pt/1.45 Arial,Helvetica,sans-serif}
+.letterhead{display:grid;grid-template-columns:94px minmax(0,1fr);gap:14px;align-items:center;padding:0 0 11px;margin-bottom:25px;border-bottom:3px double #111;text-align:center}
+.letterhead img{width:94px;height:85px;object-fit:contain}
+.letterhead strong{display:block;font-size:12pt;line-height:1.28}.letterhead small{display:block;font-size:8.5pt;line-height:1.35;margin-top:4px}
+.letter-meta{display:grid;grid-template-columns:100px minmax(0,1fr) 180px;gap:3px 8px;margin-bottom:27px}.letter-meta strong{font-weight:400}.letter-meta .date{grid-column:3;grid-row:1 / span 3}
+.to{margin-bottom:28px}.body-copy{white-space:pre-wrap;text-align:justify;overflow-wrap:anywhere}.body-copy p{margin:0 0 13px}.signature{width:48%;margin:30px 0 0 auto;text-align:left;break-inside:avoid}.signature .sign-space{height:54px}.signature-name{text-decoration:none;font-weight:700}
+.warning{font-size:.8rem;color:#526c80;background:#f2f7fc;border-radius:8px;padding:10px;margin-top:14px}
+@media(max-width:850px){.wrap{grid-template-columns:1fr}.letterhead{grid-template-columns:76px minmax(0,1fr)}.letterhead img{width:76px;height:70px}.paper{padding:16px}.letter-meta{grid-template-columns:75px minmax(0,1fr)}.letter-meta .date{grid-column:1 / -1;grid-row:auto;margin-top:8px}.signature{width:65%}}
+@page{size:A4;margin:17mm 17mm 16mm}
+@media print{
+ body{background:#fff!important}.topbar,.editor-panel,.no-print{display:none!important}
+ .wrap{display:block;width:auto;margin:0}.preview-panel{padding:0;border:0;box-shadow:none;border-radius:0}
+ .paper{padding:0;border:0;box-shadow:none;font-size:10.5pt}
+ .letterhead{grid-template-columns:85px minmax(0,1fr);margin-bottom:22px}
+ .letterhead img{width:85px;height:77px}
+ .body-copy p{orphans:3;widows:3}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <strong>Surat Lainnya · Draf Dinas Kesehatan Provinsi Sumatera Utara</strong>
+  <div class="actions">
+    <a class="btn" href="/" rel="noopener">Kembali ke Dashboard</a>
+    <button class="btn primary" id="printLetter" type="button">Cetak / Simpan PDF</button>
+  </div>
+</header>
+<main class="wrap">
+  <section class="panel editor-panel" aria-label="Editor surat">
+    <h1>Edit Surat</h1>
+    <p class="muted">Isian awal berikut disalin dari PDF draf yang Anda kirim. Perubahan berlaku pada pratinjau dan hasil cetak di perangkat ini.</p>
+    <div class="grid2">
+      <div class="field"><label for="letterNumber">Nomor</label><input id="letterNumber" value="......./......./RH.00.01/......./2026"></div>
+      <div class="field"><label for="letterDate">Tanggal</label><input id="letterDate" value="Tanggal / Bulan / Tahun"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label for="letterNature">Sifat</label><input id="letterNature" value="Biasa"></div>
+      <div class="field"><label for="letterSubject">Hal</label><input id="letterSubject" value="Penyampaian Informasi Kegiatan Klaster ODHIV Sentra Insyaf Medan"></div>
+    </div>
+    <div class="field"><label for="letterRecipient">Yth.</label><input id="letterRecipient" value="Kepala Dinas Kesehatan Provinsi Sumatera Utara"></div>
+    <div class="field"><label for="letterAddress">Alamat penerima</label><input id="letterAddress" value="Medan"></div>
+    <div class="field"><label for="letterBody">Isi surat (boleh diedit)</label><textarea id="letterBody">Sentra Insyaf Medan merupakan Unit Pelaksana Teknis (UPT) Kementerian Sosial RI yang melaksanakan program rehabilitasi sosial melalui Asistensi Rehabilitasi Sosial (ATENSI), termasuk bagi Orang Dengan HIV (ODHIV).
+
+Dalam rangka pelaksanaan ATENSI bagi ODHIV, kami sampaikan informasi terkait Kegiatan Klaster ODHIV Sentra Insyaf Medan dengan nama program “SOBAT PEDULI: Peduli dengan Hati, Peduli Berbagi.”
+
+Kegiatan ini merupakan bagian dari upaya penanganan ODHIV secara terstruktur dan berkelanjutan yang difokuskan pada peningkatan kualitas hidup serta penguatan fungsi sosial ODHIV. Pelaksanaan program dirancang melalui dua bentuk intervensi yaitu:
+1. Brief Intervention (Intervensi Singkat)
+Intervensi awal yang dilaksanakan melalui penguatan kewirausahaan dan ekonomi produktif, sebagai upaya mendorong kemandirian ODHIV melalui pengembangan keterampilan usaha, peningkatan kapasitas ekonomi, serta dukungan aktivitas produktif sesuai dengan potensi individu.
+2. Comprehensive Intervention (Intervensi Komprehensif)
+Intervensi lanjutan yang dilaksanakan secara menyeluruh dengan memperhatikan aspek biologis, psikologis, dan sosial, serta menggunakan pendekatan Person In Environment (PIE) agar layanan yang diberikan selaras dengan kondisi individu dan lingkungan sosial ODHIV.
+
+Sehubungan kegiatan tersebut, kami sangat mengharapkan dukungan data guna mendukung ketepatan sasaran dan efektivitas intervensi program.
+
+Adapun wilayah kerja Sentra Insyaf Medan yang sampai saat ini belum menyampaikan data ODHIV meliputi Kabupaten/Kota sebagai berikut:
+1. Kabupaten Mandailing Natal
+2. Kabupaten Tapanuli Selatan
+3. Kota Sibolga
+4. Kabupaten Tapanuli Tengah
+5. Kabupaten Nias
+6. Kabupaten Nias Barat
+7. Kabupaten Nias Selatan
+8. Kabupaten Nias Utara
+9. Kota Gunungsitoli
+
+Berkenaan dengan hal tersebut, kami memohon kiranya Dinas Kesehatan Provinsi Sumatera Utara dapat membantu memfasilitasi koordinasi dan penyampaian data dimaksud sesuai dengan ketentuan yang berlaku, guna mendukung kelancaran pelaksanaan program ATENSI bagi ODHIV.
+
+Informasi lanjut terkait pelaksanaan Kegiatan Klaster ODHIV Sentra Insyaf, dapat menghubungi Erniwati Sihombing 0823 6325 5561.
+
+Demikian disampaikan, atas perhatiannya, diucapkan terima kasih.</textarea></div>
+    <div class="grid2">
+      <div class="field"><label for="letterSignTitle">Jabatan penandatangan</label><input id="letterSignTitle" value="Kepala Sentra Insyaf di Medan"></div>
+      <div class="field"><label for="letterSignName">Nama penandatangan</label><input id="letterSignName" value="Langgeng Setiawan"></div>
+    </div>
+    <p class="warning">Catatan: nomor surat dan tanggal masih berupa isian draf. Periksa kembali keduanya sebelum ditandatangani atau dikirim.</p>
+  </section>
+  <section class="panel preview-panel" aria-label="Pratinjau surat">
+    <h2 class="no-print">Pratinjau surat</h2>
+    <article class="paper" id="letterPreview">
+      <header class="letterhead">
+        <img src="/logos/kemensos.png" alt="Logo Kementerian Sosial">
+        <div><strong>KEMENTERIAN SOSIAL REPUBLIK INDONESIA</strong><strong>DIREKTORAT JENDERAL REHABILITASI SOSIAL</strong><strong>SENTRA “INSYAF” DI MEDAN</strong><small>Jl. Berdikari, No.37, Lau Bakeri, Kutalimbaru, Deli Serdang 20354 · Telp (061) 77231150 · insyaf.kemensos.go.id</small></div>
+      </header>
+      <div class="letter-meta">
+        <span>Nomor</span><strong id="previewNumber">: ......./......./RH.00.01/......./2026</strong><div class="date" id="previewDate">Tanggal / Bulan / Tahun</div>
+        <span>Sifat</span><strong id="previewNature">: Biasa</strong>
+        <span>Hal</span><strong id="previewSubject">: Penyampaian Informasi Kegiatan Klaster ODHIV Sentra Insyaf Medan</strong>
+      </div>
+      <div class="to"><div>Yth. <span id="previewRecipient">Kepala Dinas Kesehatan Provinsi Sumatera Utara</span></div><div>di</div><div id="previewAddress">Medan</div></div>
+      <div class="body-copy" id="previewBody"></div>
+      <section class="signature"><div id="previewSignTitle">Kepala Sentra Insyaf di Medan</div><div class="sign-space"></div><div class="signature-name" id="previewSignName">Langgeng Setiawan</div></section>
+    </article>
+  </section>
+</main>
+<script>
+(function(){
+  const ids=['letterNumber','letterDate','letterNature','letterSubject','letterRecipient','letterAddress','letterBody','letterSignTitle','letterSignName'];
+  const pairs={
+    letterNumber:'previewNumber',letterDate:'previewDate',letterNature:'previewNature',
+    letterSubject:'previewSubject',letterRecipient:'previewRecipient',letterAddress:'previewAddress',
+    letterSignTitle:'previewSignTitle',letterSignName:'previewSignName'
+  };
+  function render(){
+    Object.entries(pairs).forEach(([inputId,previewId])=>{
+      const value=document.getElementById(inputId).value.trim();
+      const node=document.getElementById(previewId);
+      node.textContent=inputId==='letterNumber'||inputId==='letterNature'||inputId==='letterSubject'?': '+value:value;
+    });
+    const body=document.getElementById('previewBody');
+    body.replaceChildren();
+    document.getElementById('letterBody').value.split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean).forEach(text=>{
+      const p=document.createElement('p');p.textContent=text;body.appendChild(p);
+    });
+  }
+  ids.forEach(id=>document.getElementById(id).addEventListener('input',render));
+  document.getElementById('printLetter').addEventListener('click',()=>{render();window.print();});
+  render();
+})();
+</script>
+</body>
+</html>

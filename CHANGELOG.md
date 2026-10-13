@@ -1,3 +1,8 @@
+## 1.1.10 — 2026-10-13
+- Replaced the assessment form's illustrative ministry mark with the supplied Kemensos logo and refreshed ATENSI from the user-provided logo image.
+- Added an editable Surat Lainnya editor prefilled from the submitted Dinkes letter PDF, including letterhead, recipient, body, date/number fields, and print-to-PDF.
+- Kept text contrast high across the login and owner dashboard; synchronized displayed and package versions.
+
 ## 1.1.9 — 2026-10-13
 - Replaced low-contrast white typography with dark, high-contrast text and lighter surfaces across the login, owner dashboard, questionnaire, and loading screen.
 - Preserved the Form Asesmen Terintegrasi's white print sheet, dark printable text, and local Kemensos/ATENSI logos.
