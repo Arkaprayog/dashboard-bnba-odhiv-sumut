@@ -38,8 +38,8 @@ binding = "DB"
 database_name = "ppks-odhiv-auth"
 database_id = "c0b05571-c0ac-48a7-ac58-d600f7c7e5cb"
 
-APP_ORIGIN = "https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev"
-WEBAUTHN_RP_ID = "dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev"
+APP_ORIGIN = "https://sahabatodhiv-sumut.aryprayoga139.workers.dev"
+WEBAUTHN_RP_ID = "sahabatodhiv-sumut.aryprayoga139.workers.dev"
 ```
 
 ### 1.3 Verifikasi Secrets di Cloudflare
@@ -129,14 +129,14 @@ npm run deploy
 **Expected Output:**
 ```
 ✓ Uploaded default/ (XX files)
-✓ Deployed to https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev
+✓ Deployed to https://sahabatodhiv-sumut.aryprayoga139.workers.dev
 ```
 
 ### 3.2 Verifikasi Deployment Status
 
 ```bash
 # Cek apakah worker sudah aktif
-curl -s https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev/api/setup-status | jq .
+curl -s https://sahabatodhiv-sumut.aryprayoga139.workers.dev/api/setup-status | jq .
 ```
 
 **Expected Response:**
@@ -167,7 +167,7 @@ Jika `setupOpen: true`, jalankan setup untuk membuat owner account:
 
 ```bash
 # Setup dengan curl
-curl -X POST https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev/api/setup-owner \
+curl -X POST https://sahabatodhiv-sumut.aryprayoga139.workers.dev/api/setup-owner \
   -H "Content-Type: application/json" \
   -d '{
     "username": "admin",
@@ -212,7 +212,7 @@ wrangler d1 execute ppks-odhiv-auth --remote --command "SELECT id, username, dis
 
 ### 5.1 Akses Dashboard di Browser
 
-1. Buka: `https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev`
+1. Buka: `https://sahabatodhiv-sumut.aryprayoga139.workers.dev`
 2. Masukkan:
    - **Username:** `admin`
    - **Password:** (password yang Anda set di step 4.1)
@@ -240,7 +240,7 @@ Jika `password_hash` kosong atau NULL, hash belum digenerate. Jalankan reset:
 wrangler d1 execute ppks-odhiv-auth --remote --command "DELETE FROM admins WHERE username='admin';"
 
 # Setup ulang admin
-curl -X POST https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev/api/setup-owner \
+curl -X POST https://sahabatodhiv-sumut.aryprayoga139.workers.dev/api/setup-owner \
   -H "Content-Type: application/json" \
   -d '{
     "username": "admin",
@@ -257,7 +257,7 @@ curl -X POST https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev/api/se
 #### Error: "Respons server tidak valid"
 ```bash
 # Test endpoint login langsung via curl
-curl -X POST https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev/api/login \
+curl -X POST https://sahabatodhiv-sumut.aryprayoga139.workers.dev/api/login \
   -H "Content-Type: application/json" \
   -d '{
     "username": "admin",
@@ -276,7 +276,7 @@ Cek response JSON untuk error message.
 ```bash
 # Setelah login, get session cookie dan test
 curl -b "cookies.txt" -c "cookies.txt" \
-  -X GET https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev/api/me \
+  -X GET https://sahabatodhiv-sumut.aryprayoga139.workers.dev/api/me \
   -H "Cookie: $(cat cookies.txt | grep -oP 'session_id\s+\K.*')" | jq .
 ```
 
@@ -288,7 +288,7 @@ Expected: Admin data kembali dengan session valid.
 # Dari browser: Klik tombol "Keluar"
 # Atau via curl dengan CSRF token dari respons login sebelumnya
 
-curl -X POST https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev/api/logout \
+curl -X POST https://sahabatodhiv-sumut.aryprayoga139.workers.dev/api/logout \
   -H "X-CSRF-Token: <csrf_token_dari_login>" \
   -H "Content-Type: application/json" | jq .
 ```
@@ -299,7 +299,7 @@ Expected: `{"ok": true}` dan session hilang.
 
 ```bash
 # Test respondent data fetch
-curl -X GET https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev/api/respondents \
+curl -X GET https://sahabatodhiv-sumut.aryprayoga139.workers.dev/api/respondents \
   -H "Cookie: $(cat cookies.txt)" | jq .
 ```
 
@@ -344,7 +344,7 @@ wrangler tail --format pretty
 
 ### 8.3 Check Request/Response via Browser DevTools
 
-1. Buka: `https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev`
+1. Buka: `https://sahabatodhiv-sumut.aryprayoga139.workers.dev`
 2. Tekan F12 (Developer Tools)
 3. Tab "Network"
 4. Masukkan credentials dan tekan login
