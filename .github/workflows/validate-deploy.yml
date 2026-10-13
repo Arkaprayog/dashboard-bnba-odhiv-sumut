@@ -130,7 +130,7 @@ jobs:
           const html = fs.readFileSync('public/index.html', 'utf8');
           const worker = fs.readFileSync('src/index.ts', 'utf8');
           const checks = [
-            ['three-photo Danau Toba slideshow, cache-busted assets, and version', html.includes('id="danau-toba-slideshow-v1-2-8"') && html.includes('/danau-toba/photo-1.jpg?v=1.2.8') && html.includes('/danau-toba/photo-2.jpg?v=1.2.8') && html.includes('/danau-toba/photo-3.jpg?v=1.2.8') && html.includes('setInterval(next,4500)')],
+            ['three-photo Danau Toba slideshow, cache-busted assets, and version', html.includes('id="danau-toba-slideshow-v1-2-9"') && html.includes('/danau-toba/photo-1.jpg?v=1.2.9') && html.includes('/danau-toba/photo-2.jpg?v=1.2.9') && html.includes('/danau-toba/photo-3.jpg?v=1.2.9') && html.includes('setInterval(next,4500)')],
             ['Kemensos logo centered over QR', html.includes('respondent-quiz-qr-logo') && html.includes('class="respondent-quiz-qr-frame"')],
             ['camera and document upload choices', html.includes('application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document') && html.includes('capture="environment"')],
             ['server validates PDF/DOC/DOCX upload MIME', worker.includes('application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document')],
@@ -290,7 +290,7 @@ jobs:
           grep -qi '<html' /tmp/sahabat-dashboard.html || (echo "::error::Sahabat dashboard response is not HTML." && exit 1)
           grep -q 'ownerProfileForm' /tmp/sahabat-dashboard.html || (echo "::error::Owner profile UI is missing." && exit 1)
           for photo in 1 2 3; do
-            photo_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output "/tmp/sahabat-toba-photo-$photo.jpg" --write-out '%{http_code}|%{content_type}' "$APP_URL/danau-toba/photo-$photo.jpg?v=1.2.8")"
+            photo_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output "/tmp/sahabat-toba-photo-$photo.jpg" --write-out '%{http_code}|%{content_type}' "$APP_URL/danau-toba/photo-$photo.jpg?v=1.2.9")"
             photo_status="${photo_response%%|*}"
             photo_type="${photo_response#*|}"
             test "$photo_status" = "200" || (echo "::error::Landing slideshow photo $photo returned HTTP $photo_status." && exit 1)
