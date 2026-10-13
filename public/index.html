@@ -1209,7 +1209,7 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
         <div class="respondent-quiz-copy">
           <h3>Link Kuisioner Responden</h3>
           <p>Gunakan tautan ini untuk membuka formulir Google Form.</p>
-          <a id="respondentQuizLink" class="respondent-quiz-url" href="https://sahabatodhiv-sumut.aryprayoga139.workers.dev/kuisioner-responden.html" target="_blank" rel="noopener noreferrer">https://sahabatodhiv-sumut.aryprayoga139.workers.dev/kuisioner-responden.html</a>
+          <a id="respondentQuizLink" class="respondent-quiz-url" href="https://sahabatodhivsumut.web.id/kuisioner-responden.html" target="_blank" rel="noopener noreferrer">https://sahabatodhivsumut.web.id/kuisioner-responden.html</a>
           <div class="owner-form-actions">
             <button class="dashbtn" type="button" id="openRespondentQuiz">Buka Kuisioner</button>
             <button class="dashbtn" type="button" id="copyRespondentQuiz">Salin Link</button>
@@ -1218,8 +1218,8 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
         </div>
         <div class="respondent-quiz-qr-wrap">
           <h3>Kode QR Kuisioner</h3>
-          <a class="respondent-quiz-qr-frame" href="https://sahabatodhiv-sumut.aryprayoga139.workers.dev/kuisioner-responden.html" target="_blank" rel="noopener noreferrer" aria-label="Buka Google Form Kuisioner Responden">
-            <img class="respondent-quiz-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=12&data=https%3A%2F%2Fsahabatodhiv-sumut.aryprayoga139.workers.dev%2Fkuisioner-responden.html" alt="Kode QR untuk membuka Kuisioner Responden" loading="lazy" decoding="async">
+          <a class="respondent-quiz-qr-frame" href="https://sahabatodhivsumut.web.id/kuisioner-responden.html" target="_blank" rel="noopener noreferrer" aria-label="Buka Google Form Kuisioner Responden">
+            <img class="respondent-quiz-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=12&data=https%3A%2F%2Fsahabatodhivsumut.web.id%2Fkuisioner-responden.html" alt="Kode QR untuk membuka Kuisioner Responden" loading="lazy" decoding="async">
             <img class="respondent-quiz-qr-logo" src="/kemensos.svg" alt="Logo Kementerian Sosial" loading="lazy" decoding="async">
           </a>
           <p>Pindai dengan kamera ponsel untuk membuka formulir.</p>
@@ -1271,7 +1271,7 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.11</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.12</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi<br>© 2026 Data Base ODHIV Sumatera Utara · Hak cipta dilindungi</p>
 </main>
@@ -1328,7 +1328,7 @@ async function loadOwnerProfile(){
 let csrfToken='';
 toggle.addEventListener('click',()=>{const show=password.type==='password';password.type=show?'text':'password';toggle.setAttribute('aria-label',show?'Sembunyikan password':'Tampilkan password');});
 
-const NEWS_QUESTIONNAIRE_URL='https://sahabatodhiv-sumut.aryprayoga139.workers.dev/kuesioner.html';
+const NEWS_QUESTIONNAIRE_URL='https://sahabatodhivsumut.web.id/kuesioner.html';
 let overviewRows=[];
 let overviewHeaders=[];
 let newsItems=[];
@@ -1339,8 +1339,8 @@ function setAppView(view){
  if(view==='news'&&!newsItems.length)loadNews();
 }
 document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button)setAppView(button.dataset.view);});
-document.getElementById('openRespondentQuiz').addEventListener('click',()=>window.open('https://sahabatodhiv-sumut.aryprayoga139.workers.dev/kuisioner-responden.html','_blank','noopener,noreferrer'));
-document.getElementById('copyRespondentQuiz').addEventListener('click',async()=>{const message=document.getElementById('respondentQuizMessage');try{await navigator.clipboard.writeText('https://sahabatodhiv-sumut.aryprayoga139.workers.dev/kuisioner-responden.html');message.textContent='Link kuisioner berhasil disalin.';}catch{message.textContent='Salin link ini secara manual: https://sahabatodhiv-sumut.aryprayoga139.workers.dev/kuisioner-responden.html';}});
+document.getElementById('openRespondentQuiz').addEventListener('click',()=>window.open('https://sahabatodhivsumut.web.id/kuisioner-responden.html','_blank','noopener,noreferrer'));
+document.getElementById('copyRespondentQuiz').addEventListener('click',async()=>{const message=document.getElementById('respondentQuizMessage');try{await navigator.clipboard.writeText('https://sahabatodhivsumut.web.id/kuisioner-responden.html');message.textContent='Link kuisioner berhasil disalin.';}catch{message.textContent='Salin link ini secara manual: https://sahabatodhivsumut.web.id/kuisioner-responden.html';}});
 
 document.getElementById('refreshOverview').addEventListener('click',()=>{if(overviewRows.length)renderOverview(overviewRows,overviewHeaders);else loadRespondents();});
 function normalizedFieldName(value){return String(value??'').normalize('NFKD').toLocaleLowerCase().replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');}
