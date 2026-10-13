@@ -789,6 +789,14 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
  body:not(.authenticated) main{margin:4px auto!important}
 }
 </style>
+  <style id="dashboard-landscape-brand-v1">
+    .dashboard-landscape-brand{display:none}
+    @media screen and (orientation:landscape) and (max-width:950px) and (max-height:520px){
+      body.authenticated .dashboard-landscape-brand{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:8px 12px;border:1px solid rgba(255,255,255,.24);border-radius:13px;background:rgba(11,57,91,.24);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);text-align:left}
+      body.authenticated .dashboard-landscape-brand strong{display:block;color:#fff;font-size:clamp(.9rem,2.5vw,1.15rem);line-height:1.15;text-shadow:0 1px 3px rgba(0,0,0,.45)}
+      body.authenticated .dashboard-landscape-brand small{display:block;margin-top:3px;color:#f2f8ff;font-size:clamp(.65rem,1.8vw,.78rem);line-height:1.2}
+    }
+  </style>
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
@@ -816,7 +824,7 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
     <button class="submit" type="submit">Masuk <span aria-hidden="true">→</span></button>
     <p class="message" id="message" role="status" aria-live="polite"></p>
   </form>
-  <section id="dashboard" hidden aria-labelledby="dashboardTitle">
+  <section id="dashboard" hidden aria-labelledby="dashboardTitle">\n    <div class="dashboard-landscape-brand" id="dashboardLandscapeBrand" aria-label="Sahabat ODHIV Sumut"><div><strong>Sahabat ODHIV Sumut</strong><small>Bersama Menuju Hidup Lebih Baik</small></div></div>
     <div class="owner-card" id="ownerCard">
       <div class="owner-profile-side">
         <img class="owner-avatar" id="ownerAvatar" alt="Foto owner" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' rx='40' fill='%23e8f2ff'/%3E%3Ccircle cx='40' cy='29' r='14' fill='%237d9bb8'/%3E%3Cpath d='M13 75c2-18 13-27 27-27s25 9 27 27' fill='%237d9bb8'/%3E%3C/svg%3E">
