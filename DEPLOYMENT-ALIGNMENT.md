@@ -1,34 +1,36 @@
-# Menyelaraskan GitHub dan Cloudflare
+# Sinkronisasi GitHub dan Cloudflare — Sahabat ODHIV Sumut
 
-## Sumber kode
+## Sumber kode dan target produksi
 
-Repositori GitHub `Arkaprayog/dashboard-bnba-odhiv-sumut` adalah sumber kode yang harus ditinjau sebelum deployment. Jangan melakukan edit langsung di editor Worker Cloudflare tanpa kemudian menyalin perubahan yang sudah diuji kembali ke GitHub.
+- Repository: `Arkaprayog/sahabatodhiv-sumut`
+- Branch utama: `main`
+- Worker produksi: `sahabatodhiv-sumut`
+- URL: https://sahabatodhiv-sumut.aryprayoga139.workers.dev
+- D1 binding: `DB` mengarah ke database `ppks-odhiv-auth`.
 
-Worker target: `dashboard-bnba-odhiv-sumut`.
+## Alur deployment
 
-## Otomatisasi yang disiapkan
+Workflow `.github/workflows/validate-deploy.yml` menjalankan pemeriksaan kode, pemeriksaan konfigurasi Wrangler, lalu deployment ke environment `sahabatodhiv-sumut` untuk push ke `main` atau pemicu manual. Workflow Android membangun APK debug secara terpisah ketika berkas Android berubah.
 
-Workflow `.github/workflows/validate-deploy.yml`:
-- menjalankan typecheck pada pull request ke `main`;
-- menyediakan deployment produksi manual melalui GitHub Actions;
-- menjalankan validasi sebelum deployment;
-- tidak otomatis men-deploy setiap commit ke produksi.
+Jangan mengedit Worker langsung di Cloudflare tanpa merekonsiliasi perubahan ke repository. Perubahan kode harus masuk ke GitHub agar bisa diaudit dan dibangun ulang.
 
-Deployment memerlukan dua GitHub Actions secrets:
-- `CLOUDFLARE_API_TOKEN`: token Cloudflare dengan hak minimum untuk deploy Worker di akun target;
-- `CLOUDFLARE_ACCOUNT_ID`: ID akun Cloudflare target.
+## GitHub Actions secrets
 
-Jangan pernah menaruh token di source code, file konfigurasi, issue, atau log. Gunakan token yang dibatasi ke akun dan izin yang dibutuhkan.
+Workflow produksi membutuhkan:
+- `CLOUDFLARE_API_TOKEN`: token dengan izin minimum untuk deployment Worker pada akun target.
+- `CLOUDFLARE_ACCOUNT_ID`: ID akun Cloudflare.
 
-## Sebelum menjalankan deployment produksi
+Secret aplikasi seperti Google service account, token bootstrap, dan VAPID private key harus tetap dikelola sebagai Cloudflare Worker secrets. Jangan menaruh nilai secret di source code, `wrangler.toml`, log, issue, atau percakapan.
 
-1. Pastikan perubahan perbaikan HTTP 500 yang dibuat melalui Cloudflare AI sudah dipindahkan ke GitHub sebagai perubahan kode yang ditinjau. Deployment Cloudflare terbaru saja tidak membuktikan bahwa source GitHub sudah sama.
-2. Jalankan typecheck dan uji alur owner/login di staging.
-3. Periksa bahwa `wrangler.toml` menunjuk ke Worker dan D1 yang benar. Jangan mengganti database ID atau menjalankan migrasi remote tanpa pemeriksaan.
-4. Pastikan secret Google dan binding produksi tetap ada setelah deploy.
-5. Jalankan workflow manual dari GitHub Actions, lalu periksa deployment ID/versi Cloudflare dan health endpoint.
-6. Uji login, logout, endpoint yang memerlukan sesi, serta penolakan akses tanpa autentikasi sebelum memakai data nyata.
+## Pemeriksaan sebelum dan sesudah deploy
 
-## Batas saat ini
+1. Jalankan typecheck, pemeriksaan inline JavaScript, pemeriksaan konfigurasi Wrangler, dan smoke tests.
+2. Pastikan nama Worker, `APP_ORIGIN`, dan `WEBAUTHN_RP_ID` mengarah ke domain Sahabat yang kanonis.
+3. Pastikan deployment tidak mengganti database D1 atau menghapus secret.
+4. Pastikan GitHub Actions sukses dan health check mengonfirmasi backend serta database terhubung.
+5. Uji login/logout, role akses, endpoint yang memerlukan autentikasi, upload, Google Sheets, dan notifikasi menggunakan data sintetis.
+6. Untuk APK, unduh artefak dari workflow Android dan uji pada perangkat nyata.
 
-Menambahkan workflow tidak langsung menyelaraskan kode produksi. Deployment baru dapat dijalankan setelah secret GitHub Actions dikonfigurasi dan revisi kode produksi yang dibuat melalui Cloudflare AI sudah direkonsiliasi dengan source GitHub. Jangan menganggap deployment berhasil sampai GitHub Actions dan versi Worker sama-sama terverifikasi.
+## Status dan batasan keamanan
+
+Lulusnya build dan smoke tests tidak sama dengan audit keamanan menyeluruh. Repository sendiri mencatat bahwa aplikasi belum boleh dianggap siap untuk data responden nyata sebelum kontrol akses, pembatasan laju, privasi berkas, dan pengujian operasional ditinjau. Data ODHIV sangat sensitif; gunakan data sintetis selama validasi dan batasi akses spreadsheet/folder foto.
