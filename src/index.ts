@@ -923,7 +923,7 @@ export default {
                 teamPosition: get(row, "POSISI JABATAN PETUGAS", 13),
                 teamPhone: get(row, "NO HP/WA PETUGAS", 14),
               };
-            }).filter((item): item is NonNullable<typeof item> => item !== null).reverse();
+            }).filter(item => item !== null).reverse();
             return reply({ items, csrfToken: admin.csrf_token });
           } catch (error) {
             const incidentId = logIncident("team_submissions_load_failed", error, { path: url.pathname });
