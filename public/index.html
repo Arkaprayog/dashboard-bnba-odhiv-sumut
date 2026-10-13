@@ -1965,7 +1965,7 @@ refreshSavedAssessments().catch(error=>{assessmentMessage.textContent='Daftar as
 
 <script id="danau-toba-slideshow-v1-1-8">
 (() => {
- const photos = [...Array.from({length:7},(_,i)=>`/danau-toba/photo-${i+1}.jpg`), '/owner-background.webp'];
+ const photos = ['/owner-background.webp', ...Array.from({length:7},(_,i)=>`/danau-toba/photo-${i+1}.jpg`)];
  let timer=null,index=0;
  const isAuthenticated=()=>document.body.classList.contains('authenticated');
  const next=()=>{if(isAuthenticated())return;document.body.style.backgroundImage=`linear-gradient(180deg,rgba(5,24,42,.12),rgba(3,20,36,.18)),url("${photos[index]}")`;index=(index+1)%photos.length;};
