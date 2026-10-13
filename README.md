@@ -9,6 +9,16 @@ Proyek ini **belum siap untuk data responden nyata**. Dashboard operasional, pem
 - Spreadsheet dan folder foto harus tetap privat; berikan akses service account minimum yang diperlukan.
 - Jangan mencatat nama, nomor telepon, NIK, URL foto, atau isi baris responden ke log.
 
+## Domain produksi dan baseline keamanan
+
+- Domain kanonis: `https://sahabatodhivsumut.web.id`.
+- Cloudflare memaksa HTTPS, menetapkan minimum TLS 1.2, HSTS selama enam bulan (tanpa `includeSubDomains`/`preload`), Security Level High, dan Cloudflare Managed Free Ruleset.
+- Worker utama menggunakan custom domain yang dideklarasikan di `wrangler.toml`; hostname paralel `workers.dev` dinonaktifkan pada environment utama.
+- API menggunakan CSP default-deny; asset menerapkan CSP, `X-Content-Type-Options`, `X-Frame-Options`, `Cross-Origin-Resource-Policy`, dan kebijakan rujukan.
+- Percobaan login tetap dibatasi di Worker per alamat IP yang di-hash. Slot Cloudflare Free untuk aturan rate-limit tambahan sudah digunakan oleh pemeriksaan kredensial bocor; jangan mengganti aturan itu tanpa tinjauan.
+
+Pengaturan ini mengurangi paparan, tetapi **bukan sertifikasi keamanan**. Jangan gunakan data responden nyata sampai kontrol peran, seluruh endpoint, alur file/foto, backup, retensi, dan prosedur insiden ditinjau dan diuji.
+
 ## Konfigurasi Google yang benar untuk kode Worker saat ini
 
 Kode `src/index.ts` membaca dua secret terpisah untuk autentikasi Google:
