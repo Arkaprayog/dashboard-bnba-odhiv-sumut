@@ -75,13 +75,14 @@ jobs:
           const fs = require('fs');
           const intro = fs.readFileSync('public/kuisioner-responden.html', 'utf8');
           const dashboard = fs.readFileSync('public/index.html', 'utf8');
+          const activity = fs.readFileSync('android-app/app/src/main/java/id/sahabatodhiv/sumut/MainActivity.java', 'utf8');
           const checks = [
-            ['redirect status message and 5.2-second timer', intro.includes("window.setTimeout(()=>{document.getElementById('status').textContent='Mengalihkan ke Google Forms…';window.location.replace(FORM_URL)},5200)")],
-            ['canonical Google Form URL', intro.includes('1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw')],
-            ['accessible animated kite illustration', intro.includes('aria-label="Layangan merah terbang"') && intro.includes('aria-label="Dua anak laki-laki berlari mengejar layangan"')],
-            ['reduced-motion accessibility support', intro.includes('@media(prefers-reduced-motion:reduce)')],
-            ['brand and loading status content', intro.includes('Sahabat ODHIV Sumut') && intro.includes('id="status"')],
-            ['dashboard link and QR target intro page', dashboard.includes('kuisioner-responden.html')],
+            ['questionnaire has no animated illustration or timer', !intro.includes('animation:') && !intro.includes('@keyframes') && !intro.includes('setTimeout') && !intro.includes('sceneOut') && !intro.includes('kiteFloat')],
+            ['questionnaire redirects directly to canonical Google Form', intro.includes('window.location.replace("https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform")')],
+            ['questionnaire keeps a usable fallback link', intro.includes('id="formLink"') && intro.includes('Buka Google Forms')],
+            ['dashboard login opens without animated intro', !dashboard.includes('startCollaborationIntro') && !dashboard.includes('collab-intro')],
+            ['native app has no animated splash or artificial delay', !activity.includes('AnimatedSplashView') && !activity.includes('3000L') && activity.includes('setContentView(webView);')],
+            ['dashboard link and QR target questionnaire page', dashboard.includes('kuisioner-responden.html')],
             ['old short form link removed', !dashboard.includes('9YuWSVtgpcSed5St5')],
           ];
           for (const [name, ok] of checks) {
@@ -124,7 +125,7 @@ jobs:
             ['test button targets actual Worker endpoint', html.includes("fetch('/api/push-test',{method:'POST'") && worker.includes('url.pathname === "/api/push-test"')],
             ['service worker receives and displays push', sw.includes("addEventListener('push'") && sw.includes('showNotification')],
             ['push notifications request vibration', sw.includes('vibrate:[250,120,250,120,350]')],
-            ['dashboard and questionnaire no longer run animated intro', !html.includes('startCollaborationIntro') && !html.includes('collab-intro') && !html.includes('await startCollaborationIntro') && !questionnaire.includes('animation:') && !questionnaire.includes('setTimeout')],
+            ['dashboard has no animated intro', !html.includes('startCollaborationIntro') && !html.includes('collab-intro') && !html.includes('await startCollaborationIntro')],
             ['push test remains queued unless delivery is confirmed', worker.includes('push_test_pending') && worker.includes('delivery.configured && delivery.subscriptions > 0 && delivery.failed === 0') && worker.includes('Promise<{ configured: boolean; subscriptions: number; failed: number }>')],
             ['push delivery logs avoid exposing provider exception details', worker.includes('Do not log provider exception text') && worker.includes('console.warn("push_delivery_failed", { stage: "request" })')],
             ['Worker stores subscriptions and polls form response rows', worker.includes('INSERT INTO push_subscriptions') && worker.includes("state_key='response_row_count'")],
