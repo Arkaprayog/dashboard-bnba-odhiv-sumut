@@ -124,6 +124,8 @@ jobs:
             ['test button targets actual Worker endpoint', html.includes("fetch('/api/push-test',{method:'POST'") && worker.includes('url.pathname === "/api/push-test"')],
             ['service worker receives and displays push', sw.includes("addEventListener('push'") && sw.includes('showNotification')],
             ['push notifications request vibration', sw.includes('vibrate:[250,120,250,120,350]')],
+            ['push test remains queued unless delivery is confirmed', worker.includes('push_test_pending') && worker.includes('delivery.configured && delivery.subscriptions > 0 && delivery.failed === 0') && worker.includes('Promise<{ configured: boolean; subscriptions: number; failed: number }>')],
+            ['push delivery logs avoid exposing provider exception details', worker.includes('Do not log provider exception text') && worker.includes('console.warn("push_delivery_failed", { stage: "request" })')],
             ['Worker stores subscriptions and polls form response rows', worker.includes('INSERT INTO push_subscriptions') && worker.includes("state_key='response_row_count'")],
             ['push enrollment does not require private signing key on receiver', worker.includes('enabled: !!(env.VAPID_PUBLIC_KEY && env.VAPID_SUBJECT)')],
           ];
