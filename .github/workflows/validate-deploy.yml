@@ -289,6 +289,19 @@ jobs:
           test "$page_status" = "200" || (echo "::error::Sahabat dashboard page returned HTTP $page_status." && exit 1)
           grep -qi '<html' /tmp/sahabat-dashboard.html || (echo "::error::Sahabat dashboard response is not HTML." && exit 1)
           grep -q 'ownerProfileForm' /tmp/sahabat-dashboard.html || (echo "::error::Owner profile UI is missing." && exit 1)
+          background_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-owner-background.webp --write-out '%{http_code}|%{content_type}' "$APP_URL/owner-background.webp")"
+          background_status="${background_response%%|*}"
+          background_type="${background_response#*|}"
+          test "$background_status" = "200" || (echo "::error::Owner background image returned HTTP $background_status." && exit 1)
+          case "$background_type" in image/webp*) ;; *) echo "::error::Owner background image has unexpected content type: $background_type." && exit 1 ;; esac
+          python3 - <<'PY'
+          from pathlib import Path
+          asset = Path('/tmp/sahabat-owner-background.webp')
+          data = asset.read_bytes()
+          if len(data) < 10000 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+              raise SystemExit('Deployed owner background is not a valid WebP image.')
+          print(f'Deployed owner background verified: {len(data)} bytes.')
+          PY
           quiz_status="$(curl --connect-timeout 5 --max-time 20 --location --max-redirs 5 --silent --show-error --output /tmp/sahabat-questionnaire.html --write-out '%{http_code}' "$APP_URL/kuisioner-responden.html")"
           test "$quiz_status" = "200" || (echo "::error::Questionnaire intro page returned HTTP $quiz_status." && exit 1)
           grep -q '1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire intro is missing the canonical Google Form URL." && exit 1)
