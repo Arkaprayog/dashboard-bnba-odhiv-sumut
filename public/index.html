@@ -2017,4 +2017,33 @@ body:not(.authenticated) .kemenkes-logo{order:2!important;width:100px!important;
 body:not(.authenticated) main{width:min(100%,390px)!important;padding:13px clamp(13px,3.5vw,20px)!important;background:rgba(218,237,250,.32)!important;border-color:rgba(255,255,255,.52)!important;backdrop-filter:blur(9px) saturate(120%)!important;-webkit-backdrop-filter:blur(9px) saturate(120%)!important}
 body:not(.authenticated) .brand{margin:8px auto 10px!important}
 body:not(.authenticated) .foot{margin-top:10px!important}
+
+/* v1.2.6: smaller translucent login card for mobile and desktop */
+body:not(.authenticated) main{
+ width:min(100%,340px)!important;
+ padding:11px 12px 12px!important;
+ background:rgba(218,237,250,.32)!important;
+ border-color:rgba(255,255,255,.56)!important;
+ border-radius:18px!important;
+ box-shadow:0 12px 30px rgba(0,32,75,.20)!important;
+ backdrop-filter:blur(10px) saturate(120%)!important;
+ -webkit-backdrop-filter:blur(10px) saturate(120%)!important;
+}
+body:not(.authenticated) .agency-logos{gap:4px!important;margin:0 auto 7px!important;max-width:220px!important}
+body:not(.authenticated) .kemensos-logo{width:clamp(88px,23vw,112px)!important;height:clamp(56px,15vw,72px)!important}
+body:not(.authenticated) .sumut-logo{width:46px!important;height:52px!important}
+body:not(.authenticated) .kemenkes-logo{width:88px!important;height:28px!important}
+body:not(.authenticated) .directorate{margin-top:3px!important;font-size:.7rem!important;line-height:1.35!important}
+body:not(.authenticated) .brand{margin:6px auto 8px!important;gap:7px!important}
+body:not(.authenticated) .brand h1{font-size:clamp(1rem,4.2vw,1.2rem)!important;line-height:1.18!important}
+body:not(.authenticated) .ribbon{width:25px!important;height:34px!important}
+body:not(.authenticated) .separator{height:35px!important}
+body:not(.authenticated) .form{gap:8px!important}
+body:not(.authenticated) .field input,body:not(.authenticated) .submit{height:43px!important;font-size:.92rem!important}
+body:not(.authenticated) .field input{padding-left:48px!important;border-radius:11px!important}
+body:not(.authenticated) .lock{left:15px!important}
+body:not(.authenticated) .foot{margin-top:8px!important;font-size:.69rem!important;line-height:1.35!important}
+body:not(.authenticated) .rule{margin:6px auto 5px!important}
+body:not(.authenticated) .login-trust{margin-top:7px!important;padding-top:6px!important}
+@media(max-height:680px){body:not(.authenticated){align-items:flex-start!important}body:not(.authenticated) main{margin:6px auto!important}}
 </style>
