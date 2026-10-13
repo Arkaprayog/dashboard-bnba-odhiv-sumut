@@ -209,6 +209,33 @@ async function ensureFeatureSchema(env: Env) {
   ]);
 }
 
+
+async function ensureTeamSchema(env: Env) {
+  await env.DB.batch([
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS team_petugas (
+      id TEXT PRIMARY KEY,
+      display_name TEXT NOT NULL,
+      position TEXT NOT NULL CHECK (position IN ('PENDAMPING SEBAYA','PENJANGKAU LAPANGAN')),
+      phone TEXT NOT NULL,
+      token_hash TEXT NOT NULL UNIQUE,
+      active INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0,1)),
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      created_by TEXT
+    )`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS team_submission_attempts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ip_hash TEXT NOT NULL,
+      created_at INTEGER NOT NULL
+    )`),
+    env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_team_submission_ip_time ON team_submission_attempts(ip_hash,created_at)"),
+    env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_team_petugas_active ON team_petugas(active,created_at)"),
+  ]);
+}
+
+async function hashTeamToken(token: string): Promise<string> {
+  return digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token)));
+}
+
 async function sendPushToAll(env: Env, title: string, body: string, tag: string): Promise<{ configured: boolean; subscriptions: number; failed: number }> {
   if (!env.VAPID_PRIVATE_KEY || !env.VAPID_PUBLIC_KEY || !env.VAPID_SUBJECT) {
     return { configured: false, subscriptions: 0, failed: 0 };
@@ -783,6 +810,203 @@ export default {
           }
         }
 
+
+
+        // Team management: administrators register field staff and issue revocable,
+        // password-free bearer links. Only token hashes are stored in D1.
+        if (url.pathname === "/api/team-petugas" && request.method === "GET") {
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login ke dashboard admin." }, 401);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengelola tim petugas." }, 403);
+          await ensureTeamSchema(env);
+          const rows = await env.DB.prepare("SELECT id,display_name,position,phone,active,created_at FROM team_petugas ORDER BY created_at DESC LIMIT 300").all();
+          return reply({ items: rows.results || [], csrfToken: admin.csrf_token });
+        }
+
+        if (url.pathname === "/api/team-petugas" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login ke dashboard admin." }, 401);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengelola tim petugas." }, 403);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          let body: { name?: unknown; position?: unknown; phone?: unknown };
+          try { body = await request.json() as typeof body; } catch { return reply({ error: "Format data petugas tidak valid." }, 400); }
+          const name = typeof body.name === "string" ? body.name.trim().replace(/\s+/g, " ") : "";
+          const position = typeof body.position === "string" ? body.position.trim().toUpperCase() : "";
+          const phone = typeof body.phone === "string" ? body.phone.trim() : "";
+          if (name.length < 2 || name.length > 120 ||
+              !["PENDAMPING SEBAYA", "PENJANGKAU LAPANGAN"].includes(position) ||
+              !/^\+?[0-9 ()-]{8,30}$/.test(phone)) {
+            return reply({ error: "Nama, posisi jabatan, atau nomor HP/WA belum valid." }, 400);
+          }
+          await ensureTeamSchema(env);
+          const token = b64(crypto.getRandomValues(new Uint8Array(32)));
+          const id = crypto.randomUUID();
+          await env.DB.prepare("INSERT INTO team_petugas(id,display_name,position,phone,token_hash,active,created_by) VALUES(?,?,?,?,?,1,?)")
+            .bind(id, name, position, phone, await hashTeamToken(token), admin.id).run();
+          await audit(env, admin.id, "team_petugas_create");
+          const origin = normalizeOrigin(env.APP_ORIGIN || new URL(request.url).origin);
+          return reply({ ok: true, item: { id, display_name: name, position, phone, active: 1 }, link: origin + "/tim-pendataan.html?token=" + encodeURIComponent(token) }, 201);
+        }
+
+        if (url.pathname === "/api/team-petugas/revoke" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login ke dashboard admin." }, 401);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengelola tim petugas." }, 403);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          let body: { id?: unknown };
+          try { body = await request.json() as typeof body; } catch { return reply({ error: "Format permintaan tidak valid." }, 400); }
+          const id = typeof body.id === "string" ? body.id : "";
+          if (!/^[0-9a-f-]{36}$/i.test(id)) return reply({ error: "Identitas petugas tidak valid." }, 400);
+          await ensureTeamSchema(env);
+          const result = await env.DB.prepare("UPDATE team_petugas SET active=0 WHERE id=? AND active=1").bind(id).run();
+          if (!result.meta.changes) return reply({ error: "Petugas tidak ditemukan atau sudah dinonaktifkan." }, 404);
+          await audit(env, admin.id, "team_petugas_revoke");
+          return reply({ ok: true });
+        }
+
+        if (url.pathname === "/api/team-info" && request.method === "GET") {
+          const rawToken = (url.searchParams.get("token") || "").trim();
+          if (rawToken.length < 40 || rawToken.length > 100) return reply({ error: "Tautan petugas tidak valid. Minta tautan baru kepada admin." }, 403);
+          await ensureTeamSchema(env);
+          const petugas = await env.DB.prepare("SELECT id,display_name,position FROM team_petugas WHERE token_hash=? AND active=1")
+            .bind(await hashTeamToken(rawToken)).first<{ id: string; display_name: string; position: string }>();
+          if (!petugas) return reply({ error: "Tautan petugas tidak aktif atau tidak valid. Hubungi admin untuk mendapatkan tautan baru." }, 403);
+          return reply({ ok: true, petugas: { name: petugas.display_name, position: petugas.position } });
+        }
+
+        if (url.pathname === "/api/team-questionnaire" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const rawToken = (url.searchParams.get("token") || "").trim();
+          if (rawToken.length < 40 || rawToken.length > 100) return reply({ error: "Tautan petugas tidak valid." }, 403);
+          const contentLength = Number(request.headers.get("content-length") || "0");
+          if (contentLength > 18 * 1024 * 1024) return reply({ error: "Total ukuran kiriman terlalu besar. Maksimal 8 MB per foto." }, 413);
+          await ensureTeamSchema(env);
+          const petugas = await env.DB.prepare("SELECT id,display_name,position,phone FROM team_petugas WHERE token_hash=? AND active=1")
+            .bind(await hashTeamToken(rawToken)).first<{ id: string; display_name: string; position: string; phone: string }>();
+          if (!petugas) return reply({ error: "Tautan petugas tidak aktif atau tidak valid. Hubungi admin." }, 403);
+
+          const clientIp = request.headers.get("CF-Connecting-IP") || "unknown";
+          const ipHash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(clientIp)));
+          const now = Math.floor(Date.now() / 1000);
+          await env.DB.prepare("DELETE FROM team_submission_attempts WHERE created_at<?").bind(now - 86400).run();
+          const attempts = await env.DB.prepare("SELECT COUNT(*) AS n FROM team_submission_attempts WHERE ip_hash=? AND created_at>?")
+            .bind(ipHash, now - 3600).first<{ n: number }>();
+          if ((attempts?.n || 0) >= 60) return reply({ error: "Batas pengiriman sementara tercapai. Coba kembali nanti." }, 429, { "retry-after": "3600" });
+          await env.DB.prepare("INSERT INTO team_submission_attempts(ip_hash,created_at) VALUES(?,?)").bind(ipHash, now).run();
+
+          if (!env.GOOGLE_SHEET_ID || !env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !env.GOOGLE_PRIVATE_KEY) {
+            return reply({ error: "Integrasi penyimpanan belum siap. Hubungi admin; data belum dikirim." }, 503);
+          }
+          let form: FormData;
+          try { form = await request.formData(); } catch { return reply({ error: "Format formulir tidak valid." }, 400); }
+          const get = (key: string, max: number) => String(form.get(key) || "").trim().slice(0, max);
+          const nama = get("namaLengkap", 160);
+          const nik = get("nik", 16);
+          const usiaText = get("usia", 3);
+          const usia = Number(usiaText);
+          const gender = get("jenisKelamin", 20);
+          const alamat = get("alamatDomisili", 400);
+          const kota = get("kotaDomisili", 120);
+          const pekerjaan = get("pekerjaan", 160);
+          const phone = get("noHpWa", 30);
+          const bantuanValues = form.getAll("jenisBantuan").map(value => String(value).trim()).filter(value => ["BANTUAN NUTRISI", "BANTUAN KEWIRAUSAHAAN"].includes(value));
+          const bantuan = [...new Set(bantuanValues)].join(", ");
+          const timestamp = new Intl.DateTimeFormat("id-ID", { timeZone: "Asia/Jakarta", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(new Date());
+          const selfPhoto = form.get("fotoDiri");
+          const ktpPhoto = form.get("fotoKtp");
+          if (!nama || !/^\d{16}$/.test(nik) || !Number.isInteger(usia) || usia < 0 || usia > 120 ||
+              !["Laki-laki", "Perempuan"].includes(gender) || !alamat || !kota || !pekerjaan ||
+              !/^\+?[0-9 ()-]{8,30}$/.test(phone) || !bantuan) {
+            return reply({ error: "Periksa kembali isian wajib. NIK harus 16 digit, usia 0–120, dan pilih minimal satu jenis bantuan." }, 400);
+          }
+          const validPhoto = (value: FormDataEntryValue | null): value is File =>
+            value instanceof File && ["image/jpeg", "image/png", "image/webp"].includes(value.type) && value.size > 0 && value.size <= 8 * 1024 * 1024;
+          if (!validPhoto(selfPhoto) || !validPhoto(ktpPhoto)) {
+            return reply({ error: "Foto diri dan KTP wajib diambil/diunggah sebagai JPG, PNG, atau WebP, maksimal 8 MB per foto." }, 400);
+          }
+
+          const uploadedIds: string[] = [];
+          let accessToken = "";
+          try {
+            accessToken = await googleAccessToken(env);
+            const uploadPrivatePhoto = async (photo: File, label: string) => {
+              const safeName = (photo.name || label).replace(/[^A-Za-z0-9._-]/g, "_").slice(0, 80) || label;
+              const metadata = { name: "TimPendataan-" + petugas.id + "-" + Date.now() + "-" + label + "-" + safeName, mimeType: photo.type };
+              const uploadForm = new FormData();
+              uploadForm.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json; charset=UTF-8" }));
+              uploadForm.append("file", photo, safeName);
+              const response = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,mimeType", {
+                method: "POST", headers: { authorization: "Bearer " + accessToken }, body: uploadForm,
+              });
+              if (!response.ok) throw new Error("Google Drive gagal menyimpan foto " + label + " (HTTP " + response.status + ").");
+              const uploaded = await response.json() as { id?: string; mimeType?: string };
+              if (!uploaded.id || uploaded.mimeType !== photo.type) throw new Error("Google Drive tidak mengembalikan identitas foto yang valid.");
+              uploadedIds.push(uploaded.id);
+              return "https://drive.google.com/file/d/" + uploaded.id + "/view";
+            };
+
+            const selfPhotoUrl = await uploadPrivatePhoto(selfPhoto, "foto-diri");
+            const ktpPhotoUrl = await uploadPrivatePhoto(ktpPhoto, "foto-ktp");
+            const spreadsheetBase = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID);
+            const metadataResponse = await fetch(spreadsheetBase + "?fields=sheets.properties.title,sheets.properties.sheetId", { headers: { authorization: "Bearer " + accessToken } });
+            if (!metadataResponse.ok) throw new Error("Tidak dapat membaca metadata Google Sheets (HTTP " + metadataResponse.status + ").");
+            const metadata = await metadataResponse.json() as { sheets?: Array<{ properties?: { title?: string; sheetId?: number } }> };
+            let ownerTab = (metadata.sheets || []).find(sheet => sheet.properties?.title === "Kuisioner Owner");
+            if (!ownerTab) {
+              const createResponse = await fetch(spreadsheetBase + ":batchUpdate", {
+                method: "POST", headers: { authorization: "Bearer " + accessToken, "content-type": "application/json" },
+                body: JSON.stringify({ requests: [{ addSheet: { properties: { title: "Kuisioner Owner" } } }] }),
+              });
+              if (!createResponse.ok) throw new Error("Gagal menyiapkan tab Kuisioner Owner (HTTP " + createResponse.status + ").");
+              const created = await createResponse.json() as { replies?: Array<{ addSheet?: { properties?: { sheetId?: number; title?: string } } }> };
+              ownerTab = { properties: created.replies?.[0]?.addSheet?.properties || { title: "Kuisioner Owner" } };
+            }
+            const tabName = "'Kuisioner Owner'";
+            const headers = ["Timestamp", "NAMA LENGKAP", "NIK", "USIA", "JENIS KELAMIN", "ALAMAT DOMISILI SAAT INI", "KOTA DOMISILI SAAT INI", "PEKERJAAN", "NO HP/WA", "FOTO DIRI", "FOTO KTP", "JENIS BANTUAN", "TELAH DIDATA OLEH", "POSISI JABATAN PETUGAS", "NO HP/WA PETUGAS"];
+            const headerRange = encodeURIComponent(tabName + "!A1:O1");
+            const headerCheck = await fetch(spreadsheetBase + "/values/" + headerRange, { headers: { authorization: "Bearer " + accessToken } });
+            if (!headerCheck.ok) throw new Error("Gagal memeriksa judul kolom Kuisioner Owner.");
+            const headerData = await headerCheck.json() as { values?: string[][] };
+            const existingHeaders = headerData.values?.[0] || [];
+            if (!existingHeaders.some(value => String(value || "").trim())) {
+              const writeHeader = await fetch(spreadsheetBase + "/values/" + headerRange + "?valueInputOption=RAW", {
+                method: "PUT", headers: { authorization: "Bearer " + accessToken, "content-type": "application/json" },
+                body: JSON.stringify({ values: [headers] }),
+              });
+              if (!writeHeader.ok) throw new Error("Gagal menyiapkan judul kolom Kuisioner Owner.");
+            } else {
+              const attributionHeaders = existingHeaders.slice(12, 15).map(value => String(value || "").trim());
+              if (attributionHeaders.every(value => !value)) {
+                const writeAttribution = await fetch(spreadsheetBase + "/values/" + encodeURIComponent(tabName + "!M1:O1") + "?valueInputOption=RAW", {
+                  method: "PUT", headers: { authorization: "Bearer " + accessToken, "content-type": "application/json" },
+                  body: JSON.stringify({ values: [headers.slice(12, 15)] }),
+                });
+                if (!writeAttribution.ok) throw new Error("Gagal menyiapkan kolom atribusi petugas.");
+              } else if (attributionHeaders.some((value, index) => value !== headers[index + 12])) {
+                throw new Error("Kolom atribusi petugas pada Kuisioner Owner tidak sesuai. Periksa header M1:O1.");
+              }
+            }
+            const appendRange = encodeURIComponent(tabName + "!A:O");
+            const appendResponse = await fetch(spreadsheetBase + "/values/" + appendRange + ":append?valueInputOption=RAW&insertDataOption=INSERT_ROWS", {
+              method: "POST", headers: { authorization: "Bearer " + accessToken, "content-type": "application/json" },
+              body: JSON.stringify({ majorDimension: "ROWS", values: [[timestamp, nama, nik, String(usia), gender, alamat, kota, pekerjaan, phone, selfPhotoUrl, ktpPhotoUrl, bantuan, petugas.display_name, petugas.position, petugas.phone]] }),
+            });
+            if (!appendResponse.ok) throw new Error("Google Sheets gagal menyimpan data pendataan (HTTP " + appendResponse.status + ").");
+            await env.DB.prepare("INSERT INTO audit_log(admin_id,action,target_type,target_id,detail_json) VALUES(NULL,'team_questionnaire_submit','team_petugas',?,?)")
+              .bind(petugas.id, JSON.stringify({ position: petugas.position })).run();
+            return reply({ ok: true, message: "Pendataan berhasil dikirim dan terhubung ke dashboard kuesioner.", timestamp, teamName: petugas.display_name });
+          } catch (error) {
+            if (accessToken) for (const id of uploadedIds) {
+              try { await fetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(id), { method: "DELETE", headers: { authorization: "Bearer " + accessToken } }); } catch {}
+            }
+            const incidentId = logIncident("team_questionnaire_submit_failed", error, { path: url.pathname, stage: requestStage });
+            return reply({ error: "Pendataan belum berhasil disimpan. Periksa koneksi lalu coba lagi. ID insiden: " + incidentId }, 503);
+          }
+        }
 
         if (url.pathname === "/api/owner-questionnaire" && request.method === "POST") {
           if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
