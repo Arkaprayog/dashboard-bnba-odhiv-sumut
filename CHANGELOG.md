@@ -1,3 +1,9 @@
+## 1.1.12 — 2026-10-14
+- Fixed public questionnaire links, the QR destination, and the related news link to use the canonical HTTPS domain.
+- Fixed the Android offline recovery button and refreshed deployment guidance to use the canonical domain.
+- Added CI checks that fail if the production dashboard or Android offline screen reintroduces the obsolete workers.dev host.
+- Synchronized the displayed app version, package version, and release notes.
+
 ## 1.1.11 — 2026-10-14
 - Made https://sahabatodhivsumut.web.id the canonical production hostname in Wrangler and the Android WebView.
 - Disabled the parallel workers.dev hostname for the primary Worker and declared the custom domain in the deployment config.

@@ -5,7 +5,7 @@
 - Repository: `Arkaprayog/sahabatodhiv-sumut`
 - Branch utama: `main`
 - Worker produksi: `sahabatodhiv-sumut`
-- URL: https://sahabatodhiv-sumut.aryprayoga139.workers.dev
+- URL: https://sahabatodhivsumut.web.id
 - D1 binding: `DB` mengarah ke database `ppks-odhiv-auth`.
 
 ## Alur deployment
