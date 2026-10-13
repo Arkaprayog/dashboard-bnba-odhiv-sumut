@@ -1261,7 +1261,7 @@ export default {
                 method: "PUT", headers: { authorization: "Bearer " + accessToken, "content-type": "application/json" },
                 body: JSON.stringify({ values: [headers] }),
               });
-              if (!writeHeader.ok) throw new Error("Gagal menyiapkan judul kolom Kuisioner Owner.");
+              if (!writeHeader.ok) throw new Error("Gagal menyiapkan judul kolom Kuisioner Owner (HTTP " + writeHeader.status + ").");
             } else {
               const attributionHeaders = existingHeaders.slice(12, 15).map(value => String(value || "").trim());
               if (attributionHeaders.every(value => !value)) {
@@ -1270,7 +1270,7 @@ export default {
                   method: "PUT", headers: { authorization: "Bearer " + accessToken, "content-type": "application/json" },
                   body: JSON.stringify({ values: [headers.slice(12, 15)] }),
                 });
-                if (!writeAttribution.ok) throw new Error("Gagal menyiapkan kolom atribusi petugas.");
+                if (!writeAttribution.ok) throw new Error("Gagal menyiapkan kolom atribusi petugas (HTTP " + writeAttribution.status + ").");
               } else if (attributionHeaders.some((value, index) => value !== headers[index + 12])) {
                 throw new Error("Kolom atribusi petugas pada Kuisioner Owner tidak sesuai. Periksa header M1:O1.");
               }
