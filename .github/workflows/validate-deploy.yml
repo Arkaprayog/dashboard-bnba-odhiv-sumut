@@ -299,7 +299,7 @@ jobs:
           exit 1
       - name: Verify Sahabat ODHIV public page and protected respondent endpoint
         env:
-          APP_URL: https://sahabatodhiv-sumut.aryprayoga139.workers.dev
+          APP_URL: https://sahabatodhivsumut.web.id
         run: |
           page_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-dashboard.html --write-out '%{http_code}' "$APP_URL/")"
           test "$page_status" = "200" || (echo "::error::Sahabat dashboard page returned HTTP $page_status." && exit 1)
