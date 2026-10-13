@@ -16,6 +16,9 @@ on:
       - 'README.md'
       - 'DEPLOYMENT*.md'
       - 'CLOUDFLARE_DEPLOYMENT.md'
+      - 'scripts/**'
+      - 'docs/**'
+      - 'SECURITY.md'
       - '.github/workflows/validate-deploy.yml'
   push:
     branches: [main]
@@ -32,6 +35,9 @@ on:
       - 'README.md'
       - 'DEPLOYMENT*.md'
       - 'CLOUDFLARE_DEPLOYMENT.md'
+      - 'scripts/**'
+      - 'docs/**'
+      - 'SECURITY.md'
       - '.github/workflows/validate-deploy.yml'
   workflow_dispatch:
 
@@ -89,6 +95,8 @@ jobs:
           PY
       - name: Install dependencies
         run: npm install
+      - name: Validate safe owner bootstrap helper
+        run: bash -n scripts/setup-admin.sh
       - name: Typecheck
         run: npm run typecheck
       - name: Check all inline JavaScript syntax in dashboard HTML
@@ -148,13 +156,14 @@ jobs:
           const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
           const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
           const letter = fs.readFileSync('public/surat-lainnya.html', 'utf8');
+          const adminScript = fs.readFileSync('scripts/setup-admin.sh', 'utf8');
           const workflow = fs.readFileSync('.github/workflows/validate-deploy.yml', 'utf8');
           const checks = [
             ['login and dashboard have readable contrast overrides', html.includes('id="readable-contrast-v1-1-9"') && html.indexOf('id="readable-contrast-v1-1-9"') < html.search(/<body\b/i) && html.includes('rgba(248,252,255,.97)') && html.includes('color:#163650!important')],
             ['Form Asesmen Terintegrasi retains local Kemensos and ATENSI logos', html.includes('src="/kemensos.svg"') && html.includes('src="/atensi.svg"') && html.includes('id="assessmentPaper"')],
             ['questionnaire introduction has high-contrast styles', questionnaire.includes('id="readable-questionnaire-v1-1-9"') && questionnaire.indexOf('id="readable-questionnaire-v1-1-9"') < questionnaire.search(/<body\b/i) && questionnaire.includes('linear-gradient(135deg,#eef6ff')],
             ['questionnaire waiting screen avoids white typography on scenery', waiting.includes('id="readable-wait-screen-v1-1-9"') && waiting.indexOf('id="readable-wait-screen-v1-1-9"') < waiting.search(/<body\b/i) && waiting.includes('rgba(248,252,255,.48)')],
-            ['public, package, and release versions are synchronized', packageJson.version === '1.1.12' && html.includes('Versi 1.1.12') && changelog.startsWith('## 1.1.12')],
+            ['public, package, and release versions are synchronized', packageJson.version === '1.1.13' && html.includes('Versi 1.1.13') && changelog.startsWith('## 1.1.13')],
             ['deployment health and smoke tests use the canonical HTTPS domain', workflow.includes('HEALTH_URL: https://sahabatodhivsumut.web.id/api/health') && workflow.includes('APP_URL: https://sahabatodhivsumut.web.id')],
             ['assessment uses the supplied Kemensos and ATENSI logos', html.includes('src="/logos/kemensos.png"') && html.includes('src="/atensi.svg"') && letter.includes('src="/logos/kemensos.png"')],
             ['Surat Lainnya opens the editable letter based on the provided PDF', html.includes('href="/surat-lainnya.html"') && letter.includes('Penyampaian Informasi Kegiatan Klaster ODHIV Sentra Insyaf Medan') && letter.includes('window.print()') && letter.includes('Langgeng Setiawan')],
@@ -166,6 +175,7 @@ jobs:
             ['WhatsApp template has respondent name and time greeting', html.includes('const respondentName=') && html.includes("const greeting=hour>=4&&hour<11?'pagi'") && html.includes('Deny Arifin Martyon')],
             ['Content-Security-Policy configured', worker.includes('content-security-policy') && worker.includes("frame-ancestors 'none'")],
             ['API replies have a default-deny CSP and same-origin response policy', worker.includes("default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'") && worker.includes('"cross-origin-resource-policy": "same-origin"') && worker.includes('"x-permitted-cross-domain-policies": "none"')],
+            ['owner bootstrap enforces stronger passwords and secure helper contract', worker.includes('password.length < 14') && worker.includes('password minimal 14 karakter') && adminScript.includes('read -r -s -p "Password owner') && adminScript.includes('X-Owner-Bootstrap-Token') && adminScript.includes('Origin: $ORIGIN') && adminScript.includes('sahabatodhivsumut.web.id') && !adminScript.includes('PASSWORD="$3"') && !adminScript.includes('dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev')],
             ['notification logging redacts raw exception messages', worker.includes(`notification_record_failed", { action, stage: "record" }`) && !worker.includes(`notification_record_failed", { action, message:`)],
             ['copyright notice visible', html.includes('© 2026 Data Base ODHIV Sumatera Utara')],
           ];
@@ -316,8 +326,13 @@ jobs:
         env:
           APP_URL: https://sahabatodhivsumut.web.id
         run: |
-          page_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-dashboard.html --write-out '%{http_code}' "$APP_URL/")"
+          page_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --dump-header /tmp/sahabat-headers.txt --output /tmp/sahabat-dashboard.html --write-out '%{http_code}' "$APP_URL/")"
           test "$page_status" = "200" || (echo "::error::Sahabat dashboard page returned HTTP $page_status." && exit 1)
+          grep -Eiq '^strict-transport-security:[[:space:]]*max-age=15552000' /tmp/sahabat-headers.txt || (echo "::error::HSTS header is missing or has unexpected max-age." && exit 1)
+          grep -Eiq '^x-frame-options:[[:space:]]*DENY' /tmp/sahabat-headers.txt || (echo "::error::X-Frame-Options DENY is missing." && exit 1)
+          grep -Eiq '^x-content-type-options:[[:space:]]*nosniff' /tmp/sahabat-headers.txt || (echo "::error::X-Content-Type-Options nosniff is missing." && exit 1)
+          grep -Eiq '^content-security-policy:[[:space:]]*default-src' /tmp/sahabat-headers.txt || (echo "::error::Content-Security-Policy header is missing." && exit 1)
+          grep -Eiq '^cross-origin-resource-policy:[[:space:]]*same-origin' /tmp/sahabat-headers.txt || (echo "::error::Cross-Origin-Resource-Policy same-origin is missing." && exit 1)
           grep -qi '<html' /tmp/sahabat-dashboard.html || (echo "::error::Sahabat dashboard response is not HTML." && exit 1)
           grep -q 'ownerProfileForm' /tmp/sahabat-dashboard.html || (echo "::error::Owner profile UI is missing." && exit 1)
           for photo in 1 2 3; do

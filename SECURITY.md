@@ -1,316 +1,67 @@
-# Security Documentation - BNBA ODHIV SUMUT Dashboard
-
-## Overview
-
-This document outlines the security measures implemented in the BNBA ODHIV SUMUT Dashboard application running on Cloudflare Workers.
-
-## Authentication & Authorization
-
-### Password Security
-- **Hashing Algorithm**: PBKDF2 with SHA-256
-- **Salt Size**: 16 bytes (128 bits) for newly created or changed passwords; existing rows are validated to contain at least 16 bytes.
-- **Iterations**: 100,000 in the current implementation.
-- **Hash Output Size**: 32 bytes (256 bits).
-
-Implementation note: the live implementation in `src/index.ts` is authoritative. Do not increase the iteration count or output size in documentation alone. A future password-hash upgrade must include a compatible verification/migration strategy and tests so existing accounts are not locked out.
-
-### Session Management
-- **Session Token**: 32 bytes of cryptographically secure random data (base64url encoded)
-- **Session Hash**: SHA-256 digest of session token (stored in database)
-- **CSRF Token**: 24 bytes of cryptographically secure random data
-- **TTL Configuration**: Default 8 hours, minimum 15 minutes, maximum 8 hours
-- **Cookie Flags**: `HttpOnly`, `Secure`, `SameSite=Strict`
-- **Session Cleanup**: Expired and revoked sessions auto-deleted daily
-
-### Role-Based Access Control
-Three user roles with escalating permissions:
-1. **owner**: Full system access, can manage all admins
-2. **admin**: Can modify respondent data, cannot manage admins
-3. **staff**: Read-only access to respondent data
-
-### Bootstrap Endpoint Security
-- Only accessible if no admin accounts exist (one-time setup)
-- Creates the first owner account
-- Validates username format: `^[a-z0-9._-]{3,64}$`
-- Validates password length: 1-1024 characters
-- Returns generic error if admin exists (doesn't leak system state)
-
-## API Security
-
-### Input Validation
-All API inputs are strictly validated:
-
-**Login Endpoint** (`/api/login`)
-- The current UI/API accepts a password only; it does not accept a username.
-- The password must be 1-1024 characters. The API checks active admin accounts and rejects login if the same password matches more than one active account.
-- Rate limited: Maximum 10 failed attempts per 15 minutes per SHA-256 hash of the Cloudflare client IP. The raw IP is not stored in the login-attempt key.
-- Security limitation: password-only login makes account identity depend on unique passwords. A future authentication change should add an explicit username or account identifier and corresponding tests without locking out existing administrators.
-
-**Change Password** (`/api/change-password`)
-- Current password: 1-1024 characters
-- New password: 1-1024 characters
-- Both required and validated before database update
-
-**Respondent Field** (`/api/respondent-field`)
-- Row: Valid integer
-- Field: Validated against allowed column names
-- Value: Type-validated based on field definition
-
-### Cross-Site Request Forgery (CSRF) Protection
-- **Token Generation**: 24 bytes of cryptographically secure random data
-- **Validation**: Strict comparison against X-CSRF-Token header
-- **Scope**: All state-changing operations (POST, PUT, DELETE)
-- **Token Binding**: Linked to specific session ID
-
-### Rate Limiting
-**Login Attempts:**
-- Tracks failed attempts per one-way hash of the client IP in a 15-minute window
-- Blocks further login attempts from the same IP after 10 failed attempts
-- Each failed attempt logged with timestamp
-- Timeout: 15 minutes per failed attempt cycle
-
-**Implementation:**
-```typescript
-const recent = await env.DB.prepare(
-  "SELECT COUNT(*) AS n FROM login_attempts " +
-  "WHERE username_key=? AND attempted_at>? AND succeeded=0"
-).bind(loginKey, now - 900).first<{ n: number }>();
-
-if ((recent?.n || 0) >= 10) {
-  return reply({ error: "Terlalu banyak percobaan login gagal. Coba lagi nanti." }, 429);
-}
-```
-
-## HTTP Security Headers
-
-All API responses include:
-```
-cache-control: no-store
-x-content-type-options: nosniff
-x-frame-options: DENY
-referrer-policy: no-referrer
-permissions-policy: camera=(), microphone=(), geolocation=()
-```
-
-These headers prevent:
-- **Cache poisoning**: Sensitive data cached by browsers/proxies
-- **MIME-sniffing attacks**: Browser detecting file types incorrectly
-- **Clickjacking**: Embedding in iframes
-- **Referrer leaks**: Exposing URLs to external sites
-- **Camera/Microphone access**: Preventing unauthorized device access
-
-## Cross-Origin Resource Sharing (CORS)
-
-### CORS Validation
-```typescript
-function isAllowedOrigin(request: Request, env: Env): boolean {
-  const originHeader = request.headers.get("Origin");
-  if (!originHeader) return false;
-
-  const requestOrigin = normalizeOrigin(originHeader);
-  const fallbackOrigin = new URL(request.url).origin;
-  const allowedOrigins = new Set<string>([
-    env.APP_ORIGIN ? normalizeOrigin(env.APP_ORIGIN) : "",
-    fallbackOrigin,
-  ].filter((value): value is string => Boolean(value)));
-
-  return allowedOrigins.has(requestOrigin);
-}
-```
-
-**Rules:**
-- Only `APP_ORIGIN` environment variable and fallback origin are allowed
-- Exact origin matching (no wildcard)
-- Trailing slashes normalized for consistency
-- Missing Origin header returns 403
-
-## Database Security
-
-### Query Protection
-- All queries use prepared statements with parameter binding
-- No string concatenation in SQL queries
-- Parameter types validated before binding
-
-**Example:**
-```typescript
-const admin = await env.DB.prepare(
-  "SELECT id,username,display_name,password_hash,password_salt,role,active " +
-  "FROM admins WHERE username=? AND active=1"
-).bind(username).first<AdminRow>();
-```
-
-### Data Access
-- Sensitive fields (`password_hash`, `password_salt`) never exposed in API responses
-- Session data minimized in responses
-- Admin information limited to username, display name, and role
-
-### Audit Logging
-All critical operations logged:
-- `owner_bootstrap`: Initial admin account creation
-- `login_success`: Successful login
-- `login_failed`: Failed login attempt
-- `logout`: User logout
-- `password_changed`: Password change
-- `respondent_field_updated`: Data modification
-
-**Audit Log Entry:**
-```typescript
-async function audit(env: Env, adminId: string, action: string) {
-  await env.DB.prepare(
-    "INSERT INTO audit_log(admin_id,action,happened_at) VALUES(?,?,CURRENT_TIMESTAMP)"
-  ).bind(adminId, action).run();
-}
-```
-
-## Error Handling
-
-### User-Friendly Messages
-Generic error messages prevent information disclosure:
-- ✗ "Username atau password salah" (bad credentials)
-- ✗ "Origin tidak diizinkan" (CORS violation)
-- ✗ "Sesi login tidak berlaku" (session expired)
-- ✗ "Token CSRF tidak valid" (CSRF failure)
-
-### Error Logging
-Internal errors logged with incident IDs for server-side debugging:
-```typescript
-function logIncident(scope: string, error: unknown, context: Record<string, unknown> = {}) {
-  const incidentId = crypto.randomUUID();
-  console.error(scope, {
-    incidentId,
-    ...context,
-    message: error instanceof Error ? error.message : "unknown_error",
-    stack: error instanceof Error ? error.stack : undefined,
-  });
-  return incidentId;
-}
-```
-
-## Session Security
-
-### Session Storage
-- Session token hash stored in database (SHA-256)
-- Plain token only stored in HTTP-only cookie
-- Session metadata: admin_id, csrf_token, created_at, expires_at
-
-### Session Lifecycle
-1. **Creation**: On successful login
-2. **Validation**: On each API request (sessionAdmin function)
-3. **Refresh**: Not implemented (stateless session)
-4. **Revocation**: On logout or manual revocation
-5. **Cleanup**: Automatic deletion of expired sessions
-
-### Double-Submit Cookie Protection
-Not implemented as CSRF tokens are used instead, which is more secure.
-
-## Cryptography
-
-### Random Number Generation
-Uses Web Crypto API `crypto.getRandomValues()`:
-- Session tokens: 32 bytes
-- CSRF tokens: 24 bytes
-- Cryptographically secure (suitable for cryptographic operations)
-
-### Hashing Functions
-- **SHA-256**: For password hashing (via PBKDF2)
-- **SHA-256**: For session token hash
-- **PBKDF2-SHA256**: For password derivation
-
-## Infrastructure Security
-
-### Cloudflare Workers Benefits
-- DDoS protection: Cloudflare's global network
-- SSL/TLS: Free automatic HTTPS
-- Rate limiting: Available via Cloudflare dashboard
-- Web Application Firewall (WAF): Available via Cloudflare dashboard
-- Edge security: Protection at origin
-
-### D1 Database
-- Encrypted at rest
-- Automatic backups
-- Access control via Cloudflare API tokens
-- Audit logs for administrative access
-
-## Google Sheets Integration
-
-### Service Account Authentication
-- Uses service account email and private key
-- Private key stored as environment variable (base64 encoded)
-- NEVER exposed in API responses or client-side code
-- Validated before each request
-
-### Data Handling
-- Respondent data is read/write from Google Sheets
-- No sensitive authentication data stored in Sheets
-- Rate limited by Google's API quotas
-
-## Security Testing
-
-### Test Cases
-- [ ] Invalid username/password combinations
-- [ ] SQL injection attempts
-- [ ] CSRF attacks (missing/invalid tokens)
-- [ ] Session hijacking (token prediction)
-- [ ] Rate limiting evasion
-- [ ] CORS origin spoofing
-- [ ] Password hash collision attacks
-
-### Vulnerability Scanning
-- Use OWASP ZAP or similar tool
-- Scan for common vulnerabilities
-- Test all input fields
-- Verify security headers
-
-## Incident Response
-
-### If Password Hash is Compromised
-1. All admin passwords must be reset immediately
-2. All active sessions must be revoked
-3. Force re-authentication for all users
-4. Audit logs should show password reset timestamps
-
-### If Session Token is Exposed
-1. Revoke the specific session immediately
-2. Monitor account for suspicious activity
-3. Consider forcing re-authentication
-4. Review audit logs for unauthorized access
-
-### If CSRF Token Validation Fails
-1. Log the incident with details
-2. Reject the request (403 Forbidden)
-3. Notify user to retry
-4. Review browser console for CORS errors
-
-## Compliance & Standards
-
-- **OWASP Top 10**: Addressed in design
-- **NIST Cybersecurity Framework**: Following best practices
-- **CWE/SANS Top 25**: Mitigated known weaknesses
-- **GDPR**: Data minimization and user consent
-
-## Update & Maintenance
-
-### Regular Tasks
-- [ ] Update Cloudflare Workers SDK monthly
-- [ ] Review audit logs weekly
-- [ ] Check for security advisories
-- [ ] Test rate limiting monthly
-- [ ] Rotate service account keys quarterly
-
-### Version Management
-- Tag releases in Git
-- Document security fixes in release notes
-- Test upgrades in staging environment
-
-## Contact & Reporting
-
-For security vulnerabilities, please report directly to the maintainers rather than filing public issues.
-
-**Reporting:** [Add contact method here]
-
-## References
-
-- OWASP Authentication Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html
-- OWASP Session Management: https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
-- NIST Password Guidelines: https://pages.nist.gov/800-63-3/sp800-63b.html
-- Cloudflare Workers Security: https://developers.cloudflare.com/workers/platform/security/
+# Catatan keamanan dan privasi — Sahabat ODHIV Sumut
+
+Dokumen ini menggambarkan perilaku kode yang ada, bukan sertifikasi keamanan atau pernyataan kepatuhan. Aplikasi menangani kemungkinan data identitas dan kesehatan yang sensitif. Jangan gunakan data responden nyata sebelum tinjauan keamanan, privasi, akses peran, retensi, backup, pemulihan, dan prosedur insiden disetujui organisasi.
+
+## Status produksi yang terverifikasi
+
+- Domain utama: https://sahabatodhivsumut.web.id.
+- Cloudflare Worker: sahabatodhiv-sumut, binding database D1: DB.
+- Baseline Cloudflare yang terkonfigurasi: HTTPS selalu aktif, minimum TLS 1.2, HSTS enam bulan, Security Level High, dan Cloudflare Managed Free Ruleset.
+- GitHub Actions memeriksa TypeScript, sintaks JavaScript inline, sebagian kontrak keamanan/aset, konfigurasi Wrangler melalui dry-run, lalu memeriksa health endpoint, halaman publik, beberapa aset, serta endpoint yang harus terproteksi setelah deployment.
+- Pemeriksaan otomatis tidak menggantikan pengujian penetrasi, tinjauan kode independen, uji perangkat nyata, atau persetujuan organisasi untuk memakai data nyata.
+
+## Autentikasi dan sesi
+
+- Login saat ini hanya menerima password, bukan username. Worker membandingkan password terhadap akun admin aktif dan menolak jika password yang sama cocok dengan lebih dari satu akun. Ini merupakan keterbatasan desain: setiap akun harus memiliki password yang kuat dan unik; autentikasi berbasis username/identitas akun akan lebih jelas jika dirancang dan diuji sebagai perubahan terpisah.
+- Pembuatan owner pertama mewajibkan password 14-1024 karakter yang mengandung angka dan simbol. Perubahan password mewajibkan minimal 12 karakter yang mengandung huruf besar, huruf kecil, angka, dan simbol.
+- Password disimpan sebagai hash PBKDF2-SHA256 dengan salt acak 16 byte, 100.000 iterasi, dan hasil 32 byte. Jangan menaikkan parameter hanya di dokumentasi; upgrade perlu strategi verifikasi/migrasi dan pengujian kompatibilitas agar akun lama tidak terkunci.
+- Token sesi acak 32 byte; database menyimpan hash SHA-256, bukan token sesi mentah. Cookie memakai HttpOnly, Secure, SameSite=Strict, dan Path=/.
+- Default TTL sesi 8 jam, dibatasi minimal 15 menit dan maksimal 8 jam. Token CSRF acak 24 byte dikembalikan setelah login dan diperiksa melalui header X-CSRF-Token pada operasi yang mengubah data.
+- Worker membatasi 10 kegagalan login selama 15 menit berdasarkan hash SHA-256 dari alamat IP Cloudflare. Aturan Cloudflare leaked-credential check juga aktif. Ini bukan proteksi menyeluruh terhadap seluruh jenis abuse.
+
+## Bootstrap owner satu kali
+
+- POST /api/setup-owner harus berasal dari Origin yang diizinkan dan membutuhkan secret Worker OWNER_BOOTSTRAP_TOKEN.
+- Pembuatan owner hanya diizinkan jika tabel admin masih kosong.
+- Gunakan scripts/setup-admin.sh untuk meminta password dan token secara tersembunyi; skrip memeriksa status setup, memakai domain utama secara default, mengirim Origin dan header token yang benar, lalu membersihkan berkas permintaan sementara.
+- Setelah owner dibuat, hapus secret OWNER_BOOTSTRAP_TOKEN secara manual dari konfigurasi Worker. Jangan menghapus admin langsung dari database hanya untuk membuka ulang setup.
+
+## Hak akses dan data responden
+
+Worker melakukan pemeriksaan sesi, CSRF, dan pemeriksaan peran pada endpoint tertentu. Endpoint asesmen, daftar responden, foto responden, dan berkas responden secara eksplisit membatasi akses ke peran owner atau admin. Jangan menyimpulkan bahwa semua endpoint memiliki aturan peran yang sama: setiap route baru atau perubahan route wajib ditinjau dan diuji untuk owner, admin, staff, akun nonaktif, sesi kedaluwarsa, dan permintaan tanpa sesi.
+
+- File/foto melalui Google Drive dibatasi pada tipe berkas yang ditentukan dan batas ukuran 8 MB untuk rute berkas.
+- Google Sheets dan Drive harus tetap privat. Beri service account akses minimum yang diperlukan; jangan menjadikan file/folder foto publik.
+- Respons API sensitif memakai Cache-Control: no-store; header lain termasuk X-Content-Type-Options: nosniff, X-Frame-Options: DENY, Referrer-Policy: no-referrer, Permissions-Policy, Cross-Origin-Resource-Policy, dan CSP.
+- CSP aset masih mengizinkan skrip inline karena halaman dashboard mengandung JavaScript inline. Ini bukan konfigurasi CSP paling ketat; penggunaan nonce/hash memerlukan refaktor dan pengujian khusus.
+- Jangan tulis NIK, nomor telepon, baris spreadsheet, isi foto, password, token, atau private key ke log, repository, issue publik, atau percakapan.
+
+## Integrasi Google
+
+Worker membaca secret terpisah:
+- GOOGLE_SERVICE_ACCOUNT_EMAIL
+- GOOGLE_PRIVATE_KEY (private key PEM, bukan file JSON service account utuh)
+- GOOGLE_SHEET_ID
+- GOOGLE_SHEET_TAB
+
+Kode mengautentikasi service account dan membaca/menulis data sesuai rute yang tersedia. Keberhasilan HTTP tidak membuktikan izin Google Drive/Sheets sudah benar atau bahwa batas akses bisnis sudah memadai. Uji dengan data sintetis, verifikasi ACL spreadsheet/folder, dan pastikan tidak ada file publik sebelum memakai data nyata.
+
+## Audit, log, dan pemulihan
+
+- Audit log menyimpan action dan metadata admin yang disediakan kode; jangan anggap seluruh pembacaan data atau setiap kegagalan sudah diaudit.
+- Log insiden aplikasi membatasi konteks ke daftar field yang diizinkan, untuk menghindari menyimpan isi error/provider yang mungkin berisi data sensitif. Meski begitu, pemilik harus meninjau konfigurasi observability dan akses log.
+- Tetapkan jadwal backup, uji pemulihan D1 dan dokumen pendukung, batas retensi/penghapusan, serta prosedur insiden sebelum data nyata masuk.
+- Bila secret diduga bocor, rotasi Cloudflare API token, kredensial service account Google, bootstrap token, atau kunci push yang relevan melalui prosedur yang disetujui; cabut sesi yang terdampak dan periksa audit/log.
+
+## Daftar uji sebelum penggunaan data nyata
+
+- [ ] Uji login salah berulang, password unik antar akun, perubahan password, logout, dan kedaluwarsa sesi.
+- [ ] Uji Origin/CSRF yang salah, akun nonaktif, akses setiap route oleh setiap role, dan permintaan tanpa sesi.
+- [ ] Tinjau setiap route yang membaca atau mengubah data responden, status workflow, asesmen, foto, atau berkas.
+- [ ] Verifikasi spreadsheet dan folder Drive privat, izin service account minimum, dan tidak ada URL/file sensitif di log atau respons yang tidak perlu.
+- [ ] Uji retensi, backup/pemulihan, akses log, dan prosedur insiden.
+- [ ] Jalankan pemindaian keamanan yang terkontrol dan lakukan review independen sebelum persetujuan produksi untuk data nyata.
+
+## Pelaporan masalah
+
+Laporkan kerentanan secara privat kepada maintainer yang bertanggung jawab, sertakan langkah reproduksi minimal dan jangan lampirkan data responden asli, password, atau secret. Hindari publikasi detail yang memungkinkan eksploitasi sebelum perbaikan tersedia.
