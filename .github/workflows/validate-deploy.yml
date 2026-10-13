@@ -142,8 +142,11 @@ jobs:
           node - <<'NODE'
           const fs = require('fs');
           const config = fs.readFileSync('wrangler.toml', 'utf8');
+          if (!config.includes('name = "sahabatodhiv-sumut"')) throw new Error('Default Wrangler target must be sahabatodhiv-sumut.');
+          if (!config.includes('APP_ORIGIN = "https://sahabatodhiv-sumut.aryprayoga139.workers.dev"')) throw new Error('Default APP_ORIGIN must match the canonical Sahabat Worker.');
+          if (!config.includes('WEBAUTHN_RP_ID = "sahabatodhiv-sumut.aryprayoga139.workers.dev"')) throw new Error('Default WebAuthn RP ID must match the canonical Sahabat Worker.');
           const blocks = [
-            ['root dashboard legacy', '[triggers]\ncrons = []'],
+            ['root cron disabled', '[triggers]\ncrons = []'],
             ['Sahabat primary', '[env.sahabatodhiv-sumut.triggers]\ncrons = ["* * * * *"]'],
             ['production alias', '[env.production.triggers]\ncrons = []'],
             ['staging', '[env.staging.triggers]\ncrons = []'],
@@ -152,7 +155,7 @@ jobs:
             if (!config.includes(text)) throw new Error(name + ' cron configuration is incorrect.');
           }
           if (config.split('crons = ["* * * * *"]').length - 1 !== 1) throw new Error('Exactly one Worker must own the one-minute poller.');
-          console.log('PASS one poller runs on Sahabat; deployment clears stale Sahabat schedule');
+          console.log('PASS canonical Sahabat default and exactly one scheduled poller');
           NODE
       - name: Validate Sahabat ODHIV Wrangler configuration (dry run)
         run: npx wrangler deploy --dry-run --env sahabatodhiv-sumut
