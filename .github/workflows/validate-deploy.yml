@@ -138,6 +138,38 @@ jobs:
           new vm.Script(html.slice(start + openTag.length, end), { filename: 'public/surat-lainnya.html:inline-script' });
           console.log('PASS Surat Lainnya inline JavaScript syntax');
           NODE
+      - name: Validate team intake pages and API contracts
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+          for (const file of ['public/tim-pendataan.html', 'public/kelola-tim.html']) {
+            const html = fs.readFileSync(file, 'utf8');
+            const start = html.indexOf('<script>');
+            const end = html.indexOf('</script>', start + 8);
+            if (start < 0 || end < 0 || html.indexOf('<script>', end + 9) >= 0) {
+              throw new Error('Expected exactly one inline script in ' + file);
+            }
+            new vm.Script(html.slice(start + 8, end), { filename: file + ':inline-script' });
+            console.log('PASS inline JavaScript syntax: ' + file);
+          }
+          const worker = fs.readFileSync('src/index.ts', 'utf8');
+          const dashboard = fs.readFileSync('public/index.html', 'utf8');
+          const intake = fs.readFileSync('public/tim-pendataan.html', 'utf8');
+          const manager = fs.readFileSync('public/kelola-tim.html', 'utf8');
+          const checks = [
+            ['team API routes exist', worker.includes('/api/team-petugas') && worker.includes('/api/team-info') && worker.includes('/api/team-questionnaire') && worker.includes('/api/team-submissions')],
+            ['team access tokens are hashed', worker.includes('token_hash TEXT NOT NULL UNIQUE') && worker.includes('hashTeamToken(token)')],
+            ['team data appends to shared owner questionnaire sheet', worker.includes('const appendRange = encodeURIComponent(tabName + "!A:O")') && worker.includes('TELAH DIDATA OLEH')],
+            ['field page captures photos with device camera controls', intake.includes('capture="user"') && intake.includes('capture="environment"')],
+            ['admin page requires existing admin session', manager.includes("jsonFetch('/api/me')") && manager.includes("['owner','admin']")],
+            ['dashboard links to team management', dashboard.includes('href="/kelola-tim.html"')]
+          ];
+          for (const [label, ok] of checks) {
+            console.log((ok ? 'PASS ' : 'FAIL ') + label);
+            if (!ok) process.exitCode = 1;
+          }
+          NODE
       - name: Validate respondent questionnaire intro and QR destinations
         run: |
           node - <<'NODE'

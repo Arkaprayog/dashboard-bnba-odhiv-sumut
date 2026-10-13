@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light">
+<title>Pendataan Tim Lapangan — Sahabat ODHIV Sumut</title>
+<style>
+:root{color-scheme:light;--navy:#103b70;--blue:#0757a5;--ink:#173650;--muted:#5a7186;--line:#d5e1eb;--panel:#fff;--bg:#edf5fb;--ok:#126c46;--bad:#9d2525}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(150deg,#e6f4ff,#f8fbff 55%,#e7f7f4);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+header{background:#fff;border-bottom:1px solid var(--line);padding:16px max(16px,calc((100vw - 850px)/2));display:flex;align-items:center;gap:12px}
+.mark{width:44px;height:44px;border-radius:13px;background:linear-gradient(145deg,#0757a5,#21a7c5);color:white;display:grid;place-items:center;font-weight:900;font-size:1.15rem}
+header strong{display:block;color:var(--navy)}header small{display:block;color:var(--muted)}
+main{width:min(850px,calc(100% - 24px));margin:22px auto 44px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:clamp(16px,4vw,28px);box-shadow:0 12px 36px rgba(15,57,93,.08);margin-bottom:16px}
+h1{font-size:clamp(1.35rem,4vw,1.9rem);line-height:1.2;margin:0 0 8px;color:var(--navy)}h2{font-size:1.05rem;margin:0 0 14px;color:var(--navy)}
+.muted{color:var(--muted);margin:0}.pill{display:inline-flex;border-radius:999px;background:#e7f4ff;color:#0757a5;padding:5px 10px;font-size:.82rem;font-weight:800;margin-bottom:10px}
+.staff{border:1px solid #cce6f5;background:#f3faff;border-radius:12px;padding:12px 14px;margin-top:14px}.staff strong{display:block}.staff span{font-size:.9rem;color:var(--muted)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.field{display:grid;gap:6px;margin:0 0 15px;min-width:0}.field.full{grid-column:1/-1}
+label,.legend{font-size:.91rem;font-weight:800;color:#23445f}
+input,select,textarea{font:inherit;font-size:16px;width:100%;min-width:0;border:1px solid #b8cad9;border-radius:10px;padding:11px 12px;background:#fff;color:#173650}
+input:focus,select:focus,textarea:focus{outline:3px solid #b8e3fb;border-color:#2485c0}
+.readonly{background:#f2f7fb;color:#48657d}
+.photo-box{border:1px dashed #a9c4d8;border-radius:13px;padding:14px;background:#f8fbfe}.photo-box p{font-size:.86rem;color:var(--muted);margin:4px 0 10px}.capture{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:10px;background:#0757a5;color:#fff;padding:12px;font:inherit;font-weight:800;cursor:pointer}.capture input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.preview{display:none;max-width:100%;max-height:220px;object-fit:contain;border-radius:9px;margin:12px auto 0;border:1px solid var(--line)}.photo-state{font-size:.84rem;color:var(--muted);margin-top:7px;overflow-wrap:anywhere}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.option{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--line);border-radius:11px;padding:12px;font-weight:750}.option input{width:19px;height:19px;margin:2px 0 0;flex:0 0 auto}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}.btn{border:0;border-radius:11px;padding:12px 18px;background:#0757a5;color:#fff;font:inherit;font-weight:850;cursor:pointer;min-height:46px}.btn.secondary{background:#edf4f9;color:#23445f;border:1px solid var(--line)}.btn:disabled{opacity:.6;cursor:wait}
+.message{border-radius:10px;padding:12px 14px;margin-top:14px;display:none;overflow-wrap:anywhere}.message.show{display:block}.message.ok{background:#e8f7ef;color:var(--ok);border:1px solid #bce6ce}.message.error{background:#fff0f0;color:var(--bad);border:1px solid #f0c4c4}
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding:0 12px 25px}
+@media(max-width:600px){.grid,.options{grid-template-columns:1fr}.field.full{grid-column:auto}header{padding:12px 16px}.card{border-radius:14px}}
+</style>
+</head>
+<body>
+<header><div class="mark" aria-hidden="true">S</div><div><strong>Sahabat ODHIV Sumatera Utara</strong><small>Formulir pendataan tim lapangan</small></div></header>
+<main>
+<section class="card">
+<div class="pill">PENDATAAN LAPANGAN</div>
+<h1>Data Calon Penerima Bantuan</h1>
+<p class="muted">Isi data sesuai keterangan responden. Waktu pendataan dicatat otomatis oleh sistem saat data dikirim.</p>
+<div id="staffBox" class="staff" hidden><strong id="staffName"></strong><span id="staffPosition"></span></div>
+<div id="pageMessage" class="message show">Memeriksa tautan petugas…</div>
+</section>
+<form id="intakeForm" class="card" hidden enctype="multipart/form-data" novalidate>
+<h2>Identitas responden</h2>
+<div class="grid">
+<div class="field full"><label for="namaLengkap">Nama Lengkap *</label><input id="namaLengkap" name="namaLengkap" autocomplete="name" maxlength="160" required></div>
+<div class="field"><label for="nik">NIK (16 digit) *</label><input id="nik" name="nik" inputmode="numeric" autocomplete="off" minlength="16" maxlength="16" pattern="[0-9]{16}" required></div>
+<div class="field"><label for="usia">Usia *</label><input id="usia" name="usia" type="number" min="0" max="120" step="1" required></div>
+<div class="field"><label for="jenisKelamin">Jenis Kelamin *</label><select id="jenisKelamin" name="jenisKelamin" required><option value="">Pilih jenis kelamin</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></div>
+<div class="field"><label for="pekerjaan">Pekerjaan *</label><input id="pekerjaan" name="pekerjaan" maxlength="160" required></div>
+<div class="field full"><label for="alamatDomisili">Alamat Domisili Saat Ini *</label><textarea id="alamatDomisili" name="alamatDomisili" rows="3" maxlength="400" required></textarea></div>
+<div class="field"><label for="kotaDomisili">Kota/Kabupaten Domisili Saat Ini *</label><input id="kotaDomisili" name="kotaDomisili" maxlength="120" required></div>
+<div class="field"><label for="noHpWa">No. HP/WA Responden *</label><input id="noHpWa" name="noHpWa" type="tel" inputmode="tel" maxlength="30" required></div>
+</div>
+<h2>Foto langsung melalui kamera</h2>
+<p class="muted" style="margin:-8px 0 14px">Gunakan tombol kamera di bawah. Pastikan foto jelas dan responden menyetujui pengambilan serta penggunaan datanya.</p>
+<div class="grid">
+<div class="field photo-box"><label for="fotoDiri">Foto Diri (kamera depan) *</label><p>Ambil foto wajah responden dengan pencahayaan yang cukup.</p><label class="capture" for="fotoDiri">◎ Ambil Foto Diri<input id="fotoDiri" name="fotoDiri" type="file" accept="image/*" capture="user" required></label><img id="fotoDiriPreview" class="preview" alt="Pratinjau foto diri"><div id="fotoDiriState" class="photo-state">Belum ada foto dipilih.</div></div>
+<div class="field photo-box"><label for="fotoKtp">Foto KTP (kamera belakang) *</label><p>Foto KTP dengan seluruh tulisan terlihat jelas.</p><label class="capture" for="fotoKtp">▣ Foto KTP<input id="fotoKtp" name="fotoKtp" type="file" accept="image/*" capture="environment" required></label><img id="fotoKtpPreview" class="preview" alt="Pratinjau foto KTP"><div id="fotoKtpState" class="photo-state">Belum ada foto dipilih.</div></div>
+</div>
+<h2>Jenis bantuan yang diinginkan *</h2>
+<div class="options">
+<label class="option"><input type="checkbox" name="jenisBantuan" value="BANTUAN NUTRISI"><span>Bantuan Nutrisi</span></label>
+<label class="option"><input type="checkbox" name="jenisBantuan" value="BANTUAN KEWIRAUSAHAAN"><span>Bantuan Kewirausahaan</span></label>
+</div>
+<div class="field full" style="margin-top:16px"><label for="timestampPreview">Waktu pendataan (otomatis)</label><input id="timestampPreview" class="readonly" readonly aria-readonly="true"></div>
+<div class="actions"><button id="submitButton" class="btn" type="submit">Kirim Pendataan</button><button class="btn secondary" type="reset">Kosongkan Form</button></div>
+<div id="submitMessage" class="message" role="status" aria-live="polite"></div>
+</form>
+<section class="card"><p class="muted" style="font-size:.86rem">Data identitas dan foto hanya dikirim ke sistem penyimpanan resmi yang dikonfigurasi oleh pengelola. Jangan teruskan tautan petugas kepada pihak lain.</p></section>
+</main>
+<footer>Sahabat ODHIV Sumatera Utara · Halaman khusus tim lapangan</footer>
+<script>
+(()=> {
+ const params=new URLSearchParams(location.search);
+ const token=params.get('token')||'';
+ const form=document.getElementById('intakeForm');
+ const pageMessage=document.getElementById('pageMessage');
+ const submitMessage=document.getElementById('submitMessage');
+ const submitButton=document.getElementById('submitButton');
+ const showMessage=(el,text,kind)=>{el.textContent=text;el.className='message show '+(kind||'');};
+ const setTimestamp=()=>{document.getElementById('timestampPreview').value=new Intl.DateTimeFormat('id-ID',{dateStyle:'full',timeStyle:'medium',timeZone:'Asia/Jakarta'}).format(new Date());};
+ setTimestamp();
+ if(!token||token.length<40||token.length>100){showMessage(pageMessage,'Tautan pendataan tidak valid. Minta tautan baru kepada admin.','error');return;}
+ fetch('/api/team-info?token='+encodeURIComponent(token),{method:'GET',credentials:'same-origin',cache:'no-store'})
+ .then(async response=>{const data=await response.json().catch(()=>({}));if(!response.ok||!data.ok)throw new Error(data.error||'Tautan petugas tidak dapat digunakan.');return data;})
+ .then(data=>{
+  document.getElementById('staffName').textContent='Petugas: '+data.petugas.name;
+  document.getElementById('staffPosition').textContent='Posisi: '+data.petugas.position;
+  document.getElementById('staffBox').hidden=false;pageMessage.className='message';pageMessage.hidden=true;form.hidden=false;
+ })
+ .catch(error=>showMessage(pageMessage,error instanceof Error?error.message:'Tautan petugas tidak dapat digunakan.','error'));
+ for(const key of ['fotoDiri','fotoKtp']){
+  const input=document.getElementById(key),preview=document.getElementById(key+'Preview'),state=document.getElementById(key+'State');
+  input.addEventListener('change',()=>{
+   const file=input.files&&input.files[0];
+   if(!file){preview.removeAttribute('src');preview.style.display='none';state.textContent='Belum ada foto dipilih.';return;}
+   if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>8*1024*1024||file.size===0){
+    input.value='';preview.removeAttribute('src');preview.style.display='none';state.textContent='Pilih foto JPG, PNG, atau WebP maksimal 8 MB.';return;
+   }
+   const reader=new FileReader();reader.onload=()=>{preview.src=String(reader.result||'');preview.style.display='block';};reader.readAsDataURL(file);state.textContent=file.name+' · '+Math.max(1,Math.round(file.size/1024))+' KB';
+  });
+ }
+ document.getElementById('nik').addEventListener('input',event=>{event.target.value=event.target.value.replace(/\D/g,'').slice(0,16);});
+ form.addEventListener('reset',()=>{setTimeout(()=>{for(const key of ['fotoDiri','fotoKtp']){const p=document.getElementById(key+'Preview');p.removeAttribute('src');p.style.display='none';document.getElementById(key+'State').textContent='Belum ada foto dipilih.';}submitMessage.className='message';setTimestamp();},0);});
+ form.addEventListener('submit',async event=>{
+  event.preventDefault();submitMessage.className='message';
+  if(!form.reportValidity())return;
+  if(!form.querySelector('input[name="jenisBantuan"]:checked')){showMessage(submitMessage,'Pilih minimal satu jenis bantuan.','error');return;}
+  submitButton.disabled=true;submitButton.textContent='Mengirim pendataan…';
+  try{
+   const data=new FormData(form);
+   const response=await fetch('/api/team-questionnaire?token='+encodeURIComponent(token),{method:'POST',credentials:'same-origin',cache:'no-store',body:data});
+   const result=await response.json().catch(()=>({}));
+   if(!response.ok||!result.ok)throw new Error(result.error||'Pendataan belum berhasil disimpan.');
+   form.reset();showMessage(submitMessage,'Berhasil! Data telah dikirim ke dashboard kuesioner. Waktu: '+result.timestamp+'. Petugas: '+result.teamName+'.','ok');
+   window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+  }catch(error){showMessage(submitMessage,error instanceof Error?error.message:'Pendataan gagal dikirim. Periksa koneksi lalu coba kembali.','error');}
+  finally{submitButton.disabled=false;submitButton.textContent='Kirim Pendataan';}
+ });
+})();
+</script>
+</body>
+</html>

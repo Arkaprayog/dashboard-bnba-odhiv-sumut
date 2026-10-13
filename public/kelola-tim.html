@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light">
+<title>Kelola Tim Petugas — Sahabat ODHIV Sumut</title>
+<style>
+:root{color-scheme:light;--navy:#103b70;--blue:#0757a5;--ink:#173650;--muted:#5a7186;--line:#d5e1eb;--bg:#edf5fb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+header{background:#fff;border-bottom:1px solid var(--line);padding:15px max(16px,calc((100vw - 1000px)/2));display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}header strong{display:block;color:var(--navy)}header a{color:var(--blue);font-weight:800;text-decoration:none}
+main{width:min(1000px,calc(100% - 24px));margin:22px auto 44px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:clamp(16px,3vw,24px);margin-bottom:16px;box-shadow:0 8px 24px rgba(15,57,93,.05)}
+h1{font-size:1.6rem;margin:0 0 5px;color:var(--navy)}h2{font-size:1.05rem;margin:0 0 14px;color:var(--navy)}p{margin:0 0 12px}.muted{color:var(--muted);font-size:.9rem}
+.grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px}.field{display:grid;gap:5px}.field label{font-size:.9rem;font-weight:800}input,select{width:100%;min-width:0;border:1px solid #b8cad9;border-radius:9px;padding:11px 12px;font:inherit;font-size:16px;background:white;color:var(--ink)}
+button,.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:9px;background:var(--blue);color:white;padding:10px 14px;font:inherit;font-weight:800;cursor:pointer;text-decoration:none;min-height:42px}button:disabled{opacity:.6;cursor:wait}.secondary{background:#edf4f9;color:#23445f;border:1px solid var(--line)}.danger{background:#fff0f0;color:#9d2525;border:1px solid #f0c4c4}
+.form-actions{margin-top:15px;display:flex;gap:10px;flex-wrap:wrap}.message{display:none;border-radius:10px;padding:12px 14px;margin-top:14px;overflow-wrap:anywhere}.message.show{display:block}.message.ok{background:#e8f7ef;color:#126c46}.message.error{background:#fff0f0;color:#9d2525}
+.link-box{display:none;background:#f1f8ff;border:1px solid #bcdaf1;border-radius:12px;padding:14px;margin-top:16px}.link-box.show{display:block}.link-url{width:100%;margin:8px 0;padding:10px;border:1px solid #c4d7e5;background:white;border-radius:8px;overflow-wrap:anywhere;word-break:break-all;font-size:.9rem}.link-actions{display:flex;gap:8px;flex-wrap:wrap}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:.82rem;color:var(--muted);background:#f7fafc}td strong{display:block}.status{display:inline-block;border-radius:999px;padding:4px 9px;font-size:.78rem;font-weight:800;background:#e7f7ef;color:#126c46}.status.off{background:#edf0f3;color:#5a7186}.empty{padding:18px;text-align:center;color:var(--muted)}
+.submission-meta{display:block;color:var(--muted);font-size:.84rem}.photo-links{display:flex;gap:6px;flex-wrap:wrap}.photo-links a{font-size:.82rem;font-weight:800;color:var(--blue);text-decoration:none}.detail{margin-top:6px;font-size:.86rem;color:var(--muted)}.detail summary{cursor:pointer;color:var(--blue);font-weight:800}.detail p{margin:6px 0;overflow-wrap:anywhere}
+.notice{background:#fff8e6;border:1px solid #f0dfaa;color:#6e5412;border-radius:10px;padding:12px 14px;font-size:.88rem}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.card{border-radius:13px}header{align-items:flex-start}}
+</style>
+</head>
+<body>
+<header><div><strong>Sahabat ODHIV Sumatera Utara</strong><span class="muted">Pengelolaan identitas petugas pendataan</span></div><a href="/" rel="noopener">Kembali ke dashboard ↗</a></header>
+<main>
+<section class="card"><h1>Kelola Tim Petugas</h1><p class="muted">Daftarkan petugas dan buat tautan khusus agar mereka bisa melakukan pendataan tanpa memasukkan kata sandi.</p><div id="authMessage" class="message show">Memeriksa sesi admin…</div></section>
+<div id="adminArea" hidden>
+<section class="card">
+<h2>Daftarkan petugas baru</h2>
+<form id="teamForm">
+<div class="grid">
+<div class="field"><label for="name">Nama Tim Petugas *</label><input id="name" name="name" maxlength="120" required autocomplete="name"></div>
+<div class="field"><label for="position">Posisi Jabatan Kerja *</label><select id="position" name="position" required><option value="">Pilih posisi</option><option value="PENDAMPING SEBAYA">PENDAMPING SEBAYA</option><option value="PENJANGKAU LAPANGAN">PENJANGKAU LAPANGAN</option></select></div>
+<div class="field"><label for="phone">No. HP/WA Tim Petugas *</label><input id="phone" name="phone" type="tel" inputmode="tel" maxlength="30" required></div>
+</div>
+<div class="form-actions"><button id="createButton" type="submit">Daftarkan & Buat Tautan</button></div>
+</form>
+<div id="createMessage" class="message" role="status" aria-live="polite"></div>
+<div id="linkBox" class="link-box"><strong>Tautan khusus petugas berhasil dibuat</strong><p class="muted" style="margin:4px 0">Kirim tautan ini hanya kepada petugas yang bersangkutan. Tautan tidak akan ditampilkan lagi setelah halaman ditutup; buat tautan baru jika hilang.</p><div id="createdLink" class="link-url"></div><div class="link-actions"><button id="copyLink" type="button">Salin Tautan</button><a id="whatsappLink" class="btn" target="_blank" rel="noopener noreferrer">Kirim lewat WhatsApp</a></div></div>
+</section>
+<section class="card">
+<h2>Daftar petugas terdaftar</h2><p class="muted">Petugas yang dinonaktifkan tidak dapat lagi membuka formulir menggunakan tautan lamanya.</p>
+<div class="table-wrap"><table><thead><tr><th>Nama & Posisi</th><th>No. HP/WA</th><th>Status</th><th>Tindakan</th></tr></thead><tbody id="teamRows"><tr><td colspan="4" class="empty">Memuat daftar petugas…</td></tr></tbody></table></div>
+<div id="listMessage" class="message" role="status" aria-live="polite"></div>
+</section>
+<section class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="margin:0">Data pendataan masuk</h2><button id="refreshSubmissions" type="button" class="secondary">Perbarui data</button></div><p class="muted" style="margin-top:10px">Data baru dari tautan petugas tampil di sini setelah berhasil dikirim. Daftar diperbarui otomatis setiap menit. Foto dibuka melalui akses privat admin.</p>
+<div class="table-wrap"><table style="min-width:780px"><thead><tr><th>Waktu & responden</th><th>Domisili</th><th>Bantuan</th><th>Petugas</th><th>Foto</th></tr></thead><tbody id="submissionRows"><tr><td colspan="5" class="empty">Memuat pendataan…</td></tr></tbody></table></div>
+<div id="submissionMessage" class="message" role="status" aria-live="polite"></div>
+</section>
+<div class="notice">Catatan keamanan: tautan petugas berfungsi seperti kunci akses tanpa login. Jangan bagikan tautan antarpetugas atau ke publik. Jika tautan tersebar, nonaktifkan petugas terkait dan daftarkan kembali untuk membuat tautan baru.</div>
+</div>
+</main>
+<script>
+(()=> {
+ let csrfToken='';
+ const authMessage=document.getElementById('authMessage');
+ const adminArea=document.getElementById('adminArea');
+ const createMessage=document.getElementById('createMessage');
+ const linkBox=document.getElementById('linkBox');
+ const createdLink=document.getElementById('createdLink');
+ const teamRows=document.getElementById('teamRows');
+ const message=(el,text,kind)=>{el.textContent=text;el.hidden=false;el.className='message show '+(kind||'');};
+ async function jsonFetch(url,options={}){const response=await fetch(url,{credentials:'same-origin',cache:'no-store',...options});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||'Permintaan gagal.');return data;}
+ function addCell(row,text,strong=false){const cell=document.createElement('td');if(strong){const b=document.createElement('strong');b.textContent=text;cell.append(b);}else cell.textContent=text;row.append(cell);return cell;}
+
+ async function loadSubmissions(){
+  const data=await jsonFetch('/api/team-submissions');
+  if(data.csrfToken)csrfToken=data.csrfToken;
+  const body=document.getElementById('submissionRows');body.replaceChildren();
+  const items=data.items||[];
+  if(!items.length){const row=document.createElement('tr'),cell=document.createElement('td');cell.colSpan=5;cell.className='empty';cell.textContent='Belum ada pendataan yang dikirim oleh tim.';row.append(cell);body.append(row);return;}
+  const addPhotoLink=(cell,id,label)=>{if(!id)return;const link=document.createElement('a');link.href='/api/respondent-photo?id='+encodeURIComponent(id);link.target='_blank';link.rel='noopener noreferrer';link.textContent=label;cell.append(link);};
+  for(const item of items){
+   const row=document.createElement('tr');
+   const who=document.createElement('td');const name=document.createElement('strong');name.textContent=item.name||'(Tanpa nama)';const time=document.createElement('span');time.className='submission-meta';time.textContent=item.timestamp||'';const nik=document.createElement('span');nik.className='submission-meta';nik.textContent='NIK: '+(item.nik||'—');who.append(name,time,nik);
+   const detail=document.createElement('details');detail.className='detail';const summary=document.createElement('summary');summary.textContent='Detail responden';detail.append(summary);
+   for(const [label,value] of [['Alamat',item.address],['Pekerjaan',item.job],['No. HP/WA',item.phone],['Usia / jenis kelamin',[item.age,item.gender].filter(Boolean).join(' / ')]]){
+    const p=document.createElement('p');p.textContent=label+': '+(value||'—');detail.append(p);
+   }
+   who.append(detail);row.append(who);
+   const city=document.createElement('td');city.textContent=item.city||'—';row.append(city);
+   const aid=document.createElement('td');aid.textContent=item.assistance||'—';row.append(aid);
+   const staff=document.createElement('td');const staffName=document.createElement('strong');staffName.textContent=item.teamName||'—';const staffRole=document.createElement('span');staffRole.className='submission-meta';staffRole.textContent=item.teamPosition||'';const staffPhone=document.createElement('span');staffPhone.className='submission-meta';staffPhone.textContent=item.teamPhone||'';staff.append(staffName,staffRole,staffPhone);row.append(staff);
+   const photos=document.createElement('td');const links=document.createElement('div');links.className='photo-links';addPhotoLink(links,item.selfPhotoId,'Foto diri');addPhotoLink(links,item.ktpPhotoId,'Foto KTP');if(!links.childElementCount)links.textContent='—';photos.append(links);row.append(photos);
+   body.append(row);
+  }
+ }
+ async function loadTeams(){
+  const data=await jsonFetch('/api/team-petugas');
+  if(data.csrfToken)csrfToken=data.csrfToken;
+  teamRows.replaceChildren();
+  const items=data.items||[];
+  if(!items.length){const row=document.createElement('tr'),cell=document.createElement('td');cell.colSpan=4;cell.className='empty';cell.textContent='Belum ada petugas terdaftar.';row.append(cell);teamRows.append(row);return;}
+  for(const item of items){
+   const row=document.createElement('tr');
+   const identity=document.createElement('td');const name=document.createElement('strong');name.textContent=item.display_name;const position=document.createElement('span');position.className='muted';position.textContent=item.position;identity.append(name,position);row.append(identity);
+   addCell(row,item.phone);
+   const statusCell=document.createElement('td');const badge=document.createElement('span');badge.className='status'+(Number(item.active)?'':' off');badge.textContent=Number(item.active)?'Aktif':'Nonaktif';statusCell.append(badge);row.append(statusCell);
+   const actionCell=document.createElement('td');
+   if(Number(item.active)){const button=document.createElement('button');button.type='button';button.className='danger';button.textContent='Nonaktifkan';button.addEventListener('click',async()=>{if(!confirm('Nonaktifkan tautan '+item.display_name+'? Petugas tidak dapat mengirim pendataan menggunakan tautan tersebut.'))return;button.disabled=true;try{await jsonFetch('/api/team-petugas/revoke',{method:'POST',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify({id:item.id})});message(document.getElementById('listMessage'),'Tautan petugas berhasil dinonaktifkan.','ok');await loadTeams();}catch(error){message(document.getElementById('listMessage'),error.message||'Gagal menonaktifkan petugas.','error');button.disabled=false;}});actionCell.append(button);}else{const note=document.createElement('span');note.className='muted';note.textContent='Tidak ada tindakan';actionCell.append(note);}
+   row.append(actionCell);teamRows.append(row);
+  }
+ }
+ document.getElementById('refreshSubmissions').addEventListener('click',async()=>{const button=document.getElementById('refreshSubmissions');button.disabled=true;try{await loadSubmissions();message(document.getElementById('submissionMessage'),'Data berhasil diperbarui.','ok');}catch(error){message(document.getElementById('submissionMessage'),error instanceof Error?error.message:'Data gagal dimuat.','error');}finally{button.disabled=false;}});
+ setInterval(()=>{if(!adminArea.hidden)loadSubmissions().catch(error=>message(document.getElementById('submissionMessage'),error instanceof Error?error.message:'Data gagal diperbarui.','error'));},60000);
+ document.getElementById('teamForm').addEventListener('submit',async event=>{
+  event.preventDefault();message(createMessage,'','');linkBox.className='link-box';
+  const form=event.currentTarget;if(!form.reportValidity())return;
+  const button=document.getElementById('createButton');button.disabled=true;button.textContent='Mendaftarkan…';
+  try{
+   const body={name:document.getElementById('name').value.trim(),position:document.getElementById('position').value,phone:document.getElementById('phone').value.trim()};
+   const data=await jsonFetch('/api/team-petugas',{method:'POST',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify(body)});
+   createdLink.textContent=data.link;document.getElementById('copyLink').onclick=async()=>{try{await navigator.clipboard.writeText(data.link);message(createMessage,'Tautan berhasil disalin.','ok');}catch{message(createMessage,'Salin tautan dengan menekan lama teks tautan di atas.','error');}};
+   document.getElementById('whatsappLink').href='https://wa.me/?text='+encodeURIComponent('Halo '+body.name+', berikut tautan khusus untuk pendataan lapangan Sahabat ODHIV Sumatera Utara:\n'+data.link+'\nJangan bagikan tautan ini kepada orang lain.');
+   linkBox.className='link-box show';message(createMessage,'Petugas berhasil didaftarkan. Simpan dan bagikan tautan khususnya.','ok');form.reset();await loadTeams();
+  }catch(error){message(createMessage,error instanceof Error?error.message:'Gagal mendaftarkan petugas.','error');}
+  finally{button.disabled=false;button.textContent='Daftarkan & Buat Tautan';}
+ });
+ (async()=>{
+  try{
+   const data=await jsonFetch('/api/me');
+   if(!data.admin||!['owner','admin'].includes(data.admin.role))throw new Error('Halaman ini hanya untuk owner/admin. Masuk ke dashboard terlebih dahulu.');
+   csrfToken=data.csrfToken||'';adminArea.hidden=false;authMessage.className='message';authMessage.hidden=true;await loadTeams();try{await loadSubmissions();}catch(error){message(document.getElementById('submissionMessage'),error instanceof Error?error.message:'Data pendataan belum dapat dimuat.','error');}
+  }catch(error){message(authMessage,error instanceof Error?error.message:'Sesi admin tidak tersedia. Masuk ke dashboard terlebih dahulu.','error');}
+ })();
+})();
+</script>
+</body>
+</html>
