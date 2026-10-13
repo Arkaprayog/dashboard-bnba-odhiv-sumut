@@ -119,6 +119,7 @@ Demikian disampaikan, atas perhatiannya, diucapkan terima kasih.</textarea></div
     </article>
   </section>
 </main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
 <script>
 (function(){
   const ids=['letterheadLine1','letterheadLine2','letterheadLine3','letterheadAddress','letterNumber','letterDate','letterNature','letterSubject','letterRecipient','letterAddress','letterBody','letterSignTitle','letterSignName'];
@@ -128,6 +129,15 @@ Demikian disampaikan, atas perhatiannya, diucapkan terima kasih.</textarea></div
     letterSubject:'previewSubject',letterRecipient:'previewRecipient',letterAddress:'previewAddress',
     letterSignTitle:'previewSignTitle',letterSignName:'previewSignName'
   };
+  const documentUrl='https://docs.google.com/document/d/1RuoyRlTIEy24zhewd126KYq53olKuHRv-4BUiIoo82U/edit?usp=sharing';
+  function renderQr(){
+    const target=document.getElementById('signatureQrCode');
+    const fallback=document.getElementById('qrFallback');
+    target.replaceChildren();
+    if(typeof QRCode==='undefined'){fallback.hidden=false;fallback.textContent='Buka dokumen: '+documentUrl;return;}
+    fallback.hidden=true;
+    new QRCode(target,{text:documentUrl,width:300,height:300,colorDark:'#111111',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+  }
   function render(){
     Object.entries(pairs).forEach(([inputId,previewId])=>{
       const value=document.getElementById(inputId).value.trim();
@@ -142,7 +152,7 @@ Demikian disampaikan, atas perhatiannya, diucapkan terima kasih.</textarea></div
   }
   ids.forEach(id=>document.getElementById(id).addEventListener('input',render));
   document.getElementById('printLetter').addEventListener('click',()=>{render();window.print();});
-  render();
+  render();renderQr();
 })();
 </script>
 </body>
