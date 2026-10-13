@@ -208,17 +208,21 @@ async function ensureFeatureSchema(env: Env) {
   ]);
 }
 
-async function sendPushToAll(env: Env, title: string, body: string, tag: string) {
-  if (!env.VAPID_PRIVATE_KEY || !env.VAPID_PUBLIC_KEY || !env.VAPID_SUBJECT) return;
+async function sendPushToAll(env: Env, title: string, body: string, tag: string): Promise<{ configured: boolean; subscriptions: number; failed: number }> {
+  if (!env.VAPID_PRIVATE_KEY || !env.VAPID_PUBLIC_KEY || !env.VAPID_SUBJECT) {
+    return { configured: false, subscriptions: 0, failed: 0 };
+  }
   const rows = await env.DB.prepare("SELECT endpoint_hash,endpoint,p256dh,auth FROM push_subscriptions").all<{
     endpoint_hash: string; endpoint: string; p256dh: string; auth: string;
   }>();
+  const subscriptions = rows.results || [];
+  if (!subscriptions.length) return { configured: true, subscriptions: 0, failed: 0 };
   const vapid: VapidKeys = {
     subject: env.VAPID_SUBJECT,
     publicKey: env.VAPID_PUBLIC_KEY,
     privateKey: env.VAPID_PRIVATE_KEY,
   };
-  await Promise.all((rows.results || []).map(async (row) => {
+  const results = await Promise.all(subscriptions.map(async (row): Promise<boolean> => {
     try {
       const subscription: PushSubscription = {
         endpoint: row.endpoint,
@@ -229,13 +233,17 @@ async function sendPushToAll(env: Env, title: string, body: string, tag: string)
       const response = await fetch(row.endpoint, payload);
       if (response.status === 404 || response.status === 410) {
         await env.DB.prepare("DELETE FROM push_subscriptions WHERE endpoint_hash=?").bind(row.endpoint_hash).run();
-      } else if (!response.ok) {
-        console.warn("push_delivery_failed", { status: response.status });
+        return false;
       }
-    } catch (error) {
-      console.warn("push_delivery_failed", { message: error instanceof Error ? error.message : "unknown_error" });
+      if (!response.ok) console.warn("push_delivery_failed", { status: response.status });
+      return response.ok;
+    } catch {
+      // Do not log provider exception text: it may contain endpoint or subscription details.
+      console.warn("push_delivery_failed", { stage: "request" });
+      return false;
     }
   }));
+  return { configured: true, subscriptions: subscriptions.length, failed: results.filter((ok) => !ok).length };
 }
 
 async function recordNotification(env: Env, title: string, body: string, action: string) {
@@ -285,8 +293,19 @@ export default {
         await ensureFeatureSchema(env);
         const pendingTest = await env.DB.prepare("SELECT state_value FROM notification_state WHERE state_key='pending_push_test'").first<{ state_value: string }>();
         if (pendingTest) {
-          await sendPushToAll(env, "Tes notifikasi Sahabat ODHIV Sumut", "Tes push dari dashboard. Jika perangkat menampilkan pemberitahuan ini, push latar belakang berfungsi.", "push_test");
-          await env.DB.prepare("DELETE FROM notification_state WHERE state_key='pending_push_test'").run();
+          const delivery = await sendPushToAll(env, "Tes notifikasi Sahabat ODHIV Sumut", "Tes push dari dashboard. Jika perangkat menampilkan pemberitahuan ini, push latar belakang berfungsi.", "push_test");
+          // Keep the test request queued when signing keys are absent, there are no
+          // enrolled devices, or any provider rejects delivery. Do not report success
+          // by silently deleting an undelivered test.
+          if (delivery.configured && delivery.subscriptions > 0 && delivery.failed === 0) {
+            await env.DB.prepare("DELETE FROM notification_state WHERE state_key='pending_push_test'").run();
+          } else {
+            console.warn("push_test_pending", {
+              configured: delivery.configured,
+              subscriptions: delivery.subscriptions,
+              failed: delivery.failed,
+            });
+          }
         }
       } catch (error) {
         logIncident("scheduled_push_test_failed", error, { task: "push_test_delivery" });
