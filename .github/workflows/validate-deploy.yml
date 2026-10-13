@@ -289,6 +289,15 @@ jobs:
           test "$page_status" = "200" || (echo "::error::Sahabat dashboard page returned HTTP $page_status." && exit 1)
           grep -qi '<html' /tmp/sahabat-dashboard.html || (echo "::error::Sahabat dashboard response is not HTML." && exit 1)
           grep -q 'ownerProfileForm' /tmp/sahabat-dashboard.html || (echo "::error::Owner profile UI is missing." && exit 1)
+          for photo in 1 2 3; do
+            photo_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output "/tmp/sahabat-toba-photo-$photo.jpg" --write-out '%{http_code}|%{content_type}' "$APP_URL/danau-toba/photo-$photo.jpg?v=1.2.8")"
+            photo_status="${photo_response%%|*}"
+            photo_type="${photo_response#*|}"
+            test "$photo_status" = "200" || (echo "::error::Landing slideshow photo $photo returned HTTP $photo_status." && exit 1)
+            case "$photo_type" in image/jpeg*|image/jpg*) ;; *) echo "::error::Landing slideshow photo $photo has unexpected content type: $photo_type." && exit 1 ;; esac
+            test -s "/tmp/sahabat-toba-photo-$photo.jpg" || (echo "::error::Landing slideshow photo $photo is empty." && exit 1)
+            echo "Verified landing slideshow photo $photo: HTTP $photo_status ($photo_type)."
+          done
           background_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-owner-background.webp --write-out '%{http_code}|%{content_type}' "$APP_URL/owner-background.webp")"
           background_status="${background_response%%|*}"
           background_type="${background_response#*|}"
