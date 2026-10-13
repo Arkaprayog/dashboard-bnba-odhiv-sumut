@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.5 — 2026-10-13
+- Aligned the default Wrangler deployment target, health-service identity, origin, and WebAuthn RP ID with the canonical `sahabatodhiv-sumut` Worker.
+- Removed the redundant manual deployment workflow so production deploys use the validated health-check workflow.
+- Updated deployment and Android documentation to distinguish the signed release APK from the debug APK and document current release limitations.
+
 ## 1.0.18 — 2026-10-12
 - Added a 3-second collaboration logo transition after successful password verification and before dashboard display.
 - Animated orbit rings with the KOLABORASI title, Kemensos and Kemenkes logos, and HIV red ribbon; the transition closes on the Kemensos logo.
