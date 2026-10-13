@@ -1,3 +1,8 @@
+## 1.1.6 — 2026-10-13
+- Removed the username field from the public login screen so the owner can enter the password directly.
+- Refined the compact translucent login card and centered the Kemensos logo.
+- The requested five-photo, one-second Danau Toba slideshow is not yet included; image assets must be committed before enabling it.
+
 # Changelog
 
 ## 1.1.5 — 2026-10-13
