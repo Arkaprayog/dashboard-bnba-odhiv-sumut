@@ -1059,8 +1059,12 @@ export default {
               body: JSON.stringify({ majorDimension: "ROWS", values: [[timestamp, nama, nik, String(usia), gender, alamat, kota, pekerjaan, phone, selfPhotoUrl, ktpPhotoUrl, bantuan, petugas.display_name, petugas.position, petugas.phone]] }),
             });
             if (!appendResponse.ok) throw new Error("Google Sheets gagal menyimpan data pendataan (HTTP " + appendResponse.status + ").");
-            await env.DB.prepare("INSERT INTO audit_log(admin_id,action,target_type,target_id,detail_json) VALUES(NULL,'team_questionnaire_submit','team_petugas',?,?)")
-              .bind(petugas.id, JSON.stringify({ position: petugas.position })).run();
+            try {
+              await env.DB.prepare("INSERT INTO audit_log(admin_id,action,target_type,target_id,detail_json) VALUES(NULL,'team_questionnaire_submit','team_petugas',?,?)")
+                .bind(petugas.id, JSON.stringify({ position: petugas.position })).run();
+            } catch {
+              console.warn("team_submission_audit_failed");
+            }
             return reply({ ok: true, message: "Pendataan berhasil dikirim dan terhubung ke dashboard kuesioner.", timestamp, teamName: petugas.display_name });
           } catch (error) {
             if (accessToken) for (const id of uploadedIds) {
