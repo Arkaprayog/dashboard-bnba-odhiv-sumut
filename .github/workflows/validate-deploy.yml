@@ -326,8 +326,13 @@ jobs:
         env:
           APP_URL: https://sahabatodhivsumut.web.id
         run: |
-          page_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-dashboard.html --write-out '%{http_code}' "$APP_URL/")"
+          page_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --dump-header /tmp/sahabat-headers.txt --output /tmp/sahabat-dashboard.html --write-out '%{http_code}' "$APP_URL/")"
           test "$page_status" = "200" || (echo "::error::Sahabat dashboard page returned HTTP $page_status." && exit 1)
+          grep -Eiq '^strict-transport-security:[[:space:]]*max-age=15552000' /tmp/sahabat-headers.txt || (echo "::error::HSTS header is missing or has unexpected max-age." && exit 1)
+          grep -Eiq '^x-frame-options:[[:space:]]*DENY' /tmp/sahabat-headers.txt || (echo "::error::X-Frame-Options DENY is missing." && exit 1)
+          grep -Eiq '^x-content-type-options:[[:space:]]*nosniff' /tmp/sahabat-headers.txt || (echo "::error::X-Content-Type-Options nosniff is missing." && exit 1)
+          grep -Eiq '^content-security-policy:[[:space:]]*default-src' /tmp/sahabat-headers.txt || (echo "::error::Content-Security-Policy header is missing." && exit 1)
+          grep -Eiq '^cross-origin-resource-policy:[[:space:]]*same-origin' /tmp/sahabat-headers.txt || (echo "::error::Cross-Origin-Resource-Policy same-origin is missing." && exit 1)
           grep -qi '<html' /tmp/sahabat-dashboard.html || (echo "::error::Sahabat dashboard response is not HTML." && exit 1)
           grep -q 'ownerProfileForm' /tmp/sahabat-dashboard.html || (echo "::error::Owner profile UI is missing." && exit 1)
           for photo in 1 2 3; do
