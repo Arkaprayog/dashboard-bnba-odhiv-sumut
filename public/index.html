@@ -634,6 +634,75 @@ body:not(.authenticated) .setup{font-size:.7rem!important;line-height:1.4!import
 @media(max-width:360px){body:not(.authenticated){padding:9px 8px!important}body:not(.authenticated) main{padding:12px 11px 10px!important}body:not(.authenticated) .brand{gap:7px!important}body:not(.authenticated) .brand h1{font-size:1rem!important}}
 @media(max-height:650px){body:not(.authenticated){align-items:flex-start!important}body:not(.authenticated) main{margin:8px auto!important}}
 </style>
+
+<style id="owner-photo-glass-theme-v1">
+/* Owner dashboard: supplied Lake Toba photo, translucent panels, crisp readable text. */
+body.authenticated{
+  background:#123c54 url("/owner-background.webp") center center / cover no-repeat fixed!important;
+  color:#fff;
+}
+body.authenticated::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(4,20,35,.14),rgba(3,18,32,.24))!important;
+}
+body.authenticated main{
+  background:rgba(3,20,36,.09)!important;
+  border:1px solid rgba(255,255,255,.30)!important;
+  box-shadow:0 18px 48px rgba(0,12,28,.20)!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+body.authenticated .owner-card,
+body.authenticated .dashpanel,
+body.authenticated .notification-panel,
+body.authenticated .settings-panel,
+body.authenticated .app-nav,
+body.authenticated .overview-card,
+body.authenticated .overview-panel,
+body.authenticated .news-card,
+body.authenticated .respondent-stat,
+body.authenticated .assessment-panel,
+body.authenticated .respondent-quiz-note{
+  background-color:rgba(3,24,43,.16)!important;
+  border-color:rgba(255,255,255,.38)!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+body.authenticated .app-nav button{
+  background:rgba(0,32,72,.20)!important;
+  border-color:rgba(255,255,255,.42)!important;color:#fff!important;
+}
+body.authenticated .app-nav button[aria-current="page"]{
+  background:rgba(255,255,255,.28)!important;color:#063a7d!important;
+  border-color:rgba(255,255,255,.70)!important;box-shadow:none!important;
+}
+body.authenticated .datatable th{
+  background:rgba(0,30,76,.56)!important;border-color:rgba(255,255,255,.36)!important;
+}
+body.authenticated .datatable td{
+  background:rgba(4,27,49,.10)!important;border-color:rgba(255,255,255,.33)!important;
+}
+body.authenticated .datatable th:first-child,
+body.authenticated .datatable td:first-child{background:rgba(7,54,111,.62)!important}
+body.authenticated .notification-item{
+  background:rgba(255,255,255,.09)!important;border-color:rgba(255,255,255,.24)!important;
+}
+body.authenticated .dashmsg,
+body.authenticated .message,
+body.authenticated .owner-summary,
+body.authenticated .dashhead,
+body.authenticated .overview-panel,
+body.authenticated .news-card{
+  text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;
+}
+body.authenticated :is(h1,h2,h3,h4,label,.owner-summary p,.dashhead p,.overview-panel p,.overview-card small,.respondent-stat-label,.scroll-hint,.respondent-search label){
+  text-shadow:1px 1px 0 rgba(0,16,33,.68);
+}
+@media(max-width:700px){
+  body.authenticated{background-position:center top!important;background-attachment:scroll!important}
+  body.authenticated main{background:rgba(3,20,36,.08)!important}
+}
+</style>
+
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
