@@ -1,3 +1,8 @@
+## 1.1.9 — 2026-10-13
+- Replaced low-contrast white typography with dark, high-contrast text and lighter surfaces across the login, owner dashboard, questionnaire, and loading screen.
+- Preserved the Form Asesmen Terintegrasi's white print sheet, dark printable text, and local Kemensos/ATENSI logos.
+- Synchronized the visible application version and package version to 1.1.9.
+
 ## 1.1.8 — 2026-10-13
 - Reduced the public login card width and transparency overlay, removed backdrop blur, and strengthened text contrast.
 - Hid the login heading and slogan after authentication so the owner profile is the first dashboard section.

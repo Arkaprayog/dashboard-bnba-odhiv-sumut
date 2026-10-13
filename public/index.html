@@ -1051,7 +1051,7 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.0</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.9</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi<br>© 2026 Data Base ODHIV Sumatera Utara · Hak cipta dilindungi</p>
 </main>
@@ -1544,7 +1544,108 @@ async function loadRespondents(){
             const valueFor=header=>{let value=item[header]??'';if(timestampHeader&&header===timestampHeader)value=formatTimestamp(value,false);return value;};
             const details=fields.map(([label,header])=>'<tr><th>'+escapeHtml(label)+'</th><td>'+escapeHtml(valueFor(header))+'</td></tr>').join('');
             const photoMarkup=photos.map(([label,header])=>{const src=imageUrl(item[header]);return '<div class="photo">'+(src?'<img src="'+escapeHtml(src)+'" alt="'+escapeHtml(label)+'">':'<div class="missing">Foto belum tersedia sebagai gambar langsung</div>')+'<b>'+escapeHtml(label)+'</b></div>';}).join('');
-            win.document.write('<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dokumen Responden BNBA</title><style>@page{size:A4 portrait;margin:10mm}*{box-sizing:border-box}body{font:10pt Arial,sans-serif;color:#17365d;margin:0}.head{text-align:center;border-bottom:2px solid #1d69a6;padding:0 0 10px;margin-bottom:12px}.head h1{font-size:15pt;margin:0 0 4px}.head h2{font-size:12pt;margin:0}.section{background:#1769aa;color:white;padding:7px 9px;font-weight:bold;margin:10px 0 5px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #bdd7ee;padding:6px;text-align:left;vertical-align:top}th{width:31%;background:#e8f3fb}.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.photo{border:1px solid #bdd7ee;padding:4px;text-align:center;break-inside:avoid}.photo img{width:100%;height:105px;object-fit:contain}.photo b{display:block;font-size:8pt;padding:4px 0}.missing{height:105px;display:flex;align-items:center;justify-content:center;font-size:8pt;color:#666}.foot{margin-top:16px;border-top:1px solid #8ab9df;padding-top:6px;font-size:8pt;color:#555}@media print{button{display:none}}</style></head><body><div class="head"><h1>DATA RESPONDEN BANTUAN NON TUNAI (BNBA)</h1><h2>Form Asesmen Terintegrasi</h2></div><div class="section">IDENTITAS RESPONDEN</div><table>'+details+'</table><div class="section">DOKUMENTASI</div><div class="photos">'+(photoMarkup||'<p>Dokumentasi belum tersedia.</p>')+'</div><div class="foot">Dicetak dari Dashboard BNBA ODHIV Sumut · Dokumen bersifat rahasia</div><script>window.addEventListener("load",()=>setTimeout(()=>window.print(),700));<\/script></body></html>');
+            win.document.write('<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dokumen Responden BNBA</title><style>@page{size:A4 portrait;margin:10mm}*{box-sizing:border-box}body{font:10pt Arial,sans-serif;color:#17365d;margin:0}.head{text-align:center;border-bottom:2px solid #1d69a6;padding:0 0 10px;margin-bottom:12px}.head h1{font-size:15pt;margin:0 0 4px}.head h2{font-size:12pt;margin:0}.section{background:#1769aa;color:white;padding:7px 9px;font-weight:bold;margin:10px 0 5px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #bdd7ee;padding:6px;text-align:left;vertical-align:top}th{width:31%;background:#e8f3fb}.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.photo{border:1px solid #bdd7ee;padding:4px;text-align:center;break-inside:avoid}.photo img{width:100%;height:105px;object-fit:contain}.photo b{display:block;font-size:8pt;padding:4px 0}.missing{height:105px;display:flex;align-items:center;justify-content:center;font-size:8pt;color:#666}.foot{margin-top:16px;border-top:1px solid #8ab9df;padding-top:6px;font-size:8pt;color:#555}@media print{button{display:none}}</style>
+  <style id="readable-contrast-v1-1-9">
+    :root{color-scheme:light}
+    body:not(.authenticated) main,
+    body.authenticated main{
+      color:#163650!important;background:rgba(248,252,255,.97)!important;
+      border:1px solid #c6d8e8!important;
+      box-shadow:0 14px 36px rgba(11,37,68,.16)!important;
+      backdrop-filter:none!important;-webkit-backdrop-filter:none!important
+    }
+    body:not(.authenticated) main *,
+    body.authenticated main *{
+      color:#163650!important;-webkit-text-fill-color:#163650!important;
+      text-shadow:none!important
+    }
+    body:not(.authenticated) .field input,
+    body.authenticated input,
+    body.authenticated textarea,
+    body.authenticated select{
+      color:#163650!important;-webkit-text-fill-color:#163650!important;
+      background:#fff!important;border-color:#b9cddd!important
+    }
+    body:not(.authenticated) .field input::placeholder,
+    body.authenticated input::placeholder,
+    body.authenticated textarea::placeholder{color:#5f7487!important;-webkit-text-fill-color:#5f7487!important;opacity:1!important}
+    body:not(.authenticated) .submit,
+    body.authenticated .dashbtn,
+    body.authenticated .workflow-save,
+    body.authenticated .bell-button,
+    body.authenticated .settings-button,
+    body.authenticated .owner-edit,
+    body.authenticated .assessment-upload,
+    body.authenticated .app-nav button{
+      background:#dceeff!important;color:#163650!important;-webkit-text-fill-color:#163650!important;
+      border:1px solid #93b8d5!important;box-shadow:none!important
+    }
+    body.authenticated .app-nav{background:#eaf3fb!important;border-color:#c8d9e7!important}
+    body.authenticated .app-nav button[aria-current="page"]{background:#c4e5fb!important;border-color:#77add1!important}
+    body.authenticated .owner-card,
+    body.authenticated .dashpanel,
+    body.authenticated .notification-panel,
+    body.authenticated .settings-panel,
+    body.authenticated .overview-card,
+    body.authenticated .overview-panel,
+    body.authenticated .news-card,
+    body.authenticated .respondent-stat,
+    body.authenticated .assessment-panel,
+    body.authenticated .respondent-quiz-note,
+    body.authenticated .app-view,
+    body.authenticated .questionnaire-panel,
+    body.authenticated .database-panel,
+    body.authenticated .notification-card,
+    body.authenticated .dashfield,
+    body.authenticated .assessment-section{
+      color:#163650!important;background:#f6faff!important;
+      border-color:#ccdce9!important;box-shadow:none!important;
+      backdrop-filter:none!important;-webkit-backdrop-filter:none!important
+    }
+    body.authenticated .datatable{
+      color:#163650!important;background:#fff!important;border-color:#c4d4e2!important
+    }
+    body.authenticated .datatable th,
+    body.authenticated .datatable td{
+      color:#163650!important;-webkit-text-fill-color:#163650!important;
+      border-color:#cbd9e5!important
+    }
+    body.authenticated .datatable th{background:#e3eff9!important}
+    body.authenticated .datatable td{background:#fff!important}
+    body.authenticated .datatable tr:nth-child(even) td{background:#f6faff!important}
+    body.authenticated .datatable th:first-child,
+    body.authenticated .datatable td:first-child{background:#eaf3fb!important}
+    body.authenticated main a,
+    body.authenticated .app-view a,
+    body.authenticated .news-link,
+    body.authenticated .respondent-quiz-url{
+      color:#0757a5!important;-webkit-text-fill-color:#0757a5!important;text-decoration-thickness:1.5px
+    }
+    body.authenticated .news-card .news-category{background:#e2f1fb!important;color:#174f79!important}
+    body.authenticated .bell-count{background:#fee2e2!important;color:#991b1b!important;-webkit-text-fill-color:#991b1b!important}
+    body:not(.authenticated) .message:not(:empty){background:#fff8df!important;border-color:#e6d49b!important}
+    body:not(.authenticated) .message{color:#6c4c08!important;-webkit-text-fill-color:#6c4c08!important}
+    body:not(.authenticated) .directorate,
+    body:not(.authenticated) .foot,
+    body:not(.authenticated) .setup,
+    body:not(.authenticated) .login-trust,
+    body:not(.authenticated) .trust-item{color:#294d6a!important;-webkit-text-fill-color:#294d6a!important}
+    body.authenticated .scroll-hint,
+    body.authenticated .filter-count,
+    body.authenticated .workflow-state,
+    body.authenticated .settings-status{color:#415e76!important;-webkit-text-fill-color:#415e76!important}
+    body.authenticated .assessment-paper,
+    body.authenticated .assessment-paper *{text-shadow:none!important}
+    @media(max-width:600px){
+      body.authenticated main{background:rgba(248,252,255,.98)!important}
+    }
+    @media print{
+      body.authenticated main{background:#fff!important;border:0!important;box-shadow:none!important}
+      #assessmentView .assessment-paper,#assessmentView .assessment-paper *{color:#111!important;-webkit-text-fill-color:#111!important}
+    }
+  </style>
+
+</head><body><div class="head"><h1>DATA RESPONDEN BANTUAN NON TUNAI (BNBA)</h1><h2>Form Asesmen Terintegrasi</h2></div><div class="section">IDENTITAS RESPONDEN</div><table>'+details+'</table><div class="section">DOKUMENTASI</div><div class="photos">'+(photoMarkup||'<p>Dokumentasi belum tersedia.</p>')+'</div><div class="foot">Dicetak dari Dashboard BNBA ODHIV Sumut · Dokumen bersifat rahasia</div><script>window.addEventListener("load",()=>setTimeout(()=>window.print(),700));<\/script></body></html>');
             win.document.close();
           });
           td.append(print);tr.appendChild(td);return;
