@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 500" role="img" aria-labelledby="title desc">
+<title id="title">Kementerian Sosial Republik Indonesia</title>
+<desc id="desc">Lambang Kementerian Sosial dengan figur biru, daun hijau, dan garis kuning pada latar transparan.</desc>
+<g transform="translate(65 5)">
+  <circle cx="175" cy="84" r="36" fill="#214783"/>
+  <path fill="#214783" d="M111 126c26 29 66 40 112 27l31-10-29 91-1 65-27-73c-23-55-49-78-86-100z"/>
+  <path fill="#00984a" d="M237 244C252 150 313 69 407 0c-3 43-9 66-28 81-59 35-105 80-142 163z"/>
+  <path fill="#00984a" d="M250 267C291 163 367 86 474 30c-9 42-16 68-38 80-80 35-139 87-186 157z"/>
+  <path fill="#00984a" d="M251 293c60-91 147-146 257-170-36 24-70 35-107 47-64 22-112 63-150 123z"/>
+  <path fill="#00984a" d="M251 314c42-67 105-112 183-143-27 28-49 42-79 60-40 23-72 50-104 83z"/>
+  <path fill="#f7c51b" d="M111 302c18 45 56 69 110 65 52-4 93-27 122-67h30c-27 62-83 104-152 116-55 10-105-2-146-33-25-20-42-47-54-81z"/>
+  <path fill="#f7c51b" d="M201 393c61-18 101-50 123-91h29c-18 52-58 88-117 108z"/>
+  <path fill="#f7c51b" d="M267 405c56-25 89-60 106-103h28c-13 57-47 94-102 118z"/>
+  <path fill="#f7c51b" d="M335 405c44-26 69-62 82-103h26c-9 54-34 92-80 118z"/>
+</g>
+<text x="300" y="430" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="49" font-weight="700" letter-spacing="-1.5" fill="#302b2b">KEMENTERIAN SOSIAL</text>
+<text x="300" y="474" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="34" font-weight="700" fill="#302b2b">REPUBLIK INDONESIA</text>
+</svg>
