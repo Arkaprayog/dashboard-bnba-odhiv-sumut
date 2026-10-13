@@ -50,5 +50,10 @@ android {
 
 dependencies {
     implementation 'androidx.core:core:1.15.0'
-    implementation 'androidx.biometric:biometric:1.2.0'
+    implementation('androidx.biometric:biometric:1.1.0') {
+        // Newer kotlin-stdlib already contains these classes; excluding legacy split
+        // artifacts prevents duplicate-class failures during D8 packaging.
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+    }
 }
