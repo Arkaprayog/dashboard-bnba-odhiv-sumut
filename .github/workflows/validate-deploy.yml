@@ -157,6 +157,7 @@ jobs:
           const dashboard = fs.readFileSync('public/index.html', 'utf8');
           const intake = fs.readFileSync('public/tim-pendataan.html', 'utf8');
           const manager = fs.readFileSync('public/kelola-tim.html', 'utf8');
+          const config = fs.readFileSync('wrangler.toml', 'utf8');
           const checks = [
             ['team API routes exist', worker.includes('/api/team-petugas') && worker.includes('/api/team-login') && worker.includes('/api/team-me') && worker.includes('/api/team-profile') && worker.includes('/api/team-questionnaire') && worker.includes('/api/team-submissions')],
             ['team access tokens are hashed', worker.includes('token_hash TEXT NOT NULL UNIQUE') && worker.includes('hashTeamToken(token)')],
@@ -164,7 +165,8 @@ jobs:
             ['field page captures respondent photos with device camera controls', intake.includes('capture="user"') && intake.includes('capture="environment"')],
             ['team login requires the registered name and a private session', worker.includes('normalizeName(name) !== normalizeName(petugas.display_name)') && worker.includes('team_session=') && worker.includes('HttpOnly; Secure; SameSite=Strict')],
             ['team profile is mandatory and accepts up to 10 MB', worker.includes('file.size > 10 * 1024 * 1024') && worker.includes('profile_completed=1') && intake.includes('maksimal 10 MB')],
-            ['team profile upload uses Google Drive multipart/related encoding', worker.includes('googleDriveMultipartUpload(accessToken, metadata, file)') && worker.includes('multipart/related; boundary=') && worker.includes('uploadType=multipart&fields=id,mimeType')],
+            ['team profile upload uses private Cloudflare KV storage', worker.includes('TEAM_PROFILE_PHOTOS.put(objectKey') && worker.includes('kv:v1:') && worker.includes('readPrivateTeamPhoto(env, petugas.profile_photo_id)') && !worker.includes('googleDriveMultipartUpload(accessToken, metadata, file)')],
+            ['private profile photo KV namespace is bound to Worker environments', config.includes('binding = "TEAM_PROFILE_PHOTOS"') && config.includes('id = "4ee60e8a308e49dab069993b096a137b"')],
             ['admin page requires existing admin session', manager.includes("jsonFetch('/api/me')") && manager.includes("['owner','admin']")],
             ['dashboard links to team workspace', dashboard.includes("window.open('/tim-petugas.html'") && dashboard.includes('href="/tim-petugas.html"')],
             ['staff roster page and protected profile endpoint exist', fs.existsSync('public/daftar-petugas.html') && worker.includes('/api/team-petugas-photo') && worker.includes('has_profile_photo')]
