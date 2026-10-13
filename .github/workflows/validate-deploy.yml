@@ -219,6 +219,8 @@ jobs:
           if (!config.includes('WEBAUTHN_RP_ID = "sahabatodhivsumut.web.id"')) throw new Error('Default WebAuthn RP ID must match the canonical custom domain.');
           if (!config.includes('workers_dev = false')) throw new Error('The primary Worker must not expose a parallel workers.dev hostname.');
           if (!config.includes('routes = [{ pattern = "sahabatodhivsumut.web.id", custom_domain = true }]')) throw new Error('Wrangler must declare the production custom domain.');
+          if (!config.includes('[assets]\ndirectory = "./public"\nbinding = "ASSETS"\nrun_worker_first = true')) throw new Error('Static assets must pass through the Worker so security headers are applied.');
+
           const blocks = [
             ['root cron disabled', '[triggers]\ncrons = []'],
             ['Sahabat primary', '[env.sahabatodhiv-sumut.triggers]\ncrons = ["* * * * *"]'],
