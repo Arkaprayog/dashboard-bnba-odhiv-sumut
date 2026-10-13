@@ -1,7 +1,7 @@
 # Sahabat ODHIV Sumut — Android app source
 
 This project wraps the existing Cloudflare dashboard:
-https://sahabatodhiv-sumut.aryprayoga139.workers.dev/
+https://sahabatodhivsumut.web.id/
 
 ## What this build does
 
