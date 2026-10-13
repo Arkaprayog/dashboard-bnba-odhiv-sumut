@@ -995,6 +995,29 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
   }
 </style>
 
+
+  <style id="dashboard-blue-controls-v1-1-12">
+    @media screen {
+      body.authenticated main :is(.owner-card,.owner-edit,.owner-header-actions,.top-actions,.bell-button,.settings-button,#notificationBellButton,#settingsButton,#logoutButton,.profile-button,.profile-menu-button,[aria-label*="Profil"],[title*="Profil"]) {
+        color:#fff!important;
+        -webkit-text-fill-color:#fff!important;
+        background:rgba(0,105,220,.32)!important;
+        border:1px solid rgba(180,220,255,.42)!important;
+        box-shadow:none!important;
+      }
+      body.authenticated main :is(.bell-button,.settings-button,#notificationBellButton,#settingsButton,#logoutButton,.owner-edit,.profile-button,.profile-menu-button,[aria-label*="Profil"],[title*="Profil"]):hover,
+      body.authenticated main :is(.bell-button,.settings-button,#notificationBellButton,#settingsButton,#logoutButton,.owner-edit,.profile-button,.profile-menu-button,[aria-label*="Profil"],[title*="Profil"]):focus-visible {
+        background:rgba(0,132,255,.48)!important;
+        border-color:rgba(220,240,255,.72)!important;
+      }
+      body.authenticated main .bell-count {
+        background:rgba(0,132,255,.9)!important;
+        color:#fff!important;
+        -webkit-text-fill-color:#fff!important;
+      }
+    }
+  </style>
+
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
