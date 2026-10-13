@@ -132,14 +132,25 @@ Demikian disampaikan, atas perhatiannya, diucapkan terima kasih.</textarea></div
     letterSubject:'previewSubject',letterRecipient:'previewRecipient',letterAddress:'previewAddress',
     letterSignTitle:'previewSignTitle',letterSignName:'previewSignName'
   };
-  const documentUrl='https://docs.google.com/document/d/1RuoyRlTIEy24zhewd126KYq53olKuHRv-4BUiIoo82U/edit?usp=sharing';
-  function renderQr(){
-    const target=document.getElementById('signatureQrCode');
-    const fallback=document.getElementById('qrFallback');
-    target.replaceChildren();
-    if(typeof QRCode==='undefined'){fallback.hidden=false;fallback.textContent='Buka dokumen: '+documentUrl;return;}
-    fallback.hidden=true;
-    new QRCode(target,{text:documentUrl,width:300,height:300,colorDark:'#111111',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+  const qrImage=document.getElementById('signatureQrImage');
+  const qrLogo=document.querySelector('.signature-qr .qr-logo');
+  const qrFallback=document.getElementById('qrFallback');
+  qrImage.addEventListener('error',()=>{
+    qrImage.hidden=true;
+    if(qrLogo) qrLogo.hidden=true;
+    qrFallback.hidden=false;
+  });
+  async function waitForPreviewImages(){
+    const images=Array.from(document.querySelectorAll('#letterPreview img')).filter(image=>!image.hidden);
+    await Promise.all(images.map(image=>{
+      if(image.complete) return Promise.resolve();
+      return new Promise(resolve=>{
+        const done=()=>resolve();
+        image.addEventListener('load',done,{once:true});
+        image.addEventListener('error',done,{once:true});
+        window.setTimeout(done,5000);
+      });
+    }));
   }
   function render(){
     Object.entries(pairs).forEach(([inputId,previewId])=>{
@@ -154,8 +165,8 @@ Demikian disampaikan, atas perhatiannya, diucapkan terima kasih.</textarea></div
     });
   }
   ids.forEach(id=>document.getElementById(id).addEventListener('input',render));
-  document.getElementById('printLetter').addEventListener('click',()=>{render();window.print();});
-  render();renderQr();
+  document.getElementById('printLetter').addEventListener('click',async()=>{render();await waitForPreviewImages();window.print();});
+  render();
 })();
 </script>
 </body>
