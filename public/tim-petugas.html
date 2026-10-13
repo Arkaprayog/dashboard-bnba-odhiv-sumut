@@ -73,6 +73,26 @@ html body .foot,html body .setup,html body .scroll-hint,html body .app-version,h
 html body input,html body textarea,html body select,html body option{color:#123b67}
 html body button{color:inherit}
 html body .app-nav button[aria-current="page"]{color:#07366f!important}
+
+/* Fix Safari/WebKit text fill, which can override the CSS color property. */
+html body:not(.authenticated) main .foot,
+html body:not(.authenticated) main .foot *,
+html body:not(.authenticated) main .setup,
+html body:not(.authenticated) main .setup *,
+html body:not(.authenticated) main .directorate,
+html body:not(.authenticated) main .directorate *,
+html body.authenticated main .scroll-hint,
+html body.authenticated main .scroll-hint *,
+html body.authenticated main .filter-count,
+html body.authenticated main .filter-count *,
+html body.authenticated main .workflow-state,
+html body.authenticated main .workflow-state *,
+html body.authenticated main .settings-status,
+html body.authenticated main .settings-status * {
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  opacity:1!important;
+}
 </style>
 </head>
 <body>
