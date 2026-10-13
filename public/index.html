@@ -874,7 +874,7 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
       <button type="button" data-view="database">▤ Database</button>
       <button type="button" data-view="questionnaire">▧ Kuesioner</button>
       <button type="button" data-view="assessment">▧ Asesmen</button>
-      <button type="button" data-view="news">▤ Berita</button>
+      <button type="button" data-view="formats">▤ Format Lainnya</button>
       <button type="button" data-view="respondentQuiz">▧ Kuisioner Responden</button>
     </nav>
     <section class="app-view" id="homeView" aria-label="Beranda Statistik">
@@ -1009,6 +1009,24 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
         <p>Jawaban yang dikirim responden disimpan oleh Google Forms. Jika formulir telah ditautkan ke Google Sheets, respons juga tercatat di spreadsheet tersebut. Penyimpanan atau sinkronisasi ke Dashboard dan Data PPKS mengikuti koneksi sumber data yang sudah dikonfigurasi; menu ini menyediakan tautan dan kode QR, bukan koneksi baru ke Drive atau Data PPKS.</p>
       </div>
     </section>
+    <section class="app-view" id="formatsView" hidden aria-label="Format dokumen">
+      <div class="dashhead"><div><h2>Format Lainnya</h2><p>Pilih jenis surat yang ingin dibuat. Formulir akan disesuaikan setelah format surat diberikan.</p></div></div>
+      <div class="overview-grid">
+        <article class="overview-card">
+          <small>Dokumen kedinasan</small>
+          <strong style="display:block;font-size:1.15rem;margin:8px 0">Surat Tugas</strong>
+          <p>Tempat untuk formulir dan pembuatan Surat Tugas.</p>
+          <button type="button" class="dashbtn" data-document-type="surat-tugas" disabled>Formulir menyusul</button>
+        </article>
+        <article class="overview-card">
+          <small>Dokumen lainnya</small>
+          <strong style="display:block;font-size:1.15rem;margin:8px 0">Surat Lainnya</strong>
+          <p>Tempat untuk format surat lain sesuai contoh yang akan diberikan.</p>
+          <button type="button" class="dashbtn" data-document-type="surat-lainnya" disabled>Formulir menyusul</button>
+        </article>
+      </div>
+      <p class="scroll-hint">Kirimkan contoh atau format surat terlebih dahulu. Formulir akan dibuat mengikuti format tersebut.</p>
+    </section>
     <section class="app-view" id="newsView" hidden aria-label="Berita HIV dan Kesejahteraan Sosial">
       <div class="dashhead"><div><h2>Berita & Informasi</h2><p>Informasi publik dari RSS sumber kesehatan dan berita Sumatera Utara</p></div><button class="dashbtn" id="refreshNews" type="button">Perbarui berita</button></div>
       <div class="news-tools"><select id="newsCategory" aria-label="Filter kategori berita"><option value="">Semua kategori</option><option>HIV/AIDS</option><option>Kemensos</option><option>Bansos dan Kebijakan</option><option>Kemenkes dan Layanan Kesehatan</option><option>Sumatera Utara</option></select><input id="newsSearch" type="search" placeholder="Cari judul berita…" aria-label="Cari berita"></div>
@@ -1095,7 +1113,7 @@ let overviewRows=[];
 let overviewHeaders=[];
 let newsItems=[];
 function setAppView(view){
- const views={home:document.getElementById('homeView'),database:document.getElementById('databaseView'),questionnaire:document.getElementById('questionnaireView'),assessment:document.getElementById('assessmentView'),news:document.getElementById('newsView'),respondentQuiz:document.getElementById('respondentQuizView')};
+ const views={home:document.getElementById('homeView'),database:document.getElementById('databaseView'),questionnaire:document.getElementById('questionnaireView'),assessment:document.getElementById('assessmentView'),formats:document.getElementById('formatsView'),news:document.getElementById('newsView'),respondentQuiz:document.getElementById('respondentQuizView')};
  Object.entries(views).forEach(([key,node])=>{if(node)node.hidden=key!==view;});
  document.querySelectorAll('#appNavigation [data-view]').forEach(button=>{if(button.dataset.view===view)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
  if(view==='news'&&!newsItems.length)loadNews();
