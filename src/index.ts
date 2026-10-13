@@ -9,6 +9,7 @@ interface AdminRow {
 }
 
 import { buildPushPayload, type PushSubscription, type VapidKeys } from "@block65/webcrypto-web-push";
+import { safeNewsUrl } from "./news-url-policy.js";
 
 interface Env {
   ASSETS: Fetcher;
@@ -384,6 +385,7 @@ export default {
         if (priority === "sumut" || /sumatera utara|sumut|medan|deli serdang|pematangsiantar|tapanuli|simalungun|binjai|nias/.test(text)) return "Sumatera Utara";
         return priority === "health" ? "Kemenkes dan Layanan Kesehatan" : priority === "sumut" ? "Sumatera Utara" : "";
       };
+      // RSS feeds are external input. Permit article links only on the trusted publisher domains.
       const results = await Promise.allSettled(feeds.map(async feed => {
         const response = await fetch(feed.url, { headers: { "accept": "application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8", "user-agent": "Sahabat-ODHIV-Sumut-News/1.0 (+public RSS reader)" }, signal: AbortSignal.timeout(8000) });
         if (!response.ok) throw new Error(feed.name + " RSS HTTP " + response.status);
@@ -393,13 +395,14 @@ export default {
         return blocks.map(block => {
           const title = getTag(block, "title");
           const linkMatch = block.match(/<link(?:\s[^>]*)?href=["']([^"']+)["'][^>]*\/?\s*>/i);
-          const link = getTag(block, "link") || linkMatch?.[1] || "";
+          const candidateUrl = getTag(block, "link") || linkMatch?.[1] || "";
+          const articleUrl = safeNewsUrl(candidateUrl);
           const description = getTag(block, "description") || getTag(block, "summary") || getTag(block, "content:encoded") || getTag(block, "content");
           const published = getTag(block, "pubDate") || getTag(block, "published") || getTag(block, "updated") || getTag(block, "dc:date");
           const date = published && !Number.isNaN(Date.parse(published)) ? new Date(published).toISOString() : "";
           const category = topicFor(title, description, feed.priority);
-          return { title: title.slice(0, 300), summary: description.slice(0, 320), url: link, publishedAt: date, source: feed.name, category };
-        }).filter(item => item.title && /^https:\/\//i.test(item.url) && item.category);
+          return { title: title.slice(0, 300), summary: description.slice(0, 320), url: articleUrl, publishedAt: date, source: feed.name, category };
+        }).filter(item => item.title && item.url && item.category);
       }));
       const articles = results.flatMap(result => result.status === "fulfilled" ? result.value : []);
       const seen = new Set<string>();
