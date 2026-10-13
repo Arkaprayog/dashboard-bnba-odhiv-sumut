@@ -287,8 +287,8 @@ export default {
         logIncident("scheduled_auth_housekeeping_failed", error);
         throw error;
       }
-      // Process push-test requests queued by the Sahabat Worker. The dashboard Worker
-      // owns the single cron and its VAPID private key; both workers share the same D1.
+      // The Sahabat ODHIV Worker owns this single scheduled poller and its VAPID key.
+      // Push-test requests and subscriptions are stored in the shared D1 database.
       try {
         await ensureFeatureSchema(env);
         const pendingTest = await env.DB.prepare("SELECT state_value FROM notification_state WHERE state_key='pending_push_test'").first<{ state_value: string }>();
@@ -344,12 +344,12 @@ export default {
 
     if (url.pathname === "/api/health" && request.method === "GET") {
       try {
-        if (!env.DB) return reply({ ok: false, service: "dashboard-bnba-odhiv-sumut", error: "Database D1 belum dikonfigurasi." }, 503);
+        if (!env.DB) return reply({ ok: false, service: "sahabatodhiv-sumut", error: "Database D1 belum dikonfigurasi." }, 503);
         await env.DB.prepare("SELECT 1 AS ok").first<{ ok: number }>();
-        return reply({ ok: true, service: "dashboard-bnba-odhiv-sumut", database: "connected", mode: "ready" });
+        return reply({ ok: true, service: "sahabatodhiv-sumut", database: "connected", mode: "ready" });
       } catch (error) {
         const incidentId = logIncident("health_check_failed", error, { path: url.pathname });
-        return reply({ ok: false, service: "dashboard-bnba-odhiv-sumut", error: "Pemeriksaan backend gagal.", incidentId }, 503);
+        return reply({ ok: false, service: "sahabatodhiv-sumut", error: "Pemeriksaan backend gagal.", incidentId }, 503);
       }
     }
 
