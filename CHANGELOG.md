@@ -1,3 +1,9 @@
+## 1.1.8 — 2026-10-13
+- Reduced the public login card width and transparency overlay, removed backdrop blur, and strengthened text contrast.
+- Hid the login heading and slogan after authentication so the owner profile is the first dashboard section.
+- Added the owner Lake Toba photo as the first slide in the eight-image landing slideshow; each slide remains visible for five seconds.
+- Added a deployment smoke check for the generated WebP background asset.
+
 ## 1.1.7 — 2026-10-13
 - Added seven-photo Danau Toba login slideshow, advancing every second and looping while logged out.
 - Pauses after authentication and resumes after logout.
