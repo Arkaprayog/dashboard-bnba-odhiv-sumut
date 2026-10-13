@@ -47,7 +47,7 @@ button,.btn{display:inline-flex;align-items:center;justify-content:center;gap:7p
 <div id="listMessage" class="message" role="status" aria-live="polite"></div>
 </section>
 <section class="card">
-<h2>Data pendataan masuk</h2><p class="muted">Data baru dari tautan petugas tampil otomatis di sini setelah berhasil dikirim. Foto dibuka melalui akses privat admin.</p>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="margin:0">Data pendataan masuk</h2><button id="refreshSubmissions" type="button" class="secondary">Perbarui data</button></div><p class="muted" style="margin-top:10px">Data baru dari tautan petugas tampil di sini setelah berhasil dikirim. Daftar diperbarui otomatis setiap menit. Foto dibuka melalui akses privat admin.</p>
 <div class="table-wrap"><table style="min-width:780px"><thead><tr><th>Waktu & responden</th><th>Domisili</th><th>Bantuan</th><th>Petugas</th><th>Foto</th></tr></thead><tbody id="submissionRows"><tr><td colspan="5" class="empty">Memuat pendataan…</td></tr></tbody></table></div>
 <div id="submissionMessage" class="message" role="status" aria-live="polite"></div>
 </section>
@@ -105,7 +105,7 @@ button,.btn{display:inline-flex;align-items:center;justify-content:center;gap:7p
    row.append(actionCell);teamRows.append(row);
   }
  }
- document.getElementById('teamForm').addEventListener('submit',async event=>{
+ document.getElementById('refreshSubmissions').addEventListener('click',async()=>{const button=document.getElementById('refreshSubmissions');button.disabled=true;try{await loadSubmissions();message(document.getElementById('submissionMessage'),'Data berhasil diperbarui.','ok');}catch(error){message(document.getElementById('submissionMessage'),error instanceof Error?error.message:'Data gagal dimuat.','error');}finally{button.disabled=false;}});\n setInterval(()=>{if(!adminArea.hidden)loadSubmissions().catch(error=>message(document.getElementById('submissionMessage'),error instanceof Error?error.message:'Data gagal diperbarui.','error'));},60000);\n document.getElementById('teamForm').addEventListener('submit',async event=>{
   event.preventDefault();message(createMessage,'','');linkBox.className='link-box';
   const form=event.currentTarget;if(!form.reportValidity())return;
   const button=document.getElementById('createButton');button.disabled=true;button.textContent='Mendaftarkan…';
@@ -122,7 +122,7 @@ button,.btn{display:inline-flex;align-items:center;justify-content:center;gap:7p
   try{
    const data=await jsonFetch('/api/me');
    if(!data.admin||!['owner','admin'].includes(data.admin.role))throw new Error('Halaman ini hanya untuk owner/admin. Masuk ke dashboard terlebih dahulu.');
-   csrfToken=data.csrfToken||'';adminArea.hidden=false;authMessage.className='message';authMessage.hidden=true;await loadTeams();await loadSubmissions();
+   csrfToken=data.csrfToken||'';adminArea.hidden=false;authMessage.className='message';authMessage.hidden=true;await loadTeams();try{await loadSubmissions();}catch(error){message(document.getElementById('submissionMessage'),error instanceof Error?error.message:'Data pendataan belum dapat dimuat.','error');}
   }catch(error){message(authMessage,error instanceof Error?error.message:'Sesi admin tidak tersedia. Masuk ke dashboard terlebih dahulu.','error');}
  })();
 })();
