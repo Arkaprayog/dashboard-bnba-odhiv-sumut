@@ -112,10 +112,10 @@ jobs:
           const checks = [
             ['questionnaire has centered transparent logo cube and bottom loading line', intro.includes('class="cube"') && intro.includes('class="loading"') && intro.includes('cube-spin') && intro.includes('final-screen')],
             ['questionnaire redirects directly to canonical Google Form', intro.includes('window.location.replace("https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform")')],
-            ['questionnaire keeps a usable fallback link', intro.includes('id="formLink"') && intro.includes('Buka Google Forms')],
+            ['questionnaire keeps a usable fallback link and local transparent Kemensos logo', intro.includes('Lanjut ke kuesioner') && intro.includes('/kemensos.svg')],
             ['dashboard login opens without animated intro', !dashboard.includes('startCollaborationIntro') && !dashboard.includes('collab-intro')],
             ['native app has no animated splash or artificial delay', !activity.includes('AnimatedSplashView') && !activity.includes('3000L') && activity.includes('setContentView(webView);')],
-            ['dashboard link and QR target questionnaire page', dashboard.includes('kuisioner-responden.html')],
+            ['dashboard uses local Kemensos logo and links to questionnaire page', dashboard.includes('kuisioner-responden.html') && !dashboard.includes('upload.wikimedia.org') && dashboard.includes('/kemensos.svg')],
             ['old short form link removed', !dashboard.includes('9YuWSVtgpcSed5St5')],
           ];
           for (const [name, ok] of checks) {
