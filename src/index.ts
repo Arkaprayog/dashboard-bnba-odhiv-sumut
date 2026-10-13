@@ -868,6 +868,63 @@ export default {
           return reply({ ok: true });
         }
 
+
+        if (url.pathname === "/api/team-submissions" && request.method === "GET") {
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login ke dashboard admin." }, 401);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengakses pendataan tim." }, 403);
+          if (!env.GOOGLE_SHEET_ID || !env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !env.GOOGLE_PRIVATE_KEY) {
+            return reply({ error: "Integrasi Google Sheets/Drive belum dikonfigurasi." }, 503);
+          }
+          try {
+            const accessToken = await googleAccessToken(env);
+            const base = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID);
+            const range = encodeURIComponent("'Kuisioner Owner'!A1:O1000");
+            const response = await fetch(base + "/values/" + range + "?valueRenderOption=FORMATTED_VALUE", { headers: { authorization: "Bearer " + accessToken } });
+            if (!response.ok) return reply({ error: "Data pendataan tim belum dapat dibaca dari Google Sheets (HTTP " + response.status + ")." }, 502);
+            const payload = await response.json() as { values?: string[][] };
+            const rows = payload.values || [];
+            if (!rows.length) return reply({ items: [], csrfToken: admin.csrf_token });
+            const headers = rows[0].map(value => String(value || "").trim());
+            const get = (row: string[], label: string, fallbackIndex: number) => {
+              const index = headers.findIndex(value => value.toLocaleLowerCase() === label.toLocaleLowerCase());
+              return String(row[index >= 0 ? index : fallbackIndex] || "");
+            };
+            const driveId = (value: string) => {
+              const raw = String(value || "").trim();
+              if (/^[A-Za-z0-9_-]{10,200}$/.test(raw)) return raw;
+              const match = raw.match(/(?:\/file\/d\/|[?&]id=)([A-Za-z0-9_-]{10,200})/i);
+              return match?.[1] || "";
+            };
+            const items = rows.slice(1).map((row, index) => {
+              const teamName = get(row, "TELAH DIDATA OLEH", 12).trim();
+              if (!teamName) return null;
+              return {
+                row: index + 2,
+                timestamp: get(row, "Timestamp", 0),
+                name: get(row, "NAMA LENGKAP", 1),
+                nik: get(row, "NIK", 2),
+                age: get(row, "USIA", 3),
+                gender: get(row, "JENIS KELAMIN", 4),
+                address: get(row, "ALAMAT DOMISILI SAAT INI", 5),
+                city: get(row, "KOTA DOMISILI SAAT INI", 6),
+                job: get(row, "PEKERJAAN", 7),
+                phone: get(row, "NO HP/WA", 8),
+                selfPhotoId: driveId(get(row, "FOTO DIRI", 9)),
+                ktpPhotoId: driveId(get(row, "FOTO KTP", 10)),
+                assistance: get(row, "JENIS BANTUAN", 11),
+                teamName,
+                teamPosition: get(row, "POSISI JABATAN PETUGAS", 13),
+                teamPhone: get(row, "NO HP/WA PETUGAS", 14),
+              };
+            }).filter((item): item is NonNullable<typeof item> => item !== null).reverse();
+            return reply({ items, csrfToken: admin.csrf_token });
+          } catch (error) {
+            const incidentId = logIncident("team_submissions_load_failed", error, { path: url.pathname });
+            return reply({ error: "Data pendataan tim gagal dimuat. ID insiden: " + incidentId }, 503);
+          }
+        }
+
         if (url.pathname === "/api/team-info" && request.method === "GET") {
           const rawToken = (url.searchParams.get("token") || "").trim();
           if (rawToken.length < 40 || rawToken.length > 100) return reply({ error: "Tautan petugas tidak valid. Minta tautan baru kepada admin." }, 403);
