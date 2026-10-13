@@ -96,7 +96,7 @@ jobs:
           const html = fs.readFileSync('public/index.html', 'utf8');
           const worker = fs.readFileSync('src/index.ts', 'utf8');
           const checks = [
-            ['final centered login size 2 and version', html.includes('id="final-login-size-2-v1-1-1"') && html.includes('body:not(.authenticated) main{width:min(100%,360px)!important') && html.includes('v1.1.1 — final approved login card size 2')],
+            ['final centered login size 2 and version', html.includes('id="final-login-size-2-v1-1-2"') && html.includes('body:not(.authenticated) main{width:min(100%,360px)!important') && html.includes('v1.1.2 — final approved login card size 2')],
             ['Kemensos logo centered over QR', html.includes('respondent-quiz-qr-logo') && html.includes('class="respondent-quiz-qr-frame"')],
             ['camera and document upload choices', html.includes('application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document') && html.includes('capture="environment"')],
             ['server validates PDF/DOC/DOCX upload MIME', worker.includes('application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document')],
