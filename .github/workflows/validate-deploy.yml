@@ -417,7 +417,9 @@ jobs:
           node -e 'const fs=require("fs");const d=JSON.parse(fs.readFileSync("/tmp/sahabat-respondents.json","utf8"));if(!d.error)process.exit(1);'
           bootstrap_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-bootstrap.json --write-out '%{http_code}' -X POST -H "Origin: $APP_URL" -H "Content-Type: application/json" --data '{}' "$APP_URL/api/setup-owner")"
           test "$bootstrap_status" = "403" || (echo "::error::Sahabat bootstrap endpoint must reject requests without a token (HTTP 403), got $bootstrap_status." && cat /tmp/sahabat-bootstrap.json && exit 1)
-          surat_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-surat-lainnya.html --write-out '%{http_code}' "$APP_URL/surat-lainnya.html")"
+          surat_response="$(curl --connect-timeout 5 --max-time 20 --location --max-redirs 5 --silent --show-error --output /tmp/sahabat-surat-lainnya.html --write-out '%{http_code}|%{url_effective}' "$APP_URL/surat-lainnya.html")"
+          surat_status="${surat_response%%|*}"
+          echo "Surat Lainnya final response URL: ${surat_response#*|} (HTTP $surat_status)"
           test "$surat_status" = "200" || (echo "::error::Surat Lainnya page returned HTTP $surat_status." && exit 1)
           grep -q 'api.qrserver.com/v1/create-qr-code' /tmp/sahabat-surat-lainnya.html || (echo "::error::Deployed Surat Lainnya QR image is missing." && exit 1)
           grep -q 'data=https%3A%2F%2Fdocs.google.com%2Fdocument%2Fd%2F1RuoyRlTIEy24zhewd126KYq53olKuHRv-4BUiIoo82U%2Fedit%3Fusp%3Ddrivesdk' /tmp/sahabat-surat-lainnya.html || (echo "::error::Deployed Surat Lainnya QR points to an unexpected document." && exit 1)
