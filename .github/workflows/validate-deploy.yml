@@ -158,10 +158,12 @@ jobs:
           const intake = fs.readFileSync('public/tim-pendataan.html', 'utf8');
           const manager = fs.readFileSync('public/kelola-tim.html', 'utf8');
           const checks = [
-            ['team API routes exist', worker.includes('/api/team-petugas') && worker.includes('/api/team-info') && worker.includes('/api/team-questionnaire') && worker.includes('/api/team-submissions')],
+            ['team API routes exist', worker.includes('/api/team-petugas') && worker.includes('/api/team-login') && worker.includes('/api/team-me') && worker.includes('/api/team-profile') && worker.includes('/api/team-questionnaire') && worker.includes('/api/team-submissions')],
             ['team access tokens are hashed', worker.includes('token_hash TEXT NOT NULL UNIQUE') && worker.includes('hashTeamToken(token)')],
             ['team data appends to shared owner questionnaire sheet', worker.includes('const appendRange = encodeURIComponent(tabName + "!A:O")') && worker.includes('TELAH DIDATA OLEH')],
-            ['field page captures photos with device camera controls', intake.includes('capture="user"') && intake.includes('capture="environment"')],
+            ['field page captures respondent photos with device camera controls', intake.includes('capture="user"') && intake.includes('capture="environment"')],
+            ['team login requires the registered name and a private session', worker.includes('normalizeName(name) !== normalizeName(petugas.display_name)') && worker.includes('team_session=') && worker.includes('HttpOnly; Secure; SameSite=Strict')],
+            ['team profile is mandatory and accepts up to 10 MB', worker.includes('file.size > 10 * 1024 * 1024') && worker.includes('profile_completed=1') && intake.includes('maksimal 10 MB')],
             ['admin page requires existing admin session', manager.includes("jsonFetch('/api/me')") && manager.includes("['owner','admin']")],
             ['dashboard links to team management', dashboard.includes('href="/kelola-tim.html"')]
           ];
