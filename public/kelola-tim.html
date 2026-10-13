@@ -63,7 +63,7 @@ button,.btn{display:inline-flex;align-items:center;justify-content:center;gap:7p
  const linkBox=document.getElementById('linkBox');
  const createdLink=document.getElementById('createdLink');
  const teamRows=document.getElementById('teamRows');
- const message=(el,text,kind)=>{el.textContent=text;el.className='message show '+(kind||'');};
+ const message=(el,text,kind)=>{el.textContent=text;el.hidden=false;el.className='message show '+(kind||'');};
  async function jsonFetch(url,options={}){const response=await fetch(url,{credentials:'same-origin',cache:'no-store',...options});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||'Permintaan gagal.');return data;}
  function addCell(row,text,strong=false){const cell=document.createElement('td');if(strong){const b=document.createElement('strong');b.textContent=text;cell.append(b);}else cell.textContent=text;row.append(cell);return cell;}
 
