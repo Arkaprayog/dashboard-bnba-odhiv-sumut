@@ -1271,7 +1271,7 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.14</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.15</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi<br>© 2026 Data Base ODHIV Sumatera Utara · Hak cipta dilindungi</p>
 </main>
@@ -1414,6 +1414,15 @@ function renderOverview(items,headers){
  document.getElementById('overviewDataNote').textContent='Statistik agregat saja. Wilayah terbanyak yang tercatat: '+(sorted[0]?.[0]||'belum tersedia')+'. Tidak ada identitas responden yang ditampilkan.';
 }
 function escapeNewsText(value){return String(value??'').replace(/[&<>"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]));}
+function safeNewsArticleUrl(value){
+ try{
+  const url=new URL(String(value??''));
+  const host=url.hostname.toLowerCase();
+  const trustedHost=host==='kemkes.go.id'||host.endsWith('.kemkes.go.id')||host==='antaranews.com'||host.endsWith('.antaranews.com');
+  if(url.protocol!=='https:'||!trustedHost||url.username||url.password||url.port)return '';
+  return url.href;
+ }catch{return '';}
+}
 function renderNews(){
  const grid=document.getElementById('newsGrid');grid.replaceChildren();
  const category=document.getElementById('newsCategory').value;
@@ -1426,8 +1435,14 @@ function renderNews(){
   const title=document.createElement('h3');title.textContent=item.title||'Tanpa judul';
   const meta=document.createElement('div');meta.className='news-meta';const source=document.createElement('span');source.textContent=item.source||'Sumber berita';const date=document.createElement('time');date.textContent=item.publishedAt?new Date(item.publishedAt).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}):'Tanggal tidak tersedia';meta.append(source,date);
   const summary=document.createElement('p');summary.textContent=item.summary||'Buka artikel sumber untuk membaca informasi selengkapnya.';
-  const link=document.createElement('a');link.className='news-link';link.href=item.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Baca artikel asli ↗';
-  card.append(cat,title,meta,summary,link);grid.append(card);
+  const articleUrl=safeNewsArticleUrl(item.url);
+  let sourceLink;
+  if(articleUrl){
+   const link=document.createElement('a');link.className='news-link';link.href=articleUrl;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Baca artikel asli ↗';sourceLink=link;
+  }else{
+   const unavailable=document.createElement('span');unavailable.className='news-link';unavailable.textContent='Tautan sumber tidak tersedia';unavailable.setAttribute('aria-disabled','true');sourceLink=unavailable;
+  }
+  card.append(cat,title,meta,summary,sourceLink);grid.append(card);
  });
 }
 async function loadNews(){
