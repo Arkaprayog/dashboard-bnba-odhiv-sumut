@@ -160,7 +160,7 @@ jobs:
           const checks = [
             ['team API routes exist', worker.includes('/api/team-petugas') && worker.includes('/api/team-info') && worker.includes('/api/team-questionnaire') && worker.includes('/api/team-submissions')],
             ['team access tokens are hashed', worker.includes('token_hash TEXT NOT NULL UNIQUE') && worker.includes('hashTeamToken(token)')],
-            ['team data appends to shared owner questionnaire sheet', worker.includes("'Kuisioner Owner'!A:O") && worker.includes('TELAH DIDATA OLEH')],
+            ['team data appends to shared owner questionnaire sheet', worker.includes('const appendRange = encodeURIComponent(tabName + "!A:O")') && worker.includes('TELAH DIDATA OLEH')],
             ['field page captures photos with device camera controls', intake.includes('capture="user"') && intake.includes('capture="environment"')],
             ['admin page requires existing admin session', manager.includes("jsonFetch('/api/me')") && manager.includes("['owner','admin']")],
             ['dashboard links to team management', dashboard.includes('href="/kelola-tim.html"')]
