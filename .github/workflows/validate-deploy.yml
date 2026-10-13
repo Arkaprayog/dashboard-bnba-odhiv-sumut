@@ -128,10 +128,14 @@ jobs:
           const fs = require('fs');
           const vm = require('vm');
           const html = fs.readFileSync('public/surat-lainnya.html', 'utf8');
-          const scripts = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)]
-            .filter(match => !/\\bsrc\\s*=/.test(match[1]));
-          if (scripts.length !== 1) throw new Error(`Expected one inline Surat Lainnya script, found ${scripts.length}.`);
-          new vm.Script(scripts[0][2], { filename: 'public/surat-lainnya.html:inline-script' });
+          const openTag = '<script>';
+          const closeTag = '</script>';
+          const start = html.indexOf(openTag);
+          const end = html.indexOf(closeTag, start + openTag.length);
+          if (start < 0 || end < 0 || html.indexOf(openTag, end + closeTag.length) >= 0) {
+            throw new Error('Expected exactly one inline Surat Lainnya script.');
+          }
+          new vm.Script(html.slice(start + openTag.length, end), { filename: 'public/surat-lainnya.html:inline-script' });
           console.log('PASS Surat Lainnya inline JavaScript syntax');
           NODE
       - name: Validate respondent questionnaire intro and QR destinations
