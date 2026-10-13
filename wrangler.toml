@@ -57,7 +57,7 @@ WEBAUTHN_RP_ID = "sahabatodhiv-sumut.aryprayoga139.workers.dev"
 SESSION_TTL_SECONDS = "28800"
 LOG_LEVEL = "info"
 VAPID_SUBJECT = "mailto:aryprayoga139@gmail.com"
-VAPID_PUBLIC_KEY = "BPv6w9cXv9fpAU8amuIMfe2JZOlbbbJdcSUApTbnBCQGghrFICYoEE41TiHQH84z_4dSihgieAqA4OcB97ArkGA"
+VAPID_PUBLIC_KEY = "BJczNiq40ABa1ALcV7vvowgxnUOh0kRHay7c1RN_ymcoqXx_B_CVp60-NTCY3dv__LIEoUzKFcaxyzurDC0_ZbY"
 
 [env.sahabatodhiv-sumut.triggers]
 crons = ["* * * * *"]
@@ -97,7 +97,6 @@ SESSION_TTL_SECONDS = "28800"
 LOG_LEVEL = "debug"
 VAPID_SUBJECT = "mailto:aryprayoga139@gmail.com"
 VAPID_PUBLIC_KEY = "BPv6w9cXv9fpAU8amuIMfe2JZOlbbbJdcSUApTbnBCQGghrFICYoEE41TiHQH84z_4dSihgieAqA4OcB97ArkGA"
-
 
 [triggers]
 crons = []
