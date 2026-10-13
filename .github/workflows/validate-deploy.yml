@@ -11,6 +11,11 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'tsconfig.json'
+      - 'android-app/**'
+      - 'CHANGELOG.md'
+      - 'README.md'
+      - 'DEPLOYMENT*.md'
+      - 'CLOUDFLARE_DEPLOYMENT.md'
       - '.github/workflows/validate-deploy.yml'
   push:
     branches: [main]
@@ -22,6 +27,11 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'tsconfig.json'
+      - 'android-app/**'
+      - 'CHANGELOG.md'
+      - 'README.md'
+      - 'DEPLOYMENT*.md'
+      - 'CLOUDFLARE_DEPLOYMENT.md'
       - '.github/workflows/validate-deploy.yml'
   workflow_dispatch:
 
