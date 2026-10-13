@@ -879,6 +879,12 @@ export default {
           try {
             const accessToken = await googleAccessToken(env);
             const base = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID);
+            const metadataResponse = await fetch(base + "?fields=sheets.properties.title", { headers: { authorization: "Bearer " + accessToken } });
+            if (!metadataResponse.ok) return reply({ error: "Tidak dapat membaca daftar tab Google Sheets (HTTP " + metadataResponse.status + ")." }, 502);
+            const metadata = await metadataResponse.json() as { sheets?: Array<{ properties?: { title?: string } }> };
+            if (!(metadata.sheets || []).some(sheet => sheet.properties?.title === "Kuisioner Owner")) {
+              return reply({ items: [], csrfToken: admin.csrf_token });
+            }
             const range = encodeURIComponent("'Kuisioner Owner'!A1:O1000");
             const response = await fetch(base + "/values/" + range + "?valueRenderOption=FORMATTED_VALUE", { headers: { authorization: "Bearer " + accessToken } });
             if (!response.ok) return reply({ error: "Data pendataan tim belum dapat dibaca dari Google Sheets (HTTP " + response.status + ")." }, 502);
