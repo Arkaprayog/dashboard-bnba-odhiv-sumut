@@ -463,3 +463,5 @@ public final class MainActivity extends FragmentActivity {
         super.onDestroy();
     }
 }
+
+// Login and dashboard presentation are served from the canonical Sahabat ODHIV Worker.
