@@ -112,10 +112,10 @@ jobs:
           const checks = [
             ['questionnaire has centered transparent logo cube and bottom loading line', intro.includes('class="cube"') && intro.includes('class="loading"') && intro.includes('cube-spin') && intro.includes('final-screen')],
             ['questionnaire transitions at 2.8 seconds and redirects after 3 seconds', intro.includes('window.setTimeout(finish, 2800)') && intro.includes('3000 - (performance.now() - start)') && intro.includes('window.location.replace(destination)')],
-            ['questionnaire keeps a usable fallback link and local transparent Kemensos logo', intro.includes('Lanjut ke kuesioner') && intro.includes('/kemensos.svg')],
+            ['questionnaire keeps fallback link and references all four original local agency logos', intro.includes('Lanjut ke kuesioner') && intro.includes('/logos/kemensos.png') && intro.includes('/logos/sumut.png') && intro.includes('/logos/ribbon.png') && intro.includes('/logos/kemenkes.png')],
             ['dashboard login opens without animated intro', !dashboard.includes('startCollaborationIntro') && !dashboard.includes('collab-intro')],
             ['native app has no animated splash or artificial delay', !activity.includes('AnimatedSplashView') && !activity.includes('3000L') && activity.includes('setContentView(webView);')],
-            ['dashboard uses local Kemensos logo and links to questionnaire page', dashboard.includes('kuisioner-responden.html') && !dashboard.includes('upload.wikimedia.org') && dashboard.includes('/kemensos.svg')],
+            ['dashboard uses original local Kemensos, Sumut, Kemenkes, and HIV ribbon images', dashboard.includes('kuisioner-responden.html') && !dashboard.includes('upload.wikimedia.org') && dashboard.includes('/logos/kemensos.png') && dashboard.includes('/logos/sumut.png') && dashboard.includes('/logos/kemenkes.png') && dashboard.includes('/logos/ribbon.png')],
             ['old short form link removed', !dashboard.includes('9YuWSVtgpcSed5St5')],
           ];
           for (const [name, ok] of checks) {
@@ -314,6 +314,22 @@ jobs:
           quiz_status="$(curl --connect-timeout 5 --max-time 20 --location --max-redirs 5 --silent --show-error --output /tmp/sahabat-questionnaire.html --write-out '%{http_code}' "$APP_URL/kuisioner-responden.html")"
           test "$quiz_status" = "200" || (echo "::error::Questionnaire intro page returned HTTP $quiz_status." && exit 1)
           grep -q '1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire intro is missing the canonical Google Form URL." && exit 1)
+          for logo in kemensos sumut ribbon kemenkes; do
+            logo_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output "/tmp/sahabat-logo-$logo.png" --write-out '%{http_code}|%{content_type}' "$APP_URL/logos/$logo.png")"
+            logo_status="${logo_response%%|*}"
+            logo_type="${logo_response#*|}"
+            test "$logo_status" = "200" || (echo "::error::Logo asset $logo returned HTTP $logo_status." && exit 1)
+            case "$logo_type" in image/png*) ;; *) echo "::error::Logo asset $logo has unexpected content type: $logo_type." && exit 1 ;; esac
+            python3 - "/tmp/sahabat-logo-$logo.png" "$logo" <<'PY'
+          from pathlib import Path
+          import sys
+          path = Path(sys.argv[1])
+          data = path.read_bytes()
+          if len(data) < 1000 or not data.startswith(b'\\x89PNG\\r\\n\\x1a\\n'):
+              raise SystemExit(f'Logo asset {sys.argv[2]} is missing, empty, or not a valid PNG.')
+          print(f'Verified original logo asset {sys.argv[2]}: {len(data)} bytes.')
+          PY
+          done
           grep -q 'window.setTimeout(finish, 2800)' /tmp/sahabat-questionnaire.html && grep -q 'window.location.replace(destination)' /tmp/sahabat-questionnaire.html && grep -q 'class="cube"' /tmp/sahabat-questionnaire.html && grep -q 'class="loading"' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire delay animation or timed redirect is missing." && exit 1)
           ! grep -q 'Menyiapkan Kuesioner\|>3<\|>2<\|>1<' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire should not show a heading or numeric countdown." && exit 1)
           logo_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-kemensos.svg --write-out '%{http_code}' "$APP_URL/kemensos.svg")"
