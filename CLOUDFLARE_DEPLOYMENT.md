@@ -48,7 +48,7 @@ npx wrangler deploy --env sahabatodhiv-sumut
 ### 5. Verifikasi Post-Deployment
 ```bash
 # Test health endpoint
-curl https://sahabatodhiv-sumut.aryprayoga139.workers.dev/api/health
+curl https://sahabatodhivsumut.web.id/api/health
 
 # Harusnya mengembalikan:
 # {"ok":true,"service":"sahabatodhiv-sumut","mode":"ready"}
