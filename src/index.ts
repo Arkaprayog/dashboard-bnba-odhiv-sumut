@@ -865,7 +865,7 @@ export default {
           if (!admin) return reply({ error: "Silakan login ke dashboard admin." }, 401);
           if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengelola tim petugas." }, 403);
           await ensureTeamSchema(env);
-          const rows = await env.DB.prepare("SELECT id,display_name,position,phone,active,created_at FROM team_petugas_v2 ORDER BY created_at DESC LIMIT 300").all();
+          const rows = await env.DB.prepare("SELECT id,display_name,position,phone,active,created_at,profile_completed,CASE WHEN profile_photo_id<>'' THEN 1 ELSE 0 END AS has_profile_photo FROM team_petugas_v2 ORDER BY created_at DESC LIMIT 300").all();
           return reply({ items: rows.results || [], csrfToken: admin.csrf_token });
         }
 
@@ -914,6 +914,32 @@ export default {
           return reply({ ok: true });
         }
 
+
+        if (url.pathname === "/api/team-petugas-photo" && request.method === "GET") {
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return new Response("Unauthorized", { status: 401, headers: NO_STORE });
+          if (admin.role !== "owner" && admin.role !== "admin") return new Response("Forbidden", { status: 403, headers: NO_STORE });
+          const id = (url.searchParams.get("id") || "").trim();
+          if (!/^[0-9a-f-]{36}$/i.test(id)) return new Response("Not found", { status: 404, headers: NO_STORE });
+          await ensureTeamSchema(env);
+          const petugas = await env.DB.prepare("SELECT profile_photo_id FROM team_petugas_v2 WHERE id=? AND active=1").bind(id).first<{ profile_photo_id: string }>();
+          if (!petugas?.profile_photo_id) return new Response("Not found", { status: 404, headers: NO_STORE });
+          try {
+            const accessToken = await googleAccessToken(env);
+            const driveUrl = "https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(petugas.profile_photo_id);
+            const metadataResponse = await fetch(driveUrl + "?fields=mimeType&supportsAllDrives=true", { headers: { authorization: "Bearer " + accessToken } });
+            if (!metadataResponse.ok) return new Response("Foto profil tidak tersedia", { status: 502, headers: NO_STORE });
+            const metadata = await metadataResponse.json() as { mimeType?: string };
+            const mime = (metadata.mimeType || "").toLowerCase();
+            if (!["image/jpeg", "image/png", "image/webp"].includes(mime)) return new Response("Format foto profil tidak valid", { status: 415, headers: NO_STORE });
+            const fileResponse = await fetch(driveUrl + "?alt=media&supportsAllDrives=true", { headers: { authorization: "Bearer " + accessToken } });
+            if (!fileResponse.ok || !fileResponse.body) return new Response("Foto profil tidak tersedia", { status: 502, headers: NO_STORE });
+            return new Response(fileResponse.body, { status: 200, headers: { ...NO_STORE, "content-type": mime, "x-content-type-options": "nosniff", "content-security-policy": "default-src 'none'; frame-ancestors 'none'; base-uri 'none'" } });
+          } catch (error) {
+            logIncident("team_staff_photo_read_failed", error, { path: url.pathname });
+            return new Response("Foto profil gagal dimuat", { status: 502, headers: NO_STORE });
+          }
+        }
 
         if (url.pathname === "/api/team-submissions" && request.method === "GET") {
           const admin = await sessionAdmin(request, env);
