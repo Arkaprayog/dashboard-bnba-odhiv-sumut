@@ -2,16 +2,6 @@ name: Deploy sahabatodhiv-sumut Worker
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'src/**'
-      - 'public/**'
-      - 'schema.sql'
-      - 'wrangler.toml'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/deploy-sahabatodhiv-sumut.yml'
 
 permissions:
   contents: read
