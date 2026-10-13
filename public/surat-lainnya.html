@@ -18,7 +18,7 @@ body{margin:0;background:#eaf2f9;color:var(--ink);font:16px/1.5 system-ui,-apple
 .wrap{width:min(1120px,calc(100% - 24px));margin:20px auto 40px;display:grid;grid-template-columns:minmax(280px,.85fr) minmax(0,1.15fr);gap:18px;align-items:start}
 .panel{min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 8px 24px rgba(24,55,80,.06)}
 h1{font-size:1.35rem;margin:0 0 4px}h2{font-size:1rem;margin:0 0 14px}.muted{color:var(--muted);font-size:.86rem;margin:0 0 15px}
-.field{display:grid;gap:5px;margin:0 0 12px}.field label{font-weight:750;font-size:.87rem}.field input,.field textarea{width:100%;min-width:0;border:1px solid #b8cad9;border-radius:8px;padding:10px 11px;background:#fff;color:#173650;font:inherit;font-size:16px}.field textarea{min-height:360px;resize:vertical;line-height:1.45}
+.field{display:grid;gap:5px;margin:0 0 12px}.field label{font-weight:750;font-size:.87rem}.field input,.field textarea{width:100%;min-width:0;border:1px solid #b8cad9;border-radius:8px;padding:10px 11px;background:#fff;color:#173650;font:inherit;font-size:16px}.field input[readonly],.field textarea[readonly]{background:#edf3f8;color:#526c80;border-color:#9db2c4;cursor:not-allowed}.field textarea{min-height:360px;resize:vertical;line-height:1.45}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .paper{background:#fff;color:#111;border:1px solid #d8e1e8;padding:25px;box-shadow:0 8px 24px rgba(24,55,80,.07);font:11pt/1.45 Arial,Helvetica,sans-serif}
 .letterhead{display:grid;grid-template-columns:94px minmax(0,1fr);gap:14px;align-items:center;padding:0 0 11px;margin-bottom:25px;border-bottom:3px double #111;text-align:center}
@@ -52,11 +52,11 @@ h1{font-size:1.35rem;margin:0 0 4px}h2{font-size:1rem;margin:0 0 14px}.muted{col
     <h1>Edit Surat</h1>
     <p class="muted">Isian awal berikut disalin dari PDF draf yang Anda kirim. Perubahan berlaku pada pratinjau dan hasil cetak di perangkat ini.</p>
     <h2>Kop surat (teks dapat diedit, logo dikunci)</h2>
-    <p class="muted">Anda boleh mengganti kata-kata pada kop surat. Logo Kementerian Sosial tetap menggunakan berkas asli dan tidak disediakan sebagai bidang edit.</p>
-    <div class="field"><label for="letterheadLine1">Baris kop 1</label><input id="letterheadLine1" value="KEMENTERIAN SOSIAL REPUBLIK INDONESIA"></div>
-    <div class="field"><label for="letterheadLine2">Baris kop 2</label><input id="letterheadLine2" value="DIREKTORAT JENDERAL REHABILITASI SOSIAL"></div>
-    <div class="field"><label for="letterheadLine3">Baris kop 3</label><input id="letterheadLine3" value="SENTRA “INSYAF” DI MEDAN"></div>
-    <div class="field"><label for="letterheadAddress">Alamat dan kontak pada kop</label><textarea id="letterheadAddress" style="min-height:86px">Jl. Berdikari, No.37, Lau Bakeri, Kutalimbaru, Deli Serdang 20354 · Telp (061) 77231150 · insyaf.kemensos.go.id</textarea></div>
+    <p class="muted">Kop surat telah ditetapkan. Baris kop 1, 2, 3, alamat, dan logo dikunci agar tetap konsisten; bagian surat lainnya tetap dapat diedit.</p>
+    <div class="field"><label for="letterheadLine1">Baris kop 1</label><input id="letterheadLine1" value="KEMENTERIAN SOSIAL REPUBLIK INDONESIA" readonly aria-readonly="true"></div>
+    <div class="field"><label for="letterheadLine2">Baris kop 2</label><input id="letterheadLine2" value="DIREKTORAT JENDERAL REHABILITASI SOSIAL" readonly aria-readonly="true"></div>
+    <div class="field"><label for="letterheadLine3">Baris kop 3</label><input id="letterheadLine3" value="KORBAN PENYALAHGUNAAN  NARKOTIKA, PSIKOTROPIKA, DAN ZAT ADIKTIF LAINNYA DAN ORANG DENGAN HUMAN IMMUNODEFICIENCY VIRUS" readonly aria-readonly="true"></div>
+    <div class="field"><label for="letterheadAddress">Alamat dan kontak pada kop</label><textarea id="letterheadAddress" style="min-height:86px" readonly aria-readonly="true">Jalan Salemba Raya Nomor 28 Jakarta Pusat Tlp (021) 3912225 http://www.kemsos.go.id</textarea></div>
     <div class="grid2">
       <div class="field"><label for="letterNumber">Nomor</label><input id="letterNumber" value="......./......./RH.00.01/......./2026"></div>
       <div class="field"><label for="letterDate">Tanggal</label><input id="letterDate" value="Tanggal / Bulan / Tahun"></div>
