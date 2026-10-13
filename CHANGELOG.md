@@ -1,3 +1,8 @@
+## 1.1.15 — 2026-10-14
+- Membatasi tautan artikel dari RSS eksternal hanya ke URL HTTPS pada domain penerbit tepercaya Kemenkes dan ANTARA.
+- Memvalidasi ulang URL di dashboard sebelum membuat tautan yang dapat diklik, termasuk menolak kredensial URL, port khusus, dan domain tiruan.
+- Menambahkan pengujian regresi otomatis untuk URL yang diizinkan dan ditolak.
+
 ## 1.1.14 — 2026-10-14
 - Route static asset requests through the Worker so browser security headers are applied to actual public responses.
 - Extend Wrangler validation to prevent asset requests from bypassing Worker response hardening.
