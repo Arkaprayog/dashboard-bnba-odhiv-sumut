@@ -3,86 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#384B38">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#063a76">
 <title>Kuisioner Responden — Sahabat ODHIV Sumut</title>
 <style>
-:root{color-scheme:dark;--olive:#384B38;--red:#FF1D25;--cyan:#53CBEB;--blue:#1170C0;--navy:#0B2D6B}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-body{min-height:100svh;display:grid;place-items:center;overflow:hidden;color:#fff;background:radial-gradient(ellipse at 50% 42%,#15538b 0%,var(--navy) 62%,#06152f 100%)}
-.intro{width:min(100%,720px);padding:clamp(14px,4vw,28px);text-align:center}
-.scene{position:relative;width:100%;height:min(62svh,440px);min-height:280px;overflow:hidden;border-radius:24px;background:linear-gradient(#65c9ef 0%,#b9edff 65%,#e7f8ff 66%,#d9edc3 100%);box-shadow:0 18px 60px #0005}
-.cloud{position:absolute;color:#fff;opacity:.8;font-size:clamp(28px,7vw,54px);animation:cloudDrift 12s ease-in-out infinite alternate}
-.cloud.one{left:8%;top:12%}.cloud.two{right:12%;top:23%;animation-delay:-4s}
-.sun{position:absolute;right:13%;top:8%;width:clamp(34px,8vw,58px);aspect-ratio:1;border-radius:50%;background:#fff0a3;box-shadow:0 0 32px #fff5a5}
-.kite{position:absolute;left:65%;top:13%;width:clamp(52px,13vw,90px);height:auto;animation:kiteFloat 2.4s ease-in-out infinite}
-.kite path{stroke:#fff;stroke-width:1.5}
-.ground{position:absolute;left:-5%;right:-5%;bottom:-12%;height:35%;border-radius:50% 50% 0 0;background:linear-gradient(#91c77c,#4d8c55)}
-.child{position:absolute;bottom:13%;width:clamp(100px,24vw,156px);height:auto;overflow:visible}
-.child.tall{left:24%;z-index:2;animation:bodyRun .42s ease-in-out infinite alternate}
-.child.short{left:49%;width:clamp(82px,20vw,128px);z-index:2;animation:bodyRun .38s ease-in-out infinite alternate-reverse}
-.leg,.arm{transform-box:fill-box;transform-origin:top center}
-.tall .shirt{fill:var(--olive)}.short .shirt{fill:var(--blue)}
-.tall .leg-a,.short .leg-a{animation:legA .42s ease-in-out infinite alternate}
-.tall .leg-b,.short .leg-b{animation:legB .42s ease-in-out infinite alternate}
-.tall .arm-a,.short .arm-a{animation:armA .42s ease-in-out infinite alternate}
-.tall .arm-b,.short .arm-b{animation:armB .42s ease-in-out infinite alternate}
-.brand{display:grid;justify-items:center;gap:10px;padding:12px 8px 4px;opacity:0;transform:translateY(14px) scale(.96);animation:brandIn .9s ease-out 3.35s forwards}
-.mark{width:clamp(62px,16vw,92px);height:clamp(62px,16vw,92px);display:grid;place-items:center;border:3px solid #ffffffcc;border-radius:24px;background:#ffffff14;box-shadow:0 0 32px #53cbeb55}
-.mark svg{width:70%;height:70%}
-.brand h1{margin:0;font-size:clamp(1.25rem,5vw,2rem);letter-spacing:.035em}
-.slogan{margin:0;color:#bceeff;font-size:clamp(.8rem,2.8vw,1rem)}
-.status{margin:10px 0 0;color:#d8eaff;font-size:.9rem}
-.scene{animation:sceneOut .7s ease-in 3.3s forwards}
-@keyframes legA{to{transform:rotate(34deg)}}@keyframes legB{to{transform:rotate(-34deg)}}
-@keyframes armA{to{transform:rotate(-30deg)}}@keyframes armB{to{transform:rotate(30deg)}}
-@keyframes bodyRun{to{translate:0 -7px}}
-@keyframes kiteFloat{0%,100%{translate:0 0;rotate:-5deg}50%{translate:7px -10px;rotate:6deg}}
-@keyframes cloudDrift{to{translate:22px 0}}
-@keyframes sceneOut{to{opacity:0;transform:scale(.96);visibility:hidden}}
-@keyframes brandIn{to{opacity:1;transform:translateY(0) scale(1)}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;animation-delay:0ms!important}}
+body{min-height:100svh;padding:24px;background:#063a76;color:#fff}
+main{width:min(100%,640px);margin:0 auto;padding:24px;border:1px solid rgba(255,255,255,.25);border-radius:16px}
+h1{font-size:1.4rem;margin:0 0 12px}
+p{line-height:1.6}
+a{color:#fff;font-weight:700}
 </style>
 </head>
 <body>
-<main class="intro" aria-live="polite">
- <section class="scene" aria-label="Dua anak laki-laki berlari mengejar layangan">
-  <span class="cloud one" aria-hidden="true">☁</span><span class="cloud two" aria-hidden="true">☁</span><span class="sun" aria-hidden="true"></span>
-  <svg class="kite" viewBox="0 0 100 150" role="img" aria-label="Layangan merah terbang"><path d="M50 4 L88 47 L50 91 L12 47 Z" fill="#FF1D25"/><path d="M50 4 V91 M12 47 H88" fill="none" stroke="#fff"/><path d="M50 91 Q67 108 48 119 T56 146" fill="none" stroke="#fff" stroke-width="2"/><path d="M51 108 l12 2 -6 9 M51 130 l-10 2 6 8" fill="none" stroke="#fff" stroke-width="2"/></svg>
-  <div class="ground" aria-hidden="true"></div>
-  <svg class="child tall" viewBox="0 0 160 220" role="img" aria-label="Anak lebih tinggi memakai kaus hijau zaitun gelap">
-   <g class="leg leg-a"><path d="M67 137 L57 174 L43 194" fill="none" stroke="#25354b" stroke-width="13" stroke-linecap="round"/><path d="M42 194 Q29 194 27 202 Q44 208 57 199" fill="#fff" stroke="#25354b" stroke-width="3"/></g>
-   <g class="leg leg-b"><path d="M91 137 L105 169 L123 181" fill="none" stroke="#25354b" stroke-width="13" stroke-linecap="round"/><path d="M121 180 Q135 176 141 184 Q129 196 113 189" fill="#fff" stroke="#25354b" stroke-width="3"/></g>
-   <path d="M63 71 Q80 62 98 73 L111 132 Q82 145 55 132 Z" class="shirt" stroke="#263e31" stroke-width="3"/>
-   <g class="arm arm-a"><path d="M64 79 L45 96 L33 84" fill="none" stroke="#b87955" stroke-width="11" stroke-linecap="round"/></g>
-   <g class="arm arm-b"><path d="M101 81 L118 96 L132 83" fill="none" stroke="#b87955" stroke-width="11" stroke-linecap="round"/></g>
-   <path d="M68 65 L67 75 Q80 85 94 73 L92 62" fill="#b87955"/>
-   <ellipse cx="80" cy="44" rx="25" ry="29" fill="#c98c66"/>
-   <path d="M55 43 Q50 12 79 13 Q104 12 106 38 L99 30 Q81 35 63 27 L58 48Z" fill="#38271f"/>
-   <path d="M69 46 h4 M88 46 h4" stroke="#2b211d" stroke-width="3" stroke-linecap="round"/><path d="M74 57 Q80 62 87 56" fill="none" stroke="#7d3f32" stroke-width="2" stroke-linecap="round"/>
-  </svg>
-  <svg class="child short" viewBox="0 0 160 220" role="img" aria-label="Anak lebih pendek memakai kaus biru">
-   <g class="leg leg-a"><path d="M67 137 L57 174 L43 194" fill="none" stroke="#25354b" stroke-width="13" stroke-linecap="round"/><path d="M42 194 Q29 194 27 202 Q44 208 57 199" fill="#fff" stroke="#25354b" stroke-width="3"/></g>
-   <g class="leg leg-b"><path d="M91 137 L105 169 L123 181" fill="none" stroke="#25354b" stroke-width="13" stroke-linecap="round"/><path d="M121 180 Q135 176 141 184 Q129 196 113 189" fill="#fff" stroke="#25354b" stroke-width="3"/></g>
-   <path d="M63 71 Q80 62 98 73 L111 132 Q82 145 55 132 Z" class="shirt" stroke="#164b86" stroke-width="3"/>
-   <g class="arm arm-a"><path d="M64 79 L45 96 L33 84" fill="none" stroke="#c98c66" stroke-width="11" stroke-linecap="round"/></g>
-   <g class="arm arm-b"><path d="M101 81 L118 96 L132 83" fill="none" stroke="#c98c66" stroke-width="11" stroke-linecap="round"/></g>
-   <path d="M68 65 L67 75 Q80 85 94 73 L92 62" fill="#c98c66"/>
-   <ellipse cx="80" cy="44" rx="25" ry="29" fill="#d49a72"/>
-   <path d="M55 43 Q50 12 79 13 Q104 12 106 38 L99 30 Q81 35 63 27 L58 48Z" fill="#38271f"/>
-   <path d="M69 46 h4 M88 46 h4" stroke="#2b211d" stroke-width="3" stroke-linecap="round"/><path d="M74 57 Q80 62 87 56" fill="none" stroke="#7d3f32" stroke-width="2" stroke-linecap="round"/>
-  </svg>
- </section>
- <section class="brand" aria-label="Sahabat ODHIV Sumut">
-  <div class="mark" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M50 8 L84 88 H66 L50 48 L34 88 H16 Z" fill="none" stroke="#53CBEB" stroke-width="9" stroke-linejoin="round"/><path d="M58 55 L76 92 M75 55 L57 92" stroke="#FF1D25" stroke-width="9" stroke-linecap="round"/></svg></div>
-  <h1>Sahabat ODHIV Sumut</h1>
-  <p class="slogan">To help people, to help themselves and others</p>
- </section>
- <p class="status" id="status">Membuka kuisioner responden…</p>
+<main>
+<h1>Kuisioner Responden — Sahabat ODHIV Sumut</h1>
+<p>Membuka formulir resmi. Jika tidak dialihkan secara otomatis, gunakan tautan berikut.</p>
+<p><a id="formLink" href="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform">Buka Google Forms</a></p>
 </main>
 <script>
-const FORM_URL='https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform';
-window.setTimeout(()=>{document.getElementById('status').textContent='Mengalihkan ke Google Forms…';window.location.replace(FORM_URL)},5200);
+window.location.replace("https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform");
 </script>
 </body>
 </html>
