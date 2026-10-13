@@ -1,7 +1,6 @@
 package id.sahabatodhiv.sumut;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -30,6 +29,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.app.NotificationCompat;
@@ -42,7 +42,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.Executor;
 
-public final class MainActivity extends Activity {
+public final class MainActivity extends FragmentActivity {
     private static final String DASHBOARD_URL = "https://sahabatodhiv-sumut.aryprayoga139.workers.dev/";
     private static final String DASHBOARD_HOST = "sahabatodhiv-sumut.aryprayoga139.workers.dev";
     private static final String PREFS = "sahabat_odhiv_preferences";
