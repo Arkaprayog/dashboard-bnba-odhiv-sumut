@@ -105,7 +105,9 @@ button,.btn{display:inline-flex;align-items:center;justify-content:center;gap:7p
    row.append(actionCell);teamRows.append(row);
   }
  }
- document.getElementById('refreshSubmissions').addEventListener('click',async()=>{const button=document.getElementById('refreshSubmissions');button.disabled=true;try{await loadSubmissions();message(document.getElementById('submissionMessage'),'Data berhasil diperbarui.','ok');}catch(error){message(document.getElementById('submissionMessage'),error instanceof Error?error.message:'Data gagal dimuat.','error');}finally{button.disabled=false;}});\n setInterval(()=>{if(!adminArea.hidden)loadSubmissions().catch(error=>message(document.getElementById('submissionMessage'),error instanceof Error?error.message:'Data gagal diperbarui.','error'));},60000);\n document.getElementById('teamForm').addEventListener('submit',async event=>{
+ document.getElementById('refreshSubmissions').addEventListener('click',async()=>{const button=document.getElementById('refreshSubmissions');button.disabled=true;try{await loadSubmissions();message(document.getElementById('submissionMessage'),'Data berhasil diperbarui.','ok');}catch(error){message(document.getElementById('submissionMessage'),error instanceof Error?error.message:'Data gagal dimuat.','error');}finally{button.disabled=false;}});
+ setInterval(()=>{if(!adminArea.hidden)loadSubmissions().catch(error=>message(document.getElementById('submissionMessage'),error instanceof Error?error.message:'Data gagal diperbarui.','error'));},60000);
+ document.getElementById('teamForm').addEventListener('submit',async event=>{
   event.preventDefault();message(createMessage,'','');linkBox.className='link-box';
   const form=event.currentTarget;if(!form.reportValidity())return;
   const button=document.getElementById('createButton');button.disabled=true;button.textContent='Mendaftarkan…';
