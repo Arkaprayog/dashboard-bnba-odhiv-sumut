@@ -1894,3 +1894,14 @@ body:not(.authenticated) .login-trust{margin-top:9px!important;padding-top:8px!i
  body:not(.authenticated) .brand{margin:9px auto 11px!important}
 }
 </style>
+
+<style>
+/* Login refinements: centered Ministry of Social Affairs logo, compact glass card */
+body:not(.authenticated) .agency-logos{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:6px!important;max-width:260px!important;margin:0 auto 10px!important}
+body:not(.authenticated) .kemensos-logo{order:0!important;display:block!important;width:clamp(100px,27vw,128px)!important;height:clamp(66px,18vw,82px)!important;margin:0 auto!important;object-position:center!important}
+body:not(.authenticated) .sumut-logo{order:1!important;width:52px!important;height:60px!important}
+body:not(.authenticated) .kemenkes-logo{order:2!important;width:100px!important;height:32px!important;margin:0 auto!important}
+body:not(.authenticated) main{width:min(100%,390px)!important;padding:13px clamp(13px,3.5vw,20px)!important;background:rgba(218,237,250,.32)!important;border-color:rgba(255,255,255,.52)!important;backdrop-filter:blur(9px) saturate(120%)!important;-webkit-backdrop-filter:blur(9px) saturate(120%)!important}
+body:not(.authenticated) .brand{margin:8px auto 10px!important}
+body:not(.authenticated) .foot{margin-top:10px!important}
+</style>
