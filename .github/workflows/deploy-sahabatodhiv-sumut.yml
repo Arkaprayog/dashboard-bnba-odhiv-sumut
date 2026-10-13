@@ -1,4 +1,4 @@
-name: Deploy dashboard Worker
+name: Deploy sahabatodhiv-sumut Worker
 
 on:
   workflow_dispatch:
@@ -17,12 +17,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: deploy-dashboard-worker
+  group: deploy-sahabatodhiv-sumut
   cancel-in-progress: false
 
 jobs:
   validate-and-deploy:
-    name: Validate and deploy dashboard Worker
+    name: Validate and deploy sahabatodhiv-sumut Worker
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -40,9 +40,9 @@ jobs:
       - name: Type-check and build
         run: npm run build
 
-      - name: Deploy dashboard Worker
+      - name: Deploy sahabatodhiv-sumut environment
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
+          command: deploy --env sahabatodhiv-sumut
