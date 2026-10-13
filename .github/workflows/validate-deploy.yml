@@ -115,6 +115,7 @@ jobs:
             ['questionnaire keeps fallback link and references all four original local agency logos', intro.includes('Lanjut ke kuesioner') && intro.includes('/logos/kemensos.png') && intro.includes('/logos/sumut.png') && intro.includes('/logos/ribbon.png') && intro.includes('/logos/kemenkes.png')],
             ['dashboard login opens without animated intro', !dashboard.includes('startCollaborationIntro') && !dashboard.includes('collab-intro')],
             ['native app has no animated splash or artificial delay', !activity.includes('AnimatedSplashView') && !activity.includes('3000L') && activity.includes('setContentView(webView);')],
+            ['Android WebView uses the canonical HTTPS domain', activity.includes('https://sahabatodhivsumut.web.id/') && activity.includes('DASHBOARD_HOST = "sahabatodhivsumut.web.id"') && !activity.includes('sahabatodhiv-sumut.aryprayoga139.workers.dev')],
             ['dashboard uses original local Kemensos, Sumut, Kemenkes, and HIV ribbon images', dashboard.includes('kuisioner-responden.html') && !dashboard.includes('upload.wikimedia.org') && dashboard.includes('/logos/kemensos.png') && dashboard.includes('/logos/sumut.png') && dashboard.includes('/logos/kemenkes.png') && dashboard.includes('/logos/ribbon.png')],
             ['old short form link removed', !dashboard.includes('9YuWSVtgpcSed5St5')],
           ];
@@ -139,7 +140,7 @@ jobs:
             ['Form Asesmen Terintegrasi retains local Kemensos and ATENSI logos', html.includes('src="/kemensos.svg"') && html.includes('src="/atensi.svg"') && html.includes('id="assessmentPaper"')],
             ['questionnaire introduction has high-contrast styles', questionnaire.includes('id="readable-questionnaire-v1-1-9"') && questionnaire.indexOf('id="readable-questionnaire-v1-1-9"') < questionnaire.search(/<body\b/i) && questionnaire.includes('linear-gradient(135deg,#eef6ff')],
             ['questionnaire waiting screen avoids white typography on scenery', waiting.includes('id="readable-wait-screen-v1-1-9"') && waiting.indexOf('id="readable-wait-screen-v1-1-9"') < waiting.search(/<body\b/i) && waiting.includes('rgba(248,252,255,.48)')],
-            ['public, package, and release versions are synchronized', packageJson.version === '1.1.10' && html.includes('Versi 1.1.10') && changelog.startsWith('## 1.1.10')],
+            ['public, package, and release versions are synchronized', packageJson.version === '1.1.11' && html.includes('Versi 1.1.11') && changelog.startsWith('## 1.1.11')],
             ['assessment uses the supplied Kemensos and ATENSI logos', html.includes('src="/logos/kemensos.png"') && html.includes('src="/atensi.svg"') && letter.includes('src="/logos/kemensos.png"')],
             ['Surat Lainnya opens the editable letter based on the provided PDF', html.includes('href="/surat-lainnya.html"') && letter.includes('Penyampaian Informasi Kegiatan Klaster ODHIV Sentra Insyaf Medan') && letter.includes('window.print()') && letter.includes('Langgeng Setiawan')],
             ['three-photo Danau Toba slideshow, cache-busted assets, and version', html.includes('id="danau-toba-slideshow-v1-2-9"') && html.includes('/danau-toba/photo-1.jpg?v=1.2.9') && html.includes('/danau-toba/photo-2.jpg?v=1.2.9') && html.includes('/danau-toba/photo-3.jpg?v=1.2.9') && html.includes('setInterval(next,4500)')],
@@ -149,6 +150,7 @@ jobs:
             ['private file route requires an admin session', worker.includes('url.pathname === "/api/respondent-file"') && worker.includes('Peran tidak diizinkan mengakses berkas responden.')],
             ['WhatsApp template has respondent name and time greeting', html.includes('const respondentName=') && html.includes("const greeting=hour>=4&&hour<11?'pagi'") && html.includes('Deny Arifin Martyon')],
             ['Content-Security-Policy configured', worker.includes('content-security-policy') && worker.includes("frame-ancestors 'none'")],
+            ['API replies have a default-deny CSP and same-origin response policy', worker.includes("default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'") && worker.includes('"cross-origin-resource-policy": "same-origin"') && worker.includes('"x-permitted-cross-domain-policies": "none"')],
             ['notification logging redacts raw exception messages', worker.includes(`notification_record_failed", { action, stage: "record" }`) && !worker.includes(`notification_record_failed", { action, message:`)],
             ['copyright notice visible', html.includes('© 2026 Data Base ODHIV Sumatera Utara')],
           ];
@@ -188,8 +190,10 @@ jobs:
           const fs = require('fs');
           const config = fs.readFileSync('wrangler.toml', 'utf8');
           if (!config.includes('name = "sahabatodhiv-sumut"')) throw new Error('Default Wrangler target must be sahabatodhiv-sumut.');
-          if (!config.includes('APP_ORIGIN = "https://sahabatodhiv-sumut.aryprayoga139.workers.dev"')) throw new Error('Default APP_ORIGIN must match the canonical Sahabat Worker.');
-          if (!config.includes('WEBAUTHN_RP_ID = "sahabatodhiv-sumut.aryprayoga139.workers.dev"')) throw new Error('Default WebAuthn RP ID must match the canonical Sahabat Worker.');
+          if (!config.includes('APP_ORIGIN = "https://sahabatodhivsumut.web.id"')) throw new Error('Default APP_ORIGIN must match the canonical custom domain.');
+          if (!config.includes('WEBAUTHN_RP_ID = "sahabatodhivsumut.web.id"')) throw new Error('Default WebAuthn RP ID must match the canonical custom domain.');
+          if (!config.includes('workers_dev = false')) throw new Error('The primary Worker must not expose a parallel workers.dev hostname.');
+          if (!config.includes('routes = [{ pattern = "sahabatodhivsumut.web.id", custom_domain = true }]')) throw new Error('Wrangler must declare the production custom domain.');
           const blocks = [
             ['root cron disabled', '[triggers]\ncrons = []'],
             ['Sahabat primary', '[env.sahabatodhiv-sumut.triggers]\ncrons = ["* * * * *"]'],
@@ -269,7 +273,7 @@ jobs:
           command: deploy --env sahabatodhiv-sumut
       - name: Verify Sahabat ODHIV backend health
         env:
-          HEALTH_URL: https://sahabatodhiv-sumut.aryprayoga139.workers.dev/api/health
+          HEALTH_URL: https://sahabatodhivsumut.web.id/api/health
         run: |
           for attempt in $(seq 1 10); do
             response="$(curl --connect-timeout 5 --max-time 10 --fail --silent --show-error "$HEALTH_URL" 2>/dev/null || true)"
