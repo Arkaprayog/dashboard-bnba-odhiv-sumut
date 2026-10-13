@@ -268,7 +268,7 @@ async function audit(env: Env, adminId: string, action: string) {
   const notification = labels[action];
   if (notification) {
     try { await recordNotification(env, notification.title, notification.body, action); }
-    catch (error) { console.warn("notification_record_failed", { action, message: error instanceof Error ? error.message : "unknown_error" }); }
+    catch { console.warn("notification_record_failed", { action, stage: "record" }); }
   }
 }
 
