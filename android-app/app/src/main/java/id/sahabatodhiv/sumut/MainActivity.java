@@ -67,7 +67,6 @@ public final class MainActivity extends FragmentActivity {
         getWindow().setStatusBarColor(android.graphics.Color.rgb(6, 58, 125));
         getWindow().setNavigationBarColor(android.graphics.Color.rgb(6, 58, 125));
         if (getActionBar() != null) getActionBar().hide();
-        setContentView(new AnimatedSplashView(this));
         createNotificationChannel();
 
         webView = new WebView(this);
@@ -121,15 +120,14 @@ public final class MainActivity extends FragmentActivity {
             }
         });
 
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (isFinishing()) return;
-            if (getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean("biometric_enabled", false)) {
-                startupPending = true;
-                authenticateBiometric(false);
-            } else {
-                initializeDashboard();
-            }
-        }, 3000L);
+        // Open directly: no illustration splash or artificial startup delay.
+        setContentView(webView);
+        if (getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean("biometric_enabled", false)) {
+            startupPending = true;
+            authenticateBiometric(false);
+        } else {
+            initializeDashboard();
+        }
     }
 
     private void initializeDashboard() {
