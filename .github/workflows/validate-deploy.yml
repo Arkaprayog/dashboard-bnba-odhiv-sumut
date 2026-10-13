@@ -164,6 +164,7 @@ jobs:
             ['field page captures respondent photos with device camera controls', intake.includes('capture="user"') && intake.includes('capture="environment"')],
             ['team login requires the registered name and a private session', worker.includes('normalizeName(name) !== normalizeName(petugas.display_name)') && worker.includes('team_session=') && worker.includes('HttpOnly; Secure; SameSite=Strict')],
             ['team profile is mandatory and accepts up to 10 MB', worker.includes('file.size > 10 * 1024 * 1024') && worker.includes('profile_completed=1') && intake.includes('maksimal 10 MB')],
+            ['team profile upload uses Google Drive multipart/related encoding', worker.includes('googleDriveMultipartUpload(accessToken, metadata, file)') && worker.includes('multipart/related; boundary=') && worker.includes('uploadType=multipart&fields=id,mimeType')],
             ['admin page requires existing admin session', manager.includes("jsonFetch('/api/me')") && manager.includes("['owner','admin']")],
             ['dashboard links to team workspace', dashboard.includes("window.open('/tim-petugas.html'") && dashboard.includes('href="/tim-petugas.html"')],
             ['staff roster page and protected profile endpoint exist', fs.existsSync('public/daftar-petugas.html') && worker.includes('/api/team-petugas-photo') && worker.includes('has_profile_photo')]
