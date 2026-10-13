@@ -42,16 +42,16 @@ npx wrangler secret list
 
 ### 4. Deploy ke Production
 ```bash
-npx wrangler deploy
+npx wrangler deploy --env sahabatodhiv-sumut
 ```
 
 ### 5. Verifikasi Post-Deployment
 ```bash
 # Test health endpoint
-curl https://dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev/api/health
+curl https://sahabatodhiv-sumut.aryprayoga139.workers.dev/api/health
 
 # Harusnya mengembalikan:
-# {"ok":true,"service":"dashboard-bnba-odhiv-sumut","mode":"ready"}
+# {"ok":true,"service":"sahabatodhiv-sumut","mode":"ready"}
 ```
 
 ## Checklist Keamanan Sebelum Deploy
