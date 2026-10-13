@@ -1040,7 +1040,8 @@ async function loadPushNotifications(){
   const response=await fetch('/api/notifications',{credentials:'same-origin',cache:'no-store'});
   const data=await parseResponse(response);
   if(!response.ok||!data.ok)throw new Error(data.error||'Daftar notifikasi tidak dapat dimuat.');
-  setAppBadgeCount(data.unread||0);
+  const notificationsEnabled=localStorage.getItem('sahabat_notifications_enabled')!=='false';
+  setAppBadgeCount(notificationsEnabled?(data.unread||0):0);
   updateNotificationBell(data.unread||0,itemsForBell(data.items));
   const list=document.getElementById('pushNotificationList');
   if(!list)return;
