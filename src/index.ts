@@ -65,12 +65,24 @@ function logIncident(scope: string, _error: unknown, context: Record<string, unk
       safeContext[key] = value;
     }
   }
+  const providerStatus = context.providerStatus;
+  if (typeof providerStatus === "number" && Number.isInteger(providerStatus) && providerStatus >= 100 && providerStatus <= 599) {
+    safeContext.providerStatus = providerStatus;
+  }
   console.error("application_incident", {
     incidentId,
     scope: /^[a-zA-Z0-9_:-]{1,80}$/.test(scope) ? scope : "unknown_incident",
     ...safeContext,
   });
   return incidentId;
+}
+
+function safeProviderHttpStatus(error: unknown): number | undefined {
+  const message = error instanceof Error ? error.message : "";
+  const match = message.match(/\bHTTP\s+(\d{3})\b/i);
+  if (!match) return undefined;
+  const status = Number(match[1]);
+  return Number.isInteger(status) && status >= 100 && status <= 599 ? status : undefined;
 }
 
 function isAllowedPushEndpoint(value: string): boolean {
@@ -1198,6 +1210,7 @@ export default {
           const uploadedIds: string[] = [];
           let accessToken = "";
           try {
+            requestStage = "google_access_token";
             accessToken = await googleAccessToken(env);
             const uploadPrivatePhoto = async (photo: File, label: string) => {
               const safeName = (photo.name || label).replace(/[^A-Za-z0-9._-]/g, "_").slice(0, 80) || label;
@@ -1205,6 +1218,7 @@ export default {
               const uploadForm = new FormData();
               uploadForm.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json; charset=UTF-8" }));
               uploadForm.append("file", photo, safeName);
+              requestStage = label === "foto-diri" ? "drive_upload_self_photo" : "drive_upload_ktp_photo";
               const response = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,mimeType", {
                 method: "POST", headers: { authorization: "Bearer " + accessToken }, body: uploadForm,
               });
@@ -1218,11 +1232,13 @@ export default {
             const selfPhotoUrl = await uploadPrivatePhoto(selfPhoto, "foto-diri");
             const ktpPhotoUrl = await uploadPrivatePhoto(ktpPhoto, "foto-ktp");
             const spreadsheetBase = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID);
+            requestStage = "sheets_read_metadata";
             const metadataResponse = await fetch(spreadsheetBase + "?fields=sheets.properties.title,sheets.properties.sheetId", { headers: { authorization: "Bearer " + accessToken } });
             if (!metadataResponse.ok) throw new Error("Tidak dapat membaca metadata Google Sheets (HTTP " + metadataResponse.status + ").");
             const metadata = await metadataResponse.json() as { sheets?: Array<{ properties?: { title?: string; sheetId?: number } }> };
             let ownerTab = (metadata.sheets || []).find(sheet => sheet.properties?.title === "Kuisioner Owner");
             if (!ownerTab) {
+              requestStage = "sheets_create_tab";
               const createResponse = await fetch(spreadsheetBase + ":batchUpdate", {
                 method: "POST", headers: { authorization: "Bearer " + accessToken, "content-type": "application/json" },
                 body: JSON.stringify({ requests: [{ addSheet: { properties: { title: "Kuisioner Owner" } } }] }),
@@ -1234,11 +1250,13 @@ export default {
             const tabName = "'Kuisioner Owner'";
             const headers = ["Timestamp", "NAMA LENGKAP", "NIK", "USIA", "JENIS KELAMIN", "ALAMAT DOMISILI SAAT INI", "KOTA DOMISILI SAAT INI", "PEKERJAAN", "NO HP/WA", "FOTO DIRI", "FOTO KTP", "JENIS BANTUAN", "TELAH DIDATA OLEH", "POSISI JABATAN PETUGAS", "NO HP/WA PETUGAS"];
             const headerRange = encodeURIComponent(tabName + "!A1:O1");
+            requestStage = "sheets_read_headers";
             const headerCheck = await fetch(spreadsheetBase + "/values/" + headerRange, { headers: { authorization: "Bearer " + accessToken } });
-            if (!headerCheck.ok) throw new Error("Gagal memeriksa judul kolom Kuisioner Owner.");
+            if (!headerCheck.ok) throw new Error("Gagal memeriksa judul kolom Kuisioner Owner (HTTP " + headerCheck.status + ").");
             const headerData = await headerCheck.json() as { values?: string[][] };
             const existingHeaders = headerData.values?.[0] || [];
             if (!existingHeaders.some(value => String(value || "").trim())) {
+              requestStage = "sheets_write_headers";
               const writeHeader = await fetch(spreadsheetBase + "/values/" + headerRange + "?valueInputOption=RAW", {
                 method: "PUT", headers: { authorization: "Bearer " + accessToken, "content-type": "application/json" },
                 body: JSON.stringify({ values: [headers] }),
@@ -1247,6 +1265,7 @@ export default {
             } else {
               const attributionHeaders = existingHeaders.slice(12, 15).map(value => String(value || "").trim());
               if (attributionHeaders.every(value => !value)) {
+                requestStage = "sheets_write_attribution_headers";
                 const writeAttribution = await fetch(spreadsheetBase + "/values/" + encodeURIComponent(tabName + "!M1:O1") + "?valueInputOption=RAW", {
                   method: "PUT", headers: { authorization: "Bearer " + accessToken, "content-type": "application/json" },
                   body: JSON.stringify({ values: [headers.slice(12, 15)] }),
@@ -1257,6 +1276,7 @@ export default {
               }
             }
             const appendRange = encodeURIComponent(tabName + "!A:O");
+            requestStage = "sheets_append_submission";
             const appendResponse = await fetch(spreadsheetBase + "/values/" + appendRange + ":append?valueInputOption=RAW&insertDataOption=INSERT_ROWS", {
               method: "POST", headers: { authorization: "Bearer " + accessToken, "content-type": "application/json" },
               body: JSON.stringify({ majorDimension: "ROWS", values: [[timestamp, nama, nik, String(usia), gender, alamat, kota, pekerjaan, phone, selfPhotoUrl, ktpPhotoUrl, bantuan, petugas.display_name, petugas.position, petugas.phone]] }),
@@ -1273,7 +1293,7 @@ export default {
             if (accessToken) for (const id of uploadedIds) {
               try { await fetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(id), { method: "DELETE", headers: { authorization: "Bearer " + accessToken } }); } catch {}
             }
-            const incidentId = logIncident("team_questionnaire_submit_failed", error, { path: url.pathname, stage: requestStage });
+            const incidentId = logIncident("team_questionnaire_submit_failed", error, { path: url.pathname, stage: requestStage, providerStatus: safeProviderHttpStatus(error) });
             return reply({ error: "Pendataan belum berhasil disimpan. Periksa koneksi lalu coba lagi. ID insiden: " + incidentId }, 503);
           }
         }
