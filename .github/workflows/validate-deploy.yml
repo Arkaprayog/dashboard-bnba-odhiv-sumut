@@ -134,10 +134,10 @@ jobs:
           const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
           const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
           const checks = [
-            ['login and dashboard have readable contrast overrides', html.includes('id="readable-contrast-v1-1-9"') && html.indexOf('id="readable-contrast-v1-1-9"') < html.search(/<body\\b/i) && html.includes('rgba(248,252,255,.97)') && html.includes('color:#163650!important')],
+            ['login and dashboard have readable contrast overrides', html.includes('id="readable-contrast-v1-1-9"') && html.indexOf('id="readable-contrast-v1-1-9"') < html.search(/<body\b/i) && html.includes('rgba(248,252,255,.97)') && html.includes('color:#163650!important')],
             ['Form Asesmen Terintegrasi retains local Kemensos and ATENSI logos', html.includes('src="/kemensos.svg"') && html.includes('src="/atensi.svg"') && html.includes('id="assessmentPaper"')],
-            ['questionnaire introduction has high-contrast styles', questionnaire.includes('id="readable-questionnaire-v1-1-9"') && questionnaire.indexOf('id="readable-questionnaire-v1-1-9"') < questionnaire.search(/<body\\b/i) && questionnaire.includes('linear-gradient(135deg,#eef6ff')],
-            ['questionnaire waiting screen avoids white typography on scenery', waiting.includes('id="readable-wait-screen-v1-1-9"') && waiting.indexOf('id="readable-wait-screen-v1-1-9"') < waiting.search(/<body\\b/i) && waiting.includes('rgba(248,252,255,.48)')],
+            ['questionnaire introduction has high-contrast styles', questionnaire.includes('id="readable-questionnaire-v1-1-9"') && questionnaire.indexOf('id="readable-questionnaire-v1-1-9"') < questionnaire.search(/<body\b/i) && questionnaire.includes('linear-gradient(135deg,#eef6ff')],
+            ['questionnaire waiting screen avoids white typography on scenery', waiting.includes('id="readable-wait-screen-v1-1-9"') && waiting.indexOf('id="readable-wait-screen-v1-1-9"') < waiting.search(/<body\b/i) && waiting.includes('rgba(248,252,255,.48)')],
             ['public, package, and release versions are synchronized', packageJson.version === '1.1.9' && html.includes('Versi 1.1.9') && changelog.startsWith('## 1.1.9')],
             ['three-photo Danau Toba slideshow, cache-busted assets, and version', html.includes('id="danau-toba-slideshow-v1-2-9"') && html.includes('/danau-toba/photo-1.jpg?v=1.2.9') && html.includes('/danau-toba/photo-2.jpg?v=1.2.9') && html.includes('/danau-toba/photo-3.jpg?v=1.2.9') && html.includes('setInterval(next,4500)')],
             ['Kemensos logo centered over QR', html.includes('respondent-quiz-qr-logo') && html.includes('class="respondent-quiz-qr-frame"')],
