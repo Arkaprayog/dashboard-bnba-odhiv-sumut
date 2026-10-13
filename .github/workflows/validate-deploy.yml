@@ -245,7 +245,8 @@ jobs:
           quiz_status="$(curl --location --max-redirs 5 --silent --show-error --output /tmp/sahabat-questionnaire.html --write-out '%{http_code}' "$APP_URL/kuisioner-responden.html")"
           test "$quiz_status" = "200" || (echo "::error::Questionnaire intro page returned HTTP $quiz_status." && exit 1)
           grep -q '1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire intro is missing the canonical Google Form URL." && exit 1)
-          grep -q 'window.setTimeout' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire intro redirect timer is missing." && exit 1)
+          grep -q 'window.location.replace("https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform")' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire must redirect directly to the canonical Google Form." && exit 1)
+! grep -q 'window.setTimeout\|animation:\|@keyframes' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire must not contain an animation or artificial redirect delay." && exit 1)
           sw_status="$(curl --silent --show-error --output /tmp/sahabat-sw.js --write-out '%{http_code}' "$APP_URL/sw.js")"
           test "$sw_status" = "200" || (echo "::error::Service worker returned HTTP $sw_status." && exit 1)
           grep -q "addEventListener('push'" /tmp/sahabat-sw.js || (echo "::error::Push event handler missing." && exit 1)
