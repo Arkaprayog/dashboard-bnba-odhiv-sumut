@@ -163,7 +163,7 @@ jobs:
             ['Form Asesmen Terintegrasi retains local Kemensos and ATENSI logos', html.includes('src="/kemensos.svg"') && html.includes('src="/atensi.svg"') && html.includes('id="assessmentPaper"')],
             ['questionnaire introduction has high-contrast styles', questionnaire.includes('id="readable-questionnaire-v1-1-9"') && questionnaire.indexOf('id="readable-questionnaire-v1-1-9"') < questionnaire.search(/<body\b/i) && questionnaire.includes('linear-gradient(135deg,#eef6ff')],
             ['questionnaire waiting screen avoids white typography on scenery', waiting.includes('id="readable-wait-screen-v1-1-9"') && waiting.indexOf('id="readable-wait-screen-v1-1-9"') < waiting.search(/<body\b/i) && waiting.includes('rgba(248,252,255,.48)')],
-            ['public, package, and release versions are synchronized', packageJson.version === '1.1.13' && html.includes('Versi 1.1.13') && changelog.startsWith('## 1.1.13')],
+            ['public, package, and release versions are synchronized', packageJson.version === '1.1.14' && html.includes('Versi 1.1.14') && changelog.startsWith('## 1.1.14')],
             ['deployment health and smoke tests use the canonical HTTPS domain', workflow.includes('HEALTH_URL: https://sahabatodhivsumut.web.id/api/health') && workflow.includes('APP_URL: https://sahabatodhivsumut.web.id')],
             ['assessment uses the supplied Kemensos and ATENSI logos', html.includes('src="/logos/kemensos.png"') && html.includes('src="/atensi.svg"') && letter.includes('src="/logos/kemensos.png"')],
             ['Surat Lainnya opens the editable letter based on the provided PDF', html.includes('href="/surat-lainnya.html"') && letter.includes('Penyampaian Informasi Kegiatan Klaster ODHIV Sentra Insyaf Medan') && letter.includes('window.print()') && letter.includes('Langgeng Setiawan')],
@@ -219,6 +219,8 @@ jobs:
           if (!config.includes('WEBAUTHN_RP_ID = "sahabatodhivsumut.web.id"')) throw new Error('Default WebAuthn RP ID must match the canonical custom domain.');
           if (!config.includes('workers_dev = false')) throw new Error('The primary Worker must not expose a parallel workers.dev hostname.');
           if (!config.includes('routes = [{ pattern = "sahabatodhivsumut.web.id", custom_domain = true }]')) throw new Error('Wrangler must declare the production custom domain.');
+          if (!config.includes('[assets]\ndirectory = "./public"\nbinding = "ASSETS"\nrun_worker_first = true')) throw new Error('Static assets must pass through the Worker so security headers are applied.');
+
           const blocks = [
             ['root cron disabled', '[triggers]\ncrons = []'],
             ['Sahabat primary', '[env.sahabatodhiv-sumut.triggers]\ncrons = ["* * * * *"]'],
