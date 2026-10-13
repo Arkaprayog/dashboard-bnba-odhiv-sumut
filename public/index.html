@@ -1094,6 +1094,7 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
       <button type="button" data-view="home" aria-current="page">▦ Beranda</button>
       <button type="button" data-view="database">▤ Database</button>
       <button type="button" data-view="questionnaire">▧ Kuesioner</button>
+      <button type="button" id="openTeamManagement" hidden>♙ Tim Petugas</button>
       <button type="button" data-view="assessment">▧ Asesmen</button>
       <button type="button" data-view="formats">▤ Dokumen</button>
       <button type="button" data-view="respondentQuiz">▧ Kuisioner Responden</button>
@@ -1115,7 +1116,7 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
     </section>
     <section class="app-view" id="questionnaireView" hidden aria-label="Kuesioner Owner">
       <div class="dashhead"><div><h2>Kuesioner Owner</h2><p>Formulir internal owner untuk pencatatan calon penerima bantuan.</p></div></div>
-      <div class="dashpanel" style="margin-bottom:14px"><p style="margin:0 0 8px">Daftarkan petugas dan buat tautan pendataan khusus tanpa login untuk tim lapangan.</p><a class="dashbtn" href="/kelola-tim.html" target="_blank" rel="noopener noreferrer">Kelola Tim Petugas ↗</a></div>
+      <div class="dashpanel" style="margin-bottom:14px"><p style="margin:0 0 8px">Daftarkan petugas, buat tautan pribadi, dan pantau pendataan tim lapangan.</p><a class="dashbtn" href="/kelola-tim.html" target="_blank" rel="noopener noreferrer">Tim Petugas ↗</a></div>
       <form id="ownerQuestionnaireForm" class="dashpanel" enctype="multipart/form-data">
         <h3>Data calon responden</h3>
         <p class="scroll-hint">Formulir ini hanya tersedia setelah owner login. Data disimpan ke tab khusus “Kuisioner Owner” di Google Sheets; foto disimpan privat di Google Drive.</p>
@@ -1340,6 +1341,7 @@ function setAppView(view){
  if(view==='news'&&!newsItems.length)loadNews();
 }
 document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button)setAppView(button.dataset.view);});
+document.getElementById('openTeamManagement').addEventListener('click',()=>window.open('/kelola-tim.html','_blank','noopener,noreferrer'));
 document.getElementById('openRespondentQuiz').addEventListener('click',()=>window.open('https://sahabatodhivsumut.web.id/kuisioner-responden.html','_blank','noopener,noreferrer'));
 document.getElementById('copyRespondentQuiz').addEventListener('click',async()=>{const message=document.getElementById('respondentQuizMessage');try{await navigator.clipboard.writeText('https://sahabatodhivsumut.web.id/kuisioner-responden.html');message.textContent='Link kuisioner berhasil disalin.';}catch{message.textContent='Salin link ini secara manual: https://sahabatodhivsumut.web.id/kuisioner-responden.html';}});
 
@@ -1589,6 +1591,7 @@ function showDashboard(admin,csrf){
  currentDashboardRole=String(admin?.role||'').toLowerCase();
  const ownerQuestionnaireButton=document.querySelector('#appNavigation [data-view="questionnaire"]');
  if(ownerQuestionnaireButton)ownerQuestionnaireButton.hidden=currentDashboardRole!=='owner';
+ const teamMenuButton=document.getElementById('openTeamManagement');if(teamMenuButton)teamMenuButton.hidden=!['owner','admin'].includes(currentDashboardRole);
  document.body.classList.add('authenticated');
  form.hidden=true;
  dashboard.hidden=false;
@@ -1611,6 +1614,7 @@ function showLogin(text){
  dashboard.hidden=true;
  currentDashboardRole='';
  const ownerQuestionnaireButton=document.querySelector('#appNavigation [data-view="questionnaire"]');if(ownerQuestionnaireButton)ownerQuestionnaireButton.hidden=true;
+ const teamMenuButton=document.getElementById('openTeamManagement');if(teamMenuButton)teamMenuButton.hidden=true;
  document.body.classList.remove('authenticated');
  if(document.getElementById('appNavigation'))setAppView('home');
  form.hidden=false;

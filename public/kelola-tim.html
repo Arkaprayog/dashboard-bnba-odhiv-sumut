@@ -26,17 +26,17 @@ button,.btn{display:inline-flex;align-items:center;justify-content:center;gap:7p
 <body>
 <header><div><strong>Sahabat ODHIV Sumatera Utara</strong><span class="muted">Pengelolaan identitas petugas pendataan</span></div><a href="/" rel="noopener">Kembali ke dashboard ↗</a></header>
 <main>
-<section class="card"><h1>Kelola Tim Petugas</h1><p class="muted">Daftarkan petugas dan buat tautan khusus agar mereka bisa melakukan pendataan tanpa memasukkan kata sandi.</p><div id="authMessage" class="message show">Memeriksa sesi admin…</div></section>
+<section class="card"><h1>Kelola Tim Petugas</h1><p class="muted">Daftarkan petugas dan buat tautan khusus. Petugas masuk dengan tautan tersebut dan nama yang sesuai pendaftaran; setelah itu wajib melengkapi foto profil.</p><div id="authMessage" class="message show">Memeriksa sesi admin…</div></section>
 <div id="adminArea" hidden>
 <section class="card">
 <h2>Daftarkan petugas baru</h2>
 <form id="teamForm">
 <div class="grid">
 <div class="field"><label for="name">Nama Tim Petugas *</label><input id="name" name="name" maxlength="120" required autocomplete="name"></div>
-<div class="field"><label for="position">Posisi Jabatan Kerja *</label><select id="position" name="position" required><option value="">Pilih posisi</option><option value="PENDAMPING SEBAYA">PENDAMPING SEBAYA</option><option value="PENJANGKAU LAPANGAN">PENJANGKAU LAPANGAN</option></select></div>
+<div class="field"><label for="position">Posisi Jabatan Kerja *</label><select id="position" name="position" required><option value="">Pilih posisi</option><option value="PENDAMPING LAPANGAN">PENDAMPING LAPANGAN</option><option value="PENJANGKAU LAPANGAN">PENJANGKAU LAPANGAN</option></select></div>
 <div class="field"><label for="phone">No. HP/WA Tim Petugas *</label><input id="phone" name="phone" type="tel" inputmode="tel" maxlength="30" required></div>
 </div>
-<div class="form-actions"><button id="createButton" type="submit">Daftarkan & Buat Tautan</button></div>
+<div class="form-actions"><button id="createButton" type="submit">Daftarkan Petugas & Buat Link</button></div>
 </form>
 <div id="createMessage" class="message" role="status" aria-live="polite"></div>
 <div id="linkBox" class="link-box"><strong>Tautan khusus petugas berhasil dibuat</strong><p class="muted" style="margin:4px 0">Kirim tautan ini hanya kepada petugas yang bersangkutan. Tautan tidak akan ditampilkan lagi setelah halaman ditutup; buat tautan baru jika hilang.</p><div id="createdLink" class="link-url"></div><div class="link-actions"><button id="copyLink" type="button">Salin Tautan</button><a id="whatsappLink" class="btn" target="_blank" rel="noopener noreferrer">Kirim lewat WhatsApp</a></div></div>
