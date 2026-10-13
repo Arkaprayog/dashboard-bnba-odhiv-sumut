@@ -737,8 +737,8 @@ html body:not(.authenticated) .field input::placeholder{color:#526b85!important;
 html body.authenticated .login-heading{display:none!important}
 </style>
 
-<style id="landing-fix-v1-2-7">
-/* v1.2.7: ensure landing styles load inside HEAD, remove blue bottom band */
+<style id="landing-fix-v1-2-8">
+/* v1.2.8: ensure landing styles load inside HEAD, remove blue bottom band */
 html,body:not(.authenticated){min-height:100%;background-color:#123c54}
 body:not(.authenticated){
  min-height:100svh!important;
@@ -746,7 +746,6 @@ body:not(.authenticated){
  align-items:center!important;
  justify-content:center!important;
  color:#fff!important;
- background-image:linear-gradient(180deg,rgba(4,22,40,.08),rgba(3,20,36,.14))!important;
  background-size:cover!important;
  background-position:center center!important;
  background-attachment:fixed!important;
@@ -2015,9 +2014,9 @@ refreshSavedAssessments().catch(error=>{assessmentMessage.textContent='Daftar as
 })();
 </script>
 
-<script id="danau-toba-slideshow-v1-2-7">
+<script id="danau-toba-slideshow-v1-2-8">
 (() => {
- const photos = ['/danau-toba/photo-1.jpg?v=1.2.7','/danau-toba/photo-2.jpg?v=1.2.7','/danau-toba/photo-3.jpg?v=1.2.7'];
+ const photos = ['/danau-toba/photo-1.jpg?v=1.2.8','/danau-toba/photo-2.jpg?v=1.2.8','/danau-toba/photo-3.jpg?v=1.2.8'];
  let timer=null,index=0;
  const preload=photos.map(src=>{const image=new Image();image.decoding='async';image.src=src;return image;});
  const isAuthenticated=()=>document.body.classList.contains('authenticated');
