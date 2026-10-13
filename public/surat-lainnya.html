@@ -25,7 +25,7 @@ h1{font-size:1.35rem;margin:0 0 4px}h2{font-size:1rem;margin:0 0 14px}.muted{col
 .letterhead img{width:94px;height:85px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
 .letterhead strong{display:block;font-size:12pt;line-height:1.28}.letterhead small{display:block;font-size:8.5pt;line-height:1.35;margin-top:4px}
 .letter-meta{display:grid;grid-template-columns:100px minmax(0,1fr) 180px;gap:3px 8px;margin-bottom:27px}.letter-meta strong{font-weight:400}.letter-meta .date{grid-column:3;grid-row:1 / span 3}
-.to{margin-bottom:28px}.body-copy{white-space:pre-wrap;text-align:justify;overflow-wrap:anywhere}.body-copy p{margin:0 0 13px}.signature{width:48%;margin:30px 0 0 auto;text-align:left;break-inside:avoid}.signature .sign-space{height:54px}.signature-name{text-decoration:none;font-weight:700}
+.to{margin-bottom:28px}.body-copy{white-space:pre-wrap;text-align:justify;overflow-wrap:anywhere}.body-copy p{margin:0 0 13px}.signature{width:46%;min-width:210px;margin:30px 0 0 auto;text-align:center;display:grid;justify-items:center;align-content:start;break-inside:avoid;page-break-inside:avoid}.signature-title{min-height:2.9em;width:100%;display:flex;align-items:flex-start;justify-content:center;text-align:center}.signature-qr{width:104px;height:104px;margin:5px auto 7px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}.signature-qr .qr-code{width:104px;height:104px;display:block;object-fit:contain;background:#fff}.signature-qr .qr-logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:22px;height:22px;object-fit:contain;background:#fff;padding:2px;border-radius:3px;z-index:1}.signature-name{width:100%;text-decoration:underline;font-weight:700;text-align:center}.qr-fallback{font-size:7pt;line-height:1.2;overflow-wrap:anywhere;max-width:180px;margin:3px auto 0;text-align:center}
 .warning{font-size:.8rem;color:#526c80;background:#f2f7fc;border-radius:8px;padding:10px;margin-top:14px}
 @media(max-width:850px){.wrap{grid-template-columns:1fr}.letterhead{grid-template-columns:76px minmax(0,1fr)}.letterhead img{width:76px;height:70px}.paper{padding:16px}.letter-meta{grid-template-columns:75px minmax(0,1fr)}.letter-meta .date{grid-column:1 / -1;grid-row:auto;margin-top:8px}.signature{width:65%}}
 @page{size:A4;margin:17mm 17mm 16mm}
@@ -35,6 +35,10 @@ h1{font-size:1.35rem;margin:0 0 4px}h2{font-size:1rem;margin:0 0 14px}.muted{col
  .paper{padding:0;border:0;box-shadow:none;font-size:10.5pt}
  .letterhead{grid-template-columns:85px minmax(0,1fr);margin-bottom:22px}
  .letterhead img{width:85px;height:77px}
+ .signature{width:46%;min-width:0;margin-top:24px}
+ .signature-qr{width:104px;height:104px;margin:4px auto 6px}
+ .signature-qr .qr-code{width:104px;height:104px}
+ .signature-qr .qr-logo{width:22px;height:22px}
  .body-copy p{orphans:3;widows:3}
 }
 </style>
@@ -115,7 +119,7 @@ Demikian disampaikan, atas perhatiannya, diucapkan terima kasih.</textarea></div
       </div>
       <div class="to"><div>Yth. <span id="previewRecipient">Kepala Dinas Kesehatan Provinsi Sumatera Utara</span></div><div>di</div><div id="previewAddress">Medan</div></div>
       <div class="body-copy" id="previewBody"></div>
-      <section class="signature"><div id="previewSignTitle">Kepala Sentra Insyaf di Medan</div><div class="sign-space"></div><div class="signature-name" id="previewSignName">Langgeng Setiawan</div></section>
+      <section class="signature" aria-label="Blok tanda tangan"><div class="signature-title" id="previewSignTitle">Kepala Sentra Insyaf di Medan</div><div class="signature-qr" id="signatureQr" aria-label="QR code dokumen Google Docs"><img class="qr-code" id="signatureQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=480x480&amp;ecc=H&amp;qzone=4&amp;data=https%3A%2F%2Fdocs.google.com%2Fdocument%2Fd%2F1RuoyRlTIEy24zhewd126KYq53olKuHRv-4BUiIoo82U%2Fedit%3Fusp%3Ddrivesdk" alt="Pindai untuk membuka dokumen Google Docs" decoding="sync" loading="eager"><img class="qr-logo" src="/logos/kemensos.png" alt="Logo Kemensos" draggable="false"></div><div class="signature-name" id="previewSignName">Langgeng Setiawan</div><div class="qr-fallback" id="qrFallback" hidden><a href="https://docs.google.com/document/d/1RuoyRlTIEy24zhewd126KYq53olKuHRv-4BUiIoo82U/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">QR tidak tersedia. Buka dokumen Google Docs.</a></div></section>
     </article>
   </section>
 </main>
@@ -128,6 +132,26 @@ Demikian disampaikan, atas perhatiannya, diucapkan terima kasih.</textarea></div
     letterSubject:'previewSubject',letterRecipient:'previewRecipient',letterAddress:'previewAddress',
     letterSignTitle:'previewSignTitle',letterSignName:'previewSignName'
   };
+  const qrImage=document.getElementById('signatureQrImage');
+  const qrLogo=document.querySelector('.signature-qr .qr-logo');
+  const qrFallback=document.getElementById('qrFallback');
+  qrImage.addEventListener('error',()=>{
+    qrImage.hidden=true;
+    if(qrLogo) qrLogo.hidden=true;
+    qrFallback.hidden=false;
+  });
+  async function waitForPreviewImages(){
+    const images=Array.from(document.querySelectorAll('#letterPreview img')).filter(image=>!image.hidden);
+    await Promise.all(images.map(image=>{
+      if(image.complete) return Promise.resolve();
+      return new Promise(resolve=>{
+        const done=()=>resolve();
+        image.addEventListener('load',done,{once:true});
+        image.addEventListener('error',done,{once:true});
+        window.setTimeout(done,5000);
+      });
+    }));
+  }
   function render(){
     Object.entries(pairs).forEach(([inputId,previewId])=>{
       const value=document.getElementById(inputId).value.trim();
@@ -141,7 +165,7 @@ Demikian disampaikan, atas perhatiannya, diucapkan terima kasih.</textarea></div
     });
   }
   ids.forEach(id=>document.getElementById(id).addEventListener('input',render));
-  document.getElementById('printLetter').addEventListener('click',()=>{render();window.print();});
+  document.getElementById('printLetter').addEventListener('click',async()=>{render();await waitForPreviewImages();window.print();});
   render();
 })();
 </script>

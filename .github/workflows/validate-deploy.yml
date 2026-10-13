@@ -122,6 +122,22 @@ jobs:
           console.log(`Validated ${scripts.length} inline JavaScript blocks; escaped HTML snippets are intentionally ignored.`);
           NODE
           test -s public/sw.js
+      - name: Check inline JavaScript syntax in Surat Lainnya HTML
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+          const html = fs.readFileSync('public/surat-lainnya.html', 'utf8');
+          const openTag = '<script>';
+          const closeTag = '</script>';
+          const start = html.indexOf(openTag);
+          const end = html.indexOf(closeTag, start + openTag.length);
+          if (start < 0 || end < 0 || html.indexOf(openTag, end + closeTag.length) >= 0) {
+            throw new Error('Expected exactly one inline Surat Lainnya script.');
+          }
+          new vm.Script(html.slice(start + openTag.length, end), { filename: 'public/surat-lainnya.html:inline-script' });
+          console.log('PASS Surat Lainnya inline JavaScript syntax');
+          NODE
       - name: Validate respondent questionnaire intro and QR destinations
         run: |
           node - <<'NODE'
@@ -169,6 +185,8 @@ jobs:
             ['deployment health and smoke tests use the canonical HTTPS domain', workflow.includes('HEALTH_URL: https://sahabatodhivsumut.web.id/api/health') && workflow.includes('APP_URL: https://sahabatodhivsumut.web.id')],
             ['assessment uses the supplied Kemensos and ATENSI logos', html.includes('src="/logos/kemensos.png"') && html.includes('src="/atensi.svg"') && letter.includes('src="/logos/kemensos.png"')],
             ['Surat Lainnya opens the editable letter based on the provided PDF', html.includes('href="/surat-lainnya.html"') && letter.includes('Penyampaian Informasi Kegiatan Klaster ODHIV Sentra Insyaf Medan') && letter.includes('window.print()') && letter.includes('Langgeng Setiawan')],
+            ['Surat Lainnya signature block is aligned right with centered text and A4 print rules', letter.includes('@page{size:A4;margin:17mm 17mm 16mm}') && letter.includes('margin:30px 0 0 auto') && letter.includes('page-break-inside:avoid') && letter.includes('signature-title') && letter.includes('signature-qr .qr-code') && letter.includes('signature-name')],
+            ['Surat Lainnya QR links to the supplied Google Doc, uses high error correction, and has a local Kemensos logo', letter.includes('https://api.qrserver.com/v1/create-qr-code/?') && letter.includes('data=https%3A%2F%2Fdocs.google.com%2Fdocument%2Fd%2F1RuoyRlTIEy24zhewd126KYq53olKuHRv-4BUiIoo82U%2Fedit%3Fusp%3Ddrivesdk') && letter.includes('ecc=H') && letter.includes('qzone=4') && letter.includes('class="qr-code"') && letter.includes('src="/logos/kemensos.png" alt="Logo Kemensos"') && !letter.includes('cdnjs.cloudflare.com') && letter.includes('qrFallback') && worker.includes('https://api.qrserver.com')],
             ['three-photo Danau Toba slideshow, cache-busted assets, and version', html.includes('id="danau-toba-slideshow-v1-2-9"') && html.includes('/danau-toba/photo-1.jpg?v=1.2.9') && html.includes('/danau-toba/photo-2.jpg?v=1.2.9') && html.includes('/danau-toba/photo-3.jpg?v=1.2.9') && html.includes('setInterval(next,4500)')],
             ['Kemensos logo centered over QR', html.includes('respondent-quiz-qr-logo') && html.includes('src="/logos/kemensos.png"') && html.includes('class="respondent-quiz-qr-frame"')],
             ['respondent QR encodes the exact domain URL with high error correction and quiet zone', (() => { const match = html.match(/<img class="respondent-quiz-qr" src="([^"]+)"/); if (!match) return false; const src = match[1]; return src.startsWith('https://api.qrserver.com/v1/create-qr-code/?') && src.includes('data=https%3A%2F%2Fsahabatodhivsumut.web.id%2Fkuisioner-responden.html') && src.includes('size=480x480') && src.includes('ecc=H') && src.includes('qzone=4') && html.includes('src="/logos/kemensos.png" alt="Logo Kementerian Sosial Republik Indonesia"'); })()],
@@ -399,4 +417,12 @@ jobs:
           node -e 'const fs=require("fs");const d=JSON.parse(fs.readFileSync("/tmp/sahabat-respondents.json","utf8"));if(!d.error)process.exit(1);'
           bootstrap_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-bootstrap.json --write-out '%{http_code}' -X POST -H "Origin: $APP_URL" -H "Content-Type: application/json" --data '{}' "$APP_URL/api/setup-owner")"
           test "$bootstrap_status" = "403" || (echo "::error::Sahabat bootstrap endpoint must reject requests without a token (HTTP 403), got $bootstrap_status." && cat /tmp/sahabat-bootstrap.json && exit 1)
+          surat_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-surat-lainnya.html --write-out '%{http_code}' "$APP_URL/surat-lainnya.html")"
+          test "$surat_status" = "200" || (echo "::error::Surat Lainnya page returned HTTP $surat_status." && exit 1)
+          grep -q 'api.qrserver.com/v1/create-qr-code' /tmp/sahabat-surat-lainnya.html || (echo "::error::Deployed Surat Lainnya QR image is missing." && exit 1)
+          grep -q 'data=https%3A%2F%2Fdocs.google.com%2Fdocument%2Fd%2F1RuoyRlTIEy24zhewd126KYq53olKuHRv-4BUiIoo82U%2Fedit%3Fusp%3Ddrivesdk' /tmp/sahabat-surat-lainnya.html || (echo "::error::Deployed Surat Lainnya QR points to an unexpected document." && exit 1)
+          grep -q 'ecc=H' /tmp/sahabat-surat-lainnya.html && grep -q 'qzone=4' /tmp/sahabat-surat-lainnya.html || (echo "::error::Deployed Surat Lainnya QR needs high error correction and quiet zone." && exit 1)
+          grep -q 'src="/logos/kemensos.png" alt="Logo Kemensos"' /tmp/sahabat-surat-lainnya.html || (echo "::error::Deployed Surat Lainnya is missing the centered local Kemensos logo." && exit 1)
+          grep -Fq '@page{size:A4;margin:17mm 17mm 16mm}' /tmp/sahabat-surat-lainnya.html && grep -q 'signature-title' /tmp/sahabat-surat-lainnya.html && grep -q 'signature-name' /tmp/sahabat-surat-lainnya.html || (echo "::error::Deployed Surat Lainnya is missing its A4 signature layout." && exit 1)
+          echo "Verified deployed Surat Lainnya page, A4 signature block, Kemensos logo and Google Docs QR."
           echo "Sahabat ODHIV smoke checks passed: public page available, respondent API protected, bootstrap rejects missing token."
