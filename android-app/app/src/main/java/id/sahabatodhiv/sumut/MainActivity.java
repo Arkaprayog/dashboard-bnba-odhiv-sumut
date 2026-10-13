@@ -43,8 +43,8 @@ import java.util.Locale;
 import java.util.concurrent.Executor;
 
 public final class MainActivity extends FragmentActivity {
-    private static final String DASHBOARD_URL = "https://sahabatodhiv-sumut.aryprayoga139.workers.dev/";
-    private static final String DASHBOARD_HOST = "sahabatodhiv-sumut.aryprayoga139.workers.dev";
+    private static final String DASHBOARD_URL = "https://sahabatodhivsumut.web.id/";
+    private static final String DASHBOARD_HOST = "sahabatodhivsumut.web.id";
     private static final String PREFS = "sahabat_odhiv_preferences";
     private static final String CHANNEL_ID = "sahabat_odhiv_notifications";
     private static final int REQUEST_IMAGE_CHOOSER = 4107;
