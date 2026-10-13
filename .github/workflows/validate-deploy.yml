@@ -110,7 +110,7 @@ jobs:
           const dashboard = fs.readFileSync('public/index.html', 'utf8');
           const activity = fs.readFileSync('android-app/app/src/main/java/id/sahabatodhiv/sumut/MainActivity.java', 'utf8');
           const checks = [
-            ['questionnaire has no animated illustration or timer', !intro.includes('animation:') && !intro.includes('@keyframes') && !intro.includes('setTimeout') && !intro.includes('sceneOut') && !intro.includes('kiteFloat')],
+            ['questionnaire has centered transparent logo cube and bottom loading line', intro.includes('class="cube"') && intro.includes('class="loading"') && intro.includes('cube-spin') && intro.includes('final-screen')],
             ['questionnaire redirects directly to canonical Google Form', intro.includes('window.location.replace("https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform")')],
             ['questionnaire keeps a usable fallback link', intro.includes('id="formLink"') && intro.includes('Buka Google Forms')],
             ['dashboard login opens without animated intro', !dashboard.includes('startCollaborationIntro') && !dashboard.includes('collab-intro')],
