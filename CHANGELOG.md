@@ -1,3 +1,9 @@
+## 1.1.14 — 2026-10-14
+- Route static asset requests through the Worker so browser security headers are applied to actual public responses.
+- Extend Wrangler validation to prevent asset requests from bypassing Worker response hardening.
+- Add runtime smoke checks for HSTS, CSP, X-Frame-Options, X-Content-Type-Options, and same-origin resource policy.
+- Synchronize the web application and package release version.
+
 ## 1.1.13 — 2026-10-14
 - Require a stronger 14-character minimum for first-time owner bootstrap passwords.
 - Reworked the owner setup helper to use the canonical domain, correct Origin/token headers, and the API's camelCase body contract.
