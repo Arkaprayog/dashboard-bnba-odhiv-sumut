@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer"><meta name="robots" content="noindex,nofollow">
+<title>Daftar Petugas — Sahabat ODHIV Sumut</title>
+<style>
+:root{color-scheme:light;--navy:#103b70;--blue:#0757a5;--ink:#173650;--muted:#5a7186;--line:#d5e1eb;--bg:#edf5fb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+header{background:#fff;border-bottom:1px solid var(--line);padding:14px max(12px,calc((100vw - 1100px)/2));display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}header strong{display:block;color:var(--navy)}header a{color:var(--blue);font-weight:800;text-decoration:none}
+main{width:min(1100px,calc(100% - 20px));margin:20px auto 44px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:clamp(14px,2.5vw,22px);margin-bottom:14px;box-shadow:0 8px 24px rgba(15,57,93,.04)}h1{font-size:1.55rem;color:var(--navy);margin:0 0 5px}h2{font-size:1.05rem;color:var(--navy);margin:0 0 12px}p{margin:0 0 10px}.muted{color:var(--muted);font-size:.87rem}.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}.toolbar select,.toolbar button{min-height:42px;border:1px solid #bdcedd;border-radius:9px;padding:8px 11px;background:white;color:var(--ink);font:inherit}.toolbar button,.btn{background:var(--blue);border-color:var(--blue);color:white;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}.toolbar button:disabled{opacity:.6;cursor:wait}.status{padding:10px 12px;border-radius:9px;background:#edf4f9;color:#23445f;margin-top:10px;white-space:pre-wrap;overflow-wrap:anywhere}.status.error{background:#fff0f0;color:#9d2525}.status[hidden]{display:none}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0}.stat{padding:13px;border:1px solid var(--line);border-radius:12px;background:#f8fbfe;min-width:0}.stat small{display:block;color:var(--muted)}.stat strong{display:block;color:var(--navy);font-size:1.45rem;overflow-wrap:anywhere}
+.profiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.profile{display:flex;gap:12px;align-items:center;padding:13px;border:1px solid var(--line);border-radius:12px;min-width:0}.avatar{width:70px;height:70px;flex:0 0 70px;border-radius:50%;object-fit:cover;background:#edf4f9;border:1px solid var(--line)}.profile-info{min-width:0;flex:1}.profile-info strong{display:block;color:var(--navy);overflow-wrap:anywhere}.profile-info p{margin:3px 0;color:var(--muted);font-size:.85rem;overflow-wrap:anywhere}.pill{display:inline-block;padding:3px 8px;border-radius:999px;background:#e7f7ef;color:#126c46;font-size:.75rem;font-weight:800}.pill.off{background:#edf0f3;color:#5a7186}.pill.pending{background:#fff4dc;color:#875d09}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;min-width:620px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:.8rem;color:var(--muted);background:#f7fafc;white-space:nowrap}tbody tr:last-child td{border-bottom:0}.empty{text-align:center;color:var(--muted);padding:18px}.row-select{width:100%;max-width:100%;min-height:42px;border:1px solid #bdcedd;border-radius:9px;padding:8px 10px;background:white;color:var(--ink);font:inherit}
+@media(max-width:720px){.profiles{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.stat{padding:10px}.stat strong{font-size:1.2rem}.profile{align-items:flex-start}.avatar{width:60px;height:60px;flex-basis:60px}}
+@media(max-width:430px){.stats{grid-template-columns:1fr}.toolbar>*{width:100%}}
+</style>
+</head>
+<body>
+<header><div><strong>Sahabat ODHIV Sumatera Utara</strong><span class="muted">Profil, capaian bulanan, dan responden per petugas</span></div><div class="toolbar" style="margin:0"><a href="/tim-petugas.html">Menu Tim Petugas</a><a href="/">Beranda Dashboard</a></div></header>
+<main>
+<section class="card"><h1>Daftar Petugas</h1><p class="muted">Halaman ini hanya dapat dibuka owner/admin yang sudah login. Data responden pada tabel dibatasi pada empat kolom yang ditentukan.</p><div id="pageStatus" class="status">Memeriksa akses dashboard…</div><div class="toolbar"><button id="refresh" type="button">Perbarui Data</button><label for="monthSelect">Bulan capaian</label><select id="monthSelect"><option value="">Memuat bulan…</option></select></div></section>
+<section class="card"><h2>Profil Petugas</h2><div id="profiles" class="profiles"><p class="muted">Memuat profil petugas…</p></div></section>
+<section class="card"><h2>Capaian Petugas per Bulan</h2><p class="muted">Jumlah responden dihitung dari pendataan yang berhasil masuk pada bulan terpilih.</p><div class="stats"><div class="stat"><small>Petugas terdaftar</small><strong id="staffTotal">—</strong></div><div class="stat"><small>Total responden bulan ini</small><strong id="monthTotal">—</strong></div><div class="stat"><small>Petugas dengan capaian</small><strong id="staffWithResults">—</strong></div></div><div class="table-wrap"><table><thead><tr><th>Nama Petugas</th><th>Jabatan</th><th>Responden Bulan Terpilih</th><th>Total Responden</th></tr></thead><tbody id="achievementRows"><tr><td colspan="4" class="empty">Memuat capaian…</td></tr></tbody></table></div></section>
+<section class="card"><h2>Daftar Responden Petugas</h2><p class="muted">Pilih petugas untuk melihat jumlah dan daftar responden yang didatanya. Kolom yang ditampilkan hanya Nama Responden, NIK, Usia, dan Kota Domisili Saat Ini.</p><label for="staffSelect" class="muted">Petugas</label><select id="staffSelect" class="row-select"><option value="">Pilih petugas</option></select><div class="stats"><div class="stat"><small>Jumlah responden bulan terpilih</small><strong id="selectedMonthCount">0</strong></div><div class="stat"><small>Total responden petugas</small><strong id="selectedTotalCount">0</strong></div><div class="stat"><small>Nama petugas</small><strong id="selectedStaffName" style="font-size:1rem">—</strong></div></div><div class="table-wrap"><table><thead><tr><th>Nama Responden</th><th>NIK</th><th>Usia</th><th>Kota Domisili Saat Ini</th></tr></thead><tbody id="respondentRows"><tr><td colspan="4" class="empty">Pilih petugas untuk melihat data.</td></tr></tbody></table></div></section>
+</main>
+<script>
+(()=> {
+ const $=id=>document.getElementById(id);
+ let staff=[], submissions=[], selectedMonth='';
+ const status=(text,error=false)=>{$('pageStatus').textContent=text;$('pageStatus').className='status'+(error?' error':'');};
+ const cell=(row,text)=>{const td=document.createElement('td');td.textContent=String(text??'—')||'—';row.append(td);return td;};
+ const normalized=value=>String(value||'').normalize('NFKC').toLocaleLowerCase('id-ID').replace(/\s+/g,' ').trim();
+ async function fetchJson(url){const response=await fetch(url,{credentials:'same-origin',cache:'no-store'});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||'Permintaan gagal.');return data;}
+ function parseMonth(value){
+  const s=String(value||'').trim();
+  let m=s.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+  if(m)return m[1]+'-'+m[2].padStart(2,'0');
+  m=s.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})/);
+  if(m)return m[3]+'-'+m[2].padStart(2,'0');
+  const d=new Date(s);if(!Number.isNaN(d.getTime()))return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  return '';
+ }
+ function monthLabel(key){if(!key)return 'Tanggal tidak diketahui';const [y,m]=key.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});}
+ function isSelectedMonth(item){return parseMonth(item.timestamp)===selectedMonth;}
+ function staffSubmissions(person){return submissions.filter(item=>normalized(item.teamName)===normalized(person.display_name));}
+ function renderMonthOptions(){
+  const months=[...new Set(submissions.map(x=>parseMonth(x.timestamp)).filter(Boolean))].sort().reverse();
+  const now=new Date(),current=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  selectedMonth=months.includes(current)?current:(months[0]||current);
+  const select=$('monthSelect');select.replaceChildren();
+  if(!months.includes(current))months.unshift(current);
+  months.forEach(month=>{const o=document.createElement('option');o.value=month;o.textContent=monthLabel(month);select.append(o);});
+  select.value=selectedMonth;
+ }
+ function renderProfiles(){
+  const root=$('profiles');root.replaceChildren();
+  if(!staff.length){const p=document.createElement('p');p.className='muted';p.textContent='Belum ada petugas terdaftar.';root.append(p);return;}
+  for(const person of staff){
+   const card=document.createElement('article');card.className='profile';
+   const img=document.createElement('img');img.className='avatar';img.alt='Foto profil '+person.display_name;img.loading='lazy';img.src=person.has_profile_photo?('/api/team-petugas-photo?id='+encodeURIComponent(person.id)):'';
+   if(!person.has_profile_photo)img.alt='Foto profil belum diunggah';
+   img.addEventListener('error',()=>{img.removeAttribute('src');img.alt='Foto profil belum tersedia';});
+   const info=document.createElement('div');info.className='profile-info';
+   const name=document.createElement('strong');name.textContent=person.display_name;info.append(name);
+   const position=document.createElement('p');position.textContent=person.position;info.append(position);
+   const phone=document.createElement('p');phone.textContent='HP/WA: '+(person.phone||'—');info.append(phone);
+   const statusBadge=document.createElement('span');statusBadge.className='pill'+(!Number(person.active)?' off':(!Number(person.profile_completed)?' pending':''));statusBadge.textContent=!Number(person.active)?'Nonaktif':(Number(person.profile_completed)?'Profil lengkap':'Profil belum lengkap');info.append(statusBadge);
+   card.append(img,info);root.append(card);
+  }
+ }
+ function renderStaffSelect(){
+  const select=$('staffSelect'),prior=select.value;select.replaceChildren();
+  const first=document.createElement('option');first.value='';first.textContent='Pilih petugas';select.append(first);
+  staff.forEach(person=>{const o=document.createElement('option');o.value=person.id;o.textContent=person.display_name+' — '+person.position;select.append(o);});
+  if(staff.some(p=>p.id===prior))select.value=prior;
+  else if(staff.length)select.value=staff[0].id;
+ }
+ function renderAchievements(){
+  $('staffTotal').textContent=String(staff.length);
+  const tbody=$('achievementRows');tbody.replaceChildren();
+  let monthTotal=0,withResults=0;
+  if(!staff.length){const tr=document.createElement('tr');const td=cell(tr,'Belum ada petugas terdaftar.');td.colSpan=4;td.className='empty';tbody.append(tr);}
+  for(const person of staff){
+   const items=staffSubmissions(person),monthly=items.filter(isSelectedMonth).length;
+   monthTotal+=monthly;if(monthly>0)withResults++;
+   const tr=document.createElement('tr');cell(tr,person.display_name);cell(tr,person.position);cell(tr,monthly);cell(tr,items.length);tbody.append(tr);
+  }
+  $('monthTotal').textContent=String(monthTotal);$('staffWithResults').textContent=String(withResults);
+ }
+ function renderRespondents(){
+  const id=$('staffSelect').value,person=staff.find(p=>p.id===id),tbody=$('respondentRows');tbody.replaceChildren();
+  if(!person){$('selectedMonthCount').textContent='0';$('selectedTotalCount').textContent='0';$('selectedStaffName').textContent='—';const tr=document.createElement('tr');const td=cell(tr,'Pilih petugas untuk melihat data.');td.colSpan=4;td.className='empty';tbody.append(tr);return;}
+  const all=staffSubmissions(person),monthly=all.filter(isSelectedMonth);
+  $('selectedMonthCount').textContent=String(monthly.length);$('selectedTotalCount').textContent=String(all.length);$('selectedStaffName').textContent=person.display_name;
+  if(!all.length){const tr=document.createElement('tr');const td=cell(tr,'Belum ada responden yang tercatat untuk petugas ini.');td.colSpan=4;td.className='empty';tbody.append(tr);return;}
+  all.forEach(item=>{const tr=document.createElement('tr');cell(tr,item.name);cell(tr,item.nik);cell(tr,item.age);cell(tr,item.city);tbody.append(tr);});
+ }
+ function render(){renderProfiles();renderStaffSelect();renderAchievements();renderRespondents();}
+ async function load(){
+  $('refresh').disabled=true;status('Memuat profil petugas dan capaian pendataan…');
+  try{
+   const teamData=await fetchJson('/api/team-petugas');staff=teamData.items||[];
+   try{const submissionData=await fetchJson('/api/team-submissions');submissions=submissionData.items||[];renderMonthOptions();}
+   catch(error){submissions=[];renderMonthOptions();status('Profil petugas dimuat, tetapi data capaian belum tersedia: '+error.message,true);}
+   render();if(!$('pageStatus').classList.contains('error'))status('Data berhasil diperbarui.');
+  }catch(error){staff=[];submissions=[];render();status(error.message||'Tidak dapat memuat daftar petugas. Pastikan Anda sudah login sebagai owner/admin.',true);}
+  finally{$('refresh').disabled=false;}
+ }
+ $('refresh').addEventListener('click',load);
+ $('monthSelect').addEventListener('change',()=>{selectedMonth=$('monthSelect').value;renderAchievements();renderRespondents();});
+ $('staffSelect').addEventListener('change',renderRespondents);
+ load();
+})();
+</script>
+</body></html>
