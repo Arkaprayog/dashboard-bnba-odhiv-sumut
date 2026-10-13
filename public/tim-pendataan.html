@@ -114,8 +114,8 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;padding:0 12px 25px}
    const response=await fetch('/api/team-questionnaire?token='+encodeURIComponent(token),{method:'POST',credentials:'same-origin',cache:'no-store',body:data});
    const result=await response.json().catch(()=>({}));
    if(!response.ok||!result.ok)throw new Error(result.error||'Pendataan belum berhasil disimpan.');
-   showMessage(submitMessage,'Berhasil! Data telah dikirim ke dashboard kuesioner. Waktu: '+result.timestamp+'. Petugas: '+result.teamName+'.','ok');
-   form.reset();window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+   form.reset();showMessage(submitMessage,'Berhasil! Data telah dikirim ke dashboard kuesioner. Waktu: '+result.timestamp+'. Petugas: '+result.teamName+'.','ok');
+   window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
   }catch(error){showMessage(submitMessage,error instanceof Error?error.message:'Pendataan gagal dikirim. Periksa koneksi lalu coba kembali.','error');}
   finally{submitButton.disabled=false;submitButton.textContent='Kirim Pendataan';}
  });
