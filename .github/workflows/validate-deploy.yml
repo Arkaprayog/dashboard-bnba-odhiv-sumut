@@ -64,6 +64,19 @@ jobs:
                       shutil.copyfileobj(src, dst)
           print('Extracted 7 Danau Toba slideshow photos.')
           PY
+      - name: Assemble owner dashboard background image
+        run: |
+          set -euo pipefail
+          test -d .build-assets/owner-background
+          cat .build-assets/owner-background/part-*.b64 | tr -d '\r\n' | base64 --decode > public/owner-background.webp
+          python3 - <<'PY'
+          from pathlib import Path
+          asset = Path("public/owner-background.webp")
+          data = asset.read_bytes()
+          if len(data) < 10000 or data[:4] != b"RIFF" or data[8:12] != b"WEBP":
+              raise SystemExit("Owner background asset is not a valid WebP image.")
+          print(f"Owner background asset verified: {len(data)} bytes.")
+          PY
       - name: Install dependencies
         run: npm install
       - name: Typecheck
@@ -213,6 +226,19 @@ jobs:
                   with z.open(item) as src, (target / f'photo-{index}.jpg').open('wb') as dst:
                       shutil.copyfileobj(src, dst)
           print('Extracted 7 Danau Toba slideshow photos.')
+          PY
+      - name: Assemble owner dashboard background image
+        run: |
+          set -euo pipefail
+          test -d .build-assets/owner-background
+          cat .build-assets/owner-background/part-*.b64 | tr -d '\r\n' | base64 --decode > public/owner-background.webp
+          python3 - <<'PY'
+          from pathlib import Path
+          asset = Path("public/owner-background.webp")
+          data = asset.read_bytes()
+          if len(data) < 10000 or data[:4] != b"RIFF" or data[8:12] != b"WEBP":
+              raise SystemExit("Owner background asset is not a valid WebP image.")
+          print(f"Owner background asset verified: {len(data)} bytes.")
           PY
       - name: Install dependencies
         run: npm install
