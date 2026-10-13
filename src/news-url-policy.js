@@ -11,7 +11,7 @@ export function safeNewsUrl(value) {
 
   try {
     const url = new URL(value.trim());
-    const hostname = url.hostname.toLowerCase().replace(/\.$/, "");
+    const hostname = url.hostname.toLowerCase();
     const trustedHost = TRUSTED_NEWS_HOSTS.some(
       (base) => hostname === base || hostname.endsWith("." + base),
     );
