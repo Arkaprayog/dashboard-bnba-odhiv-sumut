@@ -104,7 +104,7 @@ jobs:
             ['private file route requires an admin session', worker.includes('url.pathname === "/api/respondent-file"') && worker.includes('Peran tidak diizinkan mengakses berkas responden.')],
             ['WhatsApp template has respondent name and time greeting', html.includes('const respondentName=') && html.includes("const greeting=hour>=4&&hour<11?'pagi'") && html.includes('Deny Arifin Martyon')],
             ['Content-Security-Policy configured', worker.includes('content-security-policy') && worker.includes("frame-ancestors 'none'")],
-            ['notification logging redacts raw exception messages', worker.includes('notification_record_failed", { action, stage: "record" }) && !worker.includes('notification_record_failed", { action, message:')],
+            ['notification logging redacts raw exception messages', worker.includes(`notification_record_failed", { action, stage: "record" }`) && !worker.includes(`notification_record_failed", { action, message:`)],
             ['copyright notice visible', html.includes('© 2026 Data Base ODHIV Sumatera Utara')],
           ];
           for (const [name, ok] of checks) {
