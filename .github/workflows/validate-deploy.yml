@@ -130,7 +130,7 @@ jobs:
           const html = fs.readFileSync('public/index.html', 'utf8');
           const worker = fs.readFileSync('src/index.ts', 'utf8');
           const checks = [
-            ['eight-photo Danau Toba slideshow and version', html.includes('id="danau-toba-slideshow-v1-1-8"') && html.includes('/owner-background.webp') && html.includes('setInterval(next,5000)')],
+            ['three-photo Danau Toba slideshow, cache-busted assets, and version', html.includes('id="danau-toba-slideshow-v1-2-7"') && html.includes('/danau-toba/photo-1.jpg?v=1.2.7') && html.includes('/danau-toba/photo-2.jpg?v=1.2.7') && html.includes('/danau-toba/photo-3.jpg?v=1.2.7') && html.includes('setInterval(next,4500)')],
             ['Kemensos logo centered over QR', html.includes('respondent-quiz-qr-logo') && html.includes('class="respondent-quiz-qr-frame"')],
             ['camera and document upload choices', html.includes('application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document') && html.includes('capture="environment"')],
             ['server validates PDF/DOC/DOCX upload MIME', worker.includes('application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document')],
