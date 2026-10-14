@@ -1,0 +1,52 @@
+name: Weekly source backup to Google Drive
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sahabatodhiv-drive-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    name: Archive source and upload privately
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Create source archive
+        run: |
+          set -euo pipefail
+          git archive --format=tar.gz --prefix="sahabatodhiv-sumut/" HEAD > "$RUNNER_TEMP/sahabatodhiv-sumut.tar.gz"
+          size=$(wc -c < "$RUNNER_TEMP/sahabatodhiv-sumut.tar.gz")
+          if [ "$size" -lt 1 ] || [ "$size" -gt 20971520 ]; then
+            echo "Archive size must be between 1 byte and 20 MiB."
+            exit 1
+          fi
+          echo "Created source archive ($size bytes)."
+      - name: Upload to private Drive backup folder
+        env:
+          DRIVE_BACKUP_TOKEN: ${{ secrets.DRIVE_BACKUP_TOKEN }}
+          WORKER_ORIGIN: https://sahabatodhivsumut.web.id
+        run: |
+          set -euo pipefail
+          if [ -z "${DRIVE_BACKUP_TOKEN:-}" ]; then
+            echo "::notice::Set the DRIVE_BACKUP_TOKEN repository secret and the matching Cloudflare Worker secret to enable uploads."
+            exit 0
+          fi
+          curl --fail-with-body --silent --show-error \
+            --max-time 120 \
+            -X POST "${WORKER_ORIGIN}/api/drive/backup" \
+            -H "Authorization: Bearer ${DRIVE_BACKUP_TOKEN}" \
+            -H "Content-Type: application/gzip" \
+            --data-binary "@$RUNNER_TEMP/sahabatodhiv-sumut.tar.gz" \
+            -o "$RUNNER_TEMP/drive-backup-result.json"
+          node -e 'const fs=require("fs"); const r=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); if(!r.ok) process.exit(1); console.log("Private Drive backup uploaded:", r.fileName);' "$RUNNER_TEMP/drive-backup-result.json"
