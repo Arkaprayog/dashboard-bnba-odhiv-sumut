@@ -1747,6 +1747,9 @@ export default {
             VALUES(1,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)
             ON CONFLICT(id) DO UPDATE SET photo_data=excluded.photo_data,photo_mime=excluded.photo_mime,employee_name=excluded.employee_name,nip=excluded.nip,address=excluded.address,phone=excluded.phone,email=excluded.email,institution=excluded.institution,updated_at=CURRENT_TIMESTAMP,updated_by=excluded.updated_by`)
             .bind(photoData, photoMime, employeeName, nip, address, phone, email, institution, admin.id).run();
+          // Keep the owner account label synchronized with the profile name shown on the dashboard.
+          await env.DB.prepare("UPDATE admins SET display_name=? WHERE id=? AND role='owner' AND active=1")
+            .bind(employeeName, admin.id).run();
           await audit(env, admin.id, "owner_profile_update");
           return reply({ ok: true, message: "Profil owner berhasil disimpan." });
         }
