@@ -423,8 +423,8 @@ jobs:
               raise SystemExit('Deployed owner background is not a valid WebP image.')
           print(f'Deployed owner background verified: {len(data)} bytes.')
           PY
-          grep -Fq 'dashboard-background.webp?v=1.1.25' /tmp/sahabat-dashboard.html || (echo "::error::Global glass theme or supplied dashboard background is missing from HTML." && exit 1)
-          dashboard_background_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-dashboard-background.webp --write-out '%{http_code}|%{content_type}' "$APP_URL/dashboard-background.webp?v=1.1.25")"
+          grep -Fq 'dashboard-background.webp?v=1.1.26' /tmp/sahabat-dashboard.html || (echo "::error::Global glass theme or supplied dashboard background is missing from HTML." && exit 1)
+          dashboard_background_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-dashboard-background.webp --write-out '%{http_code}|%{content_type}' "$APP_URL/dashboard-background.webp?v=1.1.26")"
           dashboard_background_status="${dashboard_background_response%%|*}"
           dashboard_background_type="${dashboard_background_response#*|}"
           test "$dashboard_background_status" = "200" || (echo "::error::Supplied dashboard background returned HTTP $dashboard_background_status." && exit 1)
