@@ -1,12 +1,7 @@
 name: Weekly source backup to Google Drive
-# Temporary push trigger is enabled only for this integration verification.
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/drive-backup.yml'
   schedule:
     - cron: "17 3 * * 1"
 
