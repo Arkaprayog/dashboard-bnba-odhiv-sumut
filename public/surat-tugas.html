@@ -14,11 +14,11 @@ body{margin:0;background:#edf1f4;color:var(--ink);font-family:"Times New Roman",
 .toolbar a,.toolbar button{border:1px solid #bdcbd5;border-radius:999px;padding:10px 16px;background:#fff;color:#173650;text-decoration:none;font:600 14px Arial,sans-serif;cursor:pointer}
 .toolbar button.primary{background:#155e91;color:#fff;border-color:#155e91}
 .hint{width:100%;text-align:center;color:#52616b;font-size:12px}
-.paper{width:min(210mm,calc(100% - 24px));min-height:297mm;margin:22px auto;padding:22mm 25mm 20mm;background:#fff;box-shadow:0 8px 30px #182c3b20;font-size:12pt;line-height:1.35}
+.paper{width:min(210mm,calc(100% - 24px));min-height:297mm;margin:22px auto;padding:22mm 25mm 20mm;background:#fff;box-shadow:0 8px 30px #182c3b20;font-size:12pt;line-height:1.35}.letterhead{display:grid;grid-template-columns:85px minmax(0,1fr);gap:14px;align-items:center;padding:0 0 11px;margin-bottom:25px;border-bottom:3px double #111;text-align:center}.letterhead img{width:85px;height:77px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}.letterhead strong{display:block;font-size:12pt;line-height:1.28}.letterhead small{display:block;font-size:8.5pt;line-height:1.35;margin-top:4px}.date-line{display:block;width:100%;text-align:right;margin:0 0 18px;break-inside:avoid;page-break-inside:avoid}
 .center{text-align:center}.title{font-weight:bold;text-decoration:underline;font-size:14pt;margin:0}.number{font-weight:bold;margin:2px 0 22px}.section{display:grid;grid-template-columns:95px 16px 1fr;gap:0 4px;margin:0 0 12px}.label{white-space:nowrap}.value{min-width:0}.value p{margin:0 0 3px}.indent{padding-left:20px;text-indent:-20px}.assign{text-align:center;font-weight:bold;letter-spacing:.4px;margin:16px 0 12px}.signature{width:48%;margin:36px 0 0 auto;text-align:left;break-inside:avoid;page-break-inside:avoid}.signature .sign-gap{height:50px}.editable{outline:none;border-radius:2px}.editable:focus{background:#fffbe6;box-shadow:0 0 0 1px #d6ad43}.date-line{text-align:right;margin:0 0 18px}.closing{margin-top:18px;text-align:justify}
 @page{size:A4 portrait;margin:0}
-@media(max-width:650px){.paper{width:100%;min-height:0;margin:0;padding:18mm 15mm;box-shadow:none;font-size:11pt}.section{grid-template-columns:76px 12px 1fr}.signature{width:65%}.toolbar{position:static}}
-@media print{body{background:#fff}.toolbar{display:none!important}.paper{width:210mm;min-height:297mm;margin:0;padding:22mm 25mm 20mm;box-shadow:none;font-size:12pt}.editable:focus{background:transparent;box-shadow:none}}
+@media(max-width:650px){.paper{width:100%;min-height:0;margin:0;padding:18mm 15mm;box-shadow:none;font-size:11pt}.letterhead{grid-template-columns:68px minmax(0,1fr);gap:8px}.letterhead img{width:68px;height:62px}.letterhead strong{font-size:10pt}.letterhead small{font-size:7.5pt}.section{grid-template-columns:76px 12px 1fr}.signature{width:65%}.toolbar{position:static}}
+@media print{body{background:#fff}.toolbar{display:none!important}.paper{width:210mm;min-height:297mm;margin:0;padding:22mm 25mm 20mm;box-shadow:none;font-size:12pt}.letterhead{grid-template-columns:85px minmax(0,1fr);margin-bottom:22px}.letterhead img{width:85px;height:77px}.date-line{text-align:right}.editable:focus{background:transparent;box-shadow:none}}
 </style>
 </head>
 <body>
@@ -29,6 +29,10 @@ body{margin:0;background:#edf1f4;color:var(--ink);font-family:"Times New Roman",
 <div class="hint">Klik teks pada surat untuk mengeditnya. Tanggal dan blok tanda tangan sudah diratakan ke kanan.</div>
 </div>
 <main class="paper" aria-label="Template Surat Tugas A4">
+<header class="letterhead" aria-label="Kop surat tetap">
+<img src="/logos/kemensos.png" alt="Logo Kementerian Sosial" draggable="false">
+<div><strong>KEMENTERIAN SOSIAL REPUBLIK INDONESIA</strong><strong>DIREKTORAT JENDERAL REHABILITASI SOSIAL</strong><strong>SENTRA “INSYAF” DI MEDAN</strong><small>Jl. Berdikari, No.37, Lau Bakeri, Kutalimbaru, Deli Serdang 20354 · Telp (061) 77231150 · insyaf.kemensos.go.id</small></div>
+</header>
 <div class="center editable" contenteditable="true" spellcheck="false"><p class="title">SURAT TUGAS</p><p class="number">NOMOR : 917/4.21/BS.00.01/9/2026</p></div>
 <div class="section">
 <div class="label">Menimbang</div><div>:</div><div class="value editable" contenteditable="true" spellcheck="false">
@@ -59,7 +63,6 @@ body{margin:0;background:#edf1f4;color:var(--ink);font-family:"Times New Roman",
 <div class="sign-gap"></div>
 <div class="editable" contenteditable="true" spellcheck="false"><strong><u>Teguh Supriyono</u></strong></div>
 </div>
-<p class="editable" contenteditable="true" spellcheck="false" style="font:9pt Arial,sans-serif;margin-top:38px">Dokumen ini telah ditandatangani secara elektronik yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE), BSSN.</p>
 </main>
 <script>
 const original = document.querySelector(".paper").innerHTML;
