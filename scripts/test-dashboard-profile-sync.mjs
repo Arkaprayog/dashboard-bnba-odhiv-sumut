@@ -68,7 +68,7 @@ const themedPages = [
 ];
 for (const path of themedPages) {
   const html = readFileSync(path, "utf8");
-  assert.ok(html.includes('id="sahabat-global-glass-v1-1-27"'), path + " must use the global white-font glass theme");
+  assert.ok(html.includes('id="sahabat-global-glass-v1-1-28"') && html.includes('id="sahabat-glass-opacity75-blur16-v1-1-28"'), path + " must use the global white-font glass theme");
   assert.ok(html.includes("/dashboard-background.webp?v=1.1.28"), path + " must use the supplied hill photo");
   assert.ok(html.includes('<meta name="color-scheme" content="dark">'), path + " must force a dark UI color scheme");
 }
