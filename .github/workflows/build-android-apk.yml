@@ -98,7 +98,7 @@ jobs:
       - name: Upload signed release APK
         uses: actions/upload-artifact@v4
         with:
-          name: Sahabat-ODHIV-Sumut-APK-release-v1.2.6
+          name: Sahabat-ODHIV-Sumut-APK-release-v1.2.7
           path: android-app/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 90

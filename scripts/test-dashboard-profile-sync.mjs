@@ -6,6 +6,11 @@ const worker = readFileSync("src/index.ts", "utf8");
 const pkg = JSON.parse(readFileSync("package.json", "utf8"));
 const gradle = readFileSync("android-app/app/build.gradle", "utf8");
 const changelog = readFileSync("CHANGELOG.md", "utf8");
+const releaseWorkflow = readFileSync(".github/workflows/build-android-apk.yml", "utf8");
+const debugWorkflow = readFileSync(".github/workflows/build-android-debug.yml", "utf8");
+const androidReadme = readFileSync("android-app/README.md", "utf8");
+const rootReadme = readFileSync("README.md", "utf8");
+const deployWorkflow = readFileSync(".github/workflows/validate-deploy.yml", "utf8");
 
 assert.match(dashboard, /dashboard-sky-glass-unified-v2/);
 assert.match(dashboard, /--dashboard-sky-blue:#87CEEB/);
