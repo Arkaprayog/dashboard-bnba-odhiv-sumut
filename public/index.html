@@ -1229,6 +1229,17 @@ body .paper *{color:#000!important;-webkit-text-fill-color:#000!important}
 body :is(.topbar,.toolbar,.no-print,.editor-panel){display:none!important}
 }
 </style>
+
+<!-- v1.1.29: consistent 16px / 75% glass surfaces for login and authenticated dashboard. -->
+<style id="sahabat-glass-v1129">
+:root{--sahabat-glass-bg:rgba(15,23,42,.75);--sahabat-glass-border:rgba(255,255,255,.18);--sahabat-glass-blur:16px}
+body.authenticated main,body.authenticated .dashpanel,body.authenticated .panel,body.authenticated .card,body.authenticated .form-card,body.authenticated .notification-panel,body.authenticated .settings-panel,body.authenticated .datawrap,body.authenticated .profile-panel,body.authenticated .modal,body.authenticated dialog,body.authenticated fieldset,body.authenticated .dashhead,body.authenticated .workflow-section,body.authenticated .menu-card,body.authenticated .quick-card,body.authenticated .stat-card{background:var(--sahabat-glass-bg)!important;border-color:var(--sahabat-glass-border)!important;backdrop-filter:blur(var(--sahabat-glass-blur)) saturate(120%)!important;-webkit-backdrop-filter:blur(var(--sahabat-glass-blur)) saturate(120%)!important;color:#fff!important}
+body.authenticated :is(p,span,label,h1,h2,h3,h4,h5,h6,li,td,th,.muted,.dashmsg,.foot,.setup){color:#fff!important}
+body.authenticated :is(button,.dashbtn,.submit,.primary,.secondary,.workflow-save,.top-link){color:#fff!important;-webkit-text-fill-color:#fff!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+body.authenticated :is(input,textarea,select,[contenteditable=true]){background:rgba(15,23,42,.75)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:rgba(255,255,255,.3)!important;caret-color:#fff!important}
+body.authenticated :is(input,textarea)::placeholder{color:rgba(255,255,255,.8)!important;-webkit-text-fill-color:rgba(255,255,255,.8)!important}
+@media(prefers-reduced-transparency:reduce){body.authenticated main,body.authenticated .dashpanel,body.authenticated .panel,body.authenticated .card{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(15,23,42,.95)!important}}
+</style>
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
