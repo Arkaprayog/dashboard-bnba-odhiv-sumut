@@ -1,27 +1,12 @@
 import fs from "node:fs";
 
-const worker = fs.readFileSync("src/index.ts", "utf8");
 const backupWorkflow = fs.readFileSync(".github/workflows/drive-backup.yml", "utf8");
 
 const checks = [
   [
-    "backup requires an explicit Shared Drive folder ID and does not fall back to a legacy My Drive folder",
-    worker.includes("const folderId = env.GOOGLE_DRIVE_BACKUP_FOLDER_ID;") &&
-      !worker.includes('env.GOOGLE_DRIVE_BACKUP_FOLDER_ID || await getDriveSetting(env, "drive_folder_backups")'),
-  ],
-  [
-    "backup preflight endpoint is protected by DRIVE_BACKUP_TOKEN",
-    worker.includes('url.pathname === "/api/drive/backup/status"') &&
-      worker.includes("DRIVE_BACKUP_FOLDER_MISSING") &&
-      worker.includes("DRIVE_BACKUP_TOKEN"),
-  ],
-  [
-    "preflight and upload validate active writable Shared Drive folders",
-    worker.includes('folder.mimeType !== "application/vnd.google-apps.folder" || !folder.driveId || folder.trashed || folder.capabilities?.canAddChildren !== true'),
-  ],
-  [
-    "Drive upload enables Shared Drive support",
-    worker.includes("uploadType=multipart&supportsAllDrives=true"),
+    "weekly schedule and manual backup run remain enabled",
+    backupWorkflow.includes("workflow_dispatch:") &&
+      backupWorkflow.includes('cron: "17 3 * * 1"'),
   ],
   [
     "source archive excludes credentials, local databases, and respondent data",
@@ -32,18 +17,28 @@ const checks = [
       backupWorkflow.includes(":(exclude,glob)**/uploads/**"),
   ],
   [
-    "weekly schedule and manual run remain enabled",
-    backupWorkflow.includes("workflow_dispatch:") &&
-      backupWorkflow.includes('cron: "17 3 * * 1"'),
-  ],
-  [
-    "recovery artifact is uploaded before Drive preflight and retained 30 days",
+    "GitHub recovery artifact is retained for 30 days before R2 upload",
     backupWorkflow.includes("actions/upload-artifact@v4") &&
       backupWorkflow.includes("retention-days: 30") &&
       backupWorkflow.indexOf("Keep a recovery copy in GitHub Actions") <
-        backupWorkflow.indexOf("Verify writable Google Shared Drive destination") &&
-      backupWorkflow.indexOf("Verify writable Google Shared Drive destination") <
-        backupWorkflow.indexOf("Upload to private Drive backup folder"),
+        backupWorkflow.indexOf("Upload private archive to Cloudflare R2"),
+  ],
+  [
+    "R2 credentials are read only from GitHub Actions secrets",
+    backupWorkflow.includes("secrets.R2_ACCOUNT_ID") &&
+      backupWorkflow.includes("secrets.R2_ACCESS_KEY_ID") &&
+      backupWorkflow.includes("secrets.R2_SECRET_ACCESS_KEY"),
+  ],
+  [
+    "upload targets the intended private R2 bucket using the S3-compatible endpoint",
+    backupWorkflow.includes("sahabatodhiv-sumut-backups") &&
+      backupWorkflow.includes("r2.cloudflarestorage.com") &&
+      backupWorkflow.includes("aws --endpoint-url"),
+  ],
+  [
+    "archive is limited to 20 MiB and uploaded as gzip",
+    backupWorkflow.includes("20971520") &&
+      backupWorkflow.includes("--content-type application/gzip"),
   ],
 ];
 
@@ -53,4 +48,4 @@ for (const [label, ok] of checks) {
   if (!ok) failed = true;
 }
 if (failed) process.exit(1);
-console.log(`PASS all ${checks.length} Google Drive backup contract checks`);
+console.log(`PASS all ${checks.length} Cloudflare R2 backup contract checks`);
