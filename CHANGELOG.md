@@ -1,3 +1,8 @@
+## 1.1.28 — 2026-10-14
+- Menerapkan tema glassmorphism global dengan `backdrop-filter: blur(16px)`, permukaan slate `rgba(15, 23, 42, 0.75)`, dan tipografi putih pada seluruh halaman web.
+- Menjaga input transparan, cache-buster background dashboard, serta keterbacaan dokumen A4 saat dicetak.
+- Menambahkan pemeriksaan regresi untuk nilai blur, opasitas permukaan, dan sinkronisasi versi web.
+
 ## 1.1.27 — 2026-10-14
 - Mempertegas font putih secara global di seluruh halaman web dan layar offline Android.
 - Menurunkan opasitas permukaan UI dan memperkuat blur glassmorphism; tombol lonceng, pengaturan, dan keluar dipastikan bulat tanpa kotak pembungkus serta ditempatkan di kanan atas.
