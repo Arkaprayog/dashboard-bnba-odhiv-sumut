@@ -21,6 +21,7 @@ interface Env {
   GOOGLE_PRIVATE_KEY?: string;
   GOOGLE_SHEET_ID?: string;
   GOOGLE_SHEET_TAB?: string;
+  DRIVE_BACKUP_TOKEN?: string;
   OWNER_BOOTSTRAP_TOKEN?: string;
   VAPID_PRIVATE_KEY?: string;
   VAPID_PUBLIC_KEY?: string;
@@ -181,6 +182,51 @@ async function googleAccessToken(env: Env): Promise<string> {
   const data = (await response.json()) as { access_token?: string; expires_in?: number; token_type?: string };
   if (!data.access_token) throw new Error("Google OAuth berhasil merespons tetapi token akses tidak tersedia.");
   return data.access_token;
+}
+
+
+async function getOrCreateDriveFolder(token: string, name: string, parentId?: string): Promise<{ id: string; name: string; webViewLink?: string }> {
+  const q = ["name = '" + name.replace(/\\/g, "\\\\").replace(/'/g, "\\'") + "'", "mimeType = 'application/vnd.google-apps.folder'", "trashed = false"];
+  if (parentId) q.push("'" + parentId.replace(/'/g, "\\'") + "' in parents");
+  const listUrl = new URL("https://www.googleapis.com/drive/v3/files");
+  listUrl.searchParams.set("q", q.join(" and "));
+  listUrl.searchParams.set("pageSize", "100");
+  listUrl.searchParams.set("fields", "files(id,name,webViewLink)");
+  const listResponse = await fetch(listUrl.toString(), { headers: { authorization: "Bearer " + token } });
+  if (!listResponse.ok) throw new Error("Google Drive folder search failed (HTTP " + listResponse.status + ").");
+  const listData = await listResponse.json() as { files?: Array<{ id?: string; name?: string; webViewLink?: string }> };
+  const existing = (listData.files || []).find((file) => typeof file.id === "string" && file.id.length > 0);
+  if (existing?.id) return { id: existing.id, name: existing.name || name, webViewLink: existing.webViewLink };
+
+  const metadata: Record<string, unknown> = { name, mimeType: "application/vnd.google-apps.folder" };
+  if (parentId) metadata.parents = [parentId];
+  const createResponse = await fetch("https://www.googleapis.com/drive/v3/files?fields=id,name,webViewLink", {
+    method: "POST",
+    headers: { authorization: "Bearer " + token, "content-type": "application/json" },
+    body: JSON.stringify(metadata),
+  });
+  if (!createResponse.ok) throw new Error("Google Drive folder create failed (HTTP " + createResponse.status + ").");
+  const created = await createResponse.json() as { id?: string; name?: string; webViewLink?: string };
+  if (!created.id) throw new Error("Google Drive folder create returned no ID.");
+  return { id: created.id, name: created.name || name, webViewLink: created.webViewLink };
+}
+
+async function ensureDriveIntegrationSchema(env: Env) {
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS integration_settings (
+    setting_key TEXT PRIMARY KEY,
+    setting_value TEXT NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`).run();
+}
+
+async function getDriveSetting(env: Env, key: string): Promise<string | null> {
+  const row = await env.DB.prepare("SELECT setting_value FROM integration_settings WHERE setting_key=?").bind(key).first<{ setting_value: string }>();
+  return row?.setting_value || null;
+}
+
+async function setDriveSetting(env: Env, key: string, value: string): Promise<void> {
+  await env.DB.prepare(`INSERT INTO integration_settings(setting_key,setting_value,updated_at) VALUES(?,?,CURRENT_TIMESTAMP)
+    ON CONFLICT(setting_key) DO UPDATE SET setting_value=excluded.setting_value,updated_at=CURRENT_TIMESTAMP`).bind(key, value).run();
 }
 
 function parsePrivateTeamPhotoReference(photoId: string): { key: string; mimeType: string } | null {
@@ -1772,6 +1818,94 @@ export default {
           const endpointHash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(endpoint)));
           await env.DB.prepare("DELETE FROM push_subscriptions WHERE endpoint_hash=?").bind(endpointHash).run();
           return reply({ ok: true });
+        }
+
+
+        if (url.pathname === "/api/drive/setup-folders" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          if (admin.role !== "owner") return reply({ error: "Hanya owner yang dapat menyiapkan folder Drive." }, 403);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          if (!env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !env.GOOGLE_PRIVATE_KEY) {
+            return reply({ error: "Integrasi Google Drive belum dikonfigurasi." }, 503);
+          }
+          try {
+            requestStage = "drive_folder_schema";
+            await ensureDriveIntegrationSchema(env);
+            requestStage = "drive_folder_auth";
+            const token = await googleAccessToken(env);
+            requestStage = "drive_folder_create";
+            const root = await getOrCreateDriveFolder(token, "Sahabat ODHIV Sumatera Utara");
+            const documents = await getOrCreateDriveFolder(token, "Dokumen Aplikasi", root.id);
+            const backups = await getOrCreateDriveFolder(token, "Cadangan Proyek", root.id);
+            await env.DB.batch([
+              env.DB.prepare("INSERT INTO integration_settings(setting_key,setting_value,updated_at) VALUES('drive_folder_root',?,CURRENT_TIMESTAMP) ON CONFLICT(setting_key) DO UPDATE SET setting_value=excluded.setting_value,updated_at=CURRENT_TIMESTAMP").bind(root.id),
+              env.DB.prepare("INSERT INTO integration_settings(setting_key,setting_value,updated_at) VALUES('drive_folder_documents',?,CURRENT_TIMESTAMP) ON CONFLICT(setting_key) DO UPDATE SET setting_value=excluded.setting_value,updated_at=CURRENT_TIMESTAMP").bind(documents.id),
+              env.DB.prepare("INSERT INTO integration_settings(setting_key,setting_value,updated_at) VALUES('drive_folder_backups',?,CURRENT_TIMESTAMP) ON CONFLICT(setting_key) DO UPDATE SET setting_value=excluded.setting_value,updated_at=CURRENT_TIMESTAMP").bind(backups.id),
+            ]);
+            await audit(env, admin.id, "drive_folder_setup");
+            return reply({
+              ok: true,
+              message: "Struktur folder Google Drive siap digunakan.",
+              folders: [
+                { name: root.name, url: root.webViewLink || "https://drive.google.com/drive/my-drive" },
+                { name: documents.name, url: documents.webViewLink || "https://drive.google.com/drive/my-drive" },
+                { name: backups.name, url: backups.webViewLink || "https://drive.google.com/drive/my-drive" },
+              ],
+              githubBackup: { ready: false, requiredSecrets: ["DRIVE_BACKUP_TOKEN di Cloudflare Worker", "DRIVE_BACKUP_TOKEN di GitHub Actions Secrets"] },
+            });
+          } catch (error) {
+            const incidentId = logIncident("drive_folder_setup_failed", error, { path: url.pathname, stage: requestStage, providerStatus: safeProviderHttpStatus(error) });
+            return reply({ error: "Penyiapan folder Google Drive gagal. ID insiden: " + incidentId }, 503);
+          }
+        }
+
+        if (url.pathname === "/api/drive/backup" && request.method === "POST") {
+          if (!env.DRIVE_BACKUP_TOKEN) return reply({ error: "Endpoint cadangan belum diaktifkan." }, 503);
+          const authorization = request.headers.get("Authorization") || "";
+          const suppliedToken = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
+          if (!suppliedToken || suppliedToken.length > 512) return reply({ error: "Akses tidak diizinkan." }, 401);
+          const expectedHash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(env.DRIVE_BACKUP_TOKEN));
+          const suppliedHash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(suppliedToken));
+          const expectedBytes = new Uint8Array(expectedHash);
+          const suppliedBytes = new Uint8Array(suppliedHash);
+          let tokenMatches = expectedBytes.length === suppliedBytes.length;
+          for (let i = 0; i < expectedBytes.length; i++) tokenMatches = (expectedBytes[i] === suppliedBytes[i]) && tokenMatches;
+          if (!tokenMatches) return reply({ error: "Akses tidak diizinkan." }, 401);
+          const contentType = request.headers.get("Content-Type") || "";
+          const contentLength = Number(request.headers.get("Content-Length") || "0");
+          if (!/^application\/(?:gzip|x-gzip|octet-stream)$/.test(contentType.split(";")[0].trim()) || !Number.isFinite(contentLength) || contentLength < 1 || contentLength > 20 * 1024 * 1024) {
+            return reply({ error: "Arsip harus berupa gzip dan berukuran maksimal 20 MB." }, 413);
+          }
+          try {
+            requestStage = "drive_backup_schema";
+            await ensureDriveIntegrationSchema(env);
+            const folderId = await getDriveSetting(env, "drive_folder_backups");
+            if (!folderId) return reply({ error: "Folder cadangan belum dibuat. Owner harus menjalankan penyiapan folder Drive terlebih dahulu." }, 409);
+            if (!env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !env.GOOGLE_PRIVATE_KEY) return reply({ error: "Integrasi Google Drive belum dikonfigurasi." }, 503);
+            const bytes = await request.arrayBuffer();
+            if (bytes.byteLength < 1 || bytes.byteLength > 20 * 1024 * 1024) return reply({ error: "Arsip tidak valid atau melebihi 20 MB." }, 413);
+            requestStage = "drive_backup_auth";
+            const token = await googleAccessToken(env);
+            const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+            const metadata = { name: "sahabatodhiv-sumut-source-" + stamp + ".tar.gz", mimeType: "application/gzip", parents: [folderId] };
+            const form = new FormData();
+            form.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json; charset=UTF-8" }));
+            form.append("file", new Blob([bytes], { type: "application/gzip" }), metadata.name);
+            requestStage = "drive_backup_upload";
+            const upload = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink", {
+              method: "POST", headers: { authorization: "Bearer " + token }, body: form,
+            });
+            if (!upload.ok) throw new Error("Google Drive backup upload failed (HTTP " + upload.status + ").");
+            const saved = await upload.json() as { id?: string; name?: string; webViewLink?: string };
+            if (!saved.id) throw new Error("Google Drive backup upload returned no ID.");
+            return reply({ ok: true, fileName: saved.name || metadata.name, fileUrl: saved.webViewLink || null });
+          } catch (error) {
+            const incidentId = logIncident("drive_backup_upload_failed", error, { path: url.pathname, stage: requestStage, providerStatus: safeProviderHttpStatus(error) });
+            return reply({ error: "Cadangan proyek gagal diunggah. ID insiden: " + incidentId }, 503);
+          }
         }
 
         if (url.pathname === "/api/me" && request.method === "GET") {
