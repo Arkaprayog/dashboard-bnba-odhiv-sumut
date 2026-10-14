@@ -70,6 +70,10 @@ function logIncident(scope: string, _error: unknown, context: Record<string, unk
   if (typeof providerStatus === "number" && Number.isInteger(providerStatus) && providerStatus >= 100 && providerStatus <= 599) {
     safeContext.providerStatus = providerStatus;
   }
+  const providerReason = context.providerReason;
+  if (typeof providerReason === "string" && providerReason.length <= 80 && /^[a-zA-Z0-9_.:-]+$/.test(providerReason)) {
+    safeContext.providerReason = providerReason;
+  }
   console.error("application_incident", {
     incidentId,
     scope: /^[a-zA-Z0-9_:-]{1,80}$/.test(scope) ? scope : "unknown_incident",
@@ -1902,12 +1906,22 @@ export default {
             const upload = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink", {
               method: "POST", headers: { authorization: "Bearer " + token }, body: form,
             });
-            if (!upload.ok) throw new Error("Google Drive backup upload failed (HTTP " + upload.status + ").");
+            if (!upload.ok) {
+              let providerReason = "";
+              try {
+                const failure = await upload.json() as { error?: { errors?: Array<{ reason?: string }>; status?: string } };
+                providerReason = failure.error?.errors?.find((item) => typeof item.reason === "string")?.reason || failure.error?.status || "";
+              } catch { /* Jangan log isi mentah respons provider. */ }
+              const safeReason = /^[a-zA-Z0-9_.:-]{1,80}$/.test(providerReason) ? providerReason : "";
+              throw new Error("Google Drive backup upload failed (HTTP " + upload.status + (safeReason ? ", reason=" + safeReason : "") + ").");
+            }
             const saved = await upload.json() as { id?: string; name?: string; webViewLink?: string };
             if (!saved.id) throw new Error("Google Drive backup upload returned no ID.");
             return reply({ ok: true, fileName: saved.name || metadata.name, fileUrl: saved.webViewLink || null });
           } catch (error) {
-            const incidentId = logIncident("drive_backup_upload_failed", error, { path: url.pathname, stage: requestStage, providerStatus: safeProviderHttpStatus(error) });
+            const errorMessage = error instanceof Error ? error.message : "";
+            const reasonMatch = errorMessage.match(/reason=([a-zA-Z0-9_.:-]{1,80})/);
+            const incidentId = logIncident("drive_backup_upload_failed", error, { path: url.pathname, stage: requestStage, providerStatus: safeProviderHttpStatus(error), providerReason: reasonMatch?.[1] });
             return reply({ error: "Cadangan proyek gagal diunggah. ID insiden: " + incidentId }, 503);
           }
         }
