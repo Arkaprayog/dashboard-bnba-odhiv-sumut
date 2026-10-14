@@ -1871,6 +1871,68 @@ export default {
           }
         }
 
+        if (url.pathname === "/api/drive/backup/status" && request.method === "GET") {
+          if (!env.DRIVE_BACKUP_TOKEN) return reply({ ok: false, error: "Endpoint cadangan belum diaktifkan.", code: "DRIVE_BACKUP_DISABLED" }, 503);
+          const authorization = request.headers.get("Authorization") || "";
+          const suppliedToken = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
+          if (!suppliedToken || suppliedToken.length > 512) return reply({ ok: false, error: "Akses tidak diizinkan." }, 401);
+          const expectedHash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(env.DRIVE_BACKUP_TOKEN));
+          const suppliedHash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(suppliedToken));
+          const expectedBytes = new Uint8Array(expectedHash);
+          const suppliedBytes = new Uint8Array(suppliedHash);
+          let tokenMatches = expectedBytes.length === suppliedBytes.length;
+          for (let i = 0; i < expectedBytes.length; i++) tokenMatches = (expectedBytes[i] === suppliedBytes[i]) && tokenMatches;
+          if (!tokenMatches) return reply({ ok: false, error: "Akses tidak diizinkan." }, 401);
+          const folderId = env.GOOGLE_DRIVE_BACKUP_FOLDER_ID || "";
+          if (!/^[A-Za-z0-9_-]{10,200}$/.test(folderId)) {
+            return reply({ ok: false, error: "GOOGLE_DRIVE_BACKUP_FOLDER_ID belum diatur ke ID folder di Shared Drive.", code: "DRIVE_BACKUP_FOLDER_MISSING" }, 409);
+          }
+          if (!env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !env.GOOGLE_PRIVATE_KEY) {
+            return reply({ ok: false, error: "Kredensial Google Drive belum lengkap di Cloudflare Worker.", code: "GOOGLE_DRIVE_CREDENTIALS_MISSING" }, 503);
+          }
+          try {
+            requestStage = "drive_backup_preflight_auth";
+            const token = await googleAccessToken(env);
+            requestStage = "drive_backup_preflight_folder";
+            const folderResponse = await fetch(
+              "https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(folderId) +
+              "?fields=id,name,mimeType,driveId,trashed,capabilities(canAddChildren)&supportsAllDrives=true",
+              { headers: { authorization: "Bearer " + token } }
+            );
+            if (!folderResponse.ok) {
+              const incidentId = logIncident(
+                "drive_backup_preflight_folder_failed",
+                new Error("Google Drive folder metadata request failed (HTTP " + folderResponse.status + ")."),
+                { path: url.pathname, stage: requestStage, providerStatus: folderResponse.status }
+              );
+              return reply({
+                ok: false,
+                error: "Google Drive tidak dapat memverifikasi folder tujuan (HTTP " + folderResponse.status + "). Periksa ID folder dan keanggotaan service account.",
+                code: "DRIVE_BACKUP_FOLDER_UNAVAILABLE",
+                incidentId,
+              }, 502);
+            }
+            const folder = await folderResponse.json() as {
+              name?: string;
+              mimeType?: string;
+              driveId?: string;
+              trashed?: boolean;
+              capabilities?: { canAddChildren?: boolean };
+            };
+            if (folder.mimeType !== "application/vnd.google-apps.folder" || !folder.driveId || folder.trashed || folder.capabilities?.canAddChildren !== true) {
+              return reply({
+                ok: false,
+                error: "Tujuan harus berupa folder aktif di Google Shared Drive dan service account harus memiliki izin menambahkan file (Contributor atau lebih tinggi).",
+                code: "DRIVE_BACKUP_FOLDER_NOT_WRITABLE",
+              }, 409);
+            }
+            return reply({ ok: true, folderName: folder.name || "Cadangan Proyek", sharedDrive: true, canUpload: true });
+          } catch (error) {
+            const incidentId = logIncident("drive_backup_preflight_failed", error, { path: url.pathname, stage: requestStage, providerStatus: safeProviderHttpStatus(error) });
+            return reply({ ok: false, error: "Pemeriksaan tujuan cadangan gagal. ID insiden: " + incidentId, code: "DRIVE_BACKUP_PREFLIGHT_FAILED", incidentId }, 503);
+          }
+        }
+
         if (url.pathname === "/api/drive/backup" && request.method === "POST") {
           if (!env.DRIVE_BACKUP_TOKEN) return reply({ error: "Endpoint cadangan belum diaktifkan." }, 503);
           const authorization = request.headers.get("Authorization") || "";
@@ -1892,13 +1954,29 @@ export default {
             requestStage = "drive_backup_schema";
             await ensureDriveIntegrationSchema(env);
             // Prefer a folder inside a Shared Drive. Service accounts have no personal Drive quota.
-            const folderId = env.GOOGLE_DRIVE_BACKUP_FOLDER_ID || await getDriveSetting(env, "drive_folder_backups");
-            if (!folderId) return reply({ error: "Folder Shared Drive cadangan belum dikonfigurasi. Atur GOOGLE_DRIVE_BACKUP_FOLDER_ID ke ID folder tujuan pada Shared Drive." }, 409);
+            const folderId = env.GOOGLE_DRIVE_BACKUP_FOLDER_ID;
+            if (!folderId || !/^[A-Za-z0-9_-]{10,200}$/.test(folderId)) return reply({ error: "Folder Shared Drive cadangan belum dikonfigurasi. Atur GOOGLE_DRIVE_BACKUP_FOLDER_ID ke ID folder tujuan pada Shared Drive." }, 409);
             if (!env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !env.GOOGLE_PRIVATE_KEY) return reply({ error: "Integrasi Google Drive belum dikonfigurasi." }, 503);
             const bytes = await request.arrayBuffer();
             if (bytes.byteLength < 1 || bytes.byteLength > 20 * 1024 * 1024) return reply({ error: "Arsip tidak valid atau melebihi 20 MB." }, 413);
             requestStage = "drive_backup_auth";
             const token = await googleAccessToken(env);
+            requestStage = "drive_backup_validate_folder";
+            const folderResponse = await fetch(
+              "https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(folderId) +
+              "?fields=id,mimeType,driveId,trashed,capabilities(canAddChildren)&supportsAllDrives=true",
+              { headers: { authorization: "Bearer " + token } }
+            );
+            if (!folderResponse.ok) throw new Error("Google Drive backup folder check failed (HTTP " + folderResponse.status + ").");
+            const folder = await folderResponse.json() as {
+              mimeType?: string;
+              driveId?: string;
+              trashed?: boolean;
+              capabilities?: { canAddChildren?: boolean };
+            };
+            if (folder.mimeType !== "application/vnd.google-apps.folder" || !folder.driveId || folder.trashed || folder.capabilities?.canAddChildren !== true) {
+              throw new Error("Backup destination is not an active writable Shared Drive folder.");
+            }
             const stamp = new Date().toISOString().replace(/[:.]/g, "-");
             const metadata = { name: "sahabatodhiv-sumut-source-" + stamp + ".tar.gz", mimeType: "application/gzip", parents: [folderId] };
             const form = new FormData();
