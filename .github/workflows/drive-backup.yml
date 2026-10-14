@@ -2,6 +2,10 @@ name: Weekly source backup to Google Drive
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/drive-backup.yml'
   schedule:
     - cron: "17 3 * * 1"
 
@@ -59,11 +63,11 @@ jobs:
             echo "::error::Missing DRIVE_BACKUP_TOKEN. Configure the same strong random value as a GitHub Actions repository secret and a Cloudflare Worker secret before running this workflow."
             exit 1
           fi
-          curl --fail-with-body --silent --show-error \
-            --max-time 120 \
+          status=$(curl --silent --show-error --max-time 120 \
+            -w "%{http_code}" \
             -X POST "${WORKER_ORIGIN}/api/drive/backup" \
             -H "Authorization: Bearer ${DRIVE_BACKUP_TOKEN}" \
             -H "Content-Type: application/gzip" \
             --data-binary "@$RUNNER_TEMP/sahabatodhiv-sumut.tar.gz" \
-            -o "$RUNNER_TEMP/drive-backup-result.json"
-          node -e 'const fs=require("fs"); const r=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); if(!r.ok) process.exit(1); console.log("Private Drive backup uploaded:", r.fileName);' "$RUNNER_TEMP/drive-backup-result.json"
+            -o "$RUNNER_TEMP/drive-backup-result.json")
+          node -e 'const fs=require("fs"); const status=Number(process.argv[2]); let r={}; try { r=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); } catch {} if(status<200 || status>=300 || !r.ok) { console.error("Backup endpoint returned failure:", {status,error:r.error || "Non-JSON error response",incidentId:r.incidentId || null}); process.exit(1); } console.log("Private Drive backup uploaded:", r.fileName);' "$RUNNER_TEMP/drive-backup-result.json" "$status"
