@@ -99,6 +99,8 @@ jobs:
         run: bash -n scripts/setup-admin.sh
       - name: Test trusted news URL policy
         run: node scripts/test-news-url-policy.mjs
+      - name: Validate Google Drive backup safety contract
+        run: node scripts/test-drive-backup-contract.mjs
       - name: Typecheck
         run: npm run typecheck
       - name: Check all inline JavaScript syntax in dashboard HTML
