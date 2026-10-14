@@ -1,3 +1,8 @@
+## 1.1.23 — 2026-10-14
+- Menyelaraskan Surat Tugas dengan konsep Surat Lainnya: kop surat tetap dengan logo, baris tempat/tanggal di kanan, dan tata letak cetak A4.
+- Menghapus pernyataan tanda tangan elektronik BSrE/BSSN yang tidak didukung oleh mekanisme tanda tangan aktual; template Surat Tugas tidak menyertakan barcode atau QR code.
+- Versi web dinaikkan ke 1.1.23; versi Android native diselaraskan ke 1.2.12 (version code 15).
+
 ## 1.1.22 — 2026-10-14
 - Menambahkan template Surat Tugas pada menu Dokumen berdasarkan dokumen yang diberikan.
 - Teks template dapat disunting langsung, tanggal dan blok tanda tangan diratakan ke kanan, serta tersedia cetak/simpan PDF A4.
