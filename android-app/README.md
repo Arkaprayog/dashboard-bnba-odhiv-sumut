@@ -5,10 +5,10 @@ https://sahabatodhivsumut.web.id/
 
 ## Version alignment — 14 October 2026
 
-- Android package version: **1.2.13** (`versionCode 16`).
-- Debug package: `1.2.13-debug`; expected artifact: `Sahabat-ODHIV-Sumut-APK-debug-v1.2.13`.
-- Signed release package: `1.2.13`; expected artifact: `Sahabat-ODHIV-Sumut-APK-release-v1.2.13`.
-- The online dashboard currently uses web version **1.1.24**. The APK loads the canonical HTTPS dashboard; online menu and backend changes become available when the website is deployed, while the native Android shell, permission behavior, camera/gallery handling, and offline fallback require a new APK build.
+- Android package version: **1.2.14** (`versionCode 17`).
+- Debug package: `1.2.14-debug`; expected artifact: `Sahabat-ODHIV-Sumut-APK-debug-v1.2.14`.
+- Signed release package: `1.2.14`; expected artifact: `Sahabat-ODHIV-Sumut-APK-release-v1.2.14`.
+- The online dashboard currently uses web version **1.1.25**. The APK loads the canonical HTTPS dashboard; online menu and backend changes become available when the website is deployed, while the native Android shell, permission behavior, camera/gallery handling, and offline fallback require a new APK build.
 - Android and web use separate version sequences because they are independently packaged. Successful GitHub Actions artifacts are not the same as a published entry on the GitHub Releases page.
 
 ## What this build does

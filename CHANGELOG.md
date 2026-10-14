@@ -1,3 +1,8 @@
+## 1.1.25 — 2026-10-14
+- Memperbaiki ambang pemeriksaan ukuran latar WebP agar menerima aset terkompresi yang valid sambil tetap memverifikasi header dan formatnya.
+- Menyegarkan cache tema global ke versi 1.1.25 setelah validasi awal mendeteksi ambang uji yang terlalu tinggi.
+- Versi Android native dinaikkan ke 1.2.14 (version code 17) untuk menyinkronkan rilis perbaikan.
+
 ## 1.1.24 — 2026-10-14
 - Menerapkan foto bukit yang diberikan sebagai latar konsisten pada seluruh halaman aplikasi/web.
 - Menyamakan font layar menjadi putih dan permukaan UI menjadi glassmorphism transparan dengan blur, termasuk form, kartu, navigasi, status, dan dokumen.

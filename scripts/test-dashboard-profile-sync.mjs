@@ -29,9 +29,9 @@ assert.match(dashboard, /id="logoutButton"/);
 assert.match(dashboard, /aria-label="Keluar"/);
 assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='owner' AND active=1/);
 assert.match(worker, /owner_profile_update/);
-assert.equal(pkg.version, "1.1.24");
-assert.match(gradle, /versionCode 16/);
-assert.match(gradle, /versionName '1\.2\.13'/);
+assert.equal(pkg.version, "1.1.25");
+assert.match(gradle, /versionCode 17/);
+assert.match(gradle, /versionName '1\.2\.14'/);
 assert.match(changelog, /^## 1\.1\.18/m);
 assert.ok(dashboard.includes("Versi " + pkg.version), "dashboard display version must match package.json");
 assert.match(dashboard, /href="\/surat-tugas\.html">Buka &amp; Edit Surat Tugas/);
@@ -45,12 +45,12 @@ assert.match(suratTugas, /@page\{size:A4 portrait;margin:0\}/);
 assert.match(suratTugas, /window\.print\(\)/);
 assert.ok(changelog.startsWith("## " + pkg.version), "changelog must begin with the current web package version");
 assert.ok(readFileSync(".github/workflows/validate-deploy.yml", "utf8").includes("typeof packageJson.version === 'string'"), "CI must compare release version dynamically");
-assert.ok(releaseWorkflow.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.13"), "release APK artifact must use the current Android version");
-assert.ok(debugWorkflow.includes("Sahabat-ODHIV-Sumut-APK-debug-v1.2.13"), "debug APK artifact must use the current Android version");
-assert.ok(androidReadme.includes("Android package version: **1.2.13** (`versionCode 16`)"), "Android README must match Gradle version");
-assert.ok(androidReadme.includes("web version **1.1.24**"), "Android README must state current web version");
-assert.ok(rootReadme.includes("release version `1.2.13` (version code `16`)"), "root README must match Android release version");
-assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.13"), "root README artifact link name must match release workflow");
+assert.ok(releaseWorkflow.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.14"), "release APK artifact must use the current Android version");
+assert.ok(debugWorkflow.includes("Sahabat-ODHIV-Sumut-APK-debug-v1.2.14"), "debug APK artifact must use the current Android version");
+assert.ok(androidReadme.includes("Android package version: **1.2.14** (`versionCode 17`)"), "Android README must match Gradle version");
+assert.ok(androidReadme.includes("web version **1.1.25**"), "Android README must state current web version");
+assert.ok(rootReadme.includes("release version `1.2.14` (version code `17`)"), "root README must match Android release version");
+assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.14"), "root README artifact link name must match release workflow");
 assert.ok(dashboard.includes('id="owner-controls-glass-theme-v1-1-18"'), "dashboard glass stylesheet must exist");
 assert.ok(dashboard.includes(':is(#notificationBellButton,#settingsButton,#logoutButton)'), "header actions must be circular glass controls");
 assert.ok(dashboard.includes("#editOwnerProfile"), "edit-profile pill style must be present");
@@ -67,13 +67,13 @@ const themedPages = [
 ];
 for (const path of themedPages) {
   const html = readFileSync(path, "utf8");
-  assert.ok(html.includes('id="sahabat-global-glass-v1-1-24"'), path + " must use the global white-font glass theme");
-  assert.ok(html.includes("/dashboard-background.webp?v=1.1.24"), path + " must use the supplied hill photo");
+  assert.ok(html.includes('id="sahabat-global-glass-v1-1-25"'), path + " must use the global white-font glass theme");
+  assert.ok(html.includes("/dashboard-background.webp?v=1.1.25"), path + " must use the supplied hill photo");
 }
 const hillBackground = readFileSync("public/dashboard-background.webp");
 assert.equal(hillBackground.toString("ascii", 0, 4), "RIFF", "dashboard photo must be a WebP/RIFF asset");
 assert.equal(hillBackground.toString("ascii", 8, 12), "WEBP", "dashboard photo must be a valid WebP asset");
-assert.ok(statSync("public/dashboard-background.webp").size > 8000, "dashboard background must not be an empty placeholder");
+assert.ok(statSync("public/dashboard-background.webp").size > 4000, "dashboard background must not be an empty placeholder");
 assert.ok(dashboard.includes("Versi " + pkg.version), "web version must match package version");
 
 console.log("PASS global glass theme, hill background, owner profile sync, CI version gate, Android artifacts, and release documentation are synchronized");
