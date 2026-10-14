@@ -1076,6 +1076,88 @@ body.authenticated main #editOwnerProfile{width:100%!important;min-width:130px!i
 <link rel="icon" type="image/svg+xml" href="/sodaramu-icon.svg">
 <link rel="apple-touch-icon" href="/sodaramu-icon.svg">
 <meta name="theme-color" content="#07545b">
+
+<style id="glassProfileHeaderV1120">
+/* Sahabat ODHIV Sumut v1.1.20 — transparent profile glass and standalone round actions */
+body.authenticated main{
+  width:min(100%,1200px)!important;
+  color:#f7fbff!important;
+  background:rgba(15,35,48,.24)!important;
+  border:1px solid rgba(255,255,255,.34)!important;
+  border-radius:32px!important;
+  box-shadow:0 20px 60px rgba(0,0,0,.16)!important;
+  backdrop-filter:blur(18px) saturate(125%)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(125%)!important;
+}
+body.authenticated .owner-card{
+  position:relative!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  justify-content:flex-start!important;
+  gap:12px!important;
+  min-height:340px;
+  margin:0 0 18px!important;
+  padding:26px!important;
+  padding-top:28px!important;
+  background:rgba(255,255,255,.055)!important;
+  border:1px solid rgba(255,255,255,.27)!important;
+  border-radius:30px!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(14px)!important;
+  -webkit-backdrop-filter:blur(14px)!important;
+}
+body.authenticated .owner-profile-side{align-items:center!important;gap:14px!important;margin:8px 0 4px!important}
+body.authenticated .owner-avatar{width:132px!important;height:132px!important;flex-basis:132px!important;border:4px solid rgba(255,255,255,.94)!important;box-shadow:0 3px 14px rgba(0,0,0,.12)!important}
+body.authenticated .owner-edit{
+  min-width:180px!important;min-height:58px!important;padding:12px 24px!important;
+  border:1px solid rgba(255,255,255,.48)!important;border-radius:999px!important;
+  background:rgba(255,255,255,.10)!important;color:#fff!important;font-size:1rem!important;font-weight:750!important;
+  box-shadow:none!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important
+}
+body.authenticated .owner-summary{width:100%!important;flex:1 1 auto!important;margin:10px 0 0!important;padding-right:0!important}
+body.authenticated .owner-summary h3{max-width:100%!important;padding-right:0!important;color:#fff!important;font-size:clamp(1.15rem,2.8vw,2rem)!important;line-height:1.3!important;text-shadow:0 1px 8px rgba(0,0,0,.12)}
+body.authenticated .owner-summary p,
+body.authenticated .owner-summary #ownerInstitutionSummary{color:rgba(255,255,255,.94)!important;font-size:clamp(.9rem,1.7vw,1.18rem)!important;line-height:1.55!important;text-shadow:0 1px 8px rgba(0,0,0,.12)}
+body.authenticated .owner-header-actions{
+  position:absolute!important;top:22px!important;right:22px!important;z-index:5!important;
+  display:block!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important
+}
+body.authenticated .top-actions{
+  display:flex!important;align-items:center!important;justify-content:center!important;gap:12px!important;
+  margin:0!important;padding:0!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important
+}
+body.authenticated .top-actions button,
+body.authenticated .top-actions .bell-button,
+body.authenticated .top-actions .settings-button,
+body.authenticated .top-actions #logoutButton{
+  position:relative!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:60px!important;min-width:60px!important;height:60px!important;min-height:60px!important;padding:0!important;
+  border:1px solid rgba(255,255,255,.42)!important;border-radius:50%!important;
+  background:rgba(255,255,255,.075)!important;color:#fff!important;
+  box-shadow:none!important;outline-offset:3px!important;cursor:pointer!important;
+  backdrop-filter:blur(14px)!important;-webkit-backdrop-filter:blur(14px)!important
+}
+body.authenticated .top-actions button:hover{background:rgba(255,255,255,.17)!important}
+body.authenticated .top-actions button svg{width:27px!important;height:27px!important;stroke:currentColor!important}
+body.authenticated .top-actions .bell-count{top:-3px!important;right:-2px!important}
+body.authenticated .app-nav{background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.23)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+body.authenticated .app-nav button{border-radius:999px!important}
+body.authenticated .app-version{color:rgba(255,255,255,.9)!important}
+@media(max-width:600px){
+ body.authenticated main{padding:12px!important;border-radius:24px!important}
+ body.authenticated .owner-card{min-height:0!important;padding:18px!important;padding-top:86px!important;border-radius:24px!important}
+ body.authenticated .owner-header-actions{top:14px!important;right:14px!important}
+ body.authenticated .top-actions{gap:9px!important}
+ body.authenticated .top-actions button,body.authenticated .top-actions .bell-button,body.authenticated .top-actions .settings-button,body.authenticated .top-actions #logoutButton{width:46px!important;min-width:46px!important;height:46px!important;min-height:46px!important}
+ body.authenticated .top-actions button svg{width:22px!important;height:22px!important}
+ body.authenticated .owner-profile-side{align-self:flex-start!important;margin-top:0!important}
+ body.authenticated .owner-avatar{width:104px!important;height:104px!important;flex-basis:104px!important}
+ body.authenticated .owner-edit{min-width:150px!important;min-height:48px!important}
+ body.authenticated .owner-summary{margin-top:8px!important}
+}
+</style>
+
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
@@ -1331,7 +1413,7 @@ body.authenticated main #editOwnerProfile{width:100%!important;min-width:130px!i
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.18</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.20</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi<br>© 2026 Data Base ODHIV Sumatera Utara · Hak cipta dilindungi</p>
 </main>
