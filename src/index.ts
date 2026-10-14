@@ -1493,7 +1493,11 @@ export default {
           VALUES(?,?,?,?)
           ON CONFLICT(id) DO UPDATE SET answers_json=excluded.answers_json,updated_at=CURRENT_TIMESTAMP,updated_by=excluded.updated_by`)
           .bind(id, answersJson, admin.username, admin.username).run();
-        await audit(env, String((admin as Record<string,string>).id || admin.username), "assessment_saved");
+        try {
+          await audit(env, String((admin as Record<string,string>).id || admin.username), "assessment_saved");
+        } catch {
+          console.warn("assessment_audit_failed", { stage: "audit" });
+        }
         return reply({ ok: true, id });
       } catch (error) {
         const incidentId = logIncident("assessment_database_error", error, { path: url.pathname });
