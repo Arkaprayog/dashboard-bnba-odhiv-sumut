@@ -1,10 +1,9 @@
-name: Weekly source backup to Google Drive
+name: Weekly source backup to Cloudflare R2
 
 on:
   workflow_dispatch:
   schedule:
     - cron: "17 3 * * 1"
-  # Validate the backup path whenever its workflow definition changes.
   push:
     branches: [main]
     paths:
@@ -14,23 +13,24 @@ permissions:
   contents: read
 
 concurrency:
-  group: sahabatodhiv-drive-backup
+  group: sahabatodhiv-r2-backup
   cancel-in-progress: false
 
 jobs:
   backup:
-    name: Archive source and upload privately
+    name: Archive source and upload privately to R2
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+
       - name: Create source archive
+        shell: bash
         run: |
           set -euo pipefail
-          # Export tracked source only, explicitly excluding common credential and local-data files.
           git archive --format=tar.gz --prefix="sahabatodhiv-sumut/" HEAD -- . \
             ':(exclude,glob).env*' \
             ':(exclude,glob)**/.env*' \
@@ -50,49 +50,57 @@ jobs:
             > "$RUNNER_TEMP/sahabatodhiv-sumut.tar.gz"
           size=$(wc -c < "$RUNNER_TEMP/sahabatodhiv-sumut.tar.gz")
           if [ "$size" -lt 1 ] || [ "$size" -gt 20971520 ]; then
-            echo "Archive size must be between 1 byte and 20 MiB."
+            echo "::error::Archive size must be between 1 byte and 20 MiB."
             exit 1
           fi
           echo "Created source archive ($size bytes)."
+
       - name: Keep a recovery copy in GitHub Actions
         uses: actions/upload-artifact@v4
         with:
-          name: sahabatodhiv-sumut-source-${{ github.run_id }}
+          name: sahabatodhiv-sumut-source-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/sahabatodhiv-sumut.tar.gz
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
-      - name: Verify writable Google Shared Drive destination
+
+      - name: Validate R2 secrets
         env:
-          DRIVE_BACKUP_TOKEN: ${{ secrets.DRIVE_BACKUP_TOKEN }}
-          WORKER_ORIGIN: https://sahabatodhivsumut.web.id
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        shell: bash
         run: |
           set -euo pipefail
-          if [ -z "${DRIVE_BACKUP_TOKEN:-}" ]; then
-            echo "::error::Missing DRIVE_BACKUP_TOKEN in GitHub Actions repository secrets."
+          missing=()
+          [ -n "${R2_ACCOUNT_ID:-}" ] || missing+=("R2_ACCOUNT_ID")
+          [ -n "${R2_ACCESS_KEY_ID:-}" ] || missing+=("R2_ACCESS_KEY_ID")
+          [ -n "${R2_SECRET_ACCESS_KEY:-}" ] || missing+=("R2_SECRET_ACCESS_KEY")
+          if [ "${#missing[@]}" -gt 0 ]; then
+            echo "::error::Missing GitHub Actions repository secrets: ${missing[*]}"
+            echo "Create an R2 API token with Object Read & Write permission scoped only to bucket sahabatodhiv-sumut-backups."
             exit 1
           fi
-          status=$(curl --silent --show-error --max-time 60 \
-            -w "%{http_code}" \
-            -X GET "${WORKER_ORIGIN}/api/drive/backup/status" \
-            -H "Authorization: Bearer ${DRIVE_BACKUP_TOKEN}" \
-            -o "$RUNNER_TEMP/drive-backup-preflight.json")
-          node -e 'const fs=require("fs"); const status=Number(process.argv[2]); let r={}; try { r=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); } catch {} if(status<200 || status>=300 || !r.ok || r.canUpload!==true || r.sharedDrive!==true) { console.error("Google Drive backup preflight failed:", {status,error:r.error || "Destination is not verified as a writable Shared Drive",code:r.code || null,incidentId:r.incidentId || null}); process.exit(1); } console.log("Google Shared Drive destination validated:", r.folderName);' "$RUNNER_TEMP/drive-backup-preflight.json" "$status"
-      - name: Upload to private Drive backup folder
+          if ! [[ "$R2_ACCOUNT_ID" =~ ^[a-f0-9]{32}$ ]]; then
+            echo "::error::R2_ACCOUNT_ID must be the 32-character Cloudflare account ID."
+            exit 1
+          fi
+
+      - name: Upload private archive to Cloudflare R2
         env:
-          DRIVE_BACKUP_TOKEN: ${{ secrets.DRIVE_BACKUP_TOKEN }}
-          WORKER_ORIGIN: https://sahabatodhivsumut.web.id
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+        shell: bash
         run: |
           set -euo pipefail
-          if [ -z "${DRIVE_BACKUP_TOKEN:-}" ]; then
-            echo "::error::Missing DRIVE_BACKUP_TOKEN. Configure the same strong random value as a GitHub Actions repository secret and a Cloudflare Worker secret before running this workflow."
-            exit 1
-          fi
-          status=$(curl --silent --show-error --max-time 120 \
-            -w "%{http_code}" \
-            -X POST "${WORKER_ORIGIN}/api/drive/backup" \
-            -H "Authorization: Bearer ${DRIVE_BACKUP_TOKEN}" \
-            -H "Content-Type: application/gzip" \
-            --data-binary "@$RUNNER_TEMP/sahabatodhiv-sumut.tar.gz" \
-            -o "$RUNNER_TEMP/drive-backup-result.json")
-          node -e 'const fs=require("fs"); const status=Number(process.argv[2]); let r={}; try { r=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); } catch {} if(status<200 || status>=300 || !r.ok) { console.error("Backup endpoint returned failure:", {status,error:r.error || "Non-JSON error response",incidentId:r.incidentId || null}); process.exit(1); } console.log("Private Drive backup uploaded:", r.fileName);' "$RUNNER_TEMP/drive-backup-result.json" "$status"
+          python -m pip install --disable-pip-version-check --quiet awscli
+          endpoint="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
+          object_key="source/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}/sahabatodhiv-sumut.tar.gz"
+          aws --endpoint-url "$endpoint" s3 cp \
+            "$RUNNER_TEMP/sahabatodhiv-sumut.tar.gz" \
+            "s3://sahabatodhiv-sumut-backups/$object_key" \
+            --content-type application/gzip \
+            --only-show-errors
+          echo "Backup uploaded to private R2 bucket: $object_key"
