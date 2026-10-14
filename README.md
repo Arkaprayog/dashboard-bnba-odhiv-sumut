@@ -70,6 +70,8 @@ Data identitas dan informasi kesehatan perlu pembatasan akses, tujuan penggunaan
 
 ## Android release 1.2.12
 
+Release metadata is synchronized with `android-app/app/build.gradle`, `android-app/README.md`, and the GitHub Actions APK artifact names. The validation workflow checks these values before production deployment.
+
 The Android module now targets release version `1.2.12` (version code `15`). The GitHub Actions workflow builds a **signed release APK**, runs Android lint and verifies the APK signature before publishing a workflow artifact.
 
 ### Required release signing setup
