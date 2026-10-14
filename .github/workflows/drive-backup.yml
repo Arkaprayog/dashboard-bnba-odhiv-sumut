@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "17 3 * * 1"
+  # Validate the backup path whenever its workflow definition changes.
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/drive-backup.yml"
 
 permissions:
   contents: read
@@ -49,6 +54,30 @@ jobs:
             exit 1
           fi
           echo "Created source archive ($size bytes)."
+      - name: Keep a recovery copy in GitHub Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: sahabatodhiv-sumut-source-${{ github.run_id }}
+          path: ${{ runner.temp }}/sahabatodhiv-sumut.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Verify writable Google Shared Drive destination
+        env:
+          DRIVE_BACKUP_TOKEN: ${{ secrets.DRIVE_BACKUP_TOKEN }}
+          WORKER_ORIGIN: https://sahabatodhivsumut.web.id
+        run: |
+          set -euo pipefail
+          if [ -z "${DRIVE_BACKUP_TOKEN:-}" ]; then
+            echo "::error::Missing DRIVE_BACKUP_TOKEN in GitHub Actions repository secrets."
+            exit 1
+          fi
+          status=$(curl --silent --show-error --max-time 60 \
+            -w "%{http_code}" \
+            -X GET "${WORKER_ORIGIN}/api/drive/backup/status" \
+            -H "Authorization: Bearer ${DRIVE_BACKUP_TOKEN}" \
+            -o "$RUNNER_TEMP/drive-backup-preflight.json")
+          node -e 'const fs=require("fs"); const status=Number(process.argv[2]); let r={}; try { r=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); } catch {} if(status<200 || status>=300 || !r.ok || r.canUpload!==true || r.sharedDrive!==true) { console.error("Google Drive backup preflight failed:", {status,error:r.error || "Destination is not verified as a writable Shared Drive",code:r.code || null,incidentId:r.incidentId || null}); process.exit(1); } console.log("Google Shared Drive destination validated:", r.folderName);' "$RUNNER_TEMP/drive-backup-preflight.json" "$status"
       - name: Upload to private Drive backup folder
         env:
           DRIVE_BACKUP_TOKEN: ${{ secrets.DRIVE_BACKUP_TOKEN }}
