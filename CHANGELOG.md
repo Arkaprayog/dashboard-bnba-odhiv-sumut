@@ -1,3 +1,10 @@
+## 1.1.24 — 2026-10-14
+- Menerapkan foto bukit yang diberikan sebagai latar konsisten pada seluruh halaman aplikasi/web.
+- Menyamakan font layar menjadi putih dan permukaan UI menjadi glassmorphism transparan dengan blur, termasuk form, kartu, navigasi, status, dan dokumen.
+- Mempertahankan format surat resmi hitam-putih khusus pada saat cetak A4/PDF agar tetap layak sebagai dokumen kedinasan.
+- Menambahkan pemeriksaan regresi untuk latar WebP, tema global setiap halaman, dan sinkronisasi versi.
+- Versi Android native diselaraskan ke 1.2.13 (version code 16).
+
 ## 1.1.23 — 2026-10-14
 - Menyelaraskan Surat Tugas dengan konsep Surat Lainnya: kop surat tetap dengan logo, baris tempat/tanggal di kanan, dan tata letak cetak A4.
 - Menghapus pernyataan tanda tangan elektronik BSrE/BSSN yang tidak didukung oleh mekanisme tanda tangan aktual; template Surat Tugas tidak menyertakan barcode atau QR code.
