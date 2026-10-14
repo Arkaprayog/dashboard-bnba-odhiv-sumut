@@ -1,0 +1,24 @@
+{
+  "name": "Sahabat ODHIV Sumatera Utara",
+  "short_name": "SODARAMU",
+  "description": "Sahabat ODHIV Sumatera Utara",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fff2d5",
+  "theme_color": "#07545b",
+  "icons": [
+    {
+      "src": "/sodaramu-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/sodaramu-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
