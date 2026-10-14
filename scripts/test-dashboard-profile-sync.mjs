@@ -78,6 +78,6 @@ assert.ok(statSync("public/dashboard-background.webp").size > 4000, "dashboard b
 assert.ok(dashboard.includes("Versi " + pkg.version), "web version must match package version");
 assert.ok(offlinePage.includes('id="sahabat-offline-glass-v1-1-25"'), "native offline screen must use transparent glass styling");
 assert.ok(offlinePage.includes("data:image/webp;base64,"), "native offline screen must embed the supplied hill background for offline use");
-assert.match(offlinePage, /body,body \\*\\{color:#fff!important/);
+assert.ok(offlinePage.includes("body,body *{color:#fff!important"), "native offline screen text must be white");
 
 console.log("PASS global glass theme, hill background, owner profile sync, CI version gate, Android artifacts, and release documentation are synchronized");
