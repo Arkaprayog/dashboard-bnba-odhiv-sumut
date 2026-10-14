@@ -1,3 +1,9 @@
+## 1.1.18 — 2026-10-14
+- Menyamakan tampilan glassmorphism pada dashboard, Kelola Tim Petugas, dan Daftar Petugas dengan panel transparan dan efek blur yang tetap menjaga keterbacaan.
+- Membuat tombol lonceng, pengaturan, dan keluar berbentuk lingkaran kaca transparan; tombol Edit Profil berbentuk oval memanjang.
+- Menyembunyikan petugas nonaktif dari profil, pilihan petugas, dan capaian pada halaman Daftar Petugas tanpa menghapus catatan atau riwayat administrasi.
+- Menyelaraskan versi web ke `1.1.18`, Android ke `1.2.8` (version code `11`), serta menambah uji regresi tampilan dan status petugas.
+
 ## 1.1.17 — 2026-10-14
 - Menambahkan uji regresi untuk sinkronisasi nama/unit kerja owner, tombol profil dashboard, tema glass biru langit, dan konsistensi versi web/Android.
 - Menyelaraskan metadata paket web ke `1.1.17` serta Android ke `1.2.7` (version code `10`) agar build APK berikutnya dapat dibedakan dari rilis sebelumnya.
