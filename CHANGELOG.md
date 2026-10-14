@@ -1,3 +1,8 @@
+## 1.1.22 — 2026-10-14
+- Menambahkan template Surat Tugas pada menu Dokumen berdasarkan dokumen yang diberikan.
+- Teks template dapat disunting langsung, tanggal dan blok tanda tangan diratakan ke kanan, serta tersedia cetak/simpan PDF A4.
+- Versi web dinaikkan ke 1.1.22; versi Android native diselaraskan ke 1.2.11 (version code 14).
+
 ## 1.1.21 — 2026-10-14
 - Memindahkan baris tempat dan tanggal pada Surat Lainnya ke sisi kanan, tepat di bawah kop surat dan sebelum rincian nomor/sifat/hal, sesuai tata letak surat resmi.
 - Menjaga perataan kanan pada pratinjau, tampilan ponsel, dan cetak A4/PDF.
