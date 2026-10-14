@@ -2,6 +2,10 @@ name: Weekly source backup to Google Drive
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/drive-backup.yml'
   schedule:
     - cron: "17 3 * * 1"
 
@@ -14,6 +18,7 @@ concurrency:
 
 jobs:
   backup:
+    if: github.event_name != 'push' || github.event.head_commit.message == 'chore: run one-time Drive backup now'
     name: Archive source and upload privately
     runs-on: ubuntu-latest
     timeout-minutes: 10
