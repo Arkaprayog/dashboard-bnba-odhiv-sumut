@@ -32,7 +32,7 @@ assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='ow
 assert.match(worker, /owner_profile_update/);
 assert.equal(pkg.version, "1.1.27");
 assert.match(gradle, /versionCode 20/);
-assert.match(gradle, /versionName '1\.2\.16'/);
+assert.match(gradle, /versionName '1\.2\.17'/);
 assert.match(changelog, /^## 1\.1\.18/m);
 assert.ok(dashboard.includes("Versi " + pkg.version), "dashboard display version must match package.json");
 assert.match(dashboard, /href="\/surat-tugas\.html">Buka &amp; Edit Surat Tugas/);
