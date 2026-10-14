@@ -45,6 +45,26 @@ button,.btn{display:inline-flex;align-items:center;justify-content:center;gap:7p
  body .avatar,body .profile-photo{background:rgba(135,206,235,.2)!important;border-color:rgba(255,255,255,.86)!important}
 }
 </style>
+<style id="admin-glass-theme-v1-1-18">
+/* 1.1.18: translucent glass theme aligned with owner dashboard */
+:root{color-scheme:light;--navy:#f3f9ff;--blue:#d8f0ff;--ink:#f6fbff;--muted:rgba(240,248,255,.86);--line:rgba(255,255,255,.3);--bg:#153747}
+html{min-height:100%;background:#153747}
+body{min-height:100vh;color:#f6fbff;background:linear-gradient(180deg,rgba(4,20,35,.16),rgba(3,18,32,.32)),url("/owner-background.webp") center center/cover fixed no-repeat!important;text-shadow:0 1px 2px rgba(0,0,0,.12)}
+header{background:rgba(3,20,36,.28)!important;border-bottom:1px solid rgba(255,255,255,.3)!important;color:#f6fbff;box-shadow:0 8px 24px rgba(0,12,28,.08);backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important}
+header strong{color:#fff!important}header .muted{color:rgba(240,248,255,.86)!important}header a{color:#f0faff!important;text-decoration:underline;text-underline-offset:3px}
+.card{color:#f6fbff!important;background:rgba(3,20,36,.28)!important;border:1px solid rgba(255,255,255,.34)!important;border-radius:22px!important;box-shadow:0 16px 38px rgba(0,12,28,.14)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important}
+h1,h2,.field label{color:#f6fbff!important;text-shadow:0 1px 3px rgba(0,0,0,.2)}p,.muted,.submission-meta,.detail{color:rgba(242,249,255,.88)!important}
+input,select,.workflow-control,.row-select,.toolbar select{color:#173650!important;background:rgba(248,252,255,.9)!important;border:1px solid rgba(255,255,255,.64)!important;border-radius:12px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.46)!important}
+input:focus,select:focus,.workflow-control:focus{outline:3px solid rgba(164,225,255,.62)!important;outline-offset:1px}
+button,.btn,.toolbar button{border-radius:999px!important;color:#fff!important;background:rgba(20,111,190,.6)!important;border:1px solid rgba(255,255,255,.38)!important;box-shadow:0 5px 15px rgba(0,15,38,.12)!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important}
+button.secondary,.btn.secondary{background:rgba(240,249,255,.14)!important;color:#f6fbff!important}button.danger{background:rgba(178,48,58,.52)!important;color:#fff!important}
+button:focus-visible,.btn:focus-visible,header a:focus-visible,select:focus-visible{outline:3px solid #fff!important;outline-offset:3px}
+.message,.status{color:#f7fbff!important;background:rgba(235,247,255,.14)!important;border:1px solid rgba(255,255,255,.24)!important}.message.ok{background:rgba(26,143,99,.24)!important;color:#f2fff9!important}.message.error,.status.error{background:rgba(174,39,49,.3)!important;color:#fff!important}
+.link-box{background:rgba(192,229,255,.13)!important;border:1px solid rgba(255,255,255,.28)!important;color:#fff!important}.link-url{background:rgba(248,252,255,.92)!important;color:#173650!important;border-color:rgba(255,255,255,.56)!important}
+.table-wrap{border:1px solid rgba(255,255,255,.24)!important;border-radius:14px!important;background:rgba(3,20,36,.08)!important}th,td{border-bottom:1px solid rgba(255,255,255,.22)!important;color:#f6fbff!important}th{background:rgba(226,243,255,.14)!important;color:#fff!important}tbody tr:nth-child(even) td{background:rgba(255,255,255,.045)!important}
+.empty{color:rgba(242,249,255,.86)!important}
+@media(max-width:760px){.card{border-radius:18px!important}header{padding-top:13px!important;padding-bottom:13px!important}}
+</style>
 </head>
 <body>
 <header><div><strong>Sahabat ODHIV Sumatera Utara</strong><span class="muted">Pengelolaan identitas petugas pendataan</span></div><a href="/" rel="noopener">Kembali ke dashboard ↗</a></header>
