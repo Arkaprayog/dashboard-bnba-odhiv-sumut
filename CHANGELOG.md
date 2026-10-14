@@ -1,7 +1,12 @@
+## 1.1.27 — 2026-10-14
+- Mempertegas font putih secara global di seluruh halaman web dan layar offline Android.
+- Menurunkan opasitas permukaan UI dan memperkuat blur glassmorphism; tombol lonceng, pengaturan, dan keluar dipastikan bulat tanpa kotak pembungkus serta ditempatkan di kanan atas.
+- Memperbaiki pemeriksaan deployment agar versi cache background mengikuti `package.json`, dan menambah pemeriksaan CI untuk sinkronisasi web 1.1.27 dengan Android 1.2.17 (version code 20).
+
 ## 1.1.26 — 2026-10-14
 - Memperluas glassmorphism transparan ke permukaan UI lintas halaman, termasuk form, dialog, panel, kartu, dan elemen status.
 - Menegaskan font putih pada semua elemen UI dan menambahkan pengecualian cetak hitam-putih agar dokumen A4 tetap formal.
-- Menyegarkan cache tema web ke 1.1.26 dan menaikkan versi Android ke 1.2.16 (version code 19).
+- Menyegarkan cache tema web ke 1.1.26 dan menaikkan versi Android ke 1.2.17 (version code 19).
 
 ## 1.1.25 — 2026-10-14
 - Memperbaiki ambang pemeriksaan ukuran latar WebP agar menerima aset terkompresi yang valid sambil tetap memverifikasi header dan formatnya.

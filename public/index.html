@@ -1159,10 +1159,10 @@ body.authenticated .app-version{color:rgba(255,255,255,.9)!important}
 </style>
 
 
-<style id="sahabat-global-glass-v1-1-26">
+<style id="sahabat-global-glass-v1-1-27">
 :root{color-scheme:dark!important;--ink:#fff!important;--muted:#fff!important;--line:rgba(255,255,255,.32)!important;--bg:#163847!important;--paper:rgba(3,17,27,.17)!important}
 html,body{min-height:100%;background-color:#163847!important}
-body{color:#fff!important;background-image:linear-gradient(180deg,rgba(2,15,23,.11),rgba(2,15,23,.24)),url('/dashboard-background.webp?v=1.1.26')!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;background-attachment:fixed!important;text-shadow:0 1px 3px rgba(0,0,0,.22)!important}
+body{color:#fff!important;background-image:linear-gradient(180deg,rgba(2,15,23,.11),rgba(2,15,23,.24)),url('/dashboard-background.webp?v=1.1.27')!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;background-attachment:fixed!important;text-shadow:0 1px 3px rgba(0,0,0,.22)!important}
 body,body *{color:#fff!important;-webkit-text-fill-color:#fff!important}
 body:not(.authenticated)::before,body:not(.authenticated)::after{display:none!important;content:none!important}
 body :is(input,textarea,select,option,[contenteditable="true"]){background:rgba(2,15,23,.19)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;caret-color:#fff!important;border-color:rgba(255,255,255,.38)!important}
@@ -1195,6 +1195,18 @@ body :is(input,textarea,select,option,[contenteditable="true"])::placeholder{col
 body :is(.muted,.empty,.success,.ok,.error,.danger,.warning,.status,.message,.settings-status,.alert,.pill,.badge,.tag,.hint,.helper,.caption,.subtitle,.secondary-text){color:#fff!important;-webkit-text-fill-color:#fff!important}
 body :is(.profile-actions,.owner-actions,.account-actions,.header-actions,.profile-controls,.action-icons,.icon-actions,.icon-button-group){background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 @media print{html,body{background:#fff!important;background-image:none!important;color:#111!important;text-shadow:none!important}body,body *{color:#111!important;-webkit-text-fill-color:#111!important;text-shadow:none!important}body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){background:#fff!important;background-image:none!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-color:transparent!important}}
+
+/* v1.1.27: enforce circular, unboxed top-right actions and consistent high-transparency surfaces. */
+body .owner-header-actions,body .top-actions{position:relative!important;background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body .owner-header-actions{position:absolute!important;top:16px!important;right:16px!important;z-index:50!important}
+body .top-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:12px!important}
+body :is(#notificationBellButton,#settingsButton,#logoutButton){width:56px!important;height:56px!important;min-width:56px!important;min-height:56px!important;aspect-ratio:1/1!important;flex:0 0 56px!important;padding:0!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;background:rgba(255,255,255,.075)!important;border:1px solid rgba(255,255,255,.42)!important;box-shadow:none!important;-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important}
+body :is(#notificationBellButton,#settingsButton,#logoutButton)::before,body :is(#notificationBellButton,#settingsButton,#logoutButton)::after{content:none!important;display:none!important}
+body :is(#notificationBellButton,#settingsButton,#logoutButton) svg{width:24px!important;height:24px!important;flex:0 0 24px!important}
+@media(max-width:640px){body .owner-header-actions{top:10px!important;right:10px!important}body .top-actions{gap:8px!important}body :is(#notificationBellButton,#settingsButton,#logoutButton){width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;flex-basis:44px!important}body :is(#notificationBellButton,#settingsButton,#logoutButton) svg{width:20px!important;height:20px!important}}
+body,body *{color:#fff!important;-webkit-text-fill-color:#fff!important}
+body :is(main:not(.paper),section:not(.paper),article,aside,header:not(.letterhead),footer,nav,form,fieldset,dialog,.card,.panel,.topbar,.toolbar,.workspace,.workspace-card,.dashboard-card,.owner-card,.profile-card,.profile-panel,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.modal-content,.drawer,.menu-card,.quick-card,.quick-link,.stat-card,.overview-card,.overview-panel,.status-card,.notice-card,.upload-card,.document-card,.assessment-card){background-color:rgba(255,255,255,.055)!important;background-image:none!important;border-color:rgba(255,255,255,.25)!important;box-shadow:0 12px 34px rgba(0,0,0,.08)!important;-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important}
+@media print{body,body *{color:#111!important;-webkit-text-fill-color:#111!important;text-shadow:none!important}body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){background:#fff!important;background-image:none!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-color:transparent!important}}
 </style>
 
 </head>
