@@ -12,8 +12,9 @@ Worker membuat folder secara idempoten menggunakan Google Drive API, lalu menyim
 
 1. Aktifkan Google Drive API di Google Cloud untuk proyek service account yang saat ini digunakan.
 2. Pastikan `GOOGLE_SERVICE_ACCOUNT_EMAIL` dan `GOOGLE_PRIVATE_KEY` tersedia sebagai Cloudflare Worker secrets.
-3. Service account membuat folder di Drive miliknya. Jika folder harus berada di Drive pribadi pengguna, bagikan folder tujuan kepada email service account dan implementasikan parent-folder khusus sebelum menjalankan setup.
-4. Jangan masukkan data responden, NIK, foto, token, private key, file environment, atau ekspor database produksi ke cadangan source.
+3. **Gunakan Shared Drive untuk backup otomatis.** Service account tidak memiliki kuota penyimpanan My Drive pribadi; upload dapat gagal dengan `storageQuotaExceeded`. Buat atau gunakan Shared Drive organisasi, tambahkan email service account sebagai anggota dengan peran **Contributor** atau **Content manager**, lalu buat folder tujuan **Cadangan Proyek** di dalam Shared Drive.
+4. Tambahkan Worker secret atau variable `GOOGLE_DRIVE_BACKUP_FOLDER_ID` berisi ID folder **Cadangan Proyek** di Shared Drive. Ambil ID dari URL folder Drive (bagian setelah `/folders/`). Endpoint backup memprioritaskan folder ini dan mengunggah dengan dukungan Shared Drive. Jangan tempelkan ID/kredensial privat ke chat.
+5. Jangan masukkan data responden, NIK, foto, token, private key, file environment, atau ekspor database produksi ke cadangan source.
 
 ## Menyiapkan folder
 
@@ -23,9 +24,10 @@ Setelah kode ini dideploy, login ke dashboard sebagai **owner**. Dari sesi yang 
 
 1. Buat token acak kuat minimal 32 byte. Simpan nilai yang sama sebagai secret `DRIVE_BACKUP_TOKEN` di Cloudflare Worker dan GitHub repository Actions secrets.
 2. Jangan menaruh token di kode, issue, commit, file konfigurasi, atau log. Rotasi token di kedua layanan secara bersamaan.
-3. Setelah secret disetel dan folder dibuat, workflow **Weekly source backup to Google Drive** akan mengarsipkan file yang dilacak Git pada jadwal mingguan atau saat dijalankan manual.
-4. Arsip dibatasi maksimal 20 MiB dan diunggah melalui endpoint Worker yang memerlukan bearer secret. Workflow tidak mengarsipkan riwayat Git, data D1, atau data responden.
-5. Workflow menampilkan hanya nama arsip; URL privat dan isi data tidak dicetak ke log.
+3. Konfigurasikan `GOOGLE_DRIVE_BACKUP_FOLDER_ID` ke ID folder tujuan di Shared Drive dan pastikan service account adalah anggota Shared Drive. Folder yang dibuat pada My Drive milik service account tidak cukup untuk backup karena kuota service account.
+4. Setelah kedua secret dan folder Shared Drive disiapkan, workflow **Weekly source backup to Google Drive** mengarsipkan file yang dilacak Git pada jadwal mingguan atau saat dijalankan manual.
+5. Arsip dibatasi maksimal 20 MiB dan diunggah melalui endpoint Worker yang memerlukan bearer secret. Workflow tidak mengarsipkan riwayat Git, data D1, atau data responden.
+6. Workflow menampilkan hanya nama arsip; URL privat dan isi data tidak dicetak ke log.
 
 ## Batasan saat ini
 
