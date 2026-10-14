@@ -1300,6 +1300,42 @@ button:hover,.btn:hover{background-color:rgba(255,255,255,.25)!important}
  }
 }
 </style>
+
+<style id="sahabat-glassmorphism-v1-1-29">
+/* Glassmorphism dashboard: 75% navy glass, 16px blur, readable white typography. */
+:root{--sahabat-glass:rgba(15,23,42,.75);--sahabat-glass-border:rgba(255,255,255,.2)}
+body.authenticated main,
+body.authenticated .owner-card,
+body.authenticated .dashpanel,
+body.authenticated .notification-panel,
+body.authenticated .settings-panel,
+body.authenticated .app-nav,
+body.authenticated .app-nav button,
+body.authenticated .respondent-stat,
+body.authenticated .overview-card,
+body.authenticated .overview-panel,
+body.authenticated .news-card,
+body.authenticated .assessment-actions,
+body.authenticated .datawrap,
+body.authenticated .owner-form-grid,
+body.authenticated .workflow-section,
+body.authenticated .profile-panel,
+body.authenticated .quick-card,
+body.authenticated .stat-card,
+body.authenticated section,
+body.authenticated article,
+body.authenticated dialog,
+body.authenticated [class*="card"],
+body.authenticated [class*="panel"],
+body.authenticated [class*="menu"]{background-color:var(--sahabat-glass)!important;background-image:none!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;border-color:var(--sahabat-glass-border)!important;}
+body.authenticated main{background:var(--sahabat-glass)!important;box-shadow:0 12px 36px rgba(0,0,0,.28)!important}
+body.authenticated :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,a,li,td,th,legend,summary,div){color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important}
+body.authenticated :is(input,select,textarea){background:rgba(255,255,255,.14)!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;border-color:rgba(255,255,255,.35)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+body.authenticated :is(input,textarea)::placeholder{color:rgba(255,255,255,.72)!important;-webkit-text-fill-color:rgba(255,255,255,.72)!important}
+body.authenticated :is(button,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button){color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important}
+body.authenticated .assessment-paper,body.authenticated #assessmentView .assessment-paper{background:#fff!important;color:#171717!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+@media(prefers-reduced-transparency:reduce){body.authenticated main,body.authenticated .owner-card,body.authenticated .dashpanel,body.authenticated .notification-panel,body.authenticated .settings-panel,body.authenticated .app-nav,body.authenticated [class*="card"],body.authenticated [class*="panel"]{background-color:rgba(15,23,42,.95)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+</style>
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
