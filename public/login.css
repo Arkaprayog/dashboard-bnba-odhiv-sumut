@@ -153,3 +153,32 @@ html body:not(.authenticated) .rule{
   html body:not(.authenticated) main{padding:17px 16px;border-radius:23px}
   html body:not(.authenticated) .login-heading{margin:7px 0 23px}
 }
+
+
+/* v1.1.36: final Login contrast overrides; all informational copy must be white. */
+html body:not(.authenticated) main{
+  background:rgba(24,32,35,.27)!important;
+  background-color:rgba(24,32,35,.27)!important;
+  border-color:rgba(255,255,255,.58)!important;
+  -webkit-backdrop-filter:blur(8px) saturate(115%)!important;
+  backdrop-filter:blur(8px) saturate(115%)!important;
+}
+html body:not(.authenticated) main :is(h1,h2,h3,h4,p,span,label,small,strong,em,b,i,a,li,div,footer, .foot,.setup,.ministry,.login-heading,.app-version){
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  text-shadow:0 1px 3px rgba(0,0,0,.58)!important;
+}
+html body:not(.authenticated) main .submit,
+html body:not(.authenticated) main #message:not(:empty){
+  color:#111!important;
+  -webkit-text-fill-color:#111!important;
+  background:#fff!important;
+  background-color:#fff!important;
+}
+html body:not(.authenticated) main #password,
+html body:not(.authenticated) main #password::placeholder,
+html body:not(.authenticated) main #togglePassword,
+html body:not(.authenticated) main #togglePassword svg *{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
