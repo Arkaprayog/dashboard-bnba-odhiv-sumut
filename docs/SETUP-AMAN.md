@@ -56,3 +56,18 @@ Simpan `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, secret Google, dan secre
 ## 7. Batas penggunaan data
 
 Sebelum memproses data responden nyata, organisasi harus menyelesaikan tinjauan perlindungan data, dasar/tujuan pemrosesan, pembatasan role dan kolom, privasi foto, audit, retensi/penghapusan, backup/pemulihan, respons insiden, serta pengujian keamanan yang terdokumentasi. Gunakan data sintetis sampai tinjauan tersebut selesai.
+
+
+## 8. Cadangan kode sumber ke Google Drive
+
+Workflow `.github/workflows/drive-backup.yml` membuat arsip sumber terjadwal setiap Senin pukul 03:17 UTC (10:17 WIB) dan dapat dijalankan manual dari tab Actions. Workflow hanya mengarsipkan file yang terlacak Git dan mengecualikan pola umum untuk kredensial, file lokal, database, serta direktori data privat. Tetap tinjau perubahan dan jangan pernah commit rahasia atau data responden ke Git.
+
+Sebelum menjalankan workflow:
+
+1. Login ke aplikasi sebagai **owner** melalui domain resmi dan jalankan tindakan penyiapan folder Drive jika tersedia. Endpoint yang digunakan adalah `POST /api/drive/setup-folders` dan wajib memakai sesi owner serta token CSRF yang sah. Jangan melewati autentikasi atau mengirim cookie sesi lewat chat.
+2. Pastikan service account Google memiliki izin minimum yang diperlukan pada folder tujuan. Service account tidak dapat memiliki file di My Drive pribadi; gunakan Shared Drive yang sesuai atau mekanisme OAuth atas nama pengguna jika kepemilikan berkas diperlukan.
+3. Buat token acak kuat (minimal 32 byte) melalui password manager/generator aman. Simpan **nilai yang sama** sebagai Worker secret `DRIVE_BACKUP_TOKEN` pada Worker `sahabatodhiv-sumut` dan GitHub Actions repository secret dengan nama yang sama. Jangan letakkan token di file, URL, log, atau percakapan. Jika token sudah pernah terekspos, rotasi kedua salinan.
+4. Jalankan workflow **Weekly source backup to Google Drive** secara manual. Job harus gagal jika secret belum dikonfigurasi, folder belum disiapkan, unggahan ditolak, atau arsip melebihi 20 MiB.
+5. Periksa nama dan waktu berkas cadangan di folder Drive privat, lalu lakukan uji pemulihan ke direktori/lingkungan terpisah. Workflow saat ini mencadangkan kode sumber Git, bukan database D1, file responden, atau data operasional produksi.
+
+Jangan mengaktifkan backup data responden sebelum tinjauan retensi, persetujuan, kontrol akses, enkripsi, pemulihan, dan prosedur insiden selesai.
