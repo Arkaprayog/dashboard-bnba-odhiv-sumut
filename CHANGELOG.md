@@ -1,3 +1,8 @@
+## 1.1.21 — 2026-10-14
+- Memindahkan baris tempat dan tanggal pada Surat Lainnya ke sisi kanan, tepat di bawah kop surat dan sebelum rincian nomor/sifat/hal, sesuai tata letak surat resmi.
+- Menjaga perataan kanan pada pratinjau, tampilan ponsel, dan cetak A4/PDF.
+- Versi web dinaikkan ke 1.1.21; versi Android native diselaraskan ke 1.2.10 (version code 13).
+
 ## 1.1.20 — 2026-10-14
 - Mengganti panel profil owner dari biru solid menjadi kaca transparan/frosted glass agar latar belakang tetap terlihat.
 - Memindahkan lonceng, pengaturan, dan keluar ke sudut kanan atas; ketiganya berbentuk lingkaran terpisah tanpa kotak pembungkus.
