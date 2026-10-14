@@ -1,4 +1,5 @@
 name: Weekly source backup to Google Drive
+# Temporary push trigger is enabled only for this integration verification.
 
 on:
   workflow_dispatch:
