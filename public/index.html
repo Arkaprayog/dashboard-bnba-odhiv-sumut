@@ -1242,44 +1242,63 @@ body.authenticated :is(input,textarea)::placeholder{color:rgba(255,255,255,.8)!i
 </style>
 
 <!-- v1.1.30: glass transparency fix; keep the scenic body image visible behind translucent surfaces. -->
-<style id="sahabat-glass-v1130">
-:root{--glass-surface:rgba(15,23,42,.75);--glass-border:rgba(255,255,255,.15)}
-html,body{background-color:transparent!important}
-body{background-color:transparent!important}
-body.authenticated{background-color:transparent!important}
-body.authenticated #app,body.authenticated #root,body.authenticated .main-wrapper,body.authenticated .dashboard-wrapper{background-color:transparent!important}
-body.authenticated main,
-body.authenticated .glass-container,
-body.authenticated .card,
-body.authenticated .dashboard-card,
-body.authenticated .menu-card,
-body.authenticated .sidebar,
-body.authenticated .navbar,
-body.authenticated .modal-content,
-body.authenticated div[class*="card"],
-body.authenticated div[class*="panel"],
-body.authenticated div[class*="menu"],
-body.authenticated .dashpanel,
-body.authenticated .datawrap,
-body.authenticated .dashhead,
-body.authenticated .workflow-section,
-body.authenticated .quick-card,
-body.authenticated .stat-card,
-body.authenticated .profile-panel,
-body.authenticated .settings-panel,
-body.authenticated dialog{
+<style id="sahabat-glass-v1131">
+/* Font putih global */
+*,*::before,*::after,
+html,body,p,span,div,a,li,td,th,label,small,strong,
+h1,h2,h3,h4,h5,h6,input,select,textarea,button{
+ color:#fff!important;
+ -webkit-text-fill-color:#fff!important;
+ opacity:1!important;
+}
+p,span,h1,h2,h3,h4,h5,h6,label{
+ text-shadow:0 1px 3px rgba(0,0,0,.7);
+}
+::placeholder,::-webkit-input-placeholder{
+ color:rgba(255,255,255,.7)!important;
+ -webkit-text-fill-color:rgba(255,255,255,.7)!important;
+ opacity:1!important;
+}
+/* Permukaan kaca 75%, blur 16px. Gambar latar aplikasi tetap dipertahankan. */
+:root{--glass-surface:rgba(15,23,42,.75);--glass-border:rgba(255,255,255,.18)}
+html,body,body.authenticated,body.authenticated #app,body.authenticated #root,
+body.authenticated .main-wrapper,body.authenticated .dashboard-wrapper{
+ background-color:transparent!important;
+}
+.card,.dashboard-card,.menu-card,.glass-container,.panel,.sidebar,.navbar,
+.modal-content,div[class*="card"],div[class*="bg-"],section,
+body.authenticated main,body.authenticated div[class*="panel"],
+body.authenticated div[class*="menu"],body.authenticated .dashpanel,
+body.authenticated .datawrap,body.authenticated .dashhead,
+body.authenticated .workflow-section,body.authenticated .quick-card,
+body.authenticated .stat-card,body.authenticated .profile-panel,
+body.authenticated .settings-panel,body.authenticated dialog{
  background:var(--glass-surface)!important;
  background-color:var(--glass-surface)!important;
  backdrop-filter:blur(16px)!important;
  -webkit-backdrop-filter:blur(16px)!important;
- box-shadow:0 8px 32px 0 rgba(0,0,0,.3)!important;
  border:1px solid var(--glass-border)!important;
- color:#fff!important
+ box-shadow:0 8px 32px rgba(0,0,0,.3)!important;
 }
-body.authenticated .dashpanel *,body.authenticated .card *,body.authenticated .dashboard-card *,body.authenticated .menu-card *,body.authenticated .sidebar *,body.authenticated .navbar *,body.authenticated .modal-content *{color:#fff!important}
-/* Login shell also uses a translucent surface; preserve the photographic body background. */
-body:not(.authenticated) main{background:rgba(15,23,42,.75)!important;background-color:rgba(15,23,42,.75)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;border:1px solid var(--glass-border)!important}
-@media(prefers-reduced-transparency:reduce){body.authenticated main,body.authenticated .dashpanel,body.authenticated .card{background:rgba(15,23,42,.95)!important;background-color:rgba(15,23,42,.95)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+/* Form dan tombol kaca; warna teks tetap putih. */
+input,select,textarea,button,.btn{
+ background-color:rgba(255,255,255,.15)!important;
+ border:1px solid rgba(255,255,255,.3)!important;
+ backdrop-filter:blur(12px)!important;
+ -webkit-backdrop-filter:blur(12px)!important;
+ color:#fff!important;
+ -webkit-text-fill-color:#fff!important;
+}
+button:hover,.btn:hover{background-color:rgba(255,255,255,.25)!important}
+@media(prefers-reduced-transparency:reduce){
+ .card,.dashboard-card,.menu-card,.glass-container,.panel,.sidebar,.navbar,
+ .modal-content,section,body.authenticated main{
+  background:rgba(15,23,42,.95)!important;
+  background-color:rgba(15,23,42,.95)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+ }
+}
 </style>
 </head>
 <body>
