@@ -1240,6 +1240,47 @@ body.authenticated :is(input,textarea,select,[contenteditable=true]){background:
 body.authenticated :is(input,textarea)::placeholder{color:rgba(255,255,255,.8)!important;-webkit-text-fill-color:rgba(255,255,255,.8)!important}
 @media(prefers-reduced-transparency:reduce){body.authenticated main,body.authenticated .dashpanel,body.authenticated .panel,body.authenticated .card{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(15,23,42,.95)!important}}
 </style>
+
+<!-- v1.1.30: glass transparency fix; keep the scenic body image visible behind translucent surfaces. -->
+<style id="sahabat-glass-v1130">
+:root{--glass-surface:rgba(15,23,42,.75);--glass-border:rgba(255,255,255,.15)}
+html,body{background-color:transparent!important}
+body{background-color:transparent!important}
+body.authenticated{background-color:transparent!important}
+body.authenticated #app,body.authenticated #root,body.authenticated .main-wrapper,body.authenticated .dashboard-wrapper{background-color:transparent!important}
+body.authenticated main,
+body.authenticated .glass-container,
+body.authenticated .card,
+body.authenticated .dashboard-card,
+body.authenticated .menu-card,
+body.authenticated .sidebar,
+body.authenticated .navbar,
+body.authenticated .modal-content,
+body.authenticated div[class*="card"],
+body.authenticated div[class*="panel"],
+body.authenticated div[class*="menu"],
+body.authenticated .dashpanel,
+body.authenticated .datawrap,
+body.authenticated .dashhead,
+body.authenticated .workflow-section,
+body.authenticated .quick-card,
+body.authenticated .stat-card,
+body.authenticated .profile-panel,
+body.authenticated .settings-panel,
+body.authenticated dialog{
+ background:var(--glass-surface)!important;
+ background-color:var(--glass-surface)!important;
+ backdrop-filter:blur(16px)!important;
+ -webkit-backdrop-filter:blur(16px)!important;
+ box-shadow:0 8px 32px 0 rgba(0,0,0,.3)!important;
+ border:1px solid var(--glass-border)!important;
+ color:#fff!important
+}
+body.authenticated .dashpanel *,body.authenticated .card *,body.authenticated .dashboard-card *,body.authenticated .menu-card *,body.authenticated .sidebar *,body.authenticated .navbar *,body.authenticated .modal-content *{color:#fff!important}
+/* Login shell also uses a translucent surface; preserve the photographic body background. */
+body:not(.authenticated) main{background:rgba(15,23,42,.75)!important;background-color:rgba(15,23,42,.75)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;border:1px solid var(--glass-border)!important}
+@media(prefers-reduced-transparency:reduce){body.authenticated main,body.authenticated .dashpanel,body.authenticated .card{background:rgba(15,23,42,.95)!important;background-color:rgba(15,23,42,.95)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+</style>
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
