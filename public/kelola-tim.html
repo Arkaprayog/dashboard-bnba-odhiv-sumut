@@ -66,10 +66,10 @@ button:focus-visible,.btn:focus-visible,header a:focus-visible,select:focus-visi
 @media(max-width:760px){.card{border-radius:18px!important}header{padding-top:13px!important;padding-bottom:13px!important}}
 </style>
 
-<style id="sahabat-global-glass-v1-1-28">
+<style id="sahabat-global-glass-v1-1-30">
 :root{color-scheme:dark!important;--ink:#fff!important;--muted:#fff!important;--line:rgba(255,255,255,.32)!important;--bg:#163847!important;--paper:rgba(3,17,27,.17)!important}
 html,body{min-height:100%;background-color:#163847!important}
-body{color:#fff!important;background-image:linear-gradient(180deg,rgba(2,15,23,.11),rgba(2,15,23,.24)),url('/dashboard-background.webp?v=1.1.28')!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;background-attachment:fixed!important;text-shadow:0 1px 3px rgba(0,0,0,.22)!important}
+body{color:#fff!important;background-image:linear-gradient(180deg,rgba(2,15,23,.11),rgba(2,15,23,.24)),url('/dashboard-background.webp?v=1.1.30')!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;background-attachment:fixed!important;text-shadow:0 1px 3px rgba(0,0,0,.22)!important}
 body,body *{color:#fff!important;-webkit-text-fill-color:#fff!important}
 body:not(.authenticated)::before,body:not(.authenticated)::after{display:none!important;content:none!important}
 body :is(input,textarea,select,option,[contenteditable="true"]){background:rgba(2,15,23,.19)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;caret-color:#fff!important;border-color:rgba(255,255,255,.38)!important}
@@ -116,7 +116,7 @@ body :is(main:not(.paper),section:not(.paper),article,aside,header:not(.letterhe
 @media print{body,body *{color:#111!important;-webkit-text-fill-color:#111!important;text-shadow:none!important}body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){background:#fff!important;background-image:none!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-color:transparent!important}}
 </style>
 
-<style id="sahabat-glass-opacity75-blur16-v1-1-28">
+<style id="sahabat-glass-opacity75-blur16-v1-1-30">
 :root{color-scheme:dark!important}
 @media screen{
 body,body *{color:#fff!important;-webkit-text-fill-color:#fff!important}
@@ -135,6 +135,28 @@ body .paper{background:#fff!important;color:#000!important;border-color:transpar
 body .paper *{color:#000!important;-webkit-text-fill-color:#000!important}
 body :is(.topbar,.toolbar,.no-print,.editor-panel){display:none!important}
 }
+</style>
+
+<style id="sahabat-glassmorphism-fix-v1-1-30">
+:root{--sahabat-glass-surface:rgba(15,23,42,.75);--sahabat-glass-border:rgba(255,255,255,.22);--sahabat-glass-blur:16px}
+html,body{color:#fff!important}
+body :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,a,li,td,th,legend,summary,div,figcaption,caption){color:#fff!important;-webkit-text-fill-color:#fff!important}
+body :is(main,header,section,article,aside,nav,form,fieldset,dialog,[role=dialog],[class*="card"],[class*="panel"],[class*="menu"],[class*="modal"],[class*="box"],[class*="section"],.owner-card,.dashpanel,.app-nav,.overview-card,.overview-panel,.respondent-stat,.news-card,.notification-panel,.settings-panel,.datawrap,.card){background:var(--sahabat-glass-surface)!important;background-color:var(--sahabat-glass-surface)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;border-color:var(--sahabat-glass-border)!important;box-shadow:0 8px 30px rgba(0,0,0,.22)!important}
+body :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea,.link-url,.workflow-control){background:rgba(15,23,42,.70)!important;background-color:rgba(15,23,42,.70)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;caret-color:#fff;border-color:rgba(255,255,255,.34)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+body :is(input,textarea,select)::placeholder,body :is(input,textarea)::placeholder{color:rgba(255,255,255,.72)!important;-webkit-text-fill-color:rgba(255,255,255,.72)!important;opacity:1!important}
+body :is(button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button,.assessment-upload){background:rgba(15,86,153,.75)!important;background-color:rgba(15,86,153,.75)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border:1px solid rgba(255,255,255,.28)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+body :is(button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button):hover{background:rgba(21,106,179,.82)!important;background-color:rgba(21,106,179,.82)!important}
+body :is(input,select,textarea,button,a):focus-visible{outline:2px solid rgba(255,255,255,.9)!important;outline-offset:2px}
+body:not(.authenticated) main{background:rgba(15,23,42,.75)!important;background-color:rgba(15,23,42,.75)!important;border:1px solid rgba(255,255,255,.28)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;box-shadow:0 18px 46px rgba(0,0,0,.32)!important}
+body:not(.authenticated) main :is(h1,h2,h3,p,span,label,small,strong,a,div){color:#fff!important;-webkit-text-fill-color:#fff!important}
+body:not(.authenticated) .field input,body:not(.authenticated) input[type=password],body:not(.authenticated) input[type=text]{background:rgba(15,23,42,.70)!important;background-color:rgba(15,23,42,.70)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;caret-color:#fff!important;border:1px solid rgba(255,255,255,.38)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)!important}
+body:not(.authenticated) .field input::placeholder{color:rgba(255,255,255,.72)!important;-webkit-text-fill-color:rgba(255,255,255,.72)!important}
+body:not(.authenticated) .submit,body:not(.authenticated) .toggle{background:rgba(15,86,153,.75)!important;background-color:rgba(15,86,153,.75)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:rgba(255,255,255,.3)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+body:not(.authenticated) .message:not(:empty){background:rgba(15,23,42,.75)!important;background-color:rgba(15,23,42,.75)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:rgba(255,255,255,.25)!important}
+.assessment-paper,.assessment-paper *{color:#171717!important;-webkit-text-fill-color:#171717!important}
+.assessment-paper{background:#fff!important;background-color:#fff!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+@media(prefers-reduced-transparency:reduce){body :is(main,header,section,article,aside,nav,form,fieldset,dialog,[role=dialog],[class*="card"],[class*="panel"],[class*="menu"],[class*="modal"],[class*="box"],[class*="section"],.owner-card,.dashpanel,.card){background:rgba(15,23,42,.95)!important;background-color:rgba(15,23,42,.95)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+@media print{body,body *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}body :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,a,li,td,th,legend,summary,div){-webkit-text-fill-color:currentColor!important}}
 </style>
 </head>
 <body>

@@ -1,7 +1,13 @@
+## 1.1.30 — 2026-10-15
+- Memperbaiki halaman login agar kartu, kolom kata sandi, tombol mata, dan status keluar memakai kaca gelap transparan; teks UI putih dan latar Danau Toba tetap terlihat.
+- Menyamakan panel, kartu, formulir, navigasi, menu, dan tombol lintas halaman dengan permukaan glassmorphism rgba(15, 23, 42, 0.75) dan blur 16px.
+- Menyegarkan cache tema semua halaman dan layar offline Android agar perubahan visual tidak tertahan versi lama.
+- Versi web 1.1.30; Android 1.2.19 (versionCode 22).
+
 ## 1.1.28 — 2026-10-14
 - Menerapkan tema glassmorphism global dengan `backdrop-filter: blur(16px)`, permukaan slate `rgba(15, 23, 42, 0.75)`, dan tipografi putih pada seluruh halaman web.
 - Menjaga input transparan, cache-buster background dashboard, serta keterbacaan dokumen A4 saat dicetak.
-- Menambahkan pemeriksaan regresi untuk nilai blur, opasitas permukaan, dan sinkronisasi versi web.
+- Menambahkan pemeriksaan regresi untuk nilai blur, opasitas permukaan, dan sinkronisasi versi.
 
 ## 1.1.27 — 2026-10-14
 - Mempertegas font putih secara global di seluruh halaman web dan layar offline Android.
