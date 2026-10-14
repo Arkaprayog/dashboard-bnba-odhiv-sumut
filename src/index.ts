@@ -21,6 +21,7 @@ interface Env {
   GOOGLE_PRIVATE_KEY?: string;
   GOOGLE_SHEET_ID?: string;
   GOOGLE_SHEET_TAB?: string;
+  GOOGLE_DRIVE_BACKUP_FOLDER_ID?: string;
   DRIVE_BACKUP_TOKEN?: string;
   OWNER_BOOTSTRAP_TOKEN?: string;
   VAPID_PRIVATE_KEY?: string;
@@ -1890,8 +1891,9 @@ export default {
           try {
             requestStage = "drive_backup_schema";
             await ensureDriveIntegrationSchema(env);
-            const folderId = await getDriveSetting(env, "drive_folder_backups");
-            if (!folderId) return reply({ error: "Folder cadangan belum dibuat. Owner harus menjalankan penyiapan folder Drive terlebih dahulu." }, 409);
+            // Prefer a folder inside a Shared Drive. Service accounts have no personal Drive quota.
+            const folderId = env.GOOGLE_DRIVE_BACKUP_FOLDER_ID || await getDriveSetting(env, "drive_folder_backups");
+            if (!folderId) return reply({ error: "Folder Shared Drive cadangan belum dikonfigurasi. Atur GOOGLE_DRIVE_BACKUP_FOLDER_ID ke ID folder tujuan pada Shared Drive." }, 409);
             if (!env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !env.GOOGLE_PRIVATE_KEY) return reply({ error: "Integrasi Google Drive belum dikonfigurasi." }, 503);
             const bytes = await request.arrayBuffer();
             if (bytes.byteLength < 1 || bytes.byteLength > 20 * 1024 * 1024) return reply({ error: "Arsip tidak valid atau melebihi 20 MB." }, 413);
@@ -1903,7 +1905,7 @@ export default {
             form.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json; charset=UTF-8" }));
             form.append("file", new Blob([bytes], { type: "application/gzip" }), metadata.name);
             requestStage = "drive_backup_upload";
-            const upload = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink", {
+            const upload = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&supportsAllDrives=true&fields=id,name,webViewLink", {
               method: "POST", headers: { authorization: "Bearer " + token }, body: form,
             });
             if (!upload.ok) {
