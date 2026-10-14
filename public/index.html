@@ -589,10 +589,6 @@ body:not(.authenticated) .message{font-size:.8rem!important;color:#fff!important
 @media(max-height:650px){body:not(.authenticated){align-items:center!important;padding:8px 12px!important}body:not(.authenticated) main{margin:auto!important;padding:12px 16px!important}body:not(.authenticated) .kemensos-logo{height:48px!important}body:not(.authenticated) .login-heading{margin-bottom:8px!important}}
 
 
-/* High-contrast white typography across the application; keep form values readable. */
-body :where(h1,h2,h3,h4,h5,h6,p,span,small,strong,b,em,i,label,legend,li,dt,dd,th,td,caption,summary,figcaption,blockquote,a,div,section,article,aside,header,footer,main,output){color:#fff!important}
-body :where(input,textarea,select,option){color:#123b67}
-.app-nav button[aria-current="page"]{color:#07366f!important}
 </style>
 <style id="finalPolishStyles">
 body:not(.authenticated){display:flex!important;align-items:center!important;justify-content:center!important;min-height:100svh!important;padding:14px 10px!important}
@@ -1023,33 +1019,38 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
     }
   </style>
 
-<style id="forceWhiteTextFinal">
-/* Final override after all existing stylesheets to override muted gray labels. */
-html body :where(h1,h2,h3,h4,h5,h6,p,span,small,strong,b,em,i,label,legend,li,dt,dd,th,td,caption,summary,figcaption,blockquote,a,div,section,article,aside,header,footer,main,output):not(input):not(textarea):not(select):not(option){color:#fff!important}
-html body .foot,html body .setup,html body .scroll-hint,html body .app-version,html body .muted,html body .text-muted,html body .hint,html body .subtle,html body .secondary,html body [class*="muted"],html body [class*="hint"]{color:#fff!important}
-html body input,html body textarea,html body select,html body option{color:#123b67}
-html body button{color:inherit}
-html body .app-nav button[aria-current="page"]{color:#07366f!important}
 
-/* Fix Safari/WebKit text fill, which can override the CSS color property. */
-html body:not(.authenticated) main .foot,
-html body:not(.authenticated) main .foot *,
-html body:not(.authenticated) main .setup,
-html body:not(.authenticated) main .setup *,
-html body:not(.authenticated) main .directorate,
-html body:not(.authenticated) main .directorate *,
-html body.authenticated main .scroll-hint,
-html body.authenticated main .scroll-hint *,
-html body.authenticated main .filter-count,
-html body.authenticated main .filter-count *,
-html body.authenticated main .workflow-state,
-html body.authenticated main .workflow-state *,
-html body.authenticated main .settings-status,
-html body.authenticated main .settings-status * {
-  color:#fff!important;
-  -webkit-text-fill-color:#fff!important;
-  opacity:1!important;
+<style id="dashboard-sky-glass-unified-v2">
+:root{--dashboard-sky-blue:#87CEEB}
+@media screen{
+ body.authenticated:before{background:linear-gradient(135deg,rgba(135,206,235,.17),rgba(3,38,82,.48) 55%,rgba(135,206,235,.12))!important}
+ body.authenticated main{color:#fff!important;background:rgba(135,206,235,.12)!important;border:1px solid rgba(255,255,255,.36)!important;box-shadow:0 18px 48px rgba(0,30,90,.14)!important;-webkit-backdrop-filter:blur(18px)!important;backdrop-filter:blur(18px)!important}
+ body.authenticated main :is(.owner-card,.dashpanel,.notification-panel,.settings-panel,.overview-card,.overview-panel,.news-card,.respondent-stat,.assessment-panel,.respondent-quiz-note,.app-view,.questionnaire-panel,.database-panel,.notification-card,.dashfield,.assessment-section,.notification-item,.assessment-paper,.assessment-row,.assessment-photo-preview,.paper,.letterhead,.letter-meta,.signature,.warning,.letter-editor,.letter-preview,.form-card,.modal,.modal-content,.tab-panel,.panel,.preview,.assessment-block,.app-nav){color:#fff!important;background:rgba(135,206,235,.17)!important;border-color:rgba(255,255,255,.38)!important;box-shadow:0 12px 32px rgba(0,36,84,.12)!important;-webkit-backdrop-filter:blur(18px)!important;backdrop-filter:blur(18px)!important}
+ body.authenticated main .owner-profile-side{color:#fff!important;background:rgba(135,206,235,.15)!important;border:1px solid rgba(255,255,255,.4)!important;border-radius:16px!important;padding:10px!important;box-shadow:0 8px 22px rgba(0,35,82,.12)!important;-webkit-backdrop-filter:blur(18px)!important;backdrop-filter:blur(18px)!important}
+ body.authenticated main .owner-card{background:rgba(135,206,235,.17)!important;border-color:rgba(255,255,255,.4)!important}
+ body.authenticated main .owner-header-actions,body.authenticated main .top-actions{display:flex!important;align-items:center!important;gap:9px!important;background:transparent!important;border:0!important;outline:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ body.authenticated main .owner-edit{color:#fff!important;-webkit-text-fill-color:#fff!important;background:rgba(135,206,235,.22)!important;border:1px solid rgba(255,255,255,.56)!important;border-radius:11px!important;box-shadow:none!important}
+ body.authenticated main :is(#notificationBellButton,#settingsButton,#logoutButton){display:inline-flex!important;align-items:center!important;justify-content:center!important;width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;padding:0!important;gap:0!important;color:#fff!important;-webkit-text-fill-color:#fff!important;background:rgba(135,206,235,.2)!important;border:1px solid rgba(255,255,255,.58)!important;border-radius:50%!important;box-shadow:0 5px 14px rgba(0,30,80,.12)!important}
+ body.authenticated main :is(#notificationBellButton,#settingsButton,#logoutButton) svg{display:block!important;width:22px!important;height:22px!important;flex:0 0 22px!important}
+ body.authenticated main :is(#notificationBellButton,#settingsButton,#logoutButton):hover,body.authenticated main :is(#notificationBellButton,#settingsButton,#logoutButton):focus-visible{background:rgba(135,206,235,.38)!important;border-color:rgba(255,255,255,.88)!important;outline:2px solid rgba(255,255,255,.45)!important;outline-offset:2px!important}
+ body.authenticated main .owner-avatar{border-color:rgba(255,255,255,.92)!important;background:rgba(135,206,235,.22)!important;box-shadow:0 3px 12px rgba(0,35,82,.16)!important}
+ body.authenticated main :is(input,textarea,select,.workflow-control,.settings-row select,.news-tools input,.news-tools select){color:#fff!important;-webkit-text-fill-color:#fff!important;background:rgba(135,206,235,.19)!important;border-color:rgba(255,255,255,.48)!important;caret-color:#fff!important}
+ body.authenticated main :is(input,textarea)::placeholder{color:rgba(255,255,255,.86)!important;-webkit-text-fill-color:rgba(255,255,255,.86)!important;opacity:1!important}
+ body.authenticated main option{color:#173650!important;background:#edf8ff!important;-webkit-text-fill-color:#173650!important}
+ body.authenticated main :is(button,.dashbtn,.workflow-save,.owner-edit,.assessment-upload,.bell-button,.settings-button,.app-nav button){color:#fff!important;-webkit-text-fill-color:#fff!important;background:rgba(135,206,235,.24)!important;border-color:rgba(255,255,255,.5)!important;box-shadow:0 4px 12px rgba(0,30,80,.1)!important}
+ body.authenticated main :is(#notificationBellButton,#settingsButton,#logoutButton){background:rgba(135,206,235,.2)!important}
+ body.authenticated main .app-nav button[aria-current="page"]{color:#fff!important;-webkit-text-fill-color:#fff!important;background:rgba(135,206,235,.38)!important;border-color:rgba(255,255,255,.75)!important}
+ body.authenticated main :is(.datatable,.datatable th,.datatable td,.datatable tr:nth-child(even) td,.datatable th:first-child,.datatable td:first-child){color:#fff!important;-webkit-text-fill-color:#fff!important;background:rgba(135,206,235,.13)!important;border-color:rgba(255,255,255,.4)!important}
+ body.authenticated main :is(a,.news-link,.respondent-quiz-url){color:#fff!important;-webkit-text-fill-color:#fff!important;text-decoration-color:rgba(255,255,255,.88)!important}
+ body.authenticated main .news-card .news-category{color:#fff!important;-webkit-text-fill-color:#fff!important;background:rgba(135,206,235,.28)!important;border:1px solid rgba(255,255,255,.4)!important}
+ body.authenticated main :is(.respondent-quiz-qr,.respondent-quiz-qr-logo,.respondent-photo,.owner-avatar){background:#fff!important;-webkit-text-fill-color:initial!important;text-shadow:none!important}
+ body:not(.authenticated) main{background:rgba(135,206,235,.2)!important;border-color:rgba(255,255,255,.72)!important;box-shadow:0 18px 44px rgba(28,76,127,.14)!important;-webkit-backdrop-filter:blur(18px)!important;backdrop-filter:blur(18px)!important}
+ body:not(.authenticated) main :not(button):not(.submit):not(svg):not(path):not(img){color:#123b67!important;-webkit-text-fill-color:#123b67!important;text-shadow:none!important}
+ body:not(.authenticated) main :is(input,textarea,select){color:#123b67!important;-webkit-text-fill-color:#123b67!important;background:rgba(255,255,255,.78)!important;border-color:rgba(72,133,167,.36)!important;caret-color:#123b67!important}
+ body:not(.authenticated) main :is(input,textarea)::placeholder{color:#607f94!important;-webkit-text-fill-color:#607f94!important;opacity:1!important}
+ body:not(.authenticated) main :is(button,.submit){color:#fff!important;-webkit-text-fill-color:#fff!important;background:linear-gradient(180deg,#2387f0,#0960c8)!important}
 }
+@media print{body main,body main *{color:#111!important;-webkit-text-fill-color:#111!important;text-shadow:none!important}body main{background:#fff!important;box-shadow:none!important}}
 </style>
 </head>
 <body>
@@ -1087,7 +1088,7 @@ html body.authenticated main .settings-status * {
         <div class="top-actions">
           <button class="bell-button" id="notificationBellButton" type="button" aria-label="Buka notifikasi" aria-expanded="false" title="Notifikasi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="bell-count" id="notificationBellCount" hidden>0</span></button>
           <button class="settings-button" id="settingsButton" type="button" aria-label="Pengaturan" aria-expanded="false" title="Pengaturan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a8 8 0 0 0 0-6l1.2-1-1.5-2.6-1.5.6a8 8 0 0 0-5.2-1.5L12 3h-3l-.4 1.5a8 8 0 0 0-2.2 1.3l-1.5-.6-1.5 2.6 1.2 1a8 8 0 0 0 0 6l-1.2 1 1.5 2.6 1.5-.6a8 8 0 0 0 2.2 1.3L9 21h3l.4-1.5a8 8 0 0 0 2.2-1.3l1.5.6 1.5-2.6z"/></svg></button>
-          <button class="dashbtn" id="logoutButton" type="button">Keluar</button>
+          <button class="dashbtn" id="logoutButton" type="button" aria-label="Keluar" title="Keluar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg></button>
         </div>
       </div>
     </div>
@@ -1102,7 +1103,7 @@ html body.authenticated main .settings-status * {
         <div class="dashfield"><label for="ownerNip">NIP</label><input id="ownerNip" maxlength="40"></div>
         <div class="dashfield"><label for="ownerPhone">Nomor HP</label><input id="ownerPhone" maxlength="40" inputmode="tel"></div>
         <div class="dashfield"><label for="ownerEmail">Email</label><input id="ownerEmail" type="email" maxlength="160"></div>
-        <div class="dashfield"><label for="ownerInstitution">Instansi</label><input id="ownerInstitution" maxlength="160"></div>
+        <div class="dashfield"><label for="ownerInstitution">Unit Kerja</label><input id="ownerInstitution" maxlength="160"></div>
         <div class="dashfield" style="grid-column:1/-1"><label for="ownerAddress">Alamat</label><input id="ownerAddress" maxlength="300"></div>
       </div>
       <div class="owner-form-actions"><button class="dashbtn" id="saveOwnerProfile" type="submit">Simpan profil</button><button class="dashbtn" id="cancelOwnerProfile" type="button">Batal</button></div>
@@ -1332,7 +1333,7 @@ function safeText(value){return String(value??'').trim();}
 function renderOwnerProfile(profile){
  const name=safeText(profile.employee_name)||'Profil Owner belum lengkap';
  document.getElementById('ownerName').textContent=name;
- document.getElementById('ownerInstitutionSummary').textContent='Direktorat Rehabilitasi Sosial Korban Penyalahgunaan Narkoba & ODHIV';
+ document.getElementById('ownerInstitutionSummary').textContent=safeText(profile.institution)||'Unit kerja belum diisi';
  const contact=[safeText(profile.phone),safeText(profile.email)].filter(Boolean).join(' · ');
  document.getElementById('ownerContact').textContent=contact||'Nomor HP dan email belum diisi';
  document.getElementById('ownerNipSummary').textContent=safeText(profile.nip)||'NIP belum diisi';

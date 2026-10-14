@@ -15,40 +15,27 @@ main{width:min(1100px,calc(100% - 20px));margin:20px auto 44px}.card{background:
 @media(max-width:720px){.profiles{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.stat{padding:10px}.stat strong{font-size:1.2rem}.profile{align-items:flex-start}.avatar{width:60px;height:60px;flex-basis:60px}}
 @media(max-width:430px){.stats{grid-template-columns:1fr}.toolbar>*{width:100%}}
 
-/* High-contrast white typography across the application; keep form values readable. */
-body :where(h1,h2,h3,h4,h5,h6,p,span,small,strong,b,em,i,label,legend,li,dt,dd,th,td,caption,summary,figcaption,blockquote,a,div,section,article,aside,header,footer,main,output){color:#fff!important}
-body :where(input,textarea,select,option){color:#123b67}
-.app-nav button[aria-current="page"]{color:#07366f!important}
 </style>
 
 
 
-<style id="forceWhiteTextFinal">
-/* Final override after all existing stylesheets to override muted gray labels. */
-html body :where(h1,h2,h3,h4,h5,h6,p,span,small,strong,b,em,i,label,legend,li,dt,dd,th,td,caption,summary,figcaption,blockquote,a,div,section,article,aside,header,footer,main,output):not(input):not(textarea):not(select):not(option){color:#fff!important}
-html body .foot,html body .setup,html body .scroll-hint,html body .app-version,html body .muted,html body .text-muted,html body .hint,html body .subtle,html body .secondary,html body [class*="muted"],html body [class*="hint"]{color:#fff!important}
-html body input,html body textarea,html body select,html body option{color:#123b67}
-html body button{color:inherit}
-html body .app-nav button[aria-current="page"]{color:#07366f!important}
 
-/* Fix Safari/WebKit text fill, which can override the CSS color property. */
-html body:not(.authenticated) main .foot,
-html body:not(.authenticated) main .foot *,
-html body:not(.authenticated) main .setup,
-html body:not(.authenticated) main .setup *,
-html body:not(.authenticated) main .directorate,
-html body:not(.authenticated) main .directorate *,
-html body.authenticated main .scroll-hint,
-html body.authenticated main .scroll-hint *,
-html body.authenticated main .filter-count,
-html body.authenticated main .filter-count *,
-html body.authenticated main .workflow-state,
-html body.authenticated main .workflow-state *,
-html body.authenticated main .settings-status,
-html body.authenticated main .settings-status * {
-  color:#fff!important;
-  -webkit-text-fill-color:#fff!important;
-  opacity:1!important;
+<style id="sky-glass-accessibility-v2">
+:root{--staff-sky:#87CEEB}
+@media screen{
+ html,body{min-height:100%;background-color:#eef8fd!important}
+ body{color:#173650!important;background:linear-gradient(135deg,rgba(135,206,235,.36),rgba(248,252,255,.84) 54%,rgba(135,206,235,.22))!important}
+ header,main .card,.card,.panel,.stat,.profile,.profile-card,.link-box,.warning,.notice,.info-card,.form-card,.profile-summary,.metric-card,.summary-card{background:rgba(135,206,235,.19)!important;border-color:rgba(255,255,255,.74)!important;box-shadow:0 12px 32px rgba(28,86,120,.09)!important;-webkit-backdrop-filter:blur(16px)!important;backdrop-filter:blur(16px)!important}
+ body h1,body h2,body h3,body h4,body p,body label,body legend,body summary,body small,body header strong,body header a,body .muted,body .empty,body th,body td,body caption,body footer{color:#173650!important;-webkit-text-fill-color:#173650!important;text-shadow:none!important}
+ body input,body textarea,body select,body option{color:#123b67!important;-webkit-text-fill-color:#123b67!important;background:rgba(255,255,255,.84)!important;border-color:rgba(76,137,168,.38)!important;caret-color:#123b67!important}
+ body input::placeholder,body textarea::placeholder{color:#667f91!important;-webkit-text-fill-color:#667f91!important;opacity:1!important}
+ body button,body .btn,body .toolbar button,body .capture,body .submit,body .primary{color:#fff!important;-webkit-text-fill-color:#fff!important}
+ body button:not(.secondary):not(.danger),body .btn,body .primary{background:#0757a5!important;border-color:rgba(255,255,255,.5)!important}
+ body .secondary{color:#173650!important;-webkit-text-fill-color:#173650!important;background:rgba(255,255,255,.64)!important;border-color:rgba(76,137,168,.35)!important}
+ body .status,body .message,body .notice,body .warning{overflow-wrap:anywhere}
+ body .status.error,body .message.error{color:#8f2020!important;-webkit-text-fill-color:#8f2020!important;background:rgba(255,240,240,.9)!important}
+ body .status.ok,body .message.ok{color:#12613f!important;-webkit-text-fill-color:#12613f!important;background:rgba(232,247,239,.9)!important}
+ body .avatar,body .profile-photo{background:rgba(135,206,235,.2)!important;border-color:rgba(255,255,255,.86)!important}
 }
 </style>
 </head>
