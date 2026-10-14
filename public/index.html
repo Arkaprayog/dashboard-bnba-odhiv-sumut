@@ -1052,6 +1052,26 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
 }
 @media print{body main,body main *{color:#111!important;-webkit-text-fill-color:#111!important;text-shadow:none!important}body main{background:#fff!important;box-shadow:none!important}}
 </style>
+<style id="owner-controls-glass-theme-v1-1-18">
+/* 1.1.18: translucent glass dashboard and rounded owner controls */
+@media screen{
+body.authenticated{background:#123c54 url("/owner-background.webp") center center/cover no-repeat fixed!important;color:#f7fbff!important}
+body.authenticated::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(4,20,35,.16),rgba(3,18,32,.3))!important}
+body.authenticated main{background:rgba(3,20,36,.1)!important;border:1px solid rgba(255,255,255,.3)!important;box-shadow:0 18px 48px rgba(0,12,28,.2)!important;backdrop-filter:blur(2px)!important;-webkit-backdrop-filter:blur(2px)!important}
+body.authenticated main .owner-card{background:rgba(3,20,35,.3)!important;border:1px solid rgba(255,255,255,.34)!important;border-radius:24px!important;box-shadow:0 14px 34px rgba(0,12,28,.18)!important;backdrop-filter:blur(22px)!important;-webkit-backdrop-filter:blur(22px)!important}
+body.authenticated main .owner-profile-side{min-width:145px!important;padding:14px 12px!important;gap:10px!important;background:rgba(220,243,255,.1)!important;border:1px solid rgba(255,255,255,.32)!important;border-radius:22px!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important}
+body.authenticated main .owner-avatar{width:100px!important;height:100px!important;flex:0 0 100px!important;border-radius:50%!important;object-fit:cover!important;border:3px solid rgba(255,255,255,.88)!important}
+body.authenticated main .owner-summary,body.authenticated main .owner-summary h3,body.authenticated main .owner-summary p{color:#f7fbff!important;text-shadow:0 1px 3px rgba(0,0,0,.24)!important}
+body.authenticated main .owner-summary h3{font-weight:850!important}
+body.authenticated main .owner-header-actions{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin-left:auto!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body.authenticated main .top-actions{display:flex!important;align-items:center!important;gap:9px!important}
+body.authenticated main :is(#notificationBellButton,#settingsButton,#logoutButton){width:56px!important;height:56px!important;min-width:56px!important;max-width:56px!important;min-height:56px!important;padding:0!important;flex:0 0 56px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border-radius:50%!important;color:#fff!important;-webkit-text-fill-color:#fff!important;background:rgba(220,243,255,.13)!important;border:1px solid rgba(255,255,255,.5)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 5px 15px rgba(0,12,28,.12)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+body.authenticated main :is(#notificationBellButton,#settingsButton,#logoutButton):hover{background:rgba(220,243,255,.24)!important}
+body.authenticated main :is(#notificationBellButton,#settingsButton,#logoutButton):focus-visible,body.authenticated main #editOwnerProfile:focus-visible{outline:3px solid rgba(255,255,255,.88)!important;outline-offset:3px!important}
+body.authenticated main #editOwnerProfile{width:100%!important;min-width:130px!important;min-height:44px!important;padding:10px 18px!important;border-radius:999px!important;color:#fff!important;-webkit-text-fill-color:#fff!important;background:rgba(220,243,255,.13)!important;border:1px solid rgba(255,255,255,.5)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.18)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+@media(max-width:600px){body.authenticated main .owner-card{gap:10px!important;flex-wrap:wrap!important;padding:12px!important}body.authenticated main .owner-profile-side{min-width:120px!important;padding:10px!important}body.authenticated main .owner-avatar{width:80px!important;height:80px!important;flex-basis:80px!important}body.authenticated main .owner-header-actions{margin-left:auto!important}body.authenticated main .top-actions{gap:6px!important}body.authenticated main :is(#notificationBellButton,#settingsButton,#logoutButton){width:46px!important;height:46px!important;min-width:46px!important;max-width:46px!important;min-height:46px!important;flex-basis:46px!important}body.authenticated main #editOwnerProfile{min-width:105px!important;padding:8px 12px!important;font-size:.82rem!important}}
+}
+</style>
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
@@ -1307,7 +1327,7 @@ body:not(.authenticated) .trust-item{font-size:.63rem!important}
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.17</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.18</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi<br>© 2026 Data Base ODHIV Sumatera Utara · Hak cipta dilindungi</p>
 </main>
