@@ -1,3 +1,8 @@
+## 1.1.17 — 2026-10-14
+- Menambahkan uji regresi untuk sinkronisasi nama/unit kerja owner, tombol profil dashboard, tema glass biru langit, dan konsistensi versi web/Android.
+- Menyelaraskan metadata paket web ke `1.1.17` serta Android ke `1.2.7` (version code `10`) agar build APK berikutnya dapat dibedakan dari rilis sebelumnya.
+- Memperluas validasi CI agar perubahan dashboard dan versi Android tidak kehilangan perbaikan utama secara tidak sengaja.
+
 ## 1.1.16 — 2026-10-14
 - Menyelaraskan nomor versi tampilan web, paket, dan pemeriksaan deployment setelah rangkaian pembaruan 13–14 Oktober.
 - Memperbaiki kontras teks dan tombol, serta memperjelas diagnosis ketika pengiriman kuesioner atau asesmen gagal.

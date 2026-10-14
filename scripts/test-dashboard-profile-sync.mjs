@@ -1,0 +1,38 @@
+import { readFileSync } from "node:fs";
+import assert from "node:assert/strict";
+
+const dashboard = readFileSync("public/index.html", "utf8");
+const worker = readFileSync("src/index.ts", "utf8");
+const pkg = JSON.parse(readFileSync("package.json", "utf8"));
+const gradle = readFileSync("android-app/app/build.gradle", "utf8");
+const changelog = readFileSync("CHANGELOG.md", "utf8");
+const releaseWorkflow = readFileSync(".github/workflows/build-android-apk.yml", "utf8");
+const debugWorkflow = readFileSync(".github/workflows/build-android-debug.yml", "utf8");
+const androidReadme = readFileSync("android-app/README.md", "utf8");
+const rootReadme = readFileSync("README.md", "utf8");
+const deployWorkflow = readFileSync(".github/workflows/validate-deploy.yml", "utf8");
+
+assert.match(dashboard, /dashboard-sky-glass-unified-v2/);
+assert.match(dashboard, /--dashboard-sky-blue:#87CEEB/);
+assert.match(dashboard, /backdrop-filter:blur\(18px\)/);
+assert.match(dashboard, /textContent=safeText\(profile\.institution\)\|\|'Unit kerja belum diisi'/);
+assert.match(dashboard, /id="notificationBellButton"/);
+assert.match(dashboard, /id="settingsButton"/);
+assert.match(dashboard, /id="logoutButton"/);
+assert.match(dashboard, /aria-label="Keluar"/);
+assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='owner' AND active=1/);
+assert.match(worker, /owner_profile_update/);
+assert.equal(pkg.version, "1.1.17");
+assert.match(gradle, /versionCode 10/);
+assert.match(gradle, /versionName '1\.2\.7'/);
+assert.match(changelog, /^## 1\.1\.17/m);
+assert.ok(dashboard.includes("Versi " + pkg.version), "dashboard display version must match package.json");
+assert.ok(changelog.startsWith("## " + pkg.version), "changelog must begin with the current web package version");
+assert.ok(readFileSync(".github/workflows/validate-deploy.yml", "utf8").includes("typeof packageJson.version === 'string'"), "CI must compare release version dynamically");
+assert.ok(releaseWorkflow.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.7"), "release APK artifact must use the current Android version");
+assert.ok(debugWorkflow.includes("Sahabat-ODHIV-Sumut-APK-debug-v1.2.7"), "debug APK artifact must use the current Android version");
+assert.ok(androidReadme.includes("Android package version: **1.2.7** (`versionCode 10`)"), "Android README must match Gradle version");
+assert.ok(androidReadme.includes("web version **1.1.17**"), "Android README must state current web version");
+assert.ok(rootReadme.includes("release version `1.2.7` (version code `10`)"), "root README must match Android release version");
+assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.7"), "root README artifact link name must match release workflow");
+console.log("PASS dashboard, owner profile sync, CI version gate, Android artifacts, and release documentation are synchronized");
