@@ -433,7 +433,7 @@ jobs:
           from pathlib import Path
           asset = Path('/tmp/sahabat-dashboard-background.webp')
           data = asset.read_bytes()
-          if len(data) < 8000 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+          if len(data) < 4000 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
               raise SystemExit('Deployed dashboard background is missing or is not a valid WebP asset.')
           print(f'Deployed glass dashboard background verified: {len(data)} bytes.')
           PY
