@@ -103,6 +103,8 @@ jobs:
         run: node scripts/test-drive-backup-contract.mjs
       - name: Typecheck
         run: npm run typecheck
+      - name: Test dashboard profile sync and release version alignment
+        run: node scripts/test-dashboard-profile-sync.mjs
       - name: Check all inline JavaScript syntax in dashboard HTML
         run: |
           node - <<'NODE'
