@@ -1,3 +1,9 @@
+## 1.1.20 — 2026-10-14
+- Mengganti panel profil owner dari biru solid menjadi kaca transparan/frosted glass agar latar belakang tetap terlihat.
+- Memindahkan lonceng, pengaturan, dan keluar ke sudut kanan atas; ketiganya berbentuk lingkaran terpisah tanpa kotak pembungkus.
+- Memperbesar foto profil, mempertahankan tombol Edit Profil berbentuk pil, dan menyelaraskan versi web ke 1.1.20.
+- Menyelaraskan dokumentasi APK Android dengan versi native 1.2.9 (version code 12); build APK harus berhasil dan diuji sebelum dianggap terbit.
+
 ## 1.1.18 — 2026-10-14
 - Menyamakan tampilan glassmorphism pada dashboard, Kelola Tim Petugas, dan Daftar Petugas dengan panel transparan dan efek blur yang tetap menjaga keterbacaan.
 - Membuat tombol lonceng, pengaturan, dan keluar berbentuk lingkaran kaca transparan; tombol Edit Profil berbentuk oval memanjang.
