@@ -18,3 +18,66 @@ body:not(.authenticated) .message:not(:empty){background:rgba(15,23,42,.75)!impo
 .assessment-paper{background:#fff!important;background-color:#fff!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 @media(prefers-reduced-transparency:reduce){body :is(main,header,section,article,aside,nav,form,fieldset,dialog,[role=dialog],[class*="card"],[class*="panel"],[class*="menu"],[class*="modal"],[class*="box"],[class*="section"],.owner-card,.dashpanel,.card){background:rgba(15,23,42,.95)!important;background-color:rgba(15,23,42,.95)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
 @media print{body,body *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}body :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,a,li,td,th,legend,summary,div){-webkit-text-fill-color:currentColor!important}}
+
+/* Dashboard layout refresh v1.1.32: compact header + interactive 2-column glass navigation */
+body.authenticated #ownerCard{
+  display:flex!important;align-items:center!important;gap:12px!important;
+  padding:12px 14px!important;margin-bottom:14px!important;
+  min-height:72px!important;border-radius:18px!important;
+  background:rgba(15,23,42,.36)!important;
+  border:1px solid rgba(255,255,255,.24)!important;
+  -webkit-backdrop-filter:blur(15px) saturate(125%)!important;
+  backdrop-filter:blur(15px) saturate(125%)!important;
+}
+body.authenticated #ownerCard .owner-profile-side{display:flex!important;align-items:center!important;flex:0 0 auto!important}
+body.authenticated #ownerAvatar{width:44px!important;height:44px!important;flex:0 0 44px!important;border-radius:50%!important;object-fit:cover!important}
+body.authenticated #editOwnerProfile,
+body.authenticated #ownerNipSummary,
+body.authenticated #ownerInstitutionSummary,
+body.authenticated #ownerContact,
+body.authenticated .owner-details{display:none!important}
+body.authenticated #ownerCard .owner-summary{min-width:0!important;flex:1 1 auto!important}
+body.authenticated #ownerCard .owner-summary h3{margin:0!important;font-size:1rem!important;line-height:1.3!important;font-weight:800!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+body.authenticated #ownerCard .owner-summary h3::before{content:"Halo, ";font-weight:500}
+body.authenticated #ownerCard .owner-header-actions{margin-left:auto!important;flex:0 0 auto!important}
+body.authenticated #ownerCard .top-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:7px!important;margin:0!important}
+body.authenticated #ownerCard .top-actions :is(.bell-button,.settings-button,#logoutButton){display:inline-flex!important;align-items:center!important;justify-content:center!important;width:38px!important;min-width:38px!important;height:38px!important;padding:0!important;border-radius:12px!important;background:rgba(66,165,245,.22)!important;border:1px solid rgba(255,255,255,.3)!important;color:#fff!important}
+body.authenticated #ownerCard .top-actions svg{width:19px!important;height:19px!important}
+body.authenticated #appNavigation.app-nav{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:12px!important;margin:16px 0 20px!important;padding:0!important;
+  border:0!important;background:transparent!important;
+}
+body.authenticated #appNavigation.app-nav button{
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  gap:10px!important;min-width:0!important;min-height:82px!important;
+  padding:16px!important;border-radius:18px!important;
+  background:rgba(66,165,245,.50)!important;background-color:rgba(66,165,245,.50)!important;
+  border:1px solid rgba(255,255,255,.30)!important;
+  box-shadow:0 8px 22px rgba(0,25,70,.14)!important;
+  -webkit-backdrop-filter:blur(15px) saturate(125%)!important;
+  backdrop-filter:blur(15px) saturate(125%)!important;
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+  font:inherit!important;font-weight:800!important;text-align:left!important;
+  cursor:pointer!important;transition:transform .18s ease,background-color .18s ease,box-shadow .18s ease!important;
+}
+body.authenticated #appNavigation.app-nav button::first-letter{font-size:1.3rem}
+body.authenticated #appNavigation.app-nav button:hover,
+body.authenticated #appNavigation.app-nav button:focus-visible{
+  transform:translateY(-2px)!important;background:rgba(66,165,245,.66)!important;
+  box-shadow:0 12px 28px rgba(0,25,70,.22)!important;outline:2px solid rgba(255,255,255,.8)!important;outline-offset:2px!important;
+}
+body.authenticated #appNavigation.app-nav button[aria-current="page"]{
+  background:rgba(66,165,245,.62)!important;background-color:rgba(66,165,245,.62)!important;
+  border-color:rgba(255,255,255,.55)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+body.authenticated #appNavigation.app-nav button[hidden]{display:none!important}
+body.authenticated #appNavigation.app-nav button{color:#fff!important;-webkit-text-fill-color:#fff!important}
+@media(max-width:420px){
+ body.authenticated #ownerCard{gap:8px!important;padding:10px!important}
+ body.authenticated #ownerAvatar{width:38px!important;height:38px!important;flex-basis:38px!important}
+ body.authenticated #ownerCard .top-actions{gap:5px!important}
+ body.authenticated #ownerCard .top-actions :is(.bell-button,.settings-button,#logoutButton){width:34px!important;min-width:34px!important;height:34px!important}
+ body.authenticated #appNavigation.app-nav{gap:8px!important}
+ body.authenticated #appNavigation.app-nav button{min-height:72px!important;padding:12px 10px!important;font-size:.88rem!important;border-radius:15px!important}
+}
