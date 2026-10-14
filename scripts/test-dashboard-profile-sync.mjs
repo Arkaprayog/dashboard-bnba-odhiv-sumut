@@ -50,7 +50,7 @@ assert.ok(releaseWorkflow.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.19"), "
 assert.ok(debugWorkflow.includes("Sahabat-ODHIV-Sumut-APK-debug-v1.2.19"), "debug APK artifact must use the current Android version");
 assert.ok(androidReadme.includes("Android package version: **1.2.19** (`versionCode 22`)"), "Android README must match Gradle version");
 assert.ok(androidReadme.includes("web version **1.1.30**"), "Android README must state current web version");
-assert.ok(rootReadme.includes("release version `1.2.19` (version code `20`)"), "root README must match Android release version");
+assert.ok(rootReadme.includes("release version `1.2.19` (version code `22`)"), "root README must match Android release version");
 assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.19"), "root README artifact link name must match release workflow");
 assert.ok(dashboard.includes('id="owner-controls-glass-theme-v1-1-18"'), "dashboard glass stylesheet must exist");
 assert.ok(dashboard.includes(':is(#notificationBellButton,#settingsButton,#logoutButton)'), "header actions must be circular glass controls");
