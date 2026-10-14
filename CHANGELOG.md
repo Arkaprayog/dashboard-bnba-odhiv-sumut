@@ -1,3 +1,8 @@
+## 1.1.26 — 2026-10-14
+- Memperluas glassmorphism transparan ke permukaan UI lintas halaman, termasuk form, dialog, panel, kartu, dan elemen status.
+- Menegaskan font putih pada semua elemen UI dan menambahkan pengecualian cetak hitam-putih agar dokumen A4 tetap formal.
+- Menyegarkan cache tema web ke 1.1.26 dan menaikkan versi Android ke 1.2.16 (version code 19).
+
 ## 1.1.25 — 2026-10-14
 - Memperbaiki ambang pemeriksaan ukuran latar WebP agar menerima aset terkompresi yang valid sambil tetap memverifikasi header dan formatnya.
 - Menyegarkan cache tema global ke versi 1.1.25 setelah validasi awal mendeteksi ambang uji yang terlalu tinggi.

@@ -55,10 +55,10 @@ footer p{margin:4px 0}footer strong{color:var(--green)}
   </style>
 
 
-<style id="sahabat-global-glass-v1-1-25">
+<style id="sahabat-global-glass-v1-1-26">
 :root{color-scheme:dark!important;--ink:#fff!important;--muted:#fff!important;--line:rgba(255,255,255,.32)!important;--bg:#163847!important;--paper:rgba(3,17,27,.17)!important}
 html,body{min-height:100%;background-color:#163847!important}
-body{color:#fff!important;background-image:linear-gradient(180deg,rgba(2,15,23,.11),rgba(2,15,23,.24)),url('/dashboard-background.webp?v=1.1.25')!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;background-attachment:fixed!important;text-shadow:0 1px 3px rgba(0,0,0,.22)!important}
+body{color:#fff!important;background-image:linear-gradient(180deg,rgba(2,15,23,.11),rgba(2,15,23,.24)),url('/dashboard-background.webp?v=1.1.26')!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;background-attachment:fixed!important;text-shadow:0 1px 3px rgba(0,0,0,.22)!important}
 body,body *{color:#fff!important;-webkit-text-fill-color:#fff!important}
 body:not(.authenticated)::before,body:not(.authenticated)::after{display:none!important;content:none!important}
 body :is(input,textarea,select,option,[contenteditable="true"]){background:rgba(2,15,23,.19)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;caret-color:#fff!important;border-color:rgba(255,255,255,.38)!important}
@@ -83,6 +83,14 @@ body :is([hidden],template){display:none!important}
  body .paper *{color:#000!important;-webkit-text-fill-color:#000!important}
  body :is(.topbar,.toolbar,.no-print,.editor-panel){display:none!important}
 }
+
+/* v1.1.26: unify every interactive surface as lightweight glass, not opaque cards. */
+body :is(main:not(.paper),section:not(.paper),article,aside,header:not(.letterhead),footer,nav,form,fieldset,dialog,.card,.panel,.topbar,.toolbar,.workspace,.workspace-card,.dashboard-card,.owner-card,.profile-card,.profile-panel,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.modal-content,.drawer,.menu-card,.quick-card,.quick-link,.stat-card,.overview-card,.overview-panel,.status-card,.notice-card,.upload-card,.document-card,.assessment-card){background-color:rgba(255,255,255,.075)!important;background-image:none!important;border-color:rgba(255,255,255,.25)!important;box-shadow:0 12px 34px rgba(0,0,0,.10)!important;-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important}
+body :is(input,textarea,select,option,[contenteditable="true"],.input,.field){background-color:rgba(255,255,255,.075)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:rgba(255,255,255,.30)!important}
+body :is(input,textarea,select,option,[contenteditable="true"])::placeholder{color:#fff!important;-webkit-text-fill-color:#fff!important;opacity:1!important}
+body :is(.muted,.empty,.success,.ok,.error,.danger,.warning,.status,.message,.settings-status,.alert,.pill,.badge,.tag,.hint,.helper,.caption,.subtitle,.secondary-text){color:#fff!important;-webkit-text-fill-color:#fff!important}
+body :is(.profile-actions,.owner-actions,.account-actions,.header-actions,.profile-controls,.action-icons,.icon-actions,.icon-button-group){background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+@media print{html,body{background:#fff!important;background-image:none!important;color:#111!important;text-shadow:none!important}body,body *{color:#111!important;-webkit-text-fill-color:#111!important;text-shadow:none!important}body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){background:#fff!important;background-image:none!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-color:transparent!important}}
 </style>
 
 </head>
