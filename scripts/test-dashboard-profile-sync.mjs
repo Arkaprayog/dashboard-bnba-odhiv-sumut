@@ -32,7 +32,7 @@ assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='ow
 assert.match(worker, /owner_profile_update/);
 assert.equal(pkg.version, "1.1.26");
 assert.match(gradle, /versionCode 19/);
-assert.match(gradle, /versionName '1\.2\.15'/);
+assert.match(gradle, /versionName '1\.2\.16'/);
 assert.match(changelog, /^## 1\.1\.18/m);
 assert.ok(dashboard.includes("Versi " + pkg.version), "dashboard display version must match package.json");
 assert.match(dashboard, /href="\/surat-tugas\.html">Buka &amp; Edit Surat Tugas/);
@@ -49,7 +49,7 @@ assert.ok(readFileSync(".github/workflows/validate-deploy.yml", "utf8").includes
 assert.ok(releaseWorkflow.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.16"), "release APK artifact must use the current Android version");
 assert.ok(debugWorkflow.includes("Sahabat-ODHIV-Sumut-APK-debug-v1.2.16"), "debug APK artifact must use the current Android version");
 assert.ok(androidReadme.includes("Android package version: **1.2.16** (`versionCode 19`)"), "Android README must match Gradle version");
-assert.ok(androidReadme.includes("web version **1.1.25**"), "Android README must state current web version");
+assert.ok(androidReadme.includes("web version **1.1.26**"), "Android README must state current web version");
 assert.ok(rootReadme.includes("release version `1.2.16` (version code `19`)"), "root README must match Android release version");
 assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.16"), "root README artifact link name must match release workflow");
 assert.ok(dashboard.includes('id="owner-controls-glass-theme-v1-1-18"'), "dashboard glass stylesheet must exist");
