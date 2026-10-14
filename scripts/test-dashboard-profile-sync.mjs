@@ -68,7 +68,7 @@ const themedPages = [
 ];
 for (const path of themedPages) {
   const html = readFileSync(path, "utf8");
-  assert.ok(html.includes('id="sahabat-global-glass-v1-1-28"') && html.includes('id="sahabat-glass-opacity75-blur16-v1-1-28"'), path + " must use the global white-font glass theme");
+  assert.ok(html.includes('id="sahabat-global-glass-v1-1-30"') && html.includes('id="sahabat-glass-opacity75-blur16-v1-1-30"'), path + " must use the global white-font glass theme");
   assert.ok(html.includes("/dashboard-background.webp?v=1.1.30"), path + " must use the supplied hill photo");
   assert.ok(html.includes('<meta name="color-scheme" content="dark">'), path + " must force a dark UI color scheme");
 }
@@ -77,12 +77,12 @@ assert.equal(hillBackground.toString("ascii", 0, 4), "RIFF", "dashboard photo mu
 assert.equal(hillBackground.toString("ascii", 8, 12), "WEBP", "dashboard photo must be a valid WebP asset");
 assert.ok(statSync("public/dashboard-background.webp").size > 4000, "dashboard background must not be an empty placeholder");
 assert.ok(dashboard.includes("Versi " + pkg.version), "web version must match package version");
-assert.ok(offlinePage.includes('id="sahabat-offline-glass-v1-1-28"'), "native offline screen must use the current glass styling");
+assert.ok(offlinePage.includes('id="sahabat-offline-glass-v1-1-30"'), "native offline screen must use the current glass styling");
 assert.ok(offlinePage.includes('<meta name="color-scheme" content="dark">'), "native offline screen must force dark UI controls");
 assert.ok(offlinePage.includes("background-color:rgba(15,23,42,.75)!important"), "native offline screen surfaces must use 75% glass opacity");
 assert.ok(offlinePage.includes("body,body *{color:#fff!important"), "native offline screen text must be white");
 assert.ok(offlinePage.includes("backdrop-filter:blur(16px)!important") && offlinePage.includes("background-color:rgba(15,23,42,.75)!important"), "native offline surfaces must use 75% glass with 16px blur");
-assert.ok(dashboard.includes('id="sahabat-glass-opacity75-blur16-v1-1-28"') && dashboard.includes("backdrop-filter:blur(16px)!important"), "web UI must use 16px glass blur");
+assert.ok(dashboard.includes('id="sahabat-glass-opacity75-blur16-v1-1-30"') && dashboard.includes("backdrop-filter:blur(16px)!important"), "web UI must use 16px glass blur");
 assert.ok(dashboard.includes("background-color:rgba(15,23,42,.75)!important"), "glass panels must use slate surfaces at 75% opacity");
 assert.ok(dashboard.includes("body .owner-header-actions{position:absolute!important;top:16px!important;right:16px!important"), "owner actions must remain at the top-right without a boxed wrapper");
 assert.ok(dashboard.includes("border-radius:50%!important"), "notification, settings, and logout controls must remain circular");
