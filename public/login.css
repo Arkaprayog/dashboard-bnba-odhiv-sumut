@@ -1,0 +1,155 @@
+/* Sahabat ODHIV Sumut — canonical Login styles v1.1.35
+   One source of truth for Login; dashboard styles remain in style.css. */
+html body:not(.authenticated){
+  min-height:100svh;
+  min-height:100dvh;
+  padding:18px 12px;
+  background-position:center center;
+  background-size:cover;
+}
+html body:not(.authenticated) main{
+  box-sizing:border-box;
+  width:min(100%,484px);
+  margin:auto;
+  padding:20px 18px;
+  border:1.5px solid rgba(255,255,255,.42);
+  border-radius:26px;
+  background:rgba(34,42,43,.43);
+  box-shadow:0 12px 36px rgba(0,0,0,.20);
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+}
+html body:not(.authenticated) .agency-logos{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  margin:0 auto 8px;
+}
+html body:not(.authenticated) .agency-logos .sumut-logo,
+html body:not(.authenticated) .agency-logos .kemenkes-logo{display:none}
+html body:not(.authenticated) .kemensos-logo{
+  display:block;
+  width:78px;
+  height:64px;
+  object-fit:contain;
+  filter:none;
+}
+html body:not(.authenticated) .ministry{
+  display:block;
+  margin:0;
+  color:#fff;
+  -webkit-text-fill-color:#fff;
+  font-size:.76rem;
+  line-height:1.2;
+  text-align:center;
+}
+html body:not(.authenticated) .ministry small{font-size:.8em}
+html body:not(.authenticated) .directorate,
+html body:not(.authenticated) .ribbon,
+html body:not(.authenticated) .separator,
+html body:not(.authenticated) .lock{display:none}
+html body:not(.authenticated) .login-heading{
+  display:block;
+  margin:8px 0 24px;
+  text-align:center;
+}
+html body:not(.authenticated) .login-heading h1{
+  margin:0;
+  color:#fff;
+  -webkit-text-fill-color:#fff;
+  font-size:clamp(1.3rem,5vw,1.8rem);
+  font-weight:800;
+  line-height:1.2;
+}
+html body:not(.authenticated) .login-heading p{
+  margin:8px 0 0;
+  color:#fff;
+  -webkit-text-fill-color:#fff;
+}
+html body:not(.authenticated) .brand{display:none}
+html body:not(.authenticated) .form{display:grid;gap:12px}
+html body:not(.authenticated) .field{position:relative;min-width:0}
+html body:not(.authenticated) #password{
+  box-sizing:border-box;
+  width:100%;
+  height:62px;
+  padding:0 54px 0 18px;
+  border:1.5px solid rgba(255,255,255,.72);
+  border-radius:17px;
+  background:transparent!important;
+  background-color:transparent!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  font-size:1.08rem;
+  text-align:center;
+  box-shadow:none;
+}
+html body:not(.authenticated) #password::placeholder{
+  color:rgba(255,255,255,.9)!important;
+  -webkit-text-fill-color:rgba(255,255,255,.9)!important;
+  opacity:1;
+}
+html body:not(.authenticated) #togglePassword{
+  position:absolute;
+  top:50%;
+  right:8px;
+  transform:translateY(-50%);
+  display:grid;
+  place-items:center;
+  padding:10px;
+  border:0;
+  background:transparent;
+  color:#fff;
+}
+html body:not(.authenticated) #togglePassword svg{
+  width:23px;
+  height:23px;
+}
+html body:not(.authenticated) #togglePassword svg *{stroke:#fff}
+html body:not(.authenticated) .submit{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:100%;
+  min-height:62px;
+  border:1px solid rgba(255,255,255,.9);
+  border-radius:17px;
+  background:#fff!important;
+  color:#111!important;
+  -webkit-text-fill-color:#111!important;
+  font-size:1.12rem;
+  font-weight:800;
+  box-shadow:0 5px 16px rgba(0,0,0,.14);
+}
+html body:not(.authenticated) .submit span{display:none}
+html body:not(.authenticated) #message:not(:empty){
+  margin:0;
+  padding:14px 12px;
+  border:1px solid rgba(255,255,255,.9);
+  border-radius:17px;
+  background:#fff!important;
+  color:#111!important;
+  -webkit-text-fill-color:#111!important;
+  text-align:center;
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
+}
+html body:not(.authenticated) .foot,
+html body:not(.authenticated) .setup{
+  margin:12px 0 0;
+  color:#fff;
+  -webkit-text-fill-color:#fff;
+  font-size:.9rem;
+  line-height:1.45;
+  text-align:center;
+}
+html body:not(.authenticated) .rule{
+  height:2px;
+  margin:10px 0;
+  background:rgba(255,255,255,.7);
+}
+@media(max-width:480px){
+  html body:not(.authenticated) main{padding:17px 16px;border-radius:23px}
+  html body:not(.authenticated) .login-heading{margin:7px 0 23px}
+}
