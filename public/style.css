@@ -193,3 +193,60 @@ body.authenticated #ageChart:empty::after{content:"Statistik agregat";display:bl
  body.authenticated #appNavigation.app-nav button{min-height:68px!important;padding:10px!important;font-size:.88rem!important}
  body.authenticated .overview-panels{grid-template-columns:minmax(0,1fr)!important}
 }
+
+
+/* v1.1.34 — align login screen to the supplied mobile reference */
+body:not(.authenticated){min-height:100svh!important;padding:18px 12px!important;background-position:center center!important;background-size:cover!important}
+body:not(.authenticated) main{
+ width:min(100%,484px)!important;padding:20px 18px!important;margin:auto!important;
+ border-radius:26px!important;background:rgba(34,42,43,.43)!important;
+ border:1.5px solid rgba(255,255,255,.42)!important;
+ box-shadow:0 12px 36px rgba(0,0,0,.20)!important;
+ -webkit-backdrop-filter:blur(12px)!important;backdrop-filter:blur(12px)!important;
+}
+body:not(.authenticated) .agency-logos{
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ gap:2px!important;margin:0 auto 8px!important;max-width:100%!important;
+}
+body:not(.authenticated) .agency-logos .sumut-logo,
+body:not(.authenticated) .agency-logos .kemenkes-logo{display:none!important}
+body:not(.authenticated) .kemensos-logo{display:block!important;width:86px!important;height:70px!important;object-fit:contain!important}
+body:not(.authenticated) .ministry{display:block!important;margin:0!important;font-size:.76rem!important;line-height:1.2!important;letter-spacing:.01em!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+body:not(.authenticated) .ministry small{font-size:.8em!important}
+body:not(.authenticated) .directorate{display:none!important}
+body:not(.authenticated) .brand{display:block!important;text-align:center!important;margin:8px 0 24px!important}
+body:not(.authenticated) .brand h1{font-size:clamp(1.3rem,5vw,1.8rem)!important;line-height:1.2!important;font-weight:800!important;text-align:center!important}
+body:not(.authenticated) .ribbon,
+body:not(.authenticated) .separator{display:none!important}
+body:not(.authenticated) .form{gap:12px!important}
+body:not(.authenticated) .field input,
+body:not(.authenticated) input[type=password],
+body:not(.authenticated) input[type=text]{
+ height:66px!important;padding:0 52px 0 18px!important;border-radius:17px!important;
+ background:transparent!important;background-color:transparent!important;
+ border:1.5px solid rgba(255,255,255,.72)!important;
+ color:#fff!important;-webkit-text-fill-color:#fff!important;font-size:1.08rem!important;
+ text-align:center!important;box-shadow:none!important;
+}
+body:not(.authenticated) .field input::placeholder,
+body:not(.authenticated) input[type=password]::placeholder,
+body:not(.authenticated) input[type=text]::placeholder{color:rgba(255,255,255,.88)!important;-webkit-text-fill-color:rgba(255,255,255,.88)!important;opacity:1!important}
+body:not(.authenticated) .lock{display:none!important}
+body:not(.authenticated) .toggle{right:8px!important;padding:10px!important;background:transparent!important;border:0!important;color:#fff!important}
+body:not(.authenticated) .toggle svg{stroke:#fff!important;color:#fff!important;width:23px!important;height:23px!important}
+body:not(.authenticated) .submit{
+ height:66px!important;border-radius:17px!important;
+ background:#fff!important;background-color:#fff!important;border:1px solid rgba(255,255,255,.9)!important;
+ color:#111!important;-webkit-text-fill-color:#111!important;
+ font-size:1.12rem!important;font-weight:800!important;box-shadow:0 5px 16px rgba(0,0,0,.14)!important;
+}
+body:not(.authenticated) .message:not(:empty){background:#fff!important;background-color:#fff!important;border:1px solid rgba(255,255,255,.9)!important;border-radius:17px!important;color:#111!important;-webkit-text-fill-color:#111!important;padding:14px 12px!important;box-shadow:0 4px 12px rgba(0,0,0,.12)!important}
+body:not(.authenticated) .foot{margin:12px 0 0!important;font-size:.9rem!important;line-height:1.45!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+body:not(.authenticated) .rule{height:2px!important;background:rgba(255,255,255,.7)!important;margin:10px 0!important}
+body:not(.authenticated) .setup{margin:0!important;font-size:.9rem!important;line-height:1.45!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+@media(max-width:480px){
+ body:not(.authenticated) main{padding:17px 16px!important;border-radius:23px!important}
+ body:not(.authenticated) .kemensos-logo{width:78px!important;height:62px!important}
+ body:not(.authenticated) .brand{margin:7px 0 23px!important}
+ body:not(.authenticated) .field input,body:not(.authenticated) input[type=password],body:not(.authenticated) input[type=text],body:not(.authenticated) .submit{height:62px!important}
+}
