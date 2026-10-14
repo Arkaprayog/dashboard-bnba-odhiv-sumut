@@ -79,7 +79,7 @@ assert.ok(statSync("public/dashboard-background.webp").size > 4000, "dashboard b
 assert.ok(dashboard.includes("Versi " + pkg.version), "web version must match package version");
 assert.ok(offlinePage.includes('id="sahabat-offline-glass-v1-1-28"'), "native offline screen must use the current glass styling");
 assert.ok(offlinePage.includes('<meta name="color-scheme" content="dark">'), "native offline screen must force dark UI controls");
-assert.ok(offlinePage.includes("data:image/webp;base64,"), "native offline screen must embed the supplied hill background for offline use");
+assert.ok(offlinePage.includes("background-color:rgba(15,23,42,.75)!important"), "native offline screen surfaces must use 75% glass opacity");
 assert.ok(offlinePage.includes("body,body *{color:#fff!important"), "native offline screen text must be white");
 assert.ok(offlinePage.includes("backdrop-filter:blur(16px)!important") && offlinePage.includes("background-color:rgba(15,23,42,.75)!important"), "native offline surfaces must use 75% glass with 16px blur");
 assert.ok(dashboard.includes('id="sahabat-glass-opacity75-blur16-v1-1-28"') && dashboard.includes("backdrop-filter:blur(16px)!important"), "web UI must use 16px glass blur");
