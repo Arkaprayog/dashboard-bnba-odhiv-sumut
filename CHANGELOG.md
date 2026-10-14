@@ -1,3 +1,12 @@
+## 1.1.16 — 2026-10-14
+- Menyelaraskan nomor versi tampilan web, paket, dan pemeriksaan deployment setelah rangkaian pembaruan 13–14 Oktober.
+- Memperbaiki kontras teks dan tombol, serta memperjelas diagnosis ketika pengiriman kuesioner atau asesmen gagal.
+- Memperbarui fitur Tim Kerja, profil petugas, daftar tim dan pencapaian bulanan; foto profil tim ditangani melalui penyimpanan privat.
+- Memperbaiki tata letak cetak/QR Surat Lainnya dan merapikan navigasi berbasis domain HTTPS kanonis.
+- Menambahkan halaman konfigurasi folder backup Google Drive khusus pemilik dan memperkeras alur arsip source. Backup Drive tetap membutuhkan token yang benar-benar dikonfigurasi dan diverifikasi.
+- Memperbaiki umpan balik penyimpanan asesmen dan pemulihan foto yang tersimpan bersama jawaban.
+- Menyelaraskan paket Android ke versi `1.2.6` (version code `9`) dan membangun ulang APK debug serta rilis dari sumber yang sama.
+
 ## 1.1.15 — 2026-10-14
 - Membatasi tautan artikel dari RSS eksternal hanya ke URL HTTPS pada domain penerbit tepercaya Kemenkes dan ANTARA.
 - Memvalidasi ulang URL di dashboard sebelum membuat tautan yang dapat diklik, termasuk menolak kredensial URL, port khusus, dan domain tiruan.
