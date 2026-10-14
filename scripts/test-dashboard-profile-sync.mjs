@@ -70,6 +70,7 @@ for (const path of themedPages) {
   const html = readFileSync(path, "utf8");
   assert.ok(html.includes('id="sahabat-global-glass-v1-1-26"'), path + " must use the global white-font glass theme");
   assert.ok(html.includes("/dashboard-background.webp?v=1.1.26"), path + " must use the supplied hill photo");
+  assert.ok(html.includes('<meta name="color-scheme" content="dark">'), path + " must force a dark UI color scheme");
 }
 const hillBackground = readFileSync("public/dashboard-background.webp");
 assert.equal(hillBackground.toString("ascii", 0, 4), "RIFF", "dashboard photo must be a WebP/RIFF asset");
@@ -77,6 +78,7 @@ assert.equal(hillBackground.toString("ascii", 8, 12), "WEBP", "dashboard photo m
 assert.ok(statSync("public/dashboard-background.webp").size > 4000, "dashboard background must not be an empty placeholder");
 assert.ok(dashboard.includes("Versi " + pkg.version), "web version must match package version");
 assert.ok(offlinePage.includes('id="sahabat-offline-glass-v1-1-26"'), "native offline screen must use transparent glass styling");
+assert.ok(offlinePage.includes('<meta name="color-scheme" content="dark">'), "native offline screen must force dark UI controls");
 assert.ok(offlinePage.includes("data:image/webp;base64,"), "native offline screen must embed the supplied hill background for offline use");
 assert.ok(offlinePage.includes("body,body *{color:#fff!important"), "native offline screen text must be white");
 assert.ok(offlinePage.includes("blur(18px) saturate(125%)"), "native offline surfaces must use transparent glassmorphism");
