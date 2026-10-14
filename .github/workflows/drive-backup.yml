@@ -25,7 +25,24 @@ jobs:
       - name: Create source archive
         run: |
           set -euo pipefail
-          git archive --format=tar.gz --prefix="sahabatodhiv-sumut/" HEAD > "$RUNNER_TEMP/sahabatodhiv-sumut.tar.gz"
+          # Export tracked source only, explicitly excluding common credential and local-data files.
+          git archive --format=tar.gz --prefix="sahabatodhiv-sumut/" HEAD -- . \
+            ':(exclude,glob).env*' \
+            ':(exclude,glob)**/.env*' \
+            ':(exclude,glob).dev.vars' \
+            ':(exclude,glob)**/.dev.vars' \
+            ':(exclude,glob)**/*.pem' \
+            ':(exclude,glob)**/*.key' \
+            ':(exclude,glob)**/*service-account*.json' \
+            ':(exclude,glob)**/*credentials*.json' \
+            ':(exclude,glob)**/*secret*.json' \
+            ':(exclude,glob)**/*.sqlite' \
+            ':(exclude,glob)**/*.sqlite3' \
+            ':(exclude,glob)**/*.db' \
+            ':(exclude,glob)**/respondent-data/**' \
+            ':(exclude,glob)**/private-data/**' \
+            ':(exclude,glob)**/uploads/**' \
+            > "$RUNNER_TEMP/sahabatodhiv-sumut.tar.gz"
           size=$(wc -c < "$RUNNER_TEMP/sahabatodhiv-sumut.tar.gz")
           if [ "$size" -lt 1 ] || [ "$size" -gt 20971520 ]; then
             echo "Archive size must be between 1 byte and 20 MiB."
@@ -39,8 +56,8 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "${DRIVE_BACKUP_TOKEN:-}" ]; then
-            echo "::notice::Set the DRIVE_BACKUP_TOKEN repository secret and the matching Cloudflare Worker secret to enable uploads."
-            exit 0
+            echo "::error::Missing DRIVE_BACKUP_TOKEN. Configure the same strong random value as a GitHub Actions repository secret and a Cloudflare Worker secret before running this workflow."
+            exit 1
           fi
           curl --fail-with-body --silent --show-error \
             --max-time 120 \
