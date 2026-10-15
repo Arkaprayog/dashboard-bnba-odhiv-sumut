@@ -1,0 +1,68 @@
+/* Login Glass v4 — transparent header/footer, one glass surface only. */
+html body:has(#loginCard) #loginCard,
+html body:has(#loginCard) #loginCard * {
+  text-shadow: none !important;
+}
+html body:has(#loginCard) #loginCard > .login-brand,
+html body:has(#loginCard) #loginCard > .login-brand::before,
+html body:has(#loginCard) #loginCard > .login-brand::after,
+html body:has(#loginCard) #loginCard > .login-brand h1,
+html body:has(#loginCard) #loginCard > .login-brand h1::before,
+html body:has(#loginCard) #loginCard > .login-brand h1::after,
+html body:has(#loginCard) #loginCard > .login-brand .login-subtitle,
+html body:has(#loginCard) #loginCard > .login-brand .login-subtitle::before,
+html body:has(#loginCard) #loginCard > .login-brand .login-subtitle::after,
+html body:has(#loginCard) #loginCard > .login-footer,
+html body:has(#loginCard) #loginCard > .login-footer::before,
+html body:has(#loginCard) #loginCard > .login-footer::after,
+html body:has(#loginCard) #loginCard > .login-footer p,
+html body:has(#loginCard) #loginCard > .login-footer p::before,
+html body:has(#loginCard) #loginCard > .login-footer p::after {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  filter: none !important;
+}
+html body:has(#loginCard) #loginCard > .login-brand {
+  padding: 0 !important;
+  margin: 0 0 20px !important;
+  border-radius: 0 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+html body:has(#loginCard) #loginCard > .login-brand h1 {
+  padding: 0 !important;
+  margin: 0 0 4px !important;
+  border-radius: 0 !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+html body:has(#loginCard) #loginCard > .login-brand .login-subtitle {
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+html body:has(#loginCard) #loginCard > .login-footer {
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+html body:has(#loginCard) #loginCard > .login-footer p {
+  padding: 0 !important;
+  margin: 0 0 2px !important;
+  border-radius: 0 !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+html body:has(#loginCard) #loginCard > .login-footer .login-copyright { margin-top: 2px !important; }
+/* The only glass layer is the outer login card. Inputs remain lightly translucent controls. */
+html body:has(#loginCard) #loginCard > .login-brand,
+html body:has(#loginCard) #loginCard > .login-footer,
+html body:has(#loginCard) #loginCard > .login-footer p { opacity: 1 !important; }
