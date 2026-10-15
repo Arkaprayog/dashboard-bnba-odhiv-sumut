@@ -1,3 +1,8 @@
+## 1.1.33 — 2026-10-15
+- Susun seluruh input foto dan tombol Form Asesmen Terintegrasi dalam satu kolom vertikal, dengan urutan yang jelas di ponsel maupun desktop.
+- Bersihkan efek bayangan pada kontrol asesmen, pertahankan teks putih dan permukaan glass transparan, serta perbesar area pemilihan berkas.
+- Selaraskan versi aplikasi, manifest PWA, cache stylesheet, dokumentasi, dan pemeriksaan rilis menjadi 1.1.33.
+
 ## 1.1.32 — 2026-10-15
 - Perbaiki tampilan mobile Kuisioner Responden dan From Asesmen Terintegrasi; pastikan label pilihan dan tombol tetap terbaca horizontal.
 - Sinkronkan versi web dan PWA menjadi 1.1.32; validasi versi rilis memakai nilai package.json yang aktif.
