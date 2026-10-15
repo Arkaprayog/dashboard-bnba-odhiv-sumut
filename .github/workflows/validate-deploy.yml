@@ -446,21 +446,8 @@ jobs:
               raise SystemExit('Deployed owner background is not a valid WebP image.')
           print(f'Deployed owner background verified: {len(data)} bytes.')
           PY
-          WEB_VERSION="$(node -p "require('./package.json').version")"
-          grep -Fq "dashboard-background.webp?v=$WEB_VERSION" /tmp/sahabat-dashboard.html || (echo "::error::Global glass theme or supplied dashboard background is missing from HTML for version $WEB_VERSION." && exit 1)
-          dashboard_background_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-dashboard-background.webp --write-out '%{http_code}|%{content_type}' "$APP_URL/dashboard-background.webp?v=$WEB_VERSION")"
-          dashboard_background_status="${dashboard_background_response%%|*}"
-          dashboard_background_type="${dashboard_background_response#*|}"
-          test "$dashboard_background_status" = "200" || (echo "::error::Supplied dashboard background returned HTTP $dashboard_background_status." && exit 1)
-          case "$dashboard_background_type" in image/webp*) ;; *) echo "::error::Supplied dashboard background has unexpected content type: $dashboard_background_type." && exit 1 ;; esac
-          python3 - <<'PY'
-          from pathlib import Path
-          asset = Path('/tmp/sahabat-dashboard-background.webp')
-          data = asset.read_bytes()
-          if len(data) < 4000 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
-              raise SystemExit('Deployed dashboard background is missing or is not a valid WebP asset.')
-          print(f'Deployed glass dashboard background verified: {len(data)} bytes.')
-          PY
+          grep -Fq 'background-image:url("/danau-toba/photo-1.jpg?v=2.0.0")' /tmp/sahabat-theme.css || (echo "::error::Shared glass theme background image is missing or stale." && exit 1)
+          echo "Verified the active Danau Toba background is declared in the centralized theme."
           quiz_status="$(curl --connect-timeout 5 --max-time 20 --location --max-redirs 5 --silent --show-error --output /tmp/sahabat-questionnaire.html --write-out '%{http_code}' "$APP_URL/kuisioner-responden.html")"
           test "$quiz_status" = "200" || (echo "::error::Questionnaire intro page returned HTTP $quiz_status." && exit 1)
           grep -q '1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire intro is missing the canonical Google Form URL." && exit 1)
