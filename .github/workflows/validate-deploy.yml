@@ -223,7 +223,7 @@ jobs:
           const theme = fs.readFileSync('public/transparent-theme.css', 'utf8');
           const layout = fs.readFileSync('public/app-layout.css', 'utf8');
           const checks = [
-            ['legacy inline CSS is removed and shared glass theme is centralized', !/<style\b/i.test(html) && html.includes('href="/app-layout.css?v=2.0.0"') && html.includes('href="/transparent-theme.css?v=2.0.0"') && theme.includes('--sahabat-glass-blur:16px') && theme.includes('rgba(15,23,42,.70)') && theme.includes('color:#fff!important') && !layout.includes('#063a7d') && !layout.includes('rgba(13,110,253')],
+            ['legacy inline CSS is removed and shared glass theme is centralized', !/<style\b/i.test(html) && /href="\/app-layout\.css\?v=2\.0\.\d+"/.test(html) && html.includes('href="/transparent-theme.css?v=2.0.0"') && theme.includes('--sahabat-glass-blur:16px') && theme.includes('rgba(15,23,42,.70)') && theme.includes('color:#fff!important') && !layout.includes('#063a7d') && !layout.includes('rgba(13,110,253')],
             ['Form Asesmen Terintegrasi retains the supplied Kemensos PNG and local ATENSI logo', html.includes('src="/logos/kemensos.png"') && html.includes('src="/atensi.svg"') && html.includes('id="assessmentPaper"')],
             ['questionnaire uses the shared glass theme without legacy inline CSS', !/<style\b/i.test(questionnaire) && questionnaire.includes('href="/kuesioner-layout.css?v=2.0.0"') && questionnaire.includes('href="/transparent-theme.css?v=2.0.0"')],
             ['respondent waiting screen uses the shared glass theme without legacy inline CSS', !/<style\b/i.test(waiting) && waiting.includes('href="/kuisioner-responden-layout.css?v=2.0.0"') && waiting.includes('href="/transparent-theme.css?v=2.0.0"')],
