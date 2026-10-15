@@ -56,6 +56,7 @@
 
 
 <link rel="stylesheet" href="/transparent-theme.css?v=2.0.0">
+<link rel="stylesheet" href="/login-glass-v3.css?v=1.0.0">
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
@@ -1178,7 +1179,7 @@ document.getElementById('logoutButton').addEventListener('click',async()=>{
   const response=await fetch('/api/logout',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken}});
   const data=await parseResponse(response);
   if(!response.ok){dashboardMessage.textContent=data.error||'Logout belum berhasil.';return;}
-  csrfToken='';if(respondentSyncPollHandle){clearInterval(respondentSyncPollHandle);respondentSyncPollHandle=null;}showLogin('Anda sudah keluar dari dashboard.');
+  csrfToken='';if(respondentSyncPollHandle){clearInterval(respondentSyncPollHandle);respondentSyncPollHandle=null;}showLogin('');
  }catch(error){dashboardMessage.textContent='Tidak dapat menghubungi server untuk logout.';}
 });
 (async()=>{
