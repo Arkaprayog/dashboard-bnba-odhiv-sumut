@@ -2,7 +2,7 @@
    Legacy color declarations were removed from HTML style blocks and style attributes.
    Keep the page's real background photo; all app surfaces are transparent. */
 :root{color-scheme:dark;--surface:transparent;--line:rgba(255,255,255,.42);--text:#fff}
-html,body{background-color:transparent!important;background-image:none!important;color:var(--text)!important}
+html,body{background-color:transparent!important;color:var(--text)!important}
 body{color:var(--text)!important}
 body::before,body::after{background:none!important;box-shadow:none!important}
 main,section,article,aside,nav,header,footer,form,fieldset,dialog,[role="dialog"],
