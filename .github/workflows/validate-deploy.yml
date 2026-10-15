@@ -216,6 +216,7 @@ jobs:
           const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
           const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
           const letter = fs.readFileSync('public/surat-lainnya.html', 'utf8');
+          const letterCss = fs.readFileSync('public/surat-lainnya-layout.css', 'utf8');
           const adminScript = fs.readFileSync('scripts/setup-admin.sh', 'utf8');
           const workflow = fs.readFileSync('.github/workflows/validate-deploy.yml', 'utf8');
           const theme = fs.readFileSync('public/transparent-theme.css', 'utf8');
@@ -229,7 +230,7 @@ jobs:
             ['deployment health and smoke tests use the canonical HTTPS domain', workflow.includes('HEALTH_URL: https://sahabatodhivsumut.web.id/api/health') && workflow.includes('APP_URL: https://sahabatodhivsumut.web.id')],
             ['assessment uses the supplied Kemensos and ATENSI logos', html.includes('src="/logos/kemensos.png"') && html.includes('src="/atensi.svg"') && letter.includes('src="/logos/kemensos.png"')],
             ['Surat Lainnya opens the editable letter based on the provided PDF', html.includes('href="/surat-lainnya.html"') && letter.includes('Penyampaian Informasi Kegiatan Klaster ODHIV Sentra Insyaf Medan') && letter.includes('window.print()') && letter.includes('Langgeng Setiawan')],
-            ['Surat Lainnya signature block is aligned right with centered text and A4 print rules', letter.includes('@page{size:A4;margin:17mm 17mm 16mm}') && letter.includes('margin:30px 0 0 auto') && letter.includes('page-break-inside:avoid') && letter.includes('signature-title') && letter.includes('signature-qr .qr-code') && letter.includes('signature-name')],
+            ['Surat Lainnya signature block is aligned right with centered text and A4 print rules', letterCss.includes('@page{size:A4;margin:17mm 17mm 16mm}') && letterCss.includes('margin:30px 0 0 auto') && letterCss.includes('page-break-inside:avoid') && letterCss.includes('signature-title') && letterCss.includes('signature-qr .qr-code') && letterCss.includes('signature-name')],
             ['Surat Lainnya QR links to the supplied Google Doc, uses high error correction, and has a local Kemensos logo', letter.includes('https://api.qrserver.com/v1/create-qr-code/?') && letter.includes('data=https%3A%2F%2Fdocs.google.com%2Fdocument%2Fd%2F1RuoyRlTIEy24zhewd126KYq53olKuHRv-4BUiIoo82U%2Fedit%3Fusp%3Ddrivesdk') && letter.includes('ecc=H') && letter.includes('qzone=4') && letter.includes('class="qr-code"') && letter.includes('src="/logos/kemensos.png" alt="Logo Kemensos"') && !letter.includes('cdnjs.cloudflare.com') && letter.includes('qrFallback') && worker.includes('https://api.qrserver.com')],
             ['three-photo Danau Toba slideshow, cache-busted assets, and version', html.includes('id="danau-toba-slideshow-v1-2-9"') && html.includes('/danau-toba/photo-1.jpg?v=1.2.9') && html.includes('/danau-toba/photo-2.jpg?v=1.2.9') && html.includes('/danau-toba/photo-3.jpg?v=1.2.9') && html.includes('setInterval(next,4500)')],
             ['Kemensos logo centered over QR', html.includes('respondent-quiz-qr-logo') && html.includes('src="/logos/kemensos.png"') && html.includes('class="respondent-quiz-qr-frame"')],
