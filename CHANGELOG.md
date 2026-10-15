@@ -1,3 +1,9 @@
+## 1.1.34 — 2026-10-15
+- Terapkan stylesheet glassmorphism global yang konsisten pada panel, kartu, form, tombol, tabel, dan kontrol di seluruh aplikasi.
+- Hilangkan latar solid dan bayangan berat pada permukaan aplikasi; gunakan kaca transparan, blur 14px, border putih tipis, dan teks putih.
+- Pertahankan logika HTML/JavaScript, handler, API, dan struktur data; pengecualian print menjaga lembar PDF tetap layak cetak.
+- Selaraskan versi rilis ke 1.1.34.
+
 ## 1.1.33 — 2026-10-15
 - Susun seluruh input foto dan tombol Form Asesmen Terintegrasi dalam satu kolom vertikal, dengan urutan yang jelas di ponsel maupun desktop.
 - Bersihkan efek bayangan pada kontrol asesmen, pertahankan teks putih dan permukaan glass transparan, serta perbesar area pemilihan berkas.
