@@ -1,0 +1,66 @@
+/* SODARAMU — header action buttons: always one horizontal row, aligned right. */
+.action-bar-container {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  width: 100%;
+  min-width: 0;
+}
+.action-buttons-group {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+  width: 100%;
+  min-width: 0;
+}
+.action-buttons-group > .glass-icon-btn {
+  display: inline-flex !important;
+  flex: 0 0 44px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 44px !important;
+  min-width: 44px !important;
+  max-width: 44px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  background: rgba(255,255,255,.2) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255,255,255,.3) !important;
+  border-radius: 12px !important;
+  color: #fff !important;
+  cursor: pointer;
+  transition: background .2s ease, transform .2s ease;
+}
+.action-buttons-group > .glass-icon-btn:hover {
+  background: rgba(255,255,255,.3) !important;
+}
+.action-buttons-group > .glass-icon-btn svg {
+  display: block;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+}
+.action-buttons-group > .glass-icon-btn:focus-visible {
+  outline: 2px solid rgba(255,255,255,.9);
+  outline-offset: 3px;
+}
+@media (max-width: 480px) {
+  .action-buttons-group { gap: 10px !important; }
+  .action-buttons-group > .glass-icon-btn {
+    flex-basis: 44px !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+  }
+}
+@media print {
+  .action-bar-container { display: none !important; }
+}
