@@ -1334,7 +1334,12 @@ async function refreshSavedAssessments(){
  const payload=await response.json().catch(()=>({}));
  if(!response.ok)throw new Error(payload.error||'Gagal memuat daftar asesmen.');
  savedList.replaceChildren(new Option('Pilih asesmen tersimpan',''));
- (payload.items||[]).forEach(item=>savedList.add(new Option('Asesmen '+item.id.slice(0,8)+' · '+item.updated_at,item.id)));
+ (payload.items||[]).forEach(item=>{
+  const answers=item.answers&&typeof item.answers==='object'?item.answers:{};
+  const respondentName=String(answers.q16||'').trim();
+  const label=respondentName?('From Asesmen Terintegrasi — '+respondentName):('From Asesmen Terintegrasi — '+item.id.slice(0,8));
+  savedList.add(new Option(label+' · '+item.updated_at,item.id));
+ });
 }
 function assessmentErrorText(error){
  const raw=error instanceof Error?error.message:'Gagal menyimpan asesmen.';
@@ -1370,7 +1375,14 @@ document.getElementById('assessmentLoad').addEventListener('click',async()=>{
    assessmentMessage.textContent='Asesmen tersimpan berhasil dimuat.';
  }catch(error){assessmentMessage.textContent=error instanceof Error?error.message:'Gagal memuat asesmen.'}
 });
-document.getElementById('assessmentPrint').addEventListener('click',()=>window.print());
+document.getElementById('assessmentPrint').addEventListener('click',()=>{
+ const respondentName=String(document.querySelector('#assessmentFields [name="q16"]')?.value||'').trim();
+ const safeName=respondentName.replace(/[\\/:*?"<>|]+/g,' ').replace(/\s+/g,' ').trim().slice(0,100);
+ const originalTitle=document.title;
+ document.title='From Asesmen Terintegrasi'+(safeName?' - '+safeName:'');
+ window.addEventListener('afterprint',()=>{document.title=originalTitle;},{once:true});
+ window.print();
+});
 document.getElementById('assessmentReset').addEventListener('click',()=>{if(confirm('Kosongkan semua jawaban dan foto pada form? Data yang sudah tersimpan di database tidak dihapus.')){form.reset();document.querySelectorAll('.assessment-number input').forEach(i=>i.value='');Object.keys(assessmentPhotos).forEach(key=>delete assessmentPhotos[key]);photoPreview?.replaceChildren();printPhotos?.replaceChildren();currentAssessmentId=null;assessmentMessage.textContent='Form dan foto dikosongkan. Data tersimpan di database tidak dihapus.'}});
 window.addEventListener('dashboard:authenticated',()=>{
  if(!csrfToken)return;
