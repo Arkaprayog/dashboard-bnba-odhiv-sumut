@@ -1,3 +1,7 @@
+## 1.1.37 — 2026-10-15
+- Update test otomatis agar memvalidasi teks hak cipta baru “Data Base Kemensos RI DRSKPNO”.
+- Selaraskan versi web, manifest, dan cache aset ke 1.1.37.
+
 ## 1.1.36 — 2026-10-15
 - Ganti teks hak cipta halaman akses awal dan footer menjadi “Data Base Kemensos RI DRSKPNO”.
 - Selaraskan versi web dan cache aset ke 1.1.36.
