@@ -185,11 +185,12 @@ jobs:
           node - <<'NODE'
           const fs = require('fs');
           const intro = fs.readFileSync('public/kuisioner-responden.html', 'utf8');
+          const introCss = fs.readFileSync('public/kuisioner-responden-layout.css', 'utf8');
           const dashboard = fs.readFileSync('public/index.html', 'utf8');
           const offline = fs.readFileSync('android-app/app/src/main/assets/offline.html', 'utf8');
           const activity = fs.readFileSync('android-app/app/src/main/java/id/sahabatodhiv/sumut/MainActivity.java', 'utf8');
           const checks = [
-            ['questionnaire has centered transparent logo cube and bottom loading line', intro.includes('class="cube"') && intro.includes('class="loading"') && intro.includes('cube-spin') && intro.includes('final-screen')],
+            ['questionnaire has centered transparent logo cube and bottom loading line', intro.includes('class="cube"') && intro.includes('class="loading"') && introCss.includes('cube-spin') && introCss.includes('final-screen')],
             ['questionnaire transitions at 2.8 seconds and redirects after 3 seconds', intro.includes('window.setTimeout(finish, 2800)') && intro.includes('3000 - (performance.now() - start)') && intro.includes('window.location.replace(destination)')],
             ['questionnaire keeps fallback link and references all four original local agency logos', intro.includes('Lanjut ke kuesioner') && intro.includes('/logos/kemensos.png') && intro.includes('/logos/sumut.png') && intro.includes('/logos/ribbon.png') && intro.includes('/logos/kemenkes.png')],
             ['dashboard login opens without animated intro', !dashboard.includes('startCollaborationIntro') && !dashboard.includes('collab-intro')],
