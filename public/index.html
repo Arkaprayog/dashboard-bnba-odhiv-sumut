@@ -1335,8 +1335,7 @@ async function refreshSavedAssessments(){
  if(!response.ok)throw new Error(payload.error||'Gagal memuat daftar asesmen.');
  savedList.replaceChildren(new Option('Pilih asesmen tersimpan',''));
  (payload.items||[]).forEach(item=>{
-  const answers=item.answers&&typeof item.answers==='object'?item.answers:{};
-  const respondentName=String(answers.q16||'').trim();
+  const respondentName=String(item.respondent_name||'').trim();
   const label=respondentName?('From Asesmen Terintegrasi — '+respondentName):('From Asesmen Terintegrasi — '+item.id.slice(0,8));
   savedList.add(new Option(label+' · '+item.updated_at,item.id));
  });
