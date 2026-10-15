@@ -2,10 +2,15 @@
 .action-bar-container {
   display: flex !important;
   flex-direction: row !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-direction: row !important;
   align-items: center !important;
   justify-content: flex-end !important;
   width: 100%;
   min-width: 0;
+  flex-wrap: nowrap !important;
 }
 .action-buttons-group {
   display: flex !important;
