@@ -1,31 +1,27 @@
-/* v1.1.40 — shared transparent surface theme.
-   Purpose: remove opaque decorative fills across the web app so page backgrounds/photos remain visible.
-   Semantic text colors are preserved for readability; UI surfaces are transparent/glass. */
-:root {
-  --app-surface: transparent;
-  --app-surface-soft: rgba(20, 32, 42, .16);
-  --app-surface-glass: rgba(20, 32, 42, .24);
-  --app-surface-border: rgba(255, 255, 255, .38);
+/* Sahabat ODHIV Sumut — transparent UI base v2.0.0
+   Legacy color declarations were removed from HTML style blocks and style attributes.
+   Keep the page's real background photo; all app surfaces are transparent. */
+:root{color-scheme:dark;--surface:transparent;--line:rgba(255,255,255,.42);--text:#fff}
+html,body{background-color:transparent!important;background-image:none!important;color:var(--text)!important}
+body{color:var(--text)!important}
+body::before,body::after{background:none!important;box-shadow:none!important}
+main,section,article,aside,nav,header,footer,form,fieldset,dialog,[role="dialog"],
+[class*="card"],[class*="panel"],[class*="box"],[class*="section"],[class*="modal"],
+.owner-card,.dashpanel,.overview-card,.overview-panel,.notification-panel,.settings-panel,
+.app-nav,.app-nav button,.respondent-stat,.news-card,.assessment-panel,.questionnaire-panel,
+.database-panel,.content-card,.surface,.glass,.glass-card{
+ background:transparent!important;background-color:transparent!important;background-image:none!important;
+ box-shadow:none!important;color:var(--text)!important;
+ border-color:var(--line)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important
 }
-html, body { background-color: transparent !important; }
-body { background-image: var(--app-page-background, none); }
-:where(main, section, article, aside, nav, header, footer, .card, .panel, .modal, .dialog, .container-card, .login-card, .dashboard-card, .form-card, .stat-card, .table-wrap, .table-container, .content-card, .glass, .glass-card, .surface, .surface-card) {
-  background-color: transparent !important;
-  background-image: none !important;
+input,select,textarea,button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button,
+.assessment-upload,.form-control{
+ background:transparent!important;background-color:transparent!important;background-image:none!important;
+ box-shadow:none!important;color:var(--text)!important;-webkit-text-fill-color:var(--text)!important;
+ border-color:var(--line)!important
 }
-:where(input, select, textarea, .form-control, .input, .field, .search-box) {
-  background-color: rgba(255,255,255,.08) !important;
-  border-color: var(--app-surface-border) !important;
-}
-:where(button, .btn, .button, .submit, .btn-primary, .btn-secondary, .btn-outline) {
-  background-image: none !important;
-}
-:where(table, thead, tbody, tr, th, td) {
-  background-color: transparent !important;
-  background-image: none !important;
-}
-:where(.card, .panel, .modal, .dialog, .container-card, .login-card, .dashboard-card, .form-card, .stat-card, .content-card, .glass, .glass-card, .surface, .surface-card) {
-  border-color: var(--app-surface-border);
-  -webkit-backdrop-filter: blur(8px) saturate(110%);
-  backdrop-filter: blur(8px) saturate(110%);
-}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,.75)!important}
+table,thead,tbody,tr,th,td{background:transparent!important;background-color:transparent!important;background-image:none!important;color:var(--text)!important}
+a,a:visited{color:var(--text)!important}
+.assessment-paper{background:transparent!important;background-color:transparent!important;color:var(--text)!important;box-shadow:none!important}
+@media print{.assessment-paper{background:#fff!important;color:#111!important}}

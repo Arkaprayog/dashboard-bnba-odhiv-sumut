@@ -10,29 +10,29 @@
 <style>
 :root{color-scheme:light;--ink:#173650;--muted:#526c80;--line:#c8d7e4;--blue:#0757a5;--paper:#fff;--panel:#f1f7fc}
 *{box-sizing:border-box}
-body{margin:0;background:#eaf2f9;color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
-.topbar{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);padding:12px max(14px,calc((100vw - 1120px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+.topbar{position:sticky;top:0;z-index:5;border-bottom:1px solid var(--line);padding:12px max(14px,calc((100vw - 1120px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .topbar strong{font-size:1rem}.actions{display:flex;gap:8px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;border:1px solid #8eabc2;border-radius:9px;padding:9px 14px;background:#dceeff;color:#173650;text-decoration:none;font:inherit;font-weight:750;cursor:pointer}
-.btn.primary{background:#0757a5;border-color:#0757a5;color:#fff}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;border:1px solid #8eabc2;border-radius:9px;padding:9px 14px;text-decoration:none;font:inherit;font-weight:750;cursor:pointer}
+.btn.primary{}
 .wrap{width:min(1120px,calc(100% - 24px));margin:20px auto 40px;display:grid;grid-template-columns:minmax(280px,.85fr) minmax(0,1.15fr);gap:18px;align-items:start}
-.panel{min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 8px 24px rgba(24,55,80,.06)}
-h1{font-size:1.35rem;margin:0 0 4px}h2{font-size:1rem;margin:0 0 14px}.muted{color:var(--muted);font-size:.86rem;margin:0 0 15px}
-.field{display:grid;gap:5px;margin:0 0 12px}.field label{font-weight:750;font-size:.87rem}.field input,.field textarea{width:100%;min-width:0;border:1px solid #b8cad9;border-radius:8px;padding:10px 11px;background:#fff;color:#173650;font:inherit;font-size:16px}.field input[readonly],.field textarea[readonly]{background:#edf3f8;color:#526c80;border-color:#9db2c4;cursor:not-allowed}.field textarea{min-height:360px;resize:vertical;line-height:1.45}
+.panel{min-width:0;border:1px solid var(--line);border-radius:14px;padding:16px}
+h1{font-size:1.35rem;margin:0 0 4px}h2{font-size:1rem;margin:0 0 14px}.muted{font-size:.86rem;margin:0 0 15px}
+.field{display:grid;gap:5px;margin:0 0 12px}.field label{font-weight:750;font-size:.87rem}.field input,.field textarea{width:100%;min-width:0;border:1px solid #b8cad9;border-radius:8px;padding:10px 11px;font:inherit;font-size:16px}.field input[readonly],.field textarea[readonly]{cursor:not-allowed}.field textarea{min-height:360px;resize:vertical;line-height:1.45}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.paper{background:#fff;color:#111;border:1px solid #d8e1e8;padding:25px;box-shadow:0 8px 24px rgba(24,55,80,.07);font:11pt/1.45 Arial,Helvetica,sans-serif}
+.paper{border:1px solid #d8e1e8;padding:25px;font:11pt/1.45 Arial,Helvetica,sans-serif}
 .letterhead{display:grid;grid-template-columns:94px minmax(0,1fr);gap:14px;align-items:center;padding:0 0 11px;margin-bottom:25px;border-bottom:3px double #111;text-align:center}
 .letterhead img{width:94px;height:85px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
 .letterhead strong{display:block;font-size:12pt;line-height:1.28}.letterhead small{display:block;font-size:8.5pt;line-height:1.35;margin-top:4px}
 .letter-date-line{display:block;width:100%;margin:0 0 12px;text-align:right;font-weight:400;line-height:1.5;break-inside:avoid;page-break-inside:avoid}.letter-meta{display:grid;grid-template-columns:100px minmax(0,1fr);gap:3px 8px;margin-bottom:27px}.letter-meta strong{font-weight:400}
-.to{margin-bottom:28px}.body-copy{white-space:pre-wrap;text-align:justify;overflow-wrap:anywhere}.body-copy p{margin:0 0 13px}.signature{width:46%;min-width:210px;margin:30px 0 0 auto;text-align:center;display:grid;justify-items:center;align-content:start;break-inside:avoid;page-break-inside:avoid}.signature-title{min-height:2.9em;width:100%;display:flex;align-items:flex-start;justify-content:center;text-align:center}.signature-qr{width:104px;height:104px;margin:5px auto 7px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}.signature-qr .qr-code{width:104px;height:104px;display:block;object-fit:contain;background:#fff}.signature-qr .qr-logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:22px;height:22px;object-fit:contain;background:#fff;padding:2px;border-radius:3px;z-index:1}.signature-name{width:100%;text-decoration:underline;font-weight:700;text-align:center}.qr-fallback{font-size:7pt;line-height:1.2;overflow-wrap:anywhere;max-width:180px;margin:3px auto 0;text-align:center}
-.warning{font-size:.8rem;color:#526c80;background:#f2f7fc;border-radius:8px;padding:10px;margin-top:14px}
+.to{margin-bottom:28px}.body-copy{white-space:pre-wrap;text-align:justify;overflow-wrap:anywhere}.body-copy p{margin:0 0 13px}.signature{width:46%;min-width:210px;margin:30px 0 0 auto;text-align:center;display:grid;justify-items:center;align-content:start;break-inside:avoid;page-break-inside:avoid}.signature-title{min-height:2.9em;width:100%;display:flex;align-items:flex-start;justify-content:center;text-align:center}.signature-qr{width:104px;height:104px;margin:5px auto 7px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}.signature-qr .qr-code{width:104px;height:104px;display:block;object-fit:contain}.signature-qr .qr-logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:22px;height:22px;object-fit:contain;padding:2px;border-radius:3px;z-index:1}.signature-name{width:100%;text-decoration:underline;font-weight:700;text-align:center}.qr-fallback{font-size:7pt;line-height:1.2;overflow-wrap:anywhere;max-width:180px;margin:3px auto 0;text-align:center}
+.warning{font-size:.8rem;border-radius:8px;padding:10px;margin-top:14px}
 @media(max-width:850px){.wrap{grid-template-columns:1fr}.letterhead{grid-template-columns:76px minmax(0,1fr)}.letterhead img{width:76px;height:70px}.paper{padding:16px}.letter-meta{grid-template-columns:75px minmax(0,1fr)}.letter-date-line{margin:0 0 12px;text-align:right}.signature{width:65%}}
 @page{size:A4;margin:17mm 17mm 16mm}
 @media print{
- body{background:#fff!important}.topbar,.editor-panel,.no-print{display:none!important}
- .wrap{display:block;width:auto;margin:0}.preview-panel{padding:0;border:0;box-shadow:none;border-radius:0}
- .paper{padding:0;border:0;box-shadow:none;font-size:10.5pt}
+ body{}.topbar,.editor-panel,.no-print{display:none!important}
+ .wrap{display:block;width:auto;margin:0}.preview-panel{padding:0;border:0;border-radius:0}
+ .paper{padding:0;border:0;font-size:10.5pt}
  .letter-date-line{width:100%;text-align:right;margin:0 0 12px;font-size:10.5pt}
  .letter-meta{grid-template-columns:100px minmax(0,1fr)}
  .letterhead{grid-template-columns:85px minmax(0,1fr);margin-bottom:22px}
@@ -47,96 +47,96 @@ h1{font-size:1.35rem;margin:0 0 4px}h2{font-size:1rem;margin:0 0 14px}.muted{col
 
 <style id="sahabat-global-glass-v1-1-30">
 :root{color-scheme:dark!important;--ink:#fff!important;--muted:#fff!important;--line:rgba(255,255,255,.32)!important;--bg:#163847!important;--paper:rgba(3,17,27,.17)!important}
-html,body{min-height:100%;background-color:#163847!important}
-body{color:#fff!important;background-image:linear-gradient(180deg,rgba(2,15,23,.11),rgba(2,15,23,.24)),url('/dashboard-background.webp?v=1.1.30')!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;background-attachment:fixed!important;text-shadow:0 1px 3px rgba(0,0,0,.22)!important}
-body,body *{color:#fff!important;-webkit-text-fill-color:#fff!important}
+html,body{min-height:100%}
+body{background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;background-attachment:fixed!important}
+body,body *{}
 body:not(.authenticated)::before,body:not(.authenticated)::after{display:none!important;content:none!important}
-body :is(input,textarea,select,option,[contenteditable="true"]){background:rgba(2,15,23,.19)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;caret-color:#fff!important;border-color:rgba(255,255,255,.38)!important}
-body input::placeholder,body textarea::placeholder{color:#fff!important;-webkit-text-fill-color:#fff!important;opacity:1!important}
-body select option{background:#163847!important;color:#fff!important}
-body :is(main:not(.paper),header:not(.letterhead),footer,nav,.topbar,.toolbar,.panel,.card,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.stat,.profile,.staff,.notice,.notice-card,.form-card,.link-box,.table-wrap,.message,.status,.warning,dialog,fieldset,.hero,.quick-card,.workspace-card,.dashboard-card,.settings-panel,.notification-panel,.profile-bar,.login-panel,.menu-card,.info-card,.stat-card,.quick-link,.profile-setup,.section-card,.panel-card,.form,.data-card,.settings-row,.notification-item,.assessment-section-title,.assessment-subtitle,.profile-setup,.link-box,.to,.letter-date-line){color:#fff!important;background:rgba(3,17,27,.19)!important;border-color:rgba(255,255,255,.30)!important;box-shadow:0 12px 34px rgba(0,0,0,.10)!important;backdrop-filter:blur(18px) saturate(118%)!important;-webkit-backdrop-filter:blur(18px) saturate(118%)!important}
-body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save){color:#fff!important;-webkit-text-fill-color:#fff!important;background:rgba(255,255,255,.075)!important;border:1px solid rgba(255,255,255,.42)!important;box-shadow:0 8px 24px rgba(0,0,0,.08)!important;backdrop-filter:blur(14px)!important;-webkit-backdrop-filter:blur(14px)!important}
-body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save):hover{background:rgba(255,255,255,.16)!important}
-body :is(.muted,.empty,.success,.ok,.error,.danger,.warning,.status,.message,.settings-status,.alert,.pill,.badge,.tag){color:#fff!important;-webkit-text-fill-color:#fff!important;background:rgba(3,17,27,.23)!important;border-color:rgba(255,255,255,.3)!important}
-body :is(.app-nav button[aria-current="page"],.active,.selected,[aria-pressed="true"]){background:rgba(255,255,255,.20)!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
-body .paper{color:#fff!important;background:rgba(3,17,27,.19)!important;border-color:rgba(255,255,255,.30)!important;box-shadow:0 12px 34px rgba(0,0,0,.10)!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important}
-body .paper *{color:#fff!important;-webkit-text-fill-color:#fff!important}
-body .letterhead{background:transparent!important}
-body :is(.owner-avatar,.avatar,.profile-photo){background:rgba(255,255,255,.08)!important;border-color:rgba(255,255,255,.75)!important}
-body :is(table,th,td){border-color:rgba(255,255,255,.25)!important}
+body :is(input,textarea,select,option,[contenteditable="true"]){caret-color:#fff!important}
+body input::placeholder,body textarea::placeholder{opacity:1!important}
+body select option{}
+body :is(main:not(.paper),header:not(.letterhead),footer,nav,.topbar,.toolbar,.panel,.card,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.stat,.profile,.staff,.notice,.notice-card,.form-card,.link-box,.table-wrap,.message,.status,.warning,dialog,fieldset,.hero,.quick-card,.workspace-card,.dashboard-card,.settings-panel,.notification-panel,.profile-bar,.login-panel,.menu-card,.info-card,.stat-card,.quick-link,.profile-setup,.section-card,.panel-card,.form,.data-card,.settings-row,.notification-item,.assessment-section-title,.assessment-subtitle,.profile-setup,.link-box,.to,.letter-date-line){backdrop-filter:blur(18px) saturate(118%)!important;-webkit-backdrop-filter:blur(18px) saturate(118%)!important}
+body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save){border:1px solid rgba(255,255,255,.42)!important;backdrop-filter:blur(14px)!important;-webkit-backdrop-filter:blur(14px)!important}
+body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save):hover{}
+body :is(.muted,.empty,.success,.ok,.error,.danger,.warning,.status,.message,.settings-status,.alert,.pill,.badge,.tag){}
+body :is(.app-nav button[aria-current="page"],.active,.selected,[aria-pressed="true"]){}
+body .paper{backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important}
+body .paper *{}
+body .letterhead{}
+body :is(.owner-avatar,.avatar,.profile-photo){}
+body :is(table,th,td){}
 body :is([hidden],template){display:none!important}
-@media(prefers-reduced-transparency:reduce){body :is(main:not(.paper),header:not(.letterhead),footer,nav,.topbar,.toolbar,.panel,.card,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.stat,.profile,.staff,.notice,.form-card,.table-wrap,.settings-panel,.notification-panel,.paper){backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(3,17,27,.38)!important}}
+@media(prefers-reduced-transparency:reduce){body :is(main:not(.paper),header:not(.letterhead),footer,nav,.topbar,.toolbar,.panel,.card,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.stat,.profile,.staff,.notice,.form-card,.table-wrap,.settings-panel,.notification-panel,.paper){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
 @media print{
- html,body{background:#fff!important;background-image:none!important;color:#000!important;text-shadow:none!important}
- body,body *{color:#000!important;-webkit-text-fill-color:#000!important;text-shadow:none!important}
- body .paper{background:#fff!important;color:#000!important;border-color:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
- body .paper *{color:#000!important;-webkit-text-fill-color:#000!important}
+ html,body{}
+ body,body *{}
+ body .paper{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+ body .paper *{}
  body :is(.topbar,.toolbar,.no-print,.editor-panel){display:none!important}
 }
 
 /* v1.1.26: unify every interactive surface as lightweight glass, not opaque cards. */
-body :is(main:not(.paper),section:not(.paper),article,aside,header:not(.letterhead),footer,nav,form,fieldset,dialog,.card,.panel,.topbar,.toolbar,.workspace,.workspace-card,.dashboard-card,.owner-card,.profile-card,.profile-panel,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.modal-content,.drawer,.menu-card,.quick-card,.quick-link,.stat-card,.overview-card,.overview-panel,.status-card,.notice-card,.upload-card,.document-card,.assessment-card){background-color:rgba(255,255,255,.075)!important;background-image:none!important;border-color:rgba(255,255,255,.25)!important;box-shadow:0 12px 34px rgba(0,0,0,.10)!important;-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important}
-body :is(input,textarea,select,option,[contenteditable="true"],.input,.field){background-color:rgba(255,255,255,.075)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:rgba(255,255,255,.30)!important}
-body :is(input,textarea,select,option,[contenteditable="true"])::placeholder{color:#fff!important;-webkit-text-fill-color:#fff!important;opacity:1!important}
-body :is(.muted,.empty,.success,.ok,.error,.danger,.warning,.status,.message,.settings-status,.alert,.pill,.badge,.tag,.hint,.helper,.caption,.subtitle,.secondary-text){color:#fff!important;-webkit-text-fill-color:#fff!important}
-body :is(.profile-actions,.owner-actions,.account-actions,.header-actions,.profile-controls,.action-icons,.icon-actions,.icon-button-group){background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-@media print{html,body{background:#fff!important;background-image:none!important;color:#111!important;text-shadow:none!important}body,body *{color:#111!important;-webkit-text-fill-color:#111!important;text-shadow:none!important}body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){background:#fff!important;background-image:none!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-color:transparent!important}}
+body :is(main:not(.paper),section:not(.paper),article,aside,header:not(.letterhead),footer,nav,form,fieldset,dialog,.card,.panel,.topbar,.toolbar,.workspace,.workspace-card,.dashboard-card,.owner-card,.profile-card,.profile-panel,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.modal-content,.drawer,.menu-card,.quick-card,.quick-link,.stat-card,.overview-card,.overview-panel,.status-card,.notice-card,.upload-card,.document-card,.assessment-card){-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important}
+body :is(input,textarea,select,option,[contenteditable="true"],.input,.field){}
+body :is(input,textarea,select,option,[contenteditable="true"])::placeholder{opacity:1!important}
+body :is(.muted,.empty,.success,.ok,.error,.danger,.warning,.status,.message,.settings-status,.alert,.pill,.badge,.tag,.hint,.helper,.caption,.subtitle,.secondary-text){}
+body :is(.profile-actions,.owner-actions,.account-actions,.header-actions,.profile-controls,.action-icons,.icon-actions,.icon-button-group){border:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+@media print{html,body{}body,body *{}body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
 
 /* v1.1.27: enforce circular, unboxed top-right actions and consistent high-transparency surfaces. */
-body .owner-header-actions,body .top-actions{position:relative!important;background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body .owner-header-actions,body .top-actions{position:relative!important;border:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 body .owner-header-actions{position:absolute!important;top:16px!important;right:16px!important;z-index:50!important}
 body .top-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:12px!important}
-body :is(#notificationBellButton,#settingsButton,#logoutButton){width:56px!important;height:56px!important;min-width:56px!important;min-height:56px!important;aspect-ratio:1/1!important;flex:0 0 56px!important;padding:0!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;background:rgba(255,255,255,.075)!important;border:1px solid rgba(255,255,255,.42)!important;box-shadow:none!important;-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important}
+body :is(#notificationBellButton,#settingsButton,#logoutButton){width:56px!important;height:56px!important;min-width:56px!important;min-height:56px!important;aspect-ratio:1/1!important;flex:0 0 56px!important;padding:0!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border:1px solid rgba(255,255,255,.42)!important;-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important}
 body :is(#notificationBellButton,#settingsButton,#logoutButton)::before,body :is(#notificationBellButton,#settingsButton,#logoutButton)::after{content:none!important;display:none!important}
 body :is(#notificationBellButton,#settingsButton,#logoutButton) svg{width:24px!important;height:24px!important;flex:0 0 24px!important}
 @media(max-width:640px){body .owner-header-actions{top:10px!important;right:10px!important}body .top-actions{gap:8px!important}body :is(#notificationBellButton,#settingsButton,#logoutButton){width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;flex-basis:44px!important}body :is(#notificationBellButton,#settingsButton,#logoutButton) svg{width:20px!important;height:20px!important}}
-body,body *{color:#fff!important;-webkit-text-fill-color:#fff!important}
-body :is(main:not(.paper),section:not(.paper),article,aside,header:not(.letterhead),footer,nav,form,fieldset,dialog,.card,.panel,.topbar,.toolbar,.workspace,.workspace-card,.dashboard-card,.owner-card,.profile-card,.profile-panel,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.modal-content,.drawer,.menu-card,.quick-card,.quick-link,.stat-card,.overview-card,.overview-panel,.status-card,.notice-card,.upload-card,.document-card,.assessment-card){background-color:rgba(255,255,255,.055)!important;background-image:none!important;border-color:rgba(255,255,255,.25)!important;box-shadow:0 12px 34px rgba(0,0,0,.08)!important;-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important}
-@media print{body,body *{color:#111!important;-webkit-text-fill-color:#111!important;text-shadow:none!important}body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){background:#fff!important;background-image:none!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-color:transparent!important}}
+body,body *{}
+body :is(main:not(.paper),section:not(.paper),article,aside,header:not(.letterhead),footer,nav,form,fieldset,dialog,.card,.panel,.topbar,.toolbar,.workspace,.workspace-card,.dashboard-card,.owner-card,.profile-card,.profile-panel,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.modal-content,.drawer,.menu-card,.quick-card,.quick-link,.stat-card,.overview-card,.overview-panel,.status-card,.notice-card,.upload-card,.document-card,.assessment-card){-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important}
+@media print{body,body *{}body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
 </style>
 
 <style id="sahabat-glass-opacity75-blur16-v1-1-30">
 :root{color-scheme:dark!important}
 @media screen{
-body,body *{color:#fff!important;-webkit-text-fill-color:#fff!important}
-body :is(main,header:not(.letterhead),nav,aside,section:not(.paper),article:not(.paper),form,fieldset,dialog,.card,.panel,.glass-card,.dashboard-card,.menu-card,.sidebar,.navbar,.modal-content,.menu-item,.dashboard-container,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.drawer,.quick-card,.quick-link,.stat-card,.status-card,.notice-card,.upload-card,.document-card,.assessment-card,.workspace-card,.profile-card,.profile-panel,.stat,.staff,.profile,.notice,.field,.message,.status,.warning,.topbar,.toolbar,.shell,.top-actions,.owner-header-actions,.settings-row,.notification-item,.news-card,.respondent-stat,.respondent-quiz-panel,.respondent-quiz-note){background-color:rgba(15,23,42,.75)!important;background-image:none!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;border-color:rgba(255,255,255,.12)!important;border-radius:16px!important;box-shadow:0 8px 32px rgba(0,0,0,.37)!important}
-body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save,.owner-edit,.settings-button,.bell-button){color:#fff!important;-webkit-text-fill-color:#fff!important;background-color:rgba(15,23,42,.75)!important;background-image:none!important;border:1px solid rgba(255,255,255,.12)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;box-shadow:0 8px 32px rgba(0,0,0,.37)!important}
-body :is(input,select,textarea,[contenteditable="true"]){background-color:rgba(255,255,255,.1)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border:1px solid rgba(255,255,255,.2)!important;backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important}
-body :is(input,textarea)::placeholder{color:rgba(255,255,255,.6)!important;-webkit-text-fill-color:rgba(255,255,255,.6)!important;opacity:1!important}
-body select option{background:#0f172a!important;color:#fff!important}
-body .paper,body .paper *{color:#111!important;-webkit-text-fill-color:#111!important}
-body .paper{background:#fff!important;background-image:none!important;border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-body .paper :is(section,article,header,form,fieldset,.card,.panel,.topbar,.toolbar,.field,.status,.warning){background:transparent!important;background-image:none!important;border-color:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-radius:0!important}
+body,body *{}
+body :is(main,header:not(.letterhead),nav,aside,section:not(.paper),article:not(.paper),form,fieldset,dialog,.card,.panel,.glass-card,.dashboard-card,.menu-card,.sidebar,.navbar,.modal-content,.menu-item,.dashboard-container,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.drawer,.quick-card,.quick-link,.stat-card,.status-card,.notice-card,.upload-card,.document-card,.assessment-card,.workspace-card,.profile-card,.profile-panel,.stat,.staff,.profile,.notice,.field,.message,.status,.warning,.topbar,.toolbar,.shell,.top-actions,.owner-header-actions,.settings-row,.notification-item,.news-card,.respondent-stat,.respondent-quiz-panel,.respondent-quiz-note){backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;border-radius:16px!important}
+body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save,.owner-edit,.settings-button,.bell-button){border:1px solid rgba(255,255,255,.12)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+body :is(input,select,textarea,[contenteditable="true"]){border:1px solid rgba(255,255,255,.2)!important;backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important}
+body :is(input,textarea)::placeholder{opacity:1!important}
+body select option{}
+body .paper,body .paper *{}
+body .paper{border-radius:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body .paper :is(section,article,header,form,fieldset,.card,.panel,.topbar,.toolbar,.field,.status,.warning){backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-radius:0!important}
 }
 @media print{
-html,body{background:#fff!important;background-image:none!important;color:#000!important;text-shadow:none!important}
-body,body *{color:#000!important;-webkit-text-fill-color:#000!important;text-shadow:none!important}
-body .paper{background:#fff!important;color:#000!important;border-color:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-body .paper *{color:#000!important;-webkit-text-fill-color:#000!important}
+html,body{}
+body,body *{}
+body .paper{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body .paper *{}
 body :is(.topbar,.toolbar,.no-print,.editor-panel){display:none!important}
 }
 </style>
 
 <style id="sahabat-glassmorphism-fix-v1-1-30">
 :root{--sahabat-glass-surface:rgba(15,23,42,.75);--sahabat-glass-border:rgba(255,255,255,.22);--sahabat-glass-blur:16px}
-html,body{color:#fff!important}
-body :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,a,li,td,th,legend,summary,div,figcaption,caption){color:#fff!important;-webkit-text-fill-color:#fff!important}
-body :is(main,header,section,article,aside,nav,form,fieldset,dialog,[role=dialog],[class*="card"],[class*="panel"],[class*="menu"],[class*="modal"],[class*="box"],[class*="section"],.owner-card,.dashpanel,.app-nav,.overview-card,.overview-panel,.respondent-stat,.news-card,.notification-panel,.settings-panel,.datawrap,.card){background:var(--sahabat-glass-surface)!important;background-color:var(--sahabat-glass-surface)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;border-color:var(--sahabat-glass-border)!important;box-shadow:0 8px 30px rgba(0,0,0,.22)!important}
-body :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea,.link-url,.workflow-control){background:rgba(15,23,42,.70)!important;background-color:rgba(15,23,42,.70)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;caret-color:#fff;border-color:rgba(255,255,255,.34)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body :is(input,textarea,select)::placeholder,body :is(input,textarea)::placeholder{color:rgba(255,255,255,.72)!important;-webkit-text-fill-color:rgba(255,255,255,.72)!important;opacity:1!important}
-body :is(button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button,.assessment-upload){background:rgba(15,86,153,.75)!important;background-color:rgba(15,86,153,.75)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border:1px solid rgba(255,255,255,.28)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body :is(button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button):hover{background:rgba(21,106,179,.82)!important;background-color:rgba(21,106,179,.82)!important}
+html,body{}
+body :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,a,li,td,th,legend,summary,div,figcaption,caption){}
+body :is(main,header,section,article,aside,nav,form,fieldset,dialog,[role=dialog],[class*="card"],[class*="panel"],[class*="menu"],[class*="modal"],[class*="box"],[class*="section"],.owner-card,.dashpanel,.app-nav,.overview-card,.overview-panel,.respondent-stat,.news-card,.notification-panel,.settings-panel,.datawrap,.card){backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+body :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea,.link-url,.workflow-control){caret-color:#fff;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+body :is(input,textarea,select)::placeholder,body :is(input,textarea)::placeholder{opacity:1!important}
+body :is(button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button,.assessment-upload){border:1px solid rgba(255,255,255,.28)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+body :is(button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button):hover{}
 body :is(input,select,textarea,button,a):focus-visible{outline:2px solid rgba(255,255,255,.9)!important;outline-offset:2px}
-body:not(.authenticated) main{background:rgba(15,23,42,.75)!important;background-color:rgba(15,23,42,.75)!important;border:1px solid rgba(255,255,255,.28)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;box-shadow:0 18px 46px rgba(0,0,0,.32)!important}
-body:not(.authenticated) main :is(h1,h2,h3,p,span,label,small,strong,a,div){color:#fff!important;-webkit-text-fill-color:#fff!important}
-body:not(.authenticated) .field input,body:not(.authenticated) input[type=password],body:not(.authenticated) input[type=text]{background:rgba(15,23,42,.70)!important;background-color:rgba(15,23,42,.70)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;caret-color:#fff!important;border:1px solid rgba(255,255,255,.38)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)!important}
-body:not(.authenticated) .field input::placeholder{color:rgba(255,255,255,.72)!important;-webkit-text-fill-color:rgba(255,255,255,.72)!important}
-body:not(.authenticated) .submit,body:not(.authenticated) .toggle{background:rgba(15,86,153,.75)!important;background-color:rgba(15,86,153,.75)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:rgba(255,255,255,.3)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body:not(.authenticated) .message:not(:empty){background:rgba(15,23,42,.75)!important;background-color:rgba(15,23,42,.75)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:rgba(255,255,255,.25)!important}
-.assessment-paper,.assessment-paper *{color:#171717!important;-webkit-text-fill-color:#171717!important}
-.assessment-paper{background:#fff!important;background-color:#fff!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-@media(prefers-reduced-transparency:reduce){body :is(main,header,section,article,aside,nav,form,fieldset,dialog,[role=dialog],[class*="card"],[class*="panel"],[class*="menu"],[class*="modal"],[class*="box"],[class*="section"],.owner-card,.dashpanel,.card){background:rgba(15,23,42,.95)!important;background-color:rgba(15,23,42,.95)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
-@media print{body,body *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}body :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,a,li,td,th,legend,summary,div){-webkit-text-fill-color:currentColor!important}}
+body:not(.authenticated) main{border:1px solid rgba(255,255,255,.28)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+body:not(.authenticated) main :is(h1,h2,h3,p,span,label,small,strong,a,div){}
+body:not(.authenticated) .field input,body:not(.authenticated) input[type=password],body:not(.authenticated) input[type=text]{caret-color:#fff!important;border:1px solid rgba(255,255,255,.38)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+body:not(.authenticated) .field input::placeholder{}
+body:not(.authenticated) .submit,body:not(.authenticated) .toggle{backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+body:not(.authenticated) .message:not(:empty){}
+.assessment-paper,.assessment-paper *{}
+.assessment-paper{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+@media(prefers-reduced-transparency:reduce){body :is(main,header,section,article,aside,nav,form,fieldset,dialog,[role=dialog],[class*="card"],[class*="panel"],[class*="menu"],[class*="modal"],[class*="box"],[class*="section"],.owner-card,.dashpanel,.card){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+@media print{body,body *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}body :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,a,li,td,th,legend,summary,div){}}
 </style>
 </head>
 <body>
