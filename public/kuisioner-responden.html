@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="id">
 <head>
+<link rel="stylesheet" href="/kuisioner-responden-layout.css?v=2.0.0">
+<link rel="stylesheet" href="/transparent-theme.css?v=2.0.0">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="dark">
@@ -8,136 +10,16 @@
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#075b9a">
 <title>Menghubungkan Kuesioner</title>
-<style>
-:root{color-scheme:dark;--cyan:#54e6ff;--blue:#0878c9}
-*{box-sizing:border-box}
-html,body{width:100%;height:100%;margin:0;overflow:hidden}
-body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background-image:url("/danau-toba/photo-1.jpg?v=1.3.0");isolation:isolate}
-body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none}
-.stage{position:absolute;inset:0;z-index:1;display:grid;place-items:center;padding:24px 18px 52px;perspective:1000px}
-.cube{position:relative;z-index:2;width:clamp(170px,52vw,230px);height:clamp(170px,52vw,230px);transform-style:preserve-3d;animation:cube-spin 3s linear infinite;filter:none;visibility:visible;opacity:1}
-.face{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;border:0;border-radius:22px;backdrop-filter:blur(1.5px);-webkit-backdrop-filter:blur(1.5px);backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.face svg,.face img{display:block;width:76%;height:76%;object-fit:contain;overflow:visible;visibility:visible;opacity:1;filter:drop-shadow(0 3px 5px rgba(0,25,65,.18))}
-.front{transform:translateZ(92px)}.right{transform:rotateY(90deg) translateZ(92px)}.back{transform:rotateY(180deg) translateZ(92px)}.left{transform:rotateY(-90deg) translateZ(92px)}
-.orbit{position:absolute;width:clamp(255px,76vw,370px);height:clamp(100px,28vw,140px);border:2px solid rgba(91,237,255,.82);border-left-color:rgba(91,237,255,.14);border-right-color:rgba(91,237,255,.14);border-radius:50%;transform:rotate(-17deg);animation:orbit-pulse 2.3s ease-in-out infinite;pointer-events:none}
-.loading{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(72vw,410px);height:5px;border-radius:99px;overflow:hidden}
-.loading span{display:block;width:0;height:100%;border-radius:inherit;animation:load 3s linear forwards}
-.final-logo{display:none;position:fixed;inset:0;align-items:center;justify-content:center;padding:32px;z-index:5;opacity:0}
-.final-logo img{display:block;width:min(68vw,320px);max-height:55vh;object-fit:contain}
-body.final-screen{}
-body.final-screen::before,body.final-screen .stage,body.final-screen .loading{display:none}
-body.final-screen .final-logo{display:flex;animation:final-in .18s ease-out forwards}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-@keyframes cube-spin{0%{transform:rotateX(-12deg) rotateY(0deg)}100%{transform:rotateX(-12deg) rotateY(360deg)}}
-@keyframes orbit-pulse{0%,100%{opacity:.66;scale:.96}50%{opacity:1;scale:1.03}}
-@keyframes load{0%{width:0}100%{width:100%}}
-@keyframes final-in{from{opacity:0}to{opacity:1}}
-@media(max-width:480px){.stage{padding-bottom:46px}.cube{width:164px;height:164px}.front{transform:translateZ(66px)}.right{transform:rotateY(90deg) translateZ(66px)}.back{transform:rotateY(180deg) translateZ(66px)}.left{transform:rotateY(-90deg) translateZ(66px)}.face{border-radius:17px}.orbit{width:260px;height:100px}}
-@media(prefers-reduced-motion:reduce){.cube,.orbit,.loading span{animation-duration:3s}}
-</style>
-
-  <style id="readable-wait-screen-v1-1-9">
-    :root{color-scheme:light}
-    body{background-image:url("/danau-toba/photo-1.jpg?v=1.3.0")}
-    body::before{}
-    .loading{}
-    .loading span{}
-    .final-logo{}
-  </style>
 
 
-<style id="sahabat-global-glass-v1-1-30">
-:root{color-scheme:dark!important;--ink:#fff!important;--muted:#fff!important;--line:rgba(255,255,255,.32)!important;--bg:#163847!important;--paper:rgba(3,17,27,.17)!important}
-html,body{min-height:100%}
-body{background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;background-attachment:fixed!important}
-body,body *{}
-body:not(.authenticated)::before,body:not(.authenticated)::after{display:none!important;content:none!important}
-body :is(input,textarea,select,option,[contenteditable="true"]){caret-color:#fff!important}
-body input::placeholder,body textarea::placeholder{opacity:1!important}
-body select option{}
-body :is(main:not(.paper),header:not(.letterhead),footer,nav,.topbar,.toolbar,.panel,.card,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.stat,.profile,.staff,.notice,.notice-card,.form-card,.link-box,.table-wrap,.message,.status,.warning,dialog,fieldset,.hero,.quick-card,.workspace-card,.dashboard-card,.settings-panel,.notification-panel,.profile-bar,.login-panel,.menu-card,.info-card,.stat-card,.quick-link,.profile-setup,.section-card,.panel-card,.form,.data-card,.settings-row,.notification-item,.assessment-section-title,.assessment-subtitle,.profile-setup,.link-box,.to,.letter-date-line){backdrop-filter:blur(18px) saturate(118%)!important;-webkit-backdrop-filter:blur(18px) saturate(118%)!important}
-body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save){border:1px solid rgba(255,255,255,.42)!important;backdrop-filter:blur(14px)!important;-webkit-backdrop-filter:blur(14px)!important}
-body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save):hover{}
-body :is(.muted,.empty,.success,.ok,.error,.danger,.warning,.status,.message,.settings-status,.alert,.pill,.badge,.tag){}
-body :is(.app-nav button[aria-current="page"],.active,.selected,[aria-pressed="true"]){}
-body .paper{backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important}
-body .paper *{}
-body .letterhead{}
-body :is(.owner-avatar,.avatar,.profile-photo){}
-body :is(table,th,td){}
-body :is([hidden],template){display:none!important}
-@media(prefers-reduced-transparency:reduce){body :is(main:not(.paper),header:not(.letterhead),footer,nav,.topbar,.toolbar,.panel,.card,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.stat,.profile,.staff,.notice,.form-card,.table-wrap,.settings-panel,.notification-panel,.paper){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
-@media print{
- html,body{}
- body,body *{}
- body .paper{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
- body .paper *{}
- body :is(.topbar,.toolbar,.no-print,.editor-panel){display:none!important}
-}
+  
 
-/* v1.1.26: unify every interactive surface as lightweight glass, not opaque cards. */
-body :is(main:not(.paper),section:not(.paper),article,aside,header:not(.letterhead),footer,nav,form,fieldset,dialog,.card,.panel,.topbar,.toolbar,.workspace,.workspace-card,.dashboard-card,.owner-card,.profile-card,.profile-panel,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.modal-content,.drawer,.menu-card,.quick-card,.quick-link,.stat-card,.overview-card,.overview-panel,.status-card,.notice-card,.upload-card,.document-card,.assessment-card){-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important}
-body :is(input,textarea,select,option,[contenteditable="true"],.input,.field){}
-body :is(input,textarea,select,option,[contenteditable="true"])::placeholder{opacity:1!important}
-body :is(.muted,.empty,.success,.ok,.error,.danger,.warning,.status,.message,.settings-status,.alert,.pill,.badge,.tag,.hint,.helper,.caption,.subtitle,.secondary-text){}
-body :is(.profile-actions,.owner-actions,.account-actions,.header-actions,.profile-controls,.action-icons,.icon-actions,.icon-button-group){border:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-@media print{html,body{}body,body *{}body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
 
-/* v1.1.27: enforce circular, unboxed top-right actions and consistent high-transparency surfaces. */
-body .owner-header-actions,body .top-actions{position:relative!important;border:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-body .owner-header-actions{position:absolute!important;top:16px!important;right:16px!important;z-index:50!important}
-body .top-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:12px!important}
-body :is(#notificationBellButton,#settingsButton,#logoutButton){width:56px!important;height:56px!important;min-width:56px!important;min-height:56px!important;aspect-ratio:1/1!important;flex:0 0 56px!important;padding:0!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border:1px solid rgba(255,255,255,.42)!important;-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important}
-body :is(#notificationBellButton,#settingsButton,#logoutButton)::before,body :is(#notificationBellButton,#settingsButton,#logoutButton)::after{content:none!important;display:none!important}
-body :is(#notificationBellButton,#settingsButton,#logoutButton) svg{width:24px!important;height:24px!important;flex:0 0 24px!important}
-@media(max-width:640px){body .owner-header-actions{top:10px!important;right:10px!important}body .top-actions{gap:8px!important}body :is(#notificationBellButton,#settingsButton,#logoutButton){width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;flex-basis:44px!important}body :is(#notificationBellButton,#settingsButton,#logoutButton) svg{width:20px!important;height:20px!important}}
-body,body *{}
-body :is(main:not(.paper),section:not(.paper),article,aside,header:not(.letterhead),footer,nav,form,fieldset,dialog,.card,.panel,.topbar,.toolbar,.workspace,.workspace-card,.dashboard-card,.owner-card,.profile-card,.profile-panel,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.modal-content,.drawer,.menu-card,.quick-card,.quick-link,.stat-card,.overview-card,.overview-panel,.status-card,.notice-card,.upload-card,.document-card,.assessment-card){-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important}
-@media print{body,body *{}body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
-</style>
 
-<style id="sahabat-glass-opacity75-blur16-v1-1-30">
-:root{color-scheme:dark!important}
-@media screen{
-body,body *{}
-body :is(main,header:not(.letterhead),nav,aside,section:not(.paper),article:not(.paper),form,fieldset,dialog,.card,.panel,.glass-card,.dashboard-card,.menu-card,.sidebar,.navbar,.modal-content,.menu-item,.dashboard-container,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.drawer,.quick-card,.quick-link,.stat-card,.status-card,.notice-card,.upload-card,.document-card,.assessment-card,.workspace-card,.profile-card,.profile-panel,.stat,.staff,.profile,.notice,.field,.message,.status,.warning,.topbar,.toolbar,.shell,.top-actions,.owner-header-actions,.settings-row,.notification-item,.news-card,.respondent-stat,.respondent-quiz-panel,.respondent-quiz-note){backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;border-radius:16px!important}
-body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save,.owner-edit,.settings-button,.bell-button){border:1px solid rgba(255,255,255,.12)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body :is(input,select,textarea,[contenteditable="true"]){border:1px solid rgba(255,255,255,.2)!important;backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important}
-body :is(input,textarea)::placeholder{opacity:1!important}
-body select option{}
-body .paper,body .paper *{}
-body .paper{border-radius:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-}
-@media print{
-html,body{}
-body,body *{}
-body .paper{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-body .paper *{}
-body :is(.topbar,.toolbar,.no-print,.editor-panel){display:none!important}
-}
-</style>
 
-<style id="sahabat-glassmorphism-fix-v1-1-30">
-:root{--sahabat-glass-surface:rgba(15,23,42,.75);--sahabat-glass-border:rgba(255,255,255,.22);--sahabat-glass-blur:16px}
-html,body{}
-body :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,a,li,td,th,legend,summary,div,figcaption,caption){}
-body :is(main,header,section,article,aside,nav,form,fieldset,dialog,[role=dialog],[class*="card"],[class*="panel"],[class*="menu"],[class*="modal"],[class*="box"],[class*="section"],.owner-card,.dashpanel,.app-nav,.overview-card,.overview-panel,.respondent-stat,.news-card,.notification-panel,.settings-panel,.datawrap,.card){backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea,.link-url,.workflow-control){caret-color:#fff;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body :is(input,textarea,select)::placeholder,body :is(input,textarea)::placeholder{opacity:1!important}
-body :is(button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button,.assessment-upload){border:1px solid rgba(255,255,255,.28)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body :is(button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button):hover{}
-body :is(input,select,textarea,button,a):focus-visible{outline:2px solid rgba(255,255,255,.9)!important;outline-offset:2px}
-body:not(.authenticated) main{border:1px solid rgba(255,255,255,.28)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body:not(.authenticated) main :is(h1,h2,h3,p,span,label,small,strong,a,div){}
-body:not(.authenticated) .field input,body:not(.authenticated) input[type=password],body:not(.authenticated) input[type=text]{caret-color:#fff!important;border:1px solid rgba(255,255,255,.38)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body:not(.authenticated) .field input::placeholder{}
-body:not(.authenticated) .submit,body:not(.authenticated) .toggle{backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body:not(.authenticated) .message:not(:empty){}
-.assessment-paper,.assessment-paper *{}
-.assessment-paper{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-@media(prefers-reduced-transparency:reduce){body :is(main,header,section,article,aside,nav,form,fieldset,dialog,[role=dialog],[class*="card"],[class*="panel"],[class*="menu"],[class*="modal"],[class*="box"],[class*="section"],.owner-card,.dashpanel,.card){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
-@media print{body,body *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}body :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,a,li,td,th,legend,summary,div){}}
-</style>
+
+
+
 </head>
 <body>
 <main class="stage" aria-label="Menghubungkan ke formulir kuesioner">
@@ -172,6 +54,6 @@ body:not(.authenticated) .message:not(:empty){}
 })();
 </script>
 
-<link rel="stylesheet" href="/transparent-theme.css?v=1.1.40">
+
 </body>
 </html>

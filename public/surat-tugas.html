@@ -1,119 +1,20 @@
 <!doctype html>
 <html lang="id">
 <head>
+<link rel="stylesheet" href="/surat-tugas-layout.css?v=2.0.0">
+<link rel="stylesheet" href="/transparent-theme.css?v=2.0.0">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <meta name="color-scheme" content="dark">
 <title>Surat Tugas — Sahabat ODHIV Sumut</title>
-<style>
-:root{color-scheme:light;--ink:#111;--muted:#52616b;--line:#d7dde2;--panel:#f4f7f9}
-*{box-sizing:border-box}
-body{margin:0;font-family:"Times New Roman",serif}
-.toolbar{position:sticky;top:0;z-index:5;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;padding:12px;border-bottom:1px solid var(--line);font:14px Arial,sans-serif}
-.toolbar a,.toolbar button{border:1px solid #bdcbd5;border-radius:999px;padding:10px 16px;text-decoration:none;font:600 14px Arial,sans-serif;cursor:pointer}
-.toolbar button.primary{}
-.hint{width:100%;text-align:center;font-size:12px}
-.paper{width:min(210mm,calc(100% - 24px));min-height:297mm;margin:22px auto;padding:22mm 25mm 20mm;font-size:12pt;line-height:1.35}.letterhead{display:grid;grid-template-columns:85px minmax(0,1fr);gap:14px;align-items:center;padding:0 0 11px;margin-bottom:25px;border-bottom:3px double #111;text-align:center}.letterhead img{width:85px;height:77px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}.letterhead strong{display:block;font-size:12pt;line-height:1.28}.letterhead small{display:block;font-size:8.5pt;line-height:1.35;margin-top:4px}.date-line{display:block;width:100%;text-align:right;margin:0 0 18px;break-inside:avoid;page-break-inside:avoid}
-.center{text-align:center}.title{font-weight:bold;text-decoration:underline;font-size:14pt;margin:0}.number{font-weight:bold;margin:2px 0 22px}.section{display:grid;grid-template-columns:95px 16px 1fr;gap:0 4px;margin:0 0 12px}.label{white-space:nowrap}.value{min-width:0}.value p{margin:0 0 3px}.indent{padding-left:20px;text-indent:-20px}.assign{text-align:center;font-weight:bold;letter-spacing:.4px;margin:16px 0 12px}.signature{width:48%;margin:36px 0 0 auto;text-align:left;break-inside:avoid;page-break-inside:avoid}.signature .sign-gap{height:50px}.editable{outline:none;border-radius:2px}.editable:focus{}.date-line{text-align:right;margin:0 0 18px}.closing{margin-top:18px;text-align:justify}
-@page{size:A4 portrait;margin:0}
-@media(max-width:650px){.paper{width:100%;min-height:0;margin:0;padding:18mm 15mm;font-size:11pt}.letterhead{grid-template-columns:68px minmax(0,1fr);gap:8px}.letterhead img{width:68px;height:62px}.letterhead strong{font-size:10pt}.letterhead small{font-size:7.5pt}.section{grid-template-columns:76px 12px 1fr}.signature{width:65%}.toolbar{position:static}}
-@media print{body{}.toolbar{display:none!important}.paper{width:210mm;min-height:297mm;margin:0;padding:22mm 25mm 20mm;font-size:12pt}.letterhead{grid-template-columns:85px minmax(0,1fr);margin-bottom:22px}.letterhead img{width:85px;height:77px}.date-line{text-align:right}.editable:focus{}}
-</style>
 
-<style id="sahabat-global-glass-v1-1-30">
-:root{color-scheme:dark!important;--ink:#fff!important;--muted:#fff!important;--line:rgba(255,255,255,.32)!important;--bg:#163847!important;--paper:rgba(3,17,27,.17)!important}
-html,body{min-height:100%}
-body{background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;background-attachment:fixed!important}
-body,body *{}
-body:not(.authenticated)::before,body:not(.authenticated)::after{display:none!important;content:none!important}
-body :is(input,textarea,select,option,[contenteditable="true"]){caret-color:#fff!important}
-body input::placeholder,body textarea::placeholder{opacity:1!important}
-body select option{}
-body :is(main:not(.paper),header:not(.letterhead),footer,nav,.topbar,.toolbar,.panel,.card,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.stat,.profile,.staff,.notice,.notice-card,.form-card,.link-box,.table-wrap,.message,.status,.warning,dialog,fieldset,.hero,.quick-card,.workspace-card,.dashboard-card,.settings-panel,.notification-panel,.profile-bar,.login-panel,.menu-card,.info-card,.stat-card,.quick-link,.profile-setup,.section-card,.panel-card,.form,.data-card,.settings-row,.notification-item,.assessment-section-title,.assessment-subtitle,.profile-setup,.link-box,.to,.letter-date-line){backdrop-filter:blur(18px) saturate(118%)!important;-webkit-backdrop-filter:blur(18px) saturate(118%)!important}
-body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save){border:1px solid rgba(255,255,255,.42)!important;backdrop-filter:blur(14px)!important;-webkit-backdrop-filter:blur(14px)!important}
-body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save):hover{}
-body :is(.muted,.empty,.success,.ok,.error,.danger,.warning,.status,.message,.settings-status,.alert,.pill,.badge,.tag){}
-body :is(.app-nav button[aria-current="page"],.active,.selected,[aria-pressed="true"]){}
-body .paper{backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important}
-body .paper *{}
-body .letterhead{}
-body :is(.owner-avatar,.avatar,.profile-photo){}
-body :is(table,th,td){}
-body :is([hidden],template){display:none!important}
-@media(prefers-reduced-transparency:reduce){body :is(main:not(.paper),header:not(.letterhead),footer,nav,.topbar,.toolbar,.panel,.card,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.stat,.profile,.staff,.notice,.form-card,.table-wrap,.settings-panel,.notification-panel,.paper){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
-@media print{
- html,body{}
- body,body *{}
- body .paper{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
- body .paper *{}
- body :is(.topbar,.toolbar,.no-print,.editor-panel){display:none!important}
-}
 
-/* v1.1.26: unify every interactive surface as lightweight glass, not opaque cards. */
-body :is(main:not(.paper),section:not(.paper),article,aside,header:not(.letterhead),footer,nav,form,fieldset,dialog,.card,.panel,.topbar,.toolbar,.workspace,.workspace-card,.dashboard-card,.owner-card,.profile-card,.profile-panel,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.modal-content,.drawer,.menu-card,.quick-card,.quick-link,.stat-card,.overview-card,.overview-panel,.status-card,.notice-card,.upload-card,.document-card,.assessment-card){-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important}
-body :is(input,textarea,select,option,[contenteditable="true"],.input,.field){}
-body :is(input,textarea,select,option,[contenteditable="true"])::placeholder{opacity:1!important}
-body :is(.muted,.empty,.success,.ok,.error,.danger,.warning,.status,.message,.settings-status,.alert,.pill,.badge,.tag,.hint,.helper,.caption,.subtitle,.secondary-text){}
-body :is(.profile-actions,.owner-actions,.account-actions,.header-actions,.profile-controls,.action-icons,.icon-actions,.icon-button-group){border:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-@media print{html,body{}body,body *{}body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
 
-/* v1.1.27: enforce circular, unboxed top-right actions and consistent high-transparency surfaces. */
-body .owner-header-actions,body .top-actions{position:relative!important;border:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-body .owner-header-actions{position:absolute!important;top:16px!important;right:16px!important;z-index:50!important}
-body .top-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:12px!important}
-body :is(#notificationBellButton,#settingsButton,#logoutButton){width:56px!important;height:56px!important;min-width:56px!important;min-height:56px!important;aspect-ratio:1/1!important;flex:0 0 56px!important;padding:0!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border:1px solid rgba(255,255,255,.42)!important;-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important}
-body :is(#notificationBellButton,#settingsButton,#logoutButton)::before,body :is(#notificationBellButton,#settingsButton,#logoutButton)::after{content:none!important;display:none!important}
-body :is(#notificationBellButton,#settingsButton,#logoutButton) svg{width:24px!important;height:24px!important;flex:0 0 24px!important}
-@media(max-width:640px){body .owner-header-actions{top:10px!important;right:10px!important}body .top-actions{gap:8px!important}body :is(#notificationBellButton,#settingsButton,#logoutButton){width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;flex-basis:44px!important}body :is(#notificationBellButton,#settingsButton,#logoutButton) svg{width:20px!important;height:20px!important}}
-body,body *{}
-body :is(main:not(.paper),section:not(.paper),article,aside,header:not(.letterhead),footer,nav,form,fieldset,dialog,.card,.panel,.topbar,.toolbar,.workspace,.workspace-card,.dashboard-card,.owner-card,.profile-card,.profile-panel,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.modal-content,.drawer,.menu-card,.quick-card,.quick-link,.stat-card,.overview-card,.overview-panel,.status-card,.notice-card,.upload-card,.document-card,.assessment-card){-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important}
-@media print{body,body *{}body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
-</style>
 
-<style id="sahabat-glass-opacity75-blur16-v1-1-30">
-:root{color-scheme:dark!important}
-@media screen{
-body,body *{}
-body :is(main,header:not(.letterhead),nav,aside,section:not(.paper),article:not(.paper),form,fieldset,dialog,.card,.panel,.glass-card,.dashboard-card,.menu-card,.sidebar,.navbar,.modal-content,.menu-item,.dashboard-container,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.drawer,.quick-card,.quick-link,.stat-card,.status-card,.notice-card,.upload-card,.document-card,.assessment-card,.workspace-card,.profile-card,.profile-panel,.stat,.staff,.profile,.notice,.field,.message,.status,.warning,.topbar,.toolbar,.shell,.top-actions,.owner-header-actions,.settings-row,.notification-item,.news-card,.respondent-stat,.respondent-quiz-panel,.respondent-quiz-note){backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;border-radius:16px!important}
-body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save,.owner-edit,.settings-button,.bell-button){border:1px solid rgba(255,255,255,.12)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body :is(input,select,textarea,[contenteditable="true"]){border:1px solid rgba(255,255,255,.2)!important;backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important}
-body :is(input,textarea)::placeholder{opacity:1!important}
-body select option{}
-body .paper,body .paper *{}
-body .paper{border-radius:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-body .paper :is(section,article,header,form,fieldset,.card,.panel,.topbar,.toolbar,.field,.status,.warning){backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-radius:0!important}
-}
-@media print{
-html,body{}
-body,body *{}
-body .paper{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-body .paper *{}
-body :is(.topbar,.toolbar,.no-print,.editor-panel){display:none!important}
-}
-</style>
 
-<style id="sahabat-glassmorphism-fix-v1-1-30">
-:root{--sahabat-glass-surface:rgba(15,23,42,.75);--sahabat-glass-border:rgba(255,255,255,.22);--sahabat-glass-blur:16px}
-html,body{}
-body :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,a,li,td,th,legend,summary,div,figcaption,caption){}
-body :is(main,header,section,article,aside,nav,form,fieldset,dialog,[role=dialog],[class*="card"],[class*="panel"],[class*="menu"],[class*="modal"],[class*="box"],[class*="section"],.owner-card,.dashpanel,.app-nav,.overview-card,.overview-panel,.respondent-stat,.news-card,.notification-panel,.settings-panel,.datawrap,.card){backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea,.link-url,.workflow-control){caret-color:#fff;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body :is(input,textarea,select)::placeholder,body :is(input,textarea)::placeholder{opacity:1!important}
-body :is(button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button,.assessment-upload){border:1px solid rgba(255,255,255,.28)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body :is(button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button):hover{}
-body :is(input,select,textarea,button,a):focus-visible{outline:2px solid rgba(255,255,255,.9)!important;outline-offset:2px}
-body:not(.authenticated) main{border:1px solid rgba(255,255,255,.28)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body:not(.authenticated) main :is(h1,h2,h3,p,span,label,small,strong,a,div){}
-body:not(.authenticated) .field input,body:not(.authenticated) input[type=password],body:not(.authenticated) input[type=text]{caret-color:#fff!important;border:1px solid rgba(255,255,255,.38)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body:not(.authenticated) .field input::placeholder{}
-body:not(.authenticated) .submit,body:not(.authenticated) .toggle{backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-body:not(.authenticated) .message:not(:empty){}
-.assessment-paper,.assessment-paper *{}
-.assessment-paper{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-@media(prefers-reduced-transparency:reduce){body :is(main,header,section,article,aside,nav,form,fieldset,dialog,[role=dialog],[class*="card"],[class*="panel"],[class*="menu"],[class*="modal"],[class*="box"],[class*="section"],.owner-card,.dashpanel,.card){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
-@media print{body,body *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}body :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,a,li,td,th,legend,summary,div){}}
-</style>
+
+
 </head>
 <body>
 <div class="toolbar" aria-label="Kontrol dokumen">
@@ -164,6 +65,6 @@ document.getElementById("printButton").addEventListener("click",()=>window.print
 document.getElementById("resetButton").addEventListener("click",()=>{if(confirm("Pulihkan seluruh isi surat ke teks awal?"))document.querySelector(".paper").innerHTML=original;});
 </script>
 
-<link rel="stylesheet" href="/transparent-theme.css?v=1.1.40">
+
 </body>
 </html>

@@ -2,7 +2,6 @@ import { readFileSync, statSync } from "node:fs";
 import assert from "node:assert/strict";
 
 const dashboard = readFileSync("public/index.html", "utf8");
-const loginCss = readFileSync("public/login.css", "utf8");
 const transparentCss = readFileSync("public/transparent-theme.css", "utf8");
 const manifest = JSON.parse(readFileSync("public/manifest.json", "utf8"));
 const offlinePage = readFileSync("android-app/app/src/main/assets/offline.html", "utf8");
@@ -32,10 +31,8 @@ assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='ow
 assert.match(worker, /owner_profile_update/);
 assert.equal(pkg.version, "1.1.30");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
-assert.ok(dashboard.includes('href="style.css?v=1.1.40"') && dashboard.includes('href="login.css?v=1.1.40"'), "legacy CSS URLs must remain cache-busted.");
-assert.ok(loginCss.includes("Legacy Login stylesheet retired"), "legacy login CSS must be retired rather than layered over.");
-assert.ok(transparentCss.includes("background:transparent!important") && transparentCss.includes("background-color:transparent!important"), "replacement stylesheet must enforce transparent surfaces.");
-assert.ok(!/background-color\s*:\s*rgba?\(\s*(?:15,\s*23,\s*42|24,\s*32,\s*35|15,\s*86,\s*153)/i.test(transparentCss), "replacement stylesheet must not use legacy opaque/slate/blue fills.");
+assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.0"') && dashboard.includes('href="/transparent-theme.css?v=2.0.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
+assert.ok(transparentCss.includes("--sahabat-glass-blur:16px") && transparentCss.includes("--sahabat-glass-bg:rgba(15,23,42,.70)") && transparentCss.includes("color:#fff!important"), "shared theme must use glassmorphism, blur 16px, and white typography.");
 assert.match(gradle, /versionCode 22/);
 assert.match(gradle, /versionName '1\.2\.19'/);
 assert.match(changelog, /^## 1\.1\.18/m);
@@ -57,11 +54,11 @@ assert.ok(androidReadme.includes("Android package version: **1.2.19** (`versionC
 assert.ok(androidReadme.includes("web version **1.1.30**"), "Android README must state current web version");
 assert.ok(rootReadme.includes("release version `1.2.19` (version code `22`)"), "root README must match Android release version");
 assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.19"), "root README artifact link name must match release workflow");
-assert.ok(dashboard.includes('href="/transparent-theme.css?v=1.1.40"'), "dashboard must load the shared transparent stylesheet.");
+assert.ok(dashboard.includes('href="/transparent-theme.css?v=2.0.0"'), "dashboard must load the shared transparent stylesheet.");
 assert.match(dashboard, /id="notificationBellButton"/);
 assert.ok(dashboard.includes("#editOwnerProfile"), "edit-profile pill style must be present");
-assert.ok(teamManager.includes('/transparent-theme.css?v=1.1.40'), "team manager must load shared transparent stylesheet.");
-assert.ok(staffRoster.includes('/transparent-theme.css?v=1.1.40'), "staff roster must load shared transparent stylesheet.");
+assert.ok(teamManager.includes('/transparent-theme.css?v=2.0.0'), "team manager must load shared transparent stylesheet.");
+assert.ok(staffRoster.includes('/transparent-theme.css?v=2.0.0'), "staff roster must load shared transparent stylesheet.");
 assert.ok(staffRoster.includes("staff=(teamData.items||[]).filter(person=>Number(person.active)===1);"), "inactive staff must not enter profiles, selections, or achievement totals");
 assert.ok(staffRoster.includes("Petugas aktif"), "roster metric must count only active staff");
 
@@ -73,7 +70,11 @@ const themedPages = [
 ];
 for (const path of themedPages) {
   const html = readFileSync(path, "utf8");
-  assert.ok(html.includes('/transparent-theme.css?v=1.1.40'), path + " must load the replacement transparent stylesheet.");
+  assert.ok(html.includes('/transparent-theme.css?v=2.0.0'), path + " must load the current shared glass theme.");
+  assert.doesNotMatch(html, /<style\b/i, path + " must not retain inline CSS blocks.");
+  const slug = path === "public/index.html" ? "app" : path.split("/").pop().replace(/\.html$/, "");
+  const layoutHref = path === "public/index.html" ? '/app-layout.css?v=2.0.0' : '/' + slug + '-layout.css?v=2.0.0';
+  assert.ok(html.includes(layoutHref), path + " must load its extracted layout stylesheet.");
 }
 const hillBackground = readFileSync("public/dashboard-background.webp");
 assert.equal(hillBackground.toString("ascii", 0, 4), "RIFF", "dashboard photo must be a WebP/RIFF asset");
@@ -85,14 +86,14 @@ assert.ok(offlinePage.includes('<meta name="color-scheme" content="dark">'), "na
 assert.ok(offlinePage.includes("background-color:rgba(15,23,42,.75)!important") || offlinePage.includes("background:transparent"), "native offline surfaces must retain explicit surface styling.");
 assert.ok(offlinePage.includes("body,body *{color:#fff!important"), "native offline screen text must be white");
 assert.ok(offlinePage.includes("backdrop-filter:blur(16px)!important") || offlinePage.includes("background:transparent"), "native offline surfaces must use their configured surface style.");
-assert.ok(dashboard.includes('href="/transparent-theme.css?v=1.1.40"'), "dashboard uses the replacement transparent theme.");
-assert.ok(transparentCss.includes("background-color:transparent!important"), "shared UI surfaces must be transparent.");
+assert.ok(dashboard.includes('href="/transparent-theme.css?v=2.0.0"'), "dashboard uses the replacement transparent theme.");
+assert.ok(transparentCss.includes("--sahabat-glass-bg:rgba(15,23,42,.70)") && transparentCss.includes("backdrop-filter:blur(var(--sahabat-glass-blur))"), "shared UI surfaces must use the centralized glass treatment.");
 assert.ok(dashboard.includes("owner-header-actions"), "owner header actions must remain available.");
 assert.ok(dashboard.includes('id="settingsButton"') && dashboard.includes('id="logoutButton"'), "settings and logout controls must remain available.");
-assert.ok(dashboard.includes('background-image:url("/danau-toba/photo-1.jpg?v=1.2.9")'), "login page background photo must remain configured.");
+assert.ok(transparentCss.includes('background-image:url("/danau-toba/photo-1.jpg?v=2.0.0")') && dashboard.includes("/danau-toba/photo-1.jpg?v=1.2.9"), "login background photo and slideshow must remain configured.");
 for (const path of themedPages) {
   const html = readFileSync(path, "utf8");
-  assert.ok(html.includes("/transparent-theme.css?v=1.1.40"), path + " must load the shared replacement theme.");
+  assert.ok(html.includes("/transparent-theme.css?v=2.0.0"), path + " must load the shared replacement theme.");
 }
 
 console.log("PASS global glass theme, hill background, owner profile sync, CI version gate, Android artifacts, and release documentation are synchronized");
