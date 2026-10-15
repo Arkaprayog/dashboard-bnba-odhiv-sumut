@@ -1,11 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#fff5d9"/><stop offset="1" stop-color="#f0d19a"/></linearGradient><linearGradient id="map" x2="1" y2="1"><stop stop-color="#1465d7"/><stop offset="1" stop-color="#06418d"/></linearGradient><linearGradient id="ribbon" x2="1" y2="1"><stop stop-color="#ff493b"/><stop offset="1" stop-color="#b90017"/></linearGradient></defs>
-<rect width="512" height="512" rx="100" fill="#102b3b"/><rect x="13" y="13" width="486" height="486" rx="88" fill="url(#bg)" stroke="#d7b97e" stroke-width="7"/>
-<path d="M74 82l50-20 46 18 29-13 45 22 43-18 27 26 48 5 20 29 40 11 10 40-18 24 23 37-20 30-17 33-30 11-12 40-32 18-27-19-32 18-25-26-30 10-22-22-34 6-20-25-25 4-14-30-29-3-4-29-24-14 8-29-22-24 13-24-17-28 14-25-14-22z" fill="url(#map)" stroke="#082d6d" stroke-width="4" stroke-linejoin="round"/>
-<path d="M113 101l43 26-13 31 35 18-7 32 37 23-15 34 29 17-12 39 35 18M210 77l-12 39 26 20-8 33 29 19-9 33 25 18-5 32 32 20M284 96l-12 35 31 16-6 28 29 19-11 31 31 18-2 32 30 21M91 210l38 4 17 27 38-4 20 26M170 318l38-14 22 18 35-7 17 27M315 272l32 3 18 24 37-3" fill="none" stroke="#8ac6ee" stroke-width="3" opacity=".65"/>
-<path d="M115 345L256 67 400 345 349 345 256 166 164 345z" fill="#49d5dc" fill-opacity=".36" stroke="#c2f7ff" stroke-width="8" stroke-linejoin="round"/>
-<path d="M257 68L257 345 400 345z" fill="#0c75c5" fill-opacity=".35"/>
-<path d="M300 218c-25-31-69-11-58 22l40 55 33 45 34-28-40-50c-8-10-10-23-2-33 10-12 28-7 34 5l17 28 27-17-20-34c-18-30-47-34-65-17z" fill="url(#ribbon)" stroke="#9c1322" stroke-width="5" transform="translate(-8 -7) rotate(-8 320 270)"/>
-<g stroke="#125b61" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="126" cy="351" r="20" fill="#bd7952"/><path d="M105 346q2-27 24-26 19 2 18 21l-11-7-17 7z" fill="#182d3b"/><path d="M106 375q19-14 38 0l13 48h-63z" fill="#28b889"/><circle cx="192" cy="369" r="18" fill="#d99870"/><path d="M173 365q0-23 22-24 17 1 19 22l-15-8-20 12z" fill="#152d3c"/><path d="M171 390q22-12 41 3l14 44h-64z" fill="#f1b62d"/><circle cx="257" cy="374" r="19" fill="#b97955"/><path d="M238 369q3-22 22-22 19 2 18 22l-17-9-20 9z" fill="#173341"/><path d="M235 397q22-15 44 0l15 44h-74z" fill="#4f9f91"/><circle cx="323" cy="366" r="18" fill="#b87953"/><path d="M305 362q2-23 21-23 20 1 20 22l-18-8-20 9z" fill="#183342"/><path d="M303 389q21-13 42 0l14 44h-69z" fill="#efb12d"/><path d="M139 386q29 31 49 17M209 402q20 16 29 1M278 402q19 13 35-2" fill="none" stroke="#f3c19a" stroke-width="11"/></g>
-<text x="256" y="472" text-anchor="middle" font-family="Arial,sans-serif" font-size="48" font-weight="900" letter-spacing="1" fill="#07545b" stroke="#fff3d6" stroke-width="3" paint-order="stroke">SODARAMU</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+<title id="title">SODARAMU</title>
+<defs>
+ <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#effffb"/><stop offset="1" stop-color="#b8e6df"/></linearGradient>
+ <linearGradient id="sumatra" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#83a987"/><stop offset="1" stop-color="#d6d8a4"/></linearGradient>
+ <linearGradient id="ribbon" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff4b48"/><stop offset="1" stop-color="#b90020"/></linearGradient>
+ <linearGradient id="atensi" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f9cf56"/><stop offset=".48" stop-color="#4ca99b"/><stop offset="1" stop-color="#2f5e82"/></linearGradient>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur stdDeviation="7"/></filter>
+</defs>
+<rect width="512" height="512" rx="88" fill="#dff8f3"/>
+<rect x="24" y="24" width="464" height="464" rx="78" fill="#6a9d98" opacity=".28" filter="url(#shadow)"/>
+<rect x="26" y="22" width="460" height="460" rx="78" fill="url(#glass)" stroke="#9dcac3" stroke-width="3"/>
+<!-- Stylized Sumatra and nearby islands -->
+<path d="M145 75l26 9 17 25 29 12 7 27 24 17 9 27 24 16-8 27-23 15-10 29-24 13-18 31-17-7-9-29-23-18-7-25-21-18-5-27-20-17-7-27 9-21-6-21z" fill="url(#sumatra)" stroke="#5d8175" stroke-width="2"/>
+<g fill="#b6d3b2" stroke="#6e9585" stroke-width="1.5"><path d="M250 237l17 8 8 16-10 9-15-8-7-13z"/><path d="M278 270l13 6 6 12-9 7-13-8z"/><path d="M301 290l10 3 6 10-8 5-9-8z"/><path d="M225 285l8 3 4 11-8 5-6-8z"/></g>
+<g fill="#456d67" font-family="Arial,sans-serif" font-size="8" font-weight="600"><text x="172" y="116">SUMATERA</text><text x="192" y="143">MEDAN</text></g>
+<circle cx="207" cy="151" r="10" fill="#4c7777" stroke="#e8ffff" stroke-width="3"/><circle cx="207" cy="151" r="3" fill="#fff"/>
+<!-- ATENSI-inspired geometric A -->
+<path d="M120 356L255 102 390 356H345L255 187 165 356z" fill="url(#atensi)" opacity=".95"/>
+<path d="M255 102L255 356 120 356z" fill="#35a994" opacity=".65"/><path d="M255 102L390 356H255z" fill="#1c5074" opacity=".48"/>
+<!-- Red support ribbon -->
+<path d="M105 268C75 222 101 175 150 154" fill="none" stroke="url(#ribbon)" stroke-width="13" stroke-linecap="round"/>
+<path d="M359 115C420 119 444 156 423 202C406 239 361 271 319 300" fill="none" stroke="url(#ribbon)" stroke-width="15" stroke-linecap="round"/>
+<circle cx="359" cy="114" r="20" fill="url(#ribbon)"/>
+<path d="M267 243C248 216 215 234 226 259L286 328L330 270C350 242 319 219 300 242L278 268z" fill="url(#ribbon)" stroke="#a71924" stroke-width="2" transform="rotate(8 278 275)"/>
+<!-- Four people standing together -->
+<g stroke-linecap="round" stroke-linejoin="round">
+ <path d="M114 348Q128 314 149 336L171 373 155 393 112 379z" fill="#3aa78e"/><circle cx="143" cy="319" r="17" fill="#b87853"/><path d="M126 320Q120 297 144 300Q162 301 159 316L149 309 134 313z" fill="#243e4d"/>
+ <path d="M163 374Q180 342 200 365L222 393 202 414 158 399z" fill="#e4bb45"/><circle cx="190" cy="347" r="17" fill="#d99a70"/><path d="M173 349Q171 326 192 328Q210 331 207 346L198 338 181 343z" fill="#263e4a"/>
+ <path d="M224 385Q244 347 267 372L285 412 268 430 220 410z" fill="#337e8b"/><circle cx="253" cy="354" r="18" fill="#bd805e"/><path d="M235 354Q232 330 255 332Q274 333 270 352L259 343 242 349z" fill="#233b4b"/>
+ <path d="M307 365Q327 334 349 357L370 391 351 410 306 393z" fill="#e6b74d"/><circle cx="337" cy="339" r="17" fill="#b87853"/><path d="M320 340Q317 317 339 319Q358 320 355 337L345 329 327 335z" fill="#243e4d"/>
+ <path d="M146 362Q171 388 196 386M203 384Q231 403 255 395M271 391Q300 405 324 383" fill="none" stroke="#d7a078" stroke-width="10"/>
+</g>
+<text x="256" y="448" text-anchor="middle" fill="#155f61" font-family="Arial,sans-serif" font-size="51" font-weight="800" letter-spacing="1">SODARAMU</text>
 </svg>
