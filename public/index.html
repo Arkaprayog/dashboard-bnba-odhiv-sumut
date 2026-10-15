@@ -1321,7 +1321,7 @@ function applyAssessmentAnswers(answers){
   else if(value!==undefined)input.value=String(value);
  });
  Object.keys(assessmentPhotos).forEach(key=>delete assessmentPhotos[key]);
- photoPreview?.replaceChildren();printPhotos?.replaceChildren();
+ photoPreview?.replaceChildren();printPhotos?.replaceChildren();photoInputs.forEach(([id,label])=>ensurePhotoPage(id,label));
  const savedPhotos=answers&&typeof answers.__photos==='object'&&answers.__photos?answers.__photos:{};
  photoInputs.forEach(([id,defaultLabel])=>{
   const saved=savedPhotos[id];
@@ -1384,7 +1384,7 @@ document.getElementById('assessmentPrint').addEventListener('click',()=>{
  const restore=()=>{document.title=originalTitle;document.body.classList.remove('assessment-print-mode');};
  window.addEventListener('afterprint',restore,{once:true});window.print();
 });
-document.getElementById('assessmentReset').addEventListener('click',()=>{if(confirm('Kosongkan semua jawaban dan foto pada form? Data yang sudah tersimpan di database tidak dihapus.')){form.reset();document.querySelectorAll('.assessment-number input').forEach(i=>i.value='');Object.keys(assessmentPhotos).forEach(key=>delete assessmentPhotos[key]);photoPreview?.replaceChildren();printPhotos?.replaceChildren();currentAssessmentId=null;assessmentMessage.textContent='Form dan foto dikosongkan. Data tersimpan di database tidak dihapus.'}});
+document.getElementById('assessmentReset').addEventListener('click',()=>{if(confirm('Kosongkan semua jawaban dan foto pada form? Data yang sudah tersimpan di database tidak dihapus.')){form.reset();document.querySelectorAll('.assessment-number input').forEach(i=>i.value='');Object.keys(assessmentPhotos).forEach(key=>delete assessmentPhotos[key]);photoPreview?.replaceChildren();printPhotos?.replaceChildren();photoInputs.forEach(([id,label])=>ensurePhotoPage(id,label));currentAssessmentId=null;assessmentMessage.textContent='Form dan foto dikosongkan. Data tersimpan di database tidak dihapus.'}});
 window.addEventListener('dashboard:authenticated',()=>{
  if(!csrfToken)return;
  refreshSavedAssessments().catch(error=>{assessmentMessage.textContent='Daftar asesmen belum dapat dimuat. '+assessmentErrorText(error);});
