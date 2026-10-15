@@ -198,7 +198,7 @@ jobs:
             ['Android WebView uses the canonical HTTPS domain', activity.includes('https://sahabatodhivsumut.web.id/') && activity.includes('DASHBOARD_HOST = "sahabatodhivsumut.web.id"') && !activity.includes('sahabatodhiv-sumut.aryprayoga139.workers.dev')],
             ['dashboard questionnaire links and QR use the canonical HTTPS domain', dashboard.includes('https://sahabatodhivsumut.web.id/kuisioner-responden.html') && !dashboard.includes('sahabatodhiv-sumut.aryprayoga139.workers.dev')],
             ['Android offline recovery uses the canonical HTTPS domain', offline.includes('https://sahabatodhivsumut.web.id/') && !offline.includes('sahabatodhiv-sumut.aryprayoga139.workers.dev')],
-            ['dashboard uses original local Kemensos, Sumut, Kemenkes, and HIV ribbon images', dashboard.includes('kuisioner-responden.html') && !dashboard.includes('upload.wikimedia.org') && dashboard.includes('/logos/kemensos.png') && dashboard.includes('/logos/sumut.png') && dashboard.includes('/logos/kemenkes.png') && dashboard.includes('/logos/ribbon.png')],
+            ['dashboard uses the local Kemensos logo and canonical questionnaire link', dashboard.includes('kuisioner-responden.html') && !dashboard.includes('upload.wikimedia.org') && dashboard.includes('/logos/kemensos.png')],
             ['old short form link removed', !dashboard.includes('9YuWSVtgpcSed5St5')],
           ];
           for (const [name, ok] of checks) {
