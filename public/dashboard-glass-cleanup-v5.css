@@ -1,0 +1,61 @@
+/* Dashboard glass cleanup v5 — appended last to neutralize legacy wrapper fills. */
+#dashboard {
+  width: 92% !important;
+  max-width: 480px !important;
+  min-width: 0 !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+  color: #fff !important;
+}
+#dashboard :is(
+  .owner-card, .owner-profile-side, .owner-summary, .owner-header-actions,
+  .app-nav, .app-nav button, .app-view, .overview-card, .overview-panel,
+  .overview-grid, .overview-panels, .dashpanel, .notification-panel,
+  .settings-panel, .datawrap, .datatable, .card, .container, .dashboard-card,
+  .profile-card, .menu-btn, .form-container, .stat-box, .document-card,
+  .assessment-box, .section-card, .panel, .panel-card, .content-card,
+  .form-card, .form-section, .table-wrap, .table-container, .modal-content,
+  .owner-form-grid, .owner-form-actions
+) {
+  background: rgba(255, 255, 255, 0.05) !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  box-sizing: border-box !important;
+}
+#dashboard :is(h1,h2,h3,h4,h5,h6,p,span,label,strong,small,legend,figcaption,button,a,li,th,td,dt,dd) {
+  color: #fff !important;
+}
+#dashboard :is(svg, svg *) {
+  color: #fff !important;
+}
+#dashboard :is(input,select,textarea) {
+  background: rgba(255,255,255,.05) !important;
+  background-color: rgba(255,255,255,.05) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,.25) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  backdrop-filter: blur(14px) !important;
+  box-shadow: none !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+#dashboard :is(input,textarea)::placeholder { color: rgba(255,255,255,.8) !important; }
+#dashboard :is(.owner-summary, .app-view, .overview-card, .overview-panel, .form-section) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+#dashboard .app-nav {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  width: 100% !important;
+  margin: 16px auto !important;
+}
+#dashboard .app-nav button { min-width: 0 !important; width: 100% !important; white-space: normal !important; }
+@media (max-width: 380px) {
+  #dashboard { width: 94% !important; }
+}
