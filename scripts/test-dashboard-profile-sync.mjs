@@ -10,6 +10,7 @@ const suratLainnyaCss = readFileSync("public/surat-lainnya-layout.css", "utf8");
 const suratTugas = readFileSync("public/surat-tugas.html", "utf8");
 const suratTugasCss = readFileSync("public/surat-tugas-layout.css", "utf8");
 const dashboardCss = readFileSync("public/app-layout.css", "utf8");
+const assessmentPrintCss = readFileSync("public/assessment-print-10-pages-v1.css", "utf8");
 const teamManager = readFileSync("public/kelola-tim.html", "utf8");
 const staffRoster = readFileSync("public/daftar-petugas.html", "utf8");
 const worker = readFileSync("src/index.ts", "utf8");
@@ -34,6 +35,12 @@ assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='ow
 assert.match(worker, /owner_profile_update/);
 assert.equal(pkg.version, "1.1.38");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
+assert.ok(dashboard.includes('href="/assessment-print-10-pages-v1.css?v=1.1.38"'), "assessment must load the dedicated ten-page print stylesheet.");
+assert.ok(dashboard.includes('data-print-page=') && dashboard.includes('pageIndexForQuestion'), "assessment fields must be partitioned into six print pages.");
+assert.ok(dashboard.includes('HALAMAN 7 — LAMPIRAN FOTO DIRI (CLOSE-UP PPKS)') && dashboard.includes('HALAMAN 8 — LAMPIRAN FOTO KTP') && dashboard.includes('HALAMAN 9 — LAMPIRAN FOTO KARTU KELUARGA (KK)') && dashboard.includes('HALAMAN 10 — LAMPIRAN FOTO RUMAH TAMPAK DEPAN'), "all four photo appendices must be generated in the required order.");
+assert.ok(assessmentPrintCss.includes('size:A4 portrait') && assessmentPrintCss.includes('page-break-before:always') && assessmentPrintCss.includes('assessment-print-photo-page'), "print stylesheet must force A4 page breaks for the four appendices.");
+assert.ok(dashboard.includes('Data Base Kemensos RI DRSKPNO'), "login copyright must use the requested institution text.");
+
 assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.1"') && dashboard.includes('href="/transparent-theme.css?v=2.0.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
 assert.ok(transparentCss.includes("--sahabat-glass-blur:16px") && transparentCss.includes("--sahabat-glass-bg:rgba(15,23,42,.70)") && transparentCss.includes("color:#fff!important"), "shared theme must use glassmorphism, blur 16px, and white typography.");
 assert.match(gradle, /versionCode 23/);
