@@ -34,7 +34,7 @@ assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='ow
 assert.match(worker, /owner_profile_update/);
 assert.equal(pkg.version, "1.1.30");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
-assert.ok(dashboard.includes('href="style.css?v=1.1.39"') && dashboard.includes('href="login.css?v=1.1.39"'), "Login and global CSS must use the same cache-busted theme version.");
+assert.ok(dashboard.includes('href="style.css?v=1.1.40"') && dashboard.includes('href="login.css?v=1.1.40"'), "Login and global CSS must use the same cache-busted theme version.");
 assert.ok(!dashboard.includes("body:not(.authenticated) main :not(button):not(.submit):not(svg):not(path):not(img){color:#123b67!important"), "High-specificity blue text override must not affect the Login page.");
 assert.ok(dashboard.includes("body.authenticated main :not(button):not(.submit):not(svg):not(path):not(img){color:#123b67!important"), "Blue text override must be restricted to authenticated dashboard content.");
 assert.ok(loginCss.includes("background:rgba(24,32,35,.22)!important") && loginCss.includes("backdrop-filter:blur(8px) saturate(115%)!important"), "Login card must use the clear translucent glass surface.");
