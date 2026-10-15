@@ -1,4 +1,4 @@
-/* Sahabat ODHIV Sumut — canonical Login styles v1.1.35
+/* Sahabat ODHIV Sumut — canonical Login styles v1.1.37
    One source of truth for Login; dashboard styles remain in style.css. */
 html body:not(.authenticated){
   min-height:100svh;
@@ -155,12 +155,12 @@ html body:not(.authenticated) .rule{
 }
 
 
-/* v1.1.36: final Login contrast overrides; all informational copy must be white. */
+/* v1.1.37: explicit high-specificity Login typography and transparent glass surfaces. */
 html body:not(.authenticated) main{
-  background:rgba(24,32,35,.27)!important;
-  background-color:rgba(24,32,35,.27)!important;
+  background:rgba(24,32,35,.22)!important;
+  background-color:rgba(24,32,35,.22)!important;
   border-color:rgba(255,255,255,.58)!important;
-  -webkit-backdrop-filter:blur(8px) saturate(115%)!important;
+  -webkit-backdrop-filter:blur(6px) saturate(115%)!important;
   backdrop-filter:blur(8px) saturate(115%)!important;
 }
 html body:not(.authenticated) main :is(h1,h2,h3,h4,p,span,label,small,strong,em,b,i,a,li,div,footer, .foot,.setup,.ministry,.login-heading,.app-version){
@@ -170,10 +170,12 @@ html body:not(.authenticated) main :is(h1,h2,h3,h4,p,span,label,small,strong,em,
 }
 html body:not(.authenticated) main .submit,
 html body:not(.authenticated) main #message:not(:empty){
-  color:#111!important;
-  -webkit-text-fill-color:#111!important;
-  background:#fff!important;
-  background-color:#fff!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  background:rgba(15,86,153,.82)!important;
+  background-color:rgba(15,86,153,.82)!important;
+  border-color:rgba(255,255,255,.58)!important;
+  text-shadow:0 1px 3px rgba(0,0,0,.5)!important;
 }
 html body:not(.authenticated) main #password,
 html body:not(.authenticated) main #password::placeholder,
@@ -181,4 +183,18 @@ html body:not(.authenticated) main #togglePassword,
 html body:not(.authenticated) main #togglePassword svg *{
   color:#fff!important;
   -webkit-text-fill-color:#fff!important;
+}
+
+html body:not(.authenticated) main .login-heading h1,
+html body:not(.authenticated) main .login-heading p,
+html body:not(.authenticated) main .ministry,
+html body:not(.authenticated) main .ministry *,
+html body:not(.authenticated) main .directorate,
+html body:not(.authenticated) main .foot,
+html body:not(.authenticated) main .foot *,
+html body:not(.authenticated) main .setup,
+html body:not(.authenticated) main .setup *{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  text-shadow:0 1px 3px rgba(0,0,0,.58)!important;
 }
