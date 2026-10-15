@@ -133,3 +133,93 @@ html body.authenticated #dashboard .dashboard-landscape-brand{
   html body.authenticated #dashboard .overview-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
   html body.authenticated #dashboard .overview-panels{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
+
+/* Clean mobile dashboard layout — authoritative final overrides.
+   Prevent legacy fixed-width/sidebar rules from narrowing the authenticated workspace. */
+@media screen and (max-width: 768px) {
+  html body.authenticated,
+  html body.authenticated > main,
+  html body.authenticated main,
+  html body.authenticated main #dashboard {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+  }
+  html body.authenticated {
+    display: block !important;
+    margin: 0 !important;
+    padding: 8px !important;
+    overflow-x: clip !important;
+  }
+  html body.authenticated main {
+    display: block !important;
+    position: static !important;
+    margin: 0 auto !important;
+    padding: 10px !important;
+    transform: none !important;
+    float: none !important;
+  }
+  html body.authenticated main #dashboard {
+    display: block !important;
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+    float: none !important;
+  }
+  html body.authenticated main #dashboard > *,
+  html body.authenticated main #dashboard .app-view,
+  html body.authenticated main #dashboard .dashhead,
+  html body.authenticated main #dashboard .app-nav,
+  html body.authenticated main #dashboard .overview-grid,
+  html body.authenticated main #dashboard .overview-panels,
+  html body.authenticated main #dashboard .owner-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+    float: none !important;
+    transform: none !important;
+  }
+  html body.authenticated main #dashboard .owner-card {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    padding: 12px !important;
+  }
+  html body.authenticated main #dashboard .owner-summary {
+    flex: 1 1 180px !important;
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+  html body.authenticated main #dashboard .app-nav {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    padding: 8px !important;
+  }
+  html body.authenticated main #dashboard .app-nav button {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    font-size: clamp(0.8rem, 3.2vw, 1rem) !important;
+    line-height: 1.25 !important;
+  }
+  html body.authenticated main #dashboard .overview-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+  html body.authenticated main #dashboard .overview-panels {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+}
