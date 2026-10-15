@@ -410,6 +410,10 @@ jobs:
           case "$login_css_type" in text/css*) ;; *) echo "::error::Login stylesheet has unexpected content type: $login_css_type." && exit 1 ;; esac
           grep -Fq 'background:rgba(24,32,35,.22)!important' /tmp/sahabat-login.css || (echo "::error::Live Login stylesheet does not contain the expected translucent glass surface." && exit 1)
           grep -Fq 'html body:not(.authenticated) main .login-heading h1' /tmp/sahabat-login.css || (echo "::error::High-specificity white Login typography rules are missing." && exit 1)
+          grep -Fq 'html body:not(.authenticated) main #message:empty' /tmp/sahabat-login.css || (echo "::error::Empty Login status placeholder still has no explicit hide rule." && exit 1)
+          grep -Fq 'display:none!important' /tmp/sahabat-login.css || (echo "::error::Empty Login status message should be hidden." && exit 1)
+          grep -Fq -- '-webkit-backdrop-filter:blur(8px) saturate(115%)!important;' /tmp/sahabat-login.css || (echo "::error::WebKit Login glass blur is inconsistent." && exit 1)
+          grep -Fq 'backdrop-filter:blur(8px) saturate(115%)!important;' /tmp/sahabat-login.css || (echo "::error::Standard Login glass blur is inconsistent." && exit 1)
           ! grep -Fq 'body:not(.authenticated) main :not(button):not(.submit):not(svg):not(path):not(img){color:#123b67!important' /tmp/sahabat-dashboard.html || (echo "::error::Legacy high-specificity blue Login text override returned." && exit 1)
           echo "Verified live Login CSS asset, white typography rules, glass surface and cache version."
           for photo in 1 2 3; do

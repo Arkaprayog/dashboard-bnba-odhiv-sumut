@@ -40,6 +40,8 @@ assert.ok(dashboard.includes("body.authenticated main :not(button):not(.submit):
 assert.ok(loginCss.includes("background:rgba(24,32,35,.22)!important") && loginCss.includes("backdrop-filter:blur(6px) saturate(115%)!important"), "Login card must use the clear translucent glass surface.");
 assert.ok(loginCss.includes("html body:not(.authenticated) main .login-heading h1") && loginCss.includes("-webkit-text-fill-color:#fff!important"), "Login headings and helper copy must explicitly render white text.");
 assert.ok(loginCss.includes("background:rgba(15,86,153,.82)!important") && loginCss.includes("color:#fff!important"), "Login button and status surfaces must retain white text on translucent blue glass.");
+assert.ok(loginCss.includes("html body:not(.authenticated) main #message:empty") && loginCss.includes("display:none!important"), "Empty login status messages must not render as a dark bar.");
+assert.ok(loginCss.includes("-webkit-backdrop-filter:blur(8px) saturate(115%)!important;") && loginCss.includes("backdrop-filter:blur(8px) saturate(115%)!important;"), "Standard and WebKit glass blur declarations must match.");
 assert.match(gradle, /versionCode 22/);
 assert.match(gradle, /versionName '1\.2\.19'/);
 assert.match(changelog, /^## 1\.1\.18/m);

@@ -160,7 +160,7 @@ html body:not(.authenticated) main{
   background:rgba(24,32,35,.22)!important;
   background-color:rgba(24,32,35,.22)!important;
   border-color:rgba(255,255,255,.58)!important;
-  -webkit-backdrop-filter:blur(6px) saturate(115%)!important;
+  -webkit-backdrop-filter:blur(8px) saturate(115%)!important;
   backdrop-filter:blur(8px) saturate(115%)!important;
 }
 html body:not(.authenticated) main :is(h1,h2,h3,h4,p,span,label,small,strong,em,b,i,a,li,div,footer, .foot,.setup,.ministry,.login-heading,.app-version){
@@ -197,4 +197,17 @@ html body:not(.authenticated) main .setup *{
   color:#fff!important;
   -webkit-text-fill-color:#fff!important;
   text-shadow:0 1px 3px rgba(0,0,0,.58)!important;
+}
+
+
+/* An empty status paragraph must not leave a dark placeholder bar beneath Login. */
+html body:not(.authenticated) main #message:empty{
+  display:none!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  background-color:transparent!important;
+  box-shadow:none!important;
 }

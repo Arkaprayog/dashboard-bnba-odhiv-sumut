@@ -1,4 +1,5 @@
 ## 1.1.30 — 2026-10-15
+- Menghilangkan bar status Login saat kosong, mempertahankan status saat berisi pesan, dan menyamakan nilai blur WebKit/standar.
 - Memperbaiki konflik CSS spesifisitas tinggi yang memaksa teks Login biru; menambahkan uji regresi warna teks, versi manifest, dan pengiriman aset CSS Login di produksi.
 - Memperbaiki halaman login agar kartu, kolom kata sandi, tombol mata, dan status keluar memakai kaca gelap transparan; teks UI putih dan latar Danau Toba tetap terlihat.
 - Menyamakan panel, kartu, formulir, navigasi, menu, dan tombol lintas halaman dengan permukaan glassmorphism rgba(15, 23, 42, 0.75) dan blur 16px.
