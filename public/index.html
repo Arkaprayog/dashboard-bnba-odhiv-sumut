@@ -70,7 +70,7 @@
 <link rel="stylesheet" href="/dashboard-overhaul-v1.css?v=1.0.0">
 <link rel="stylesheet" href="/sodaramu-header-v1.css?v=1.0.0">
 <link rel="stylesheet" href="/dashboard-responsive-v6.css?v=6.0.0">
-<link rel="stylesheet" href="/assessment-form-polish-v1.css?v=1.0.0">
+<link rel="stylesheet" href="/assessment-form-polish-v1.css?v=1.1.38">
   <link rel="stylesheet" href="/owner-questionnaire-polish-v1.css?v=1.0.0">
   <link rel="stylesheet" href="/home-profile-polish-v1.css?v=1.0.0">
   <link rel="stylesheet" href="/form-mobile-ui-v1.css?v=1.1.37">
@@ -108,7 +108,7 @@
     <hr class="login-divider">
     <footer class="login-footer">
       <p>Halaman Akses Awal · Data Responden Tetap Dilindungi</p>
-      <p class="login-version">Versi 1.1.37</p>
+      <p class="login-version">Versi 1.1.38</p>
       <p class="login-copyright">© 2026 Data Base Kemensos RI DRSKPNO · Hak cipta dilindungi</p>
     </footer>
   </section>
@@ -246,7 +246,7 @@
             <label class="assessment-upload">FOTO DIRI<input type="file" id="assessmentPhotoSelf" accept="image/*" capture="user"></label>
             <label class="assessment-upload">FOTO KTP<input type="file" id="assessmentPhotoKtp" accept="image/*"></label>
             <label class="assessment-upload">FOTO KK<input type="file" id="assessmentPhotoKk" accept="image/*"></label>
-            <label class="assessment-upload">FOTO RUMAH<input type="file" id="assessmentPhotoHome" accept="image/*" capture="environment"></label>
+            <label class="assessment-upload">FOTO RUMAH TAMPAK DEPAN<input type="file" id="assessmentPhotoHome" accept="image/*" capture="environment"></label>
           </div>
           <div class="assessment-action-row">
             <button class="dashbtn" type="button" id="assessmentSave">SIMPAN ASESMEN</button>
@@ -1209,26 +1209,21 @@ const photoInputs=[
 ["assessmentPhotoSelf","FOTO DIRI"],
 ["assessmentPhotoKtp","FOTO KTP"],
 ["assessmentPhotoKk","FOTO KK"],
-["assessmentPhotoHome","FOTO RUMAH"]
+["assessmentPhotoHome","FOTO RUMAH TAMPAK DEPAN"]
 ];
 const photoPreview=document.getElementById("assessmentPhotoPreviews");
 const printPhotos=document.getElementById("assessmentPrintPhotos");
 const assessmentPhotos={};
+ const photoPageLabels={assessmentPhotoSelf:"HALAMAN 7 — LAMPIRAN FOTO DIRI (CLOSE-UP PPKS)",assessmentPhotoKtp:"HALAMAN 8 — LAMPIRAN FOTO KTP",assessmentPhotoKk:"HALAMAN 9 — LAMPIRAN FOTO KARTU KELUARGA (KK)",assessmentPhotoHome:"HALAMAN 10 — LAMPIRAN FOTO RUMAH TAMPAK DEPAN"};
+ function ensurePhotoPage(id,label){if(!printPhotos)return null;let page=printPhotos.querySelector('[data-photo-id="'+id+'"]');if(page)return page;page=document.createElement("section");page.className="assessment-print-photo-page";page.dataset.photoId=id;const heading=document.createElement("h2");heading.textContent=photoPageLabels[id]||label;const placeholder=document.createElement("div");placeholder.className="assessment-photo-placeholder";placeholder.textContent="Foto belum dilampirkan";const caption=document.createElement("p");caption.textContent=label;page.append(heading,placeholder,caption);printPhotos.append(page);return page;}
+ photoInputs.forEach(([id,label])=>ensurePhotoPage(id,label));
+
 function renderAssessmentPhoto(id,label,dataUrl,fileName){
  const old=photoPreview?.querySelector('[data-photo-id="'+id+'"]');if(old)old.remove();
- const printOld=printPhotos?.querySelector('[data-photo-id="'+id+'"]');if(printOld)printOld.remove();
- delete assessmentPhotos[id];
- if(!dataUrl)return;
- const card=document.createElement("div");card.className="assessment-photo-preview";card.dataset.photoId=id;
- const thumb=document.createElement("img");thumb.src=dataUrl;thumb.alt=label;
- const name=document.createElement("span");name.textContent=label+" — "+(fileName||"foto tersimpan");
- card.append(thumb,name);photoPreview?.append(card);
- const page=document.createElement("section");page.className="assessment-print-photo-page";page.dataset.photoId=id;
- const heading=document.createElement("h2");heading.textContent=label;
- const image=document.createElement("img");image.src=dataUrl;image.alt=label;
- const caption=document.createElement("p");caption.textContent=fileName||"Lampiran Form Asesmen Terintegrasi";
- page.append(heading,image,caption);printPhotos?.append(page);
- assessmentPhotos[id]={label,dataUrl,fileName:fileName||label};
+ const page=ensurePhotoPage(id,label);delete assessmentPhotos[id];
+ if(!dataUrl){if(page){const heading=page.querySelector("h2")||Object.assign(document.createElement("h2"),{textContent:photoPageLabels[id]||label});const caption=page.querySelector("p")||Object.assign(document.createElement("p"),{textContent:label});const placeholder=document.createElement("div");placeholder.className="assessment-photo-placeholder";placeholder.textContent="Foto belum dilampirkan";page.replaceChildren(heading,placeholder,caption);}return;}
+ const card=document.createElement("div");card.className="assessment-photo-preview";card.dataset.photoId=id;const thumb=document.createElement("img");thumb.src=dataUrl;thumb.alt=label;const name=document.createElement("span");name.textContent=label+" — "+(fileName||"foto tersimpan");card.append(thumb,name);photoPreview?.append(card);
+ const heading=document.createElement("h2");heading.textContent=photoPageLabels[id]||label;const image=document.createElement("img");image.src=dataUrl;image.alt=label;const caption=document.createElement("p");caption.textContent=fileName||"Lampiran Form Asesmen Terintegrasi";if(page)page.replaceChildren(heading,image,caption);assessmentPhotos[id]={label,dataUrl,fileName:fileName||label};
 }
 function compressAssessmentPhoto(file){
  return new Promise((resolve,reject)=>{
@@ -1288,6 +1283,12 @@ const groups=[
 const host=document.getElementById('assessmentFields');const form=document.getElementById('assessmentForm');
 function el(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n}
 groups.forEach(group=>{if(group.title)host.append(el('div','assessment-section-title',group.title));if(group.subtitle)host.append(el('div','assessment-subtitle',group.subtitle));(group.items||[]).forEach(([num,label,type='text',options=[]])=>{const row=el('div','assessment-row');row.append(el('div','assessment-no',num));row.append(el('div','assessment-label',label));const answer=el('div','assessment-answer');if(type==='fixed'){answer.textContent='-';answer.dataset.fixed='true'}else if(type==='radio'||type==='checks'){const wrap=el('div','assessment-options');options.forEach((option,i)=>{const lab=el('label','assessment-choice');const input=document.createElement('input');input.type=type==='radio'?'radio':'checkbox';input.name='q'+num+(type==='checks'?'_'+i:'');input.value=option;input.dataset.question=String(num);const check=el('span','print-check','✓');const txt=el('span','choice-text',String(i+1)+'. '+option);lab.append(input,check,txt);wrap.append(lab)});answer.append(wrap)}else{const input=document.createElement(type==='textarea'?'textarea':'input');if(type!=='textarea')input.type=type==='date'?'date':type==='number'?'number':'text';input.name='q'+num;input.dataset.question=String(num);input.setAttribute('aria-label',num+'. '+label);answer.append(input)}row.append(answer);host.append(row)})});
+ const sourceNodes=Array.from(host.childNodes);
+ const pageNodes=Array.from({length:6},(_,i)=>{const page=el('section','assessment-print-page');page.dataset.printPage=String(i+1);return page;});
+ function pageIndexForQuestion(n){if(n<=24)return 0;if(n<=46)return 1;if(n<=59)return 2;if(n<=71)return 3;if(n<=85)return 4;return 5;}
+ function findNextQuestion(nodes,start){for(let j=start;j<nodes.length;j++){const row=nodes[j].matches?.('.assessment-row')?nodes[j]:null;if(row){const raw=row.querySelector('.assessment-no')?.textContent?.trim();if(/^\d+$/.test(raw))return Number(raw);}}return 91;}
+ sourceNodes.forEach((node,index)=>{if(node.nodeType!==Node.ELEMENT_NODE)return;if(node.classList.contains('assessment-row')){const raw=node.querySelector('.assessment-no')?.textContent?.trim();const n=/^\d+$/.test(raw)?Number(raw):91;pageNodes[pageIndexForQuestion(n)].append(node);}else{pageNodes[pageIndexForQuestion(findNextQuestion(sourceNodes,index+1))].append(node);}});
+ host.replaceChildren(...pageNodes);
 let currentAssessmentId=null;
 const assessmentMessage=document.getElementById('assessmentMessage');
 const savedList=document.getElementById('assessmentSavedList');
@@ -1377,10 +1378,10 @@ document.getElementById('assessmentLoad').addEventListener('click',async()=>{
 document.getElementById('assessmentPrint').addEventListener('click',()=>{
  const respondentName=String(document.querySelector('#assessmentFields [name="q16"]')?.value||'').trim();
  const safeName=respondentName.replace(/[\\/:*?"<>|]+/g,' ').replace(/\s+/g,' ').trim().slice(0,100);
- const originalTitle=document.title;
- document.title='From Asesmen Terintegrasi'+(safeName?' - '+safeName:'');
- window.addEventListener('afterprint',()=>{document.title=originalTitle;},{once:true});
- window.print();
+ const originalTitle=document.title;document.title='From Asesmen Terintegrasi'+(safeName?' - '+safeName:'');
+ document.body.classList.add('assessment-print-mode');
+ const restore=()=>{document.title=originalTitle;document.body.classList.remove('assessment-print-mode');};
+ window.addEventListener('afterprint',restore,{once:true});window.print();
 });
 document.getElementById('assessmentReset').addEventListener('click',()=>{if(confirm('Kosongkan semua jawaban dan foto pada form? Data yang sudah tersimpan di database tidak dihapus.')){form.reset();document.querySelectorAll('.assessment-number input').forEach(i=>i.value='');Object.keys(assessmentPhotos).forEach(key=>delete assessmentPhotos[key]);photoPreview?.replaceChildren();printPhotos?.replaceChildren();currentAssessmentId=null;assessmentMessage.textContent='Form dan foto dikosongkan. Data tersimpan di database tidak dihapus.'}});
 window.addEventListener('dashboard:authenticated',()=>{
