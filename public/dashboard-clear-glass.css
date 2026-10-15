@@ -1,0 +1,102 @@
+/* Sahabat ODHIV Sumut — clear glass dashboard override
+   This stylesheet is intentionally loaded last. It changes visual styling only;
+   dashboard structure, forms, authentication, and navigation behavior remain intact. */
+:root{
+  color-scheme:dark;
+  --sahabat-clear-glass:rgba(255,255,255,.08);
+  --sahabat-clear-border:rgba(255,255,255,.25);
+  --sahabat-clear-blur:14px;
+  --sahabat-clear-text:#fff;
+}
+html,body{min-height:100%;max-width:100%;color:#fff!important}
+body{
+  background-color:transparent!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff;
+}
+body:before{background:transparent!important;opacity:0!important}
+body:after{background:transparent!important;box-shadow:none!important}
+html body *{box-sizing:border-box}
+html body :is(main,#dashboard,.app-view,.dashhead,.owner-summary,.owner-profile-side,.owner-header-actions,.top-actions,.owner-form-grid,.owner-form-actions,.settings-row,.settings-row-actions,.dashboard-landscape-brand){
+  min-width:0;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+html body :is(main,#dashboard,.app-view,.dashhead,.owner-summary,.owner-profile-side,.owner-header-actions,.top-actions,.owner-form-grid,.owner-form-actions,.settings-row,.settings-row-actions,.dashboard-landscape-brand){
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html body :is(.owner-card,.dashpanel,.overview-card,.overview-panel,.notification-panel,.settings-panel,.app-nav,.respondent-stat,.news-card,.assessment-panel,.questionnaire-panel,.database-panel,.content-card,.surface,.glass,.glass-card,.document-card,.assessment-box,.form-container,.stat-box,[class*="dashboard-card"],[class*="section-card"],[class*="panel-card"]){
+  background:rgba(255,255,255,.08)!important;
+  background-color:rgba(255,255,255,.08)!important;
+  background-image:none!important;
+  border:1px solid rgba(255,255,255,.25)!important;
+  box-shadow:0 8px 32px rgba(0,0,0,.2)!important;
+  backdrop-filter:blur(14px)!important;
+  -webkit-backdrop-filter:blur(14px)!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border-radius:20px;
+}
+html body :is(.app-nav,[role="navigation"]){
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:16px auto!important;
+  padding:12px!important;
+}
+html body :is(.app-nav button,.menu-btn,.menu-item,.nav-item,.dashbtn,.owner-edit,.settings-button,.bell-button,.assessment-upload,.workflow-save,.submit,.btn,button){
+  background:rgba(255,255,255,.08)!important;
+  background-color:rgba(255,255,255,.08)!important;
+  background-image:none!important;
+  border:1px solid rgba(255,255,255,.25)!important;
+  box-shadow:0 8px 32px rgba(0,0,0,.2)!important;
+  backdrop-filter:blur(14px)!important;
+  -webkit-backdrop-filter:blur(14px)!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+html body :is(input,select,textarea,.form-control){
+  width:100%;
+  max-width:100%;
+  background:rgba(255,255,255,.08)!important;
+  background-color:rgba(255,255,255,.08)!important;
+  border:1px solid rgba(255,255,255,.25)!important;
+  box-shadow:0 8px 32px rgba(0,0,0,.2)!important;
+  backdrop-filter:blur(14px)!important;
+  -webkit-backdrop-filter:blur(14px)!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+html body :is(input,textarea)::placeholder{color:rgba(255,255,255,.86)!important;-webkit-text-fill-color:rgba(255,255,255,.86)!important;opacity:1}
+html body :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,summary,li,td,th,a,a:visited,svg){
+  color:#fff!important;
+  -webkit-text-fill-color:inherit;
+}
+html body svg{color:#fff!important}
+html body :is(table,thead,tbody,tr,th,td){background:transparent!important;background-color:transparent!important;border-color:rgba(255,255,255,.25)!important}
+html body :is(.owner-card,.app-view,.dashpanel,.app-nav,.overview-grid,.owner-form-grid){width:100%;max-width:100%;min-width:0}
+html body #dashboard{width:min(92%,480px)!important;max-width:480px!important;margin-inline:auto!important;padding:16px 0!important}
+html body main:has(> .login-card) #dashboard{width:100%!important;max-width:none!important}
+html body #dashboard[hidden],html body [hidden]{display:none!important}
+html body :is(button,a,input,select,textarea):focus-visible{outline:2px solid rgba(255,255,255,.9)!important;outline-offset:3px}
+@media(max-width:600px){
+  html body #dashboard{width:92%!important;max-width:480px!important;padding:12px 0!important}
+  html body .owner-card{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  html body .owner-profile-side{display:flex;align-items:center;flex-direction:column}
+  html body .owner-summary{overflow-wrap:anywhere}
+  html body .app-nav{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  html body .app-nav button{min-width:0;white-space:normal;overflow-wrap:anywhere}
+  html body .overview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+}
+@media(prefers-reduced-motion:reduce){html body *{animation:none!important;transition:none!important}}
+@media print{
+  html body,html body *{color:#111!important;-webkit-text-fill-color:#111!important}
+  html body :is(.owner-card,.dashpanel,.overview-card,.notification-panel,.settings-panel,.app-nav,.app-nav button,input,select,textarea){background:#fff!important;box-shadow:none!important;backdrop-filter:none!important}
+}
