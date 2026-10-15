@@ -166,3 +166,147 @@
   #ownerQuestionnaireForm *,
   #assessmentView * { transition: none !important; }
 }
+
+
+/* v1.1.33 — assessment controls are intentionally one column on every screen. */
+html body.authenticated #dashboard #assessmentView .dashhead {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 20px !important;
+  background: rgba(255,255,255,.08) !important;
+  border: 1px solid rgba(255,255,255,.25) !important;
+  box-shadow: none !important;
+  color: #fff !important;
+}
+#assessmentView .dashhead h2,
+#assessmentView .dashhead p {
+  color: #fff !important;
+  text-shadow: none !important;
+}
+html body.authenticated #dashboard #assessmentView .assessment-actions {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 12px !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+#assessmentView .assessment-action-row,
+#assessmentView .assessment-photo-row {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+html body.authenticated #dashboard #assessmentView .assessment-upload {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 94px !important;
+  margin: 0 !important;
+  padding: 16px !important;
+  color: #fff !important;
+  background: rgba(255,255,255,.08) !important;
+  border: 1px solid rgba(255,255,255,.25) !important;
+  border-radius: 16px !important;
+  box-shadow: none !important;
+  font-size: .95rem !important;
+  font-weight: 750 !important;
+  line-height: 1.4 !important;
+  letter-spacing: .02em !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+#assessmentView .assessment-upload input[type="file"] {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 44px !important;
+  padding: 6px !important;
+  color: #fff !important;
+  background: rgba(255,255,255,.04) !important;
+  border: 1px solid rgba(255,255,255,.25) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  font-size: 16px !important;
+  line-height: 1.4 !important;
+}
+#assessmentView .assessment-upload input[type="file"]::file-selector-button {
+  min-height: 38px;
+  margin: 0 10px 0 0;
+  padding: 8px 14px;
+  color: #fff;
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.4);
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+html body.authenticated #dashboard #assessmentView .assessment-action-row .dashbtn,
+#assessmentView #assessmentSavedList {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 54px !important;
+  margin: 0 !important;
+  padding: 14px 16px !important;
+  color: #fff !important;
+  background: rgba(255,255,255,.08) !important;
+  border: 1px solid rgba(255,255,255,.25) !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  font-size: 1rem !important;
+  font-weight: 750 !important;
+  line-height: 1.4 !important;
+  text-align: center !important;
+  white-space: normal !important;
+}
+#assessmentView #assessmentSave {
+  background: rgba(255,255,255,.22) !important;
+  border-color: rgba(255,255,255,.65) !important;
+}
+#assessmentView #assessmentReset {
+  background: rgba(255,255,255,.04) !important;
+  border-color: rgba(255,255,255,.4) !important;
+}
+#assessmentView #assessmentLoad,
+#assessmentView #assessmentPrint {
+  background: rgba(255,255,255,.08) !important;
+  border-color: rgba(255,255,255,.35) !important;
+}
+#assessmentView #assessmentSavedList {
+  display: block !important;
+  text-align: left !important;
+}
+#assessmentView #assessmentSavedList option {
+  color: #fff !important;
+  background: #263d59 !important;
+}
+#assessmentView .assessment-upload *,
+#assessmentView .assessment-action-row * {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+#assessmentView .assessment-photo-previews {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+@media (max-width: 600px) {
+  #assessmentView .dashhead { padding: 16px !important; }
+  #assessmentView .assessment-upload { min-height: 86px !important; }
+  #assessmentView .assessment-action-row .dashbtn,
+  #assessmentView #assessmentSavedList { font-size: .96rem !important; }
+}
