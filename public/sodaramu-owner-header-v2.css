@@ -1,0 +1,183 @@
+/* SODARAMU owner profile header — v1.1.0
+   Fix profile layout without changing dashboard behavior or authentication logic. */
+body:has(#dashboard:not([hidden])) #dashboard .owner-card {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: 96px minmax(0, 1fr) !important;
+  grid-template-areas: "profile summary" "profile summary";
+  align-items: start !important;
+  justify-content: initial !important;
+  gap: 12px 16px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 auto 16px !important;
+  padding: 16px !important;
+  text-align: left !important;
+  box-sizing: border-box !important;
+  background: rgba(255,255,255,.08) !important;
+  background-color: rgba(255,255,255,.08) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255,255,255,.25) !important;
+  border-radius: 20px !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  backdrop-filter: blur(14px) !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-profile-side {
+  grid-area: profile !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 9px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-avatar {
+  display: block !important;
+  width: 84px !important;
+  height: 84px !important;
+  max-width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+  border: 2px solid rgba(255,255,255,.75) !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-edit {
+  width: 100% !important;
+  max-width: 96px !important;
+  min-height: 34px !important;
+  padding: 7px 8px !important;
+  white-space: normal !important;
+  text-align: center !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.12) !important;
+  border: 1px solid rgba(255,255,255,.35) !important;
+  box-shadow: none !important;
+  font-size: .78rem !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary {
+  grid-area: summary !important;
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  padding-right: 0 !important;
+  text-align: left !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary h3 {
+  margin: 1px 0 8px !important;
+  max-width: 100% !important;
+  font-size: clamp(.98rem, 3.8vw, 1.25rem) !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary p {
+  margin: 6px 0 !important;
+  max-width: 100% !important;
+  font-size: clamp(.78rem, 3vw, .92rem) !important;
+  line-height: 1.45 !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary #ownerInstitutionSummary {
+  font-size: clamp(.76rem, 2.9vw, .9rem) !important;
+  line-height: 1.5 !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions {
+  position: absolute !important;
+  z-index: 2 !important;
+  top: 12px !important;
+  right: 12px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 7px !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .top-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 7px !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .top-actions > button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 36px !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+  margin: 0 !important;
+  padding: 8px !important;
+  border-radius: 50% !important;
+  color: #fff !important;
+  background: rgba(255,255,255,.12) !important;
+  border: 1px solid rgba(255,255,255,.35) !important;
+  box-shadow: none !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .top-actions > button svg {
+  display: block !important;
+  width: 19px !important;
+  height: 19px !important;
+  color: #fff !important;
+  stroke: currentColor !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary h3 {
+  padding-right: 126px !important;
+  min-height: 36px !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary p,
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary details {
+  clear: both !important;
+}
+@media (max-width: 380px) {
+  body:has(#dashboard:not([hidden])) #dashboard .owner-card {
+    grid-template-columns: 76px minmax(0, 1fr) !important;
+    gap: 10px !important;
+    padding: 12px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .owner-avatar {
+    width: 70px !important;
+    height: 70px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions {
+    top: 9px !important;
+    right: 9px !important;
+    gap: 4px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .top-actions {
+    gap: 4px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .top-actions > button {
+    flex-basis: 31px !important;
+    width: 31px !important;
+    height: 31px !important;
+    min-width: 31px !important;
+    min-height: 31px !important;
+    padding: 6px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .owner-summary h3 {
+    padding-right: 104px !important;
+    font-size: .92rem !important;
+  }
+}
