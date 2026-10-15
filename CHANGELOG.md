@@ -1,4 +1,5 @@
 ## 1.1.30 — 2026-10-15
+- Menyegarkan URL aset tema ke v1.1.38 agar rilis CSS Login tidak berbagi kunci cache dengan aset lama; health check menguji stylesheet dengan query unik dari commit.
 - Menghilangkan bar status Login saat kosong, mempertahankan status saat berisi pesan, dan menyamakan nilai blur WebKit/standar.
 - Memperbaiki konflik CSS spesifisitas tinggi yang memaksa teks Login biru; menambahkan uji regresi warna teks, versi manifest, dan pengiriman aset CSS Login di produksi.
 - Memperbaiki halaman login agar kartu, kolom kata sandi, tombol mata, dan status keluar memakai kaca gelap transparan; teks UI putih dan latar Danau Toba tetap terlihat.

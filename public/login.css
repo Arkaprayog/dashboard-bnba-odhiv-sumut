@@ -1,4 +1,4 @@
-/* Sahabat ODHIV Sumut — canonical Login styles v1.1.37
+/* Sahabat ODHIV Sumut — canonical Login styles v1.1.38
    One source of truth for Login; dashboard styles remain in style.css. */
 html body:not(.authenticated){
   min-height:100svh;
@@ -155,7 +155,7 @@ html body:not(.authenticated) .rule{
 }
 
 
-/* v1.1.37: explicit high-specificity Login typography and transparent glass surfaces. */
+/* v1.1.38: explicit high-specificity Login typography and transparent glass surfaces. */
 html body:not(.authenticated) main{
   background:rgba(24,32,35,.22)!important;
   background-color:rgba(24,32,35,.22)!important;

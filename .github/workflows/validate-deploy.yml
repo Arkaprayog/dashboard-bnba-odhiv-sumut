@@ -401,9 +401,9 @@ jobs:
           grep -Eiq '^cross-origin-resource-policy:[[:space:]]*same-origin' /tmp/sahabat-headers.txt || (echo "::error::Cross-Origin-Resource-Policy same-origin is missing." && exit 1)
           grep -qi '<html' /tmp/sahabat-dashboard.html || (echo "::error::Sahabat dashboard response is not HTML." && exit 1)
           grep -q 'ownerProfileForm' /tmp/sahabat-dashboard.html || (echo "::error::Owner profile UI is missing." && exit 1)
-          grep -Fq 'href="style.css?v=1.1.37"' /tmp/sahabat-dashboard.html || (echo "::error::Global CSS cache version is not updated." && exit 1)
-          grep -Fq 'href="login.css?v=1.1.37"' /tmp/sahabat-dashboard.html || (echo "::error::Dedicated Login CSS is missing or stale." && exit 1)
-          login_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-login.css --write-out '%{http_code}|%{content_type}' "$APP_URL/login.css?v=1.1.37")"
+          grep -Fq 'href="style.css?v=1.1.38"' /tmp/sahabat-dashboard.html || (echo "::error::Global CSS cache version is not updated." && exit 1)
+          grep -Fq 'href="login.css?v=1.1.38"' /tmp/sahabat-dashboard.html || (echo "::error::Dedicated Login CSS is missing or stale." && exit 1)
+          login_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-login.css --write-out '%{http_code}|%{content_type}' "$APP_URL/login.css?v=1.1.38&verify=$GITHUB_SHA")"
           login_css_status="${login_css_response%%|*}"
           login_css_type="${login_css_response#*|}"
           test "$login_css_status" = "200" || (echo "::error::Dedicated Login stylesheet returned HTTP $login_css_status." && exit 1)
