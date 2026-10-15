@@ -72,3 +72,43 @@ html body:has(#loginCard) #loginCard .login-footer p{
 html body:has(#loginCard) .corner{display:none!important}
 html body:has(#loginCard) main > .foot,html body:has(#loginCard) main > .rule,html body:has(#loginCard) main > .setup{display:none!important}
 @media(max-width:420px){html body:has(#loginCard) main{padding:16px!important}html body:has(#loginCard) #loginCard{padding:24px 20px!important}}
+
+
+/* v3.1 transparency correction: remove legacy inner panels behind header and footer. */
+html body:has(#loginCard) #loginCard > .login-brand,
+html body:has(#loginCard) #loginCard > .login-footer,
+html body:has(#loginCard) #loginCard > .login-footer p,
+html body:has(#loginCard) #loginCard > .login-brand h1,
+html body:has(#loginCard) #loginCard > .login-brand .login-subtitle {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+html body:has(#loginCard) #loginCard > .login-brand {
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 0 0 !important;
+  border-radius: 0 !important;
+  color: #fff !important;
+}
+html body:has(#loginCard) #loginCard > .login-footer {
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  color: #fff !important;
+}
+html body:has(#loginCard) #loginCard > .login-footer p {
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 0 2px !important;
+  border-radius: 0 !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+html body:has(#loginCard) #loginCard > .login-footer .login-copyright {
+  margin-top: 2px !important;
+}
