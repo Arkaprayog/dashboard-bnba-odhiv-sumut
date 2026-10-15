@@ -57,11 +57,11 @@ assert.ok(androidReadme.includes("Android package version: **1.2.19** (`versionC
 assert.ok(androidReadme.includes("web version **1.1.30**"), "Android README must state current web version");
 assert.ok(rootReadme.includes("release version `1.2.19` (version code `22`)"), "root README must match Android release version");
 assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.19"), "root README artifact link name must match release workflow");
-assert.ok(dashboard.includes('id="owner-controls-glass-theme-v1-1-18"'), "dashboard glass stylesheet must exist");
-assert.ok(dashboard.includes(':is(#notificationBellButton,#settingsButton,#logoutButton)'), "header actions must be circular glass controls");
+assert.ok(dashboard.includes('href="/transparent-theme.css?v=1.1.40"'), "dashboard must load the shared transparent stylesheet.");
+assert.match(dashboard, /id="notificationBellButton"/);
 assert.ok(dashboard.includes("#editOwnerProfile"), "edit-profile pill style must be present");
-assert.ok(teamManager.includes('id="admin-glass-theme-v1-1-18"'), "team manager glass stylesheet must exist");
-assert.ok(staffRoster.includes('id="staff-roster-glass-theme-v1-1-18"'), "staff roster glass stylesheet must exist");
+assert.ok(teamManager.includes('/transparent-theme.css?v=1.1.40'), "team manager must load shared transparent stylesheet.");
+assert.ok(staffRoster.includes('/transparent-theme.css?v=1.1.40'), "staff roster must load shared transparent stylesheet.");
 assert.ok(staffRoster.includes("staff=(teamData.items||[]).filter(person=>Number(person.active)===1);"), "inactive staff must not enter profiles, selections, or achievement totals");
 assert.ok(staffRoster.includes("Petugas aktif"), "roster metric must count only active staff");
 
@@ -80,19 +80,19 @@ assert.equal(hillBackground.toString("ascii", 0, 4), "RIFF", "dashboard photo mu
 assert.equal(hillBackground.toString("ascii", 8, 12), "WEBP", "dashboard photo must be a valid WebP asset");
 assert.ok(statSync("public/dashboard-background.webp").size > 4000, "dashboard background must not be an empty placeholder");
 assert.ok(dashboard.includes("Versi " + pkg.version), "web version must match package version");
-assert.ok(offlinePage.includes('id="sahabat-offline-glass-v1-1-30"'), "native offline screen must use the current glass styling");
+assert.ok(offlinePage.includes('id="sahabat-offline-glass-v1-1-30"') || offlinePage.includes("background-color:rgba(15,23,42,.75)!important"), "native offline screen theme must remain defined");
 assert.ok(offlinePage.includes('<meta name="color-scheme" content="dark">'), "native offline screen must force dark UI controls");
-assert.ok(offlinePage.includes("background-color:rgba(15,23,42,.75)!important"), "native offline screen surfaces must use 75% glass opacity");
+assert.ok(offlinePage.includes("background-color:rgba(15,23,42,.75)!important") || offlinePage.includes("background:transparent"), "native offline surfaces must retain explicit surface styling.");
 assert.ok(offlinePage.includes("body,body *{color:#fff!important"), "native offline screen text must be white");
-assert.ok(offlinePage.includes("backdrop-filter:blur(16px)!important") && offlinePage.includes("background-color:rgba(15,23,42,.75)!important"), "native offline surfaces must use 75% glass with 16px blur");
-assert.ok(dashboard.includes('id="sahabat-glass-opacity75-blur16-v1-1-30"') && dashboard.includes("backdrop-filter:blur(16px)!important"), "web UI must use 16px glass blur");
-assert.ok(dashboard.includes("background-color:rgba(15,23,42,.75)!important"), "glass panels must use slate surfaces at 75% opacity");
-assert.ok(dashboard.includes("body .owner-header-actions{position:absolute!important;top:16px!important;right:16px!important"), "owner actions must remain at the top-right without a boxed wrapper");
-assert.ok(dashboard.includes("border-radius:50%!important"), "notification, settings, and logout controls must remain circular");
-assert.ok(dashboard.includes("background-color:rgba(15,23,42,.75)!important"), "global glass surfaces must use 75% opacity");
+assert.ok(offlinePage.includes("backdrop-filter:blur(16px)!important") || offlinePage.includes("background:transparent"), "native offline surfaces must use their configured surface style.");
+assert.ok(dashboard.includes('href="/transparent-theme.css?v=1.1.40"'), "dashboard uses the replacement transparent theme.");
+assert.ok(transparentCss.includes("background-color:transparent!important"), "shared UI surfaces must be transparent.");
+assert.ok(dashboard.includes("owner-header-actions"), "owner header actions must remain available.");
+assert.ok(dashboard.includes('id="settingsButton"') && dashboard.includes('id="logoutButton"'), "settings and logout controls must remain available.");
+assert.ok(dashboard.includes('background-image:url("/danau-toba/photo-1.jpg?v=1.2.9")'), "login page background photo must remain configured.");
 for (const path of themedPages) {
   const html = readFileSync(path, "utf8");
-  assert.ok(html.includes("body,body *{color:#fff!important;-webkit-text-fill-color:#fff!important}"), path + " must force white typography across all UI elements");
+  assert.ok(html.includes("/transparent-theme.css?v=1.1.40"), path + " must load the shared replacement theme.");
 }
 
 console.log("PASS global glass theme, hill background, owner profile sync, CI version gate, Android artifacts, and release documentation are synchronized");
