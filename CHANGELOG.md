@@ -1,4 +1,5 @@
 ## 1.1.30 — 2026-10-15
+- Tambahkan tema transparan bersama untuk seluruh halaman HTML publik agar permukaan kartu, tabel, dan panel tidak menutupi foto latar; warna teks semantik dipertahankan demi keterbacaan.
 - Memindahkan selector khusus Login dari blok CSS inline lama ke `public/login.css` agar satu sumber gaya; menyegarkan cache aset ke v1.1.39.
 - Menyegarkan URL aset tema ke v1.1.38 agar rilis CSS Login tidak berbagi kunci cache dengan aset lama; health check menguji stylesheet dengan query unik dari commit.
 - Menghilangkan bar status Login saat kosong, mempertahankan status saat berisi pesan, dan menyamakan nilai blur WebKit/standar.
