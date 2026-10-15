@@ -1,3 +1,8 @@
+## 1.1.31 — 2026-10-15
+- Perbaiki layout profil owner responsif: foto dan tombol Edit profil di kolom kiri, identitas di kanan, ikon aksi dalam baris terpisah.
+- Gabungkan CSS profil ke stylesheet dashboard terpusat agar lolos pemeriksaan rilis; samakan versi web/PWA menjadi 1.1.31.
+- Naikkan versi shell Android menjadi 1.2.20 (versionCode 23) agar build APK ikut terpicu.
+
 ## 1.1.30 — 2026-10-15
 - Tambahkan tema transparan bersama untuk seluruh halaman HTML publik agar permukaan kartu, tabel, dan panel tidak menutupi foto latar; warna teks semantik dipertahankan demi keterbacaan.
 - Memindahkan selector khusus Login dari blok CSS inline lama ke `public/login.css` agar satu sumber gaya; menyegarkan cache aset ke v1.1.39.
