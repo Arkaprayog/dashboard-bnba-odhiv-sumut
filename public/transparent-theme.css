@@ -14,11 +14,11 @@ html,body{min-height:100%;color:var(--sahabat-text)!important;background-color:t
 body{
   color:#fff!important;
   background-color:#14202b!important;
-  background-image:url("/danau-toba/photo-1.jpg?v=2.0.0")!important;
-  background-position:center center!important;
-  background-size:cover!important;
-  background-repeat:no-repeat!important;
-  background-attachment:fixed!important;
+  background-image:url("/danau-toba/photo-1.jpg?v=2.0.0");
+  background-position:center center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  background-attachment:fixed;
   -webkit-text-fill-color:#fff;
 }
 body:before{
