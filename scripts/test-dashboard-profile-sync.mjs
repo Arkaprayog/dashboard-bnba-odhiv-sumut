@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 const dashboard = readFileSync("public/index.html", "utf8");
 const loginCss = readFileSync("public/login.css", "utf8");
+const transparentCss = readFileSync("public/transparent-theme.css", "utf8");
 const manifest = JSON.parse(readFileSync("public/manifest.json", "utf8"));
 const offlinePage = readFileSync("android-app/app/src/main/assets/offline.html", "utf8");
 const suratLainnya = readFileSync("public/surat-lainnya.html", "utf8");
@@ -22,9 +23,6 @@ const deployWorkflow = readFileSync(".github/workflows/validate-deploy.yml", "ut
 assert.match(suratLainnya, /\.letter-date-line\{display:block;width:100%;margin:0 0 12px;text-align:right/);
 assert.ok(suratLainnya.indexOf('id="previewDate"') < suratLainnya.indexOf('class="letter-meta"'), "formal date line must precede letter metadata");
 assert.match(suratLainnya, /@media print\{[\s\S]*?\.letter-date-line\{width:100%;text-align:right/);
-assert.match(dashboard, /dashboard-sky-glass-unified-v2/);
-assert.match(dashboard, /--dashboard-sky-blue:#87CEEB/);
-assert.match(dashboard, /backdrop-filter:blur\(18px\)/);
 assert.match(dashboard, /textContent=safeText\(profile\.institution\)\|\|'Unit kerja belum diisi'/);
 assert.match(dashboard, /id="notificationBellButton"/);
 assert.match(dashboard, /id="settingsButton"/);
@@ -34,16 +32,10 @@ assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='ow
 assert.match(worker, /owner_profile_update/);
 assert.equal(pkg.version, "1.1.30");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
-assert.ok(dashboard.includes('href="style.css?v=1.1.40"') && dashboard.includes('href="login.css?v=1.1.40"'), "Login and global CSS must use the same cache-busted theme version.");
-assert.ok(!dashboard.includes("body:not(.authenticated) main :not(button):not(.submit):not(svg):not(path):not(img){color:#123b67!important"), "High-specificity blue text override must not affect the Login page.");
-assert.ok(dashboard.includes("body.authenticated main :not(button):not(.submit):not(svg):not(path):not(img){color:#123b67!important"), "Blue text override must be restricted to authenticated dashboard content.");
-assert.ok(loginCss.includes("background:rgba(24,32,35,.22)!important") && loginCss.includes("backdrop-filter:blur(8px) saturate(115%)!important"), "Login card must use the clear translucent glass surface.");
-assert.ok(loginCss.includes("html body:not(.authenticated) main .login-heading h1") && loginCss.includes("-webkit-text-fill-color:#fff!important"), "Login headings and helper copy must explicitly render white text.");
-const inlineStyleBlocks = [...dashboard.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)].map(match => match[1]).join("\n");
-assert.doesNotMatch(inlineStyleBlocks, /body\s*:\s*not\(\s*\.authenticated\s*\)/i, "Legacy Login selectors must live in login.css, not repeated inline styles.");
-assert.ok(loginCss.includes("background:rgba(15,86,153,.82)!important") && loginCss.includes("color:#fff!important"), "Login button and status surfaces must retain white text on translucent blue glass.");
-assert.ok(loginCss.includes("html body:not(.authenticated) main #message:empty") && loginCss.includes("display:none!important"), "Empty login status messages must not render as a dark bar.");
-assert.ok(loginCss.includes("-webkit-backdrop-filter:blur(8px) saturate(115%)!important;") && loginCss.includes("backdrop-filter:blur(8px) saturate(115%)!important;"), "Standard and WebKit glass blur declarations must match.");
+assert.ok(dashboard.includes('href="style.css?v=1.1.40"') && dashboard.includes('href="login.css?v=1.1.40"'), "legacy CSS URLs must remain cache-busted.");
+assert.ok(loginCss.includes("Legacy Login stylesheet retired"), "legacy login CSS must be retired rather than layered over.");
+assert.ok(transparentCss.includes("background:transparent!important") && transparentCss.includes("background-color:transparent!important"), "replacement stylesheet must enforce transparent surfaces.");
+assert.ok(!/background-color\s*:\s*rgba?\(\s*(?:15,\s*23,\s*42|24,\s*32,\s*35|15,\s*86,\s*153)/i.test(transparentCss), "replacement stylesheet must not use legacy opaque/slate/blue fills.");
 assert.match(gradle, /versionCode 22/);
 assert.match(gradle, /versionName '1\.2\.19'/);
 assert.match(changelog, /^## 1\.1\.18/m);
@@ -81,9 +73,7 @@ const themedPages = [
 ];
 for (const path of themedPages) {
   const html = readFileSync(path, "utf8");
-  assert.ok(html.includes('id="sahabat-global-glass-v1-1-30"') && html.includes('id="sahabat-glass-opacity75-blur16-v1-1-30"'), path + " must use the global white-font glass theme");
-  assert.ok(html.includes("/dashboard-background.webp?v=1.1.30"), path + " must use the supplied hill photo");
-  assert.ok(html.includes('<meta name="color-scheme" content="dark">'), path + " must force a dark UI color scheme");
+  assert.ok(html.includes('/transparent-theme.css?v=1.1.40'), path + " must load the replacement transparent stylesheet.");
 }
 const hillBackground = readFileSync("public/dashboard-background.webp");
 assert.equal(hillBackground.toString("ascii", 0, 4), "RIFF", "dashboard photo must be a WebP/RIFF asset");
@@ -105,6 +95,4 @@ for (const path of themedPages) {
   assert.ok(html.includes("body,body *{color:#fff!important;-webkit-text-fill-color:#fff!important}"), path + " must force white typography across all UI elements");
 }
 
-assert.ok(dashboard.includes('id="sahabat-glassmorphism-fix-v1-1-30"'), "login and dashboard visual override must load after legacy styles");
-assert.ok(loginCss.includes("html body:not(.authenticated) #password") && loginCss.includes("background:transparent!important"), "Login password field styling must live in the dedicated stylesheet.");
 console.log("PASS global glass theme, hill background, owner profile sync, CI version gate, Android artifacts, and release documentation are synchronized");
