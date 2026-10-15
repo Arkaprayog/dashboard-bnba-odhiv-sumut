@@ -245,3 +245,115 @@ html body.authenticated #dashboard [hidden] { display: none !important; }
     grid-column: 1 !important;
   }
 }
+
+
+/* === Dashboard glass & centered layout: authoritative overrides === */
+@media screen {
+  html body.authenticated {
+    width:100%!important; min-width:0!important; max-width:100%!important;
+    margin:0!important; padding:16px!important; overflow-x:hidden!important;
+    color:#fff!important;
+  }
+  html body.authenticated > main,
+  html body.authenticated main,
+  html body.authenticated main #dashboard {
+    width:100%!important; min-width:0!important; max-width:1200px!important;
+    margin-left:auto!important; margin-right:auto!important;
+    box-sizing:border-box!important; float:none!important; transform:none!important;
+  }
+  html body.authenticated main { display:block!important; padding:0!important; }
+  html body.authenticated main #dashboard {
+    display:block!important; padding:0!important;
+  }
+  html body.authenticated #dashboard :is(
+    .owner-card,.owner-profile-side,.owner-summary,.owner-header-actions,
+    .app-nav,.app-view,.dashhead,.dashpanel,.overview-grid,.overview-card,
+    .overview-panels,.overview-panel,.sumut-map-wrap,.region-bars,
+    .notification-panel,.settings-panel,.settings-row,.owner-form-grid,
+    .dashfield,.assessment-paper,.assessment-actions,.assessment-action-row,
+    .assessment-photo-previews,.assessment-upload,.document-card,
+    .form-container,.form-panel,.section-card,.panel-card,.info-card,
+    .data-card,.table-wrap,.table-container,.respondent-quiz-panel,
+    .respondent-quiz-note,fieldset,details,.workflow-control
+  ) {
+    background:rgba(255,255,255,.12)!important;
+    -webkit-backdrop-filter:blur(16px)!important;
+    backdrop-filter:blur(16px)!important;
+    border:1px solid rgba(255,255,255,.25)!important;
+    box-shadow:0 8px 32px rgba(0,0,0,.2)!important;
+    color:#fff!important;
+    min-width:0!important; box-sizing:border-box!important;
+  }
+  html body.authenticated #dashboard :is(
+    h1,h2,h3,h4,h5,h6,p,span,label,small,strong,li,dt,dd,
+    .owner-details,.owner-summary,.dashhead,.dashpanel,.overview-card,
+    .overview-panel,.map-legend,.chart-legend,.scroll-hint
+  ) { color:#fff!important; }
+  html body.authenticated #dashboard :is(input,select,textarea,[contenteditable="true"]) {
+    width:100%; max-width:100%; min-width:0; box-sizing:border-box!important;
+    background:rgba(255,255,255,.15)!important;
+    border:1px solid rgba(255,255,255,.3)!important;
+    color:#fff!important; -webkit-text-fill-color:#fff!important;
+    border-radius:12px!important;
+  }
+  html body.authenticated #dashboard :is(input,textarea)::placeholder {
+    color:rgba(255,255,255,.85)!important; -webkit-text-fill-color:rgba(255,255,255,.85)!important;
+    opacity:1!important;
+  }
+  html body.authenticated #dashboard select option {
+    background:#fff!important; color:#222!important;
+  }
+  html body.authenticated #dashboard :is(button,.dashbtn,.app-nav a) {
+    background:rgba(255,255,255,.12)!important;
+    -webkit-backdrop-filter:blur(16px)!important;
+    backdrop-filter:blur(16px)!important;
+    border:1px solid rgba(255,255,255,.3)!important;
+    box-shadow:0 8px 32px rgba(0,0,0,.2)!important;
+    color:#fff!important; -webkit-text-fill-color:#fff!important;
+    max-width:100%!important; overflow-wrap:anywhere!important;
+  }
+  html body.authenticated #dashboard :is(svg,button svg) { color:#fff!important; }
+  html body.authenticated #dashboard .app-nav {
+    display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important; width:100%!important; padding:10px!important;
+  }
+  html body.authenticated #dashboard .app-nav button {
+    width:100%!important; min-width:0!important; min-height:54px!important;
+    white-space:normal!important; line-height:1.25!important;
+  }
+  html body.authenticated #dashboard .overview-grid {
+    display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important; width:100%!important;
+  }
+  html body.authenticated #dashboard .overview-panels {
+    display:grid!important; grid-template-columns:minmax(0,1fr)!important;
+    gap:12px!important; width:100%!important;
+  }
+  html body.authenticated #dashboard :is(img,canvas,svg,table) { max-width:100%; }
+  html body.authenticated #dashboard table { width:100%!important; table-layout:fixed!important; }
+}
+@media screen and (max-width:600px) {
+  html body.authenticated { padding:8px!important; }
+  html body.authenticated main { width:100%!important; padding:0!important; }
+  html body.authenticated main #dashboard {
+    width:92%!important; max-width:480px!important; margin:0 auto!important;
+  }
+  html body.authenticated #dashboard .owner-card {
+    display:flex!important; flex-direction:column!important; align-items:stretch!important;
+    gap:12px!important; padding:14px!important;
+  }
+  html body.authenticated #dashboard .owner-profile-side,
+  html body.authenticated #dashboard .owner-summary,
+  html body.authenticated #dashboard .owner-header-actions {
+    width:100%!important; max-width:100%!important; min-width:0!important;
+    margin:0!important; position:static!important; grid-column:auto!important;
+  }
+  html body.authenticated #dashboard .owner-profile-side { text-align:center!important; }
+  html body.authenticated #dashboard .top-actions { justify-content:center!important; flex-wrap:wrap!important; }
+  html body.authenticated #dashboard .overview-card { padding:12px 8px!important; }
+}
+@media screen and (min-width:601px) {
+  html body.authenticated main #dashboard { width:92%!important; }
+  html body.authenticated #dashboard .overview-grid { grid-template-columns:repeat(4,minmax(0,1fr))!important; }
+  html body.authenticated #dashboard .overview-panels { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
+}
