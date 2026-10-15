@@ -1,0 +1,232 @@
+/* Home owner profile polish — responsive transparent glass */
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard {
+  display: grid !important;
+  grid-template-columns: 88px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 18px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 auto 18px !important;
+  padding: clamp(15px, 2.4vw, 24px) !important;
+  border: 1px solid rgba(255,255,255,.26) !important;
+  border-radius: 24px !important;
+  background: rgba(255,255,255,.105) !important;
+  background-color: rgba(255,255,255,.105) !important;
+  box-shadow: 0 16px 42px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.16) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(125%) !important;
+  backdrop-filter: blur(16px) saturate(125%) !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  color: #fff !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-profile-side {
+  display: flex !important;
+  min-width: 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-direction: column !important;
+  gap: 11px !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-avatar {
+  display: block !important;
+  width: 88px !important;
+  height: 88px !important;
+  max-width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  object-fit: cover !important;
+  border: 3px solid rgba(255,255,255,.8) !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,.16) !important;
+  box-shadow: 0 8px 22px rgba(0,0,0,.22), 0 0 0 5px rgba(255,255,255,.07) !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-edit {
+  min-height: 36px !important;
+  max-width: 100% !important;
+  padding: 7px 12px !important;
+  border: 1px solid rgba(255,255,255,.36) !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.12) !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  font-size: .8rem !important;
+  font-weight: 750 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-summary {
+  min-width: 0 !important;
+  text-align: left !important;
+  overflow-wrap: anywhere !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard #ownerName {
+  margin: 0 0 8px !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  font-size: clamp(1.12rem, 2.4vw, 1.55rem) !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+  letter-spacing: -.015em !important;
+  text-wrap: balance !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard #ownerNipSummary {
+  display: inline-flex !important;
+  align-items: center !important;
+  max-width: 100% !important;
+  margin: 0 0 9px !important;
+  padding: 5px 10px !important;
+  border: 1px solid rgba(255,255,255,.2) !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.09) !important;
+  color: rgba(255,255,255,.94) !important;
+  -webkit-text-fill-color: rgba(255,255,255,.94) !important;
+  font-size: .8rem !important;
+  font-weight: 700 !important;
+  line-height: 1.4 !important;
+  overflow-wrap: anywhere !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard #ownerInstitutionSummary {
+  margin: 0 0 10px !important;
+  color: rgba(255,255,255,.82) !important;
+  -webkit-text-fill-color: rgba(255,255,255,.82) !important;
+  font-size: .9rem !important;
+  line-height: 1.55 !important;
+  overflow-wrap: anywhere !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-details {
+  margin-top: 8px !important;
+  padding-top: 8px !important;
+  border-top: 1px solid rgba(255,255,255,.17) !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-details summary {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  min-height: 34px !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  font-size: .84rem !important;
+  font-weight: 750 !important;
+  cursor: pointer !important;
+  text-underline-offset: 3px !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-details p {
+  margin: 7px 0 0 !important;
+  color: rgba(255,255,255,.84) !important;
+  -webkit-text-fill-color: rgba(255,255,255,.84) !important;
+  font-size: .85rem !important;
+  line-height: 1.55 !important;
+  overflow-wrap: anywhere !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-header-actions {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: flex-end !important;
+  min-width: 0 !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .top-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .top-actions > button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  padding: 9px !important;
+  border: 1px solid rgba(255,255,255,.28) !important;
+  border-radius: 13px !important;
+  background: rgba(255,255,255,.105) !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: 0 5px 16px rgba(0,0,0,.1) !important;
+  cursor: pointer !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .top-actions > button svg {
+  display: block !important;
+  width: 20px !important;
+  height: 20px !important;
+  color: #fff !important;
+  stroke: currentColor !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .top-actions > button:hover,
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-edit:hover {
+  background: rgba(255,255,255,.2) !important;
+  border-color: rgba(255,255,255,.55) !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard :is(button, summary):focus-visible {
+  outline: 2px solid #fff !important;
+  outline-offset: 3px !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .bell-count {
+  border: 1px solid rgba(255,255,255,.5) !important;
+  background: rgba(255,255,255,.2) !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+@media (max-width: 640px) {
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard {
+    grid-template-columns: minmax(0, 1fr) !important;
+    justify-items: center !important;
+    gap: 14px !important;
+    padding: 17px 14px !important;
+    border-radius: 20px !important;
+    text-align: center !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-profile-side {
+    width: 100% !important;
+    gap: 10px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-avatar {
+    width: 82px !important;
+    height: 82px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-summary {
+    width: 100% !important;
+    text-align: center !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard #ownerName {
+    font-size: 1.22rem !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard #ownerNipSummary {
+    justify-content: center !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-details summary {
+    justify-content: center !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-header-actions {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard .top-actions {
+    justify-content: center !important;
+    gap: 9px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard .top-actions > button {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+}
+@media (max-width: 360px) {
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard {
+    padding: 14px 11px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-header-actions,
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard .top-actions {
+    max-width: 100% !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
