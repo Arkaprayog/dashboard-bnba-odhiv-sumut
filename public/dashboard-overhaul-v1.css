@@ -1,0 +1,152 @@
+/* SODARAMU dashboard overhaul v1.0.0 — responsive glass surfaces and horizontal data tables */
+html { color-scheme: dark; }
+html, body { min-width: 0 !important; width: 100% !important; }
+body.authenticated {
+  display: block !important; width: 100% !important; min-width: 0 !important;
+  min-height: 100svh !important; margin: 0 !important; padding: 12px !important;
+  overflow-x: hidden !important; background-color: transparent !important;
+}
+body.authenticated main {
+  display: block !important; width: min(100%, 1440px) !important; max-width: 1440px !important;
+  min-width: 0 !important; margin: 0 auto !important;
+  padding: clamp(12px, 2.5vw, 28px) !important; text-align: left !important;
+  background: transparent !important; border: 0 !important; box-shadow: none !important;
+  transform: none !important; float: none !important;
+}
+body.authenticated #dashboard {
+  display: block !important; width: 100% !important; max-width: 100% !important;
+  min-width: 0 !important; margin: 0 auto !important; padding: 0 !important;
+  overflow: visible !important;
+}
+body.authenticated #dashboard,
+body.authenticated #dashboard :is(section, article, aside, nav, header, footer, form, fieldset,
+  .owner-card, .app-nav, .dashpanel, .overview-card, .overview-panel, .notification-panel,
+  .settings-panel, .respondent-stat, .content-card, .surface, .glass, .glass-card,
+  .questionnaire-panel, .database-panel, .assessment-panel, .document-card, .form-container,
+  .stat-box, .assessment-box, .menu-btn, .app-view, .overview-grid, .overview-panels) {
+  background: rgba(255,255,255,.10) !important;
+  background-color: rgba(255,255,255,.10) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255,255,255,.25) !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  backdrop-filter: blur(14px) !important;
+  color: #fff !important;
+}
+body.authenticated #dashboard :is(.owner-profile-side, .owner-summary, .owner-header-actions, .top-actions) {
+  background: transparent !important; border: 0 !important; box-shadow: none !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+}
+body.authenticated #dashboard :is(h1,h2,h3,h4,p,span,label,small,strong,summary,li,a,svg,th,td) {
+  color: #fff !important; -webkit-text-fill-color: #fff !important;
+}
+body.authenticated #dashboard :is(button, .btn, .dashbtn, .workflow-save, .owner-edit,
+  .settings-button, .bell-button, .assessment-upload, .app-nav button) {
+  color: #fff !important; -webkit-text-fill-color: #fff !important;
+  background: rgba(255,255,255,.12) !important; background-color: rgba(255,255,255,.12) !important;
+  border: 1px solid rgba(255,255,255,.34) !important; box-shadow: none !important;
+  border-radius: 14px; max-width: 100%; min-width: 0; white-space: normal;
+}
+body.authenticated #dashboard :is(input,select,textarea,.form-control,.workflow-control) {
+  display: block; width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box;
+  color: #fff !important; -webkit-text-fill-color: #fff !important;
+  background: rgba(255,255,255,.10) !important; background-color: rgba(255,255,255,.10) !important;
+  border: 1px solid rgba(255,255,255,.30) !important; box-shadow: none !important;
+}
+body.authenticated #dashboard input::placeholder,
+body.authenticated #dashboard textarea::placeholder {
+  color: rgba(255,255,255,.78) !important; -webkit-text-fill-color: rgba(255,255,255,.78) !important;
+}
+body.authenticated #dashboard select option { color: #fff; background: #24445b; }
+body.authenticated #dashboard .owner-card {
+  display: grid !important; grid-template-columns: minmax(0,1fr) auto !important;
+  align-items: center !important; gap: 14px !important; width: 100% !important;
+  min-width: 0 !important; margin: 0 0 16px !important; padding: 16px !important;
+  position: relative !important; inset: auto !important; float: none !important; transform: none !important;
+  border-radius: 20px !important; overflow: visible !important;
+}
+body.authenticated #dashboard .owner-profile-side {
+  display: flex !important; flex-direction: row !important; align-items: center !important;
+  gap: 12px !important; min-width: 0 !important; width: auto !important; flex: initial !important;
+}
+body.authenticated #dashboard .owner-avatar { width: 76px !important; height: 76px !important; flex: 0 0 76px !important; }
+body.authenticated #dashboard .owner-summary { grid-column: 1 / -1 !important; grid-row: 2 !important; min-width: 0 !important; margin: 0 !important; overflow-wrap: anywhere !important; }
+body.authenticated #dashboard .owner-summary h3 { font-size: clamp(1rem, 3.6vw, 1.35rem) !important; line-height: 1.3 !important; overflow-wrap: anywhere !important; }
+body.authenticated #dashboard .owner-summary p { font-size: .9rem !important; line-height: 1.5 !important; overflow-wrap: anywhere !important; word-break: normal !important; }
+body.authenticated #dashboard .owner-header-actions { grid-column: 2 !important; grid-row: 1 !important; margin: 0 !important; min-width: 0 !important; }
+body.authenticated #dashboard .top-actions { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; }
+body.authenticated #dashboard .top-actions button { width: 44px !important; height: 44px !important; padding: 8px !important; }
+body.authenticated #dashboard .app-nav {
+  display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  width: 100% !important; max-width: 100% !important; min-width: 0 !important;
+  margin: 16px 0 !important; padding: 10px !important; gap: 10px !important;
+  border-radius: 20px !important;
+}
+body.authenticated #dashboard .app-nav button {
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  width: 100% !important; min-height: 54px !important; padding: 10px 8px !important;
+  line-height: 1.3 !important; overflow-wrap: normal !important; word-break: normal !important;
+}
+body.authenticated #dashboard :is(.overview-grid,.respondent-stats) {
+  display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  gap: 10px !important; width: 100% !important; min-width: 0 !important;
+}
+body.authenticated #dashboard :is(.overview-card,.respondent-stat) {
+  min-width: 0 !important; padding: 12px !important; overflow-wrap: anywhere !important;
+}
+body.authenticated #dashboard :is(.overview-panels) {
+  display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  gap: 12px !important; min-width: 0 !important;
+}
+body.authenticated #dashboard :is(.dashpanel,.app-view,.form-container,.assessment-panel,.questionnaire-panel,.database-panel) {
+  width: 100% !important; max-width: 100% !important; min-width: 0 !important;
+  margin-left: 0 !important; margin-right: 0 !important; padding: clamp(10px,2vw,16px) !important;
+  border-radius: 16px !important;
+}
+/* Tables: preserve horizontal words; scroll the table, not the whole page. */
+body.authenticated #dashboard .datawrap,
+body.authenticated #dashboard .table-responsive,
+body.authenticated #dashboard .table-wrap,
+body.authenticated #dashboard .database-table-wrap {
+  display: block !important; width: 100% !important; max-width: 100% !important;
+  min-width: 0 !important; overflow-x: auto !important; overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important; overscroll-behavior-x: contain !important;
+}
+body.authenticated #dashboard table,
+body.authenticated #dashboard .datatable {
+  width: max-content !important; min-width: 100% !important; max-width: none !important;
+  table-layout: auto !important; border-collapse: separate !important; border-spacing: 0 !important;
+  writing-mode: horizontal-tb !important;
+}
+body.authenticated #dashboard tr { height: auto !important; }
+body.authenticated #dashboard :is(th,td) {
+  writing-mode: horizontal-tb !important; text-orientation: mixed !important;
+  white-space: normal !important; word-break: normal !important; overflow-wrap: break-word !important;
+  min-width: 120px !important; max-width: 300px !important; padding: 10px 12px !important;
+  vertical-align: top !important; line-height: 1.45 !important;
+}
+body.authenticated #dashboard :is(th:first-child,td:first-child) { min-width: 82px !important; }
+body.authenticated #dashboard .assessment-row {
+  display: grid !important; grid-template-columns: 36px minmax(0,1fr) !important;
+  gap: 8px 10px !important; width: 100% !important; min-width: 0 !important;
+}
+body.authenticated #dashboard .assessment-answer { grid-column: 2 !important; min-width: 0 !important; }
+body.authenticated #dashboard .assessment-options { display: grid !important; grid-template-columns: repeat(auto-fit,minmax(min(100%,220px),1fr)) !important; gap: 8px !important; }
+body.authenticated #dashboard :is(img,svg,canvas,iframe) { max-width: 100%; }
+@media (max-width: 600px) {
+  body.authenticated { padding: 8px !important; }
+  body.authenticated main { padding: 8px !important; }
+  body.authenticated #dashboard .owner-card { grid-template-columns: minmax(0,1fr) !important; gap: 10px !important; padding: 12px !important; }
+  body.authenticated #dashboard .owner-profile-side { grid-row: 1 !important; flex-wrap: wrap !important; }
+  body.authenticated #dashboard .owner-header-actions { grid-column: 1 !important; grid-row: 2 !important; justify-self: start !important; }
+  body.authenticated #dashboard .owner-summary { grid-column: 1 !important; grid-row: 3 !important; }
+  body.authenticated #dashboard .app-nav { gap: 8px !important; padding: 8px !important; }
+  body.authenticated #dashboard .app-nav button { min-height: 50px !important; font-size: .88rem !important; }
+  body.authenticated #dashboard :is(.overview-panels) { grid-template-columns: minmax(0,1fr) !important; }
+  body.authenticated #dashboard :is(.overview-card,.respondent-stat) { padding: 10px !important; }
+  body.authenticated #dashboard :is(th,td) { min-width: 110px !important; max-width: 220px !important; padding: 8px 10px !important; }
+}
+@media (min-width: 900px) {
+  body.authenticated #dashboard .app-nav { grid-template-columns: repeat(4,minmax(0,1fr)) !important; }
+  body.authenticated #dashboard :is(.overview-grid,.respondent-stats) { grid-template-columns: repeat(4,minmax(0,1fr)) !important; }
+}
