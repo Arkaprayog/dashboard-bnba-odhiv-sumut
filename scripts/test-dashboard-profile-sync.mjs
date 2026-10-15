@@ -37,7 +37,7 @@ assert.equal(manifest.version, pkg.version, "PWA manifest version must match the
 assert.ok(dashboard.includes('href="style.css?v=1.1.37"') && dashboard.includes('href="login.css?v=1.1.37"'), "Login and global CSS must use the same cache-busted theme version.");
 assert.ok(!dashboard.includes("body:not(.authenticated) main :not(button):not(.submit):not(svg):not(path):not(img){color:#123b67!important"), "High-specificity blue text override must not affect the Login page.");
 assert.ok(dashboard.includes("body.authenticated main :not(button):not(.submit):not(svg):not(path):not(img){color:#123b67!important"), "Blue text override must be restricted to authenticated dashboard content.");
-assert.ok(loginCss.includes("background:rgba(24,32,35,.22)!important") && loginCss.includes("backdrop-filter:blur(6px) saturate(115%)!important"), "Login card must use the clear translucent glass surface.");
+assert.ok(loginCss.includes("background:rgba(24,32,35,.22)!important") && loginCss.includes("backdrop-filter:blur(8px) saturate(115%)!important"), "Login card must use the clear translucent glass surface.");
 assert.ok(loginCss.includes("html body:not(.authenticated) main .login-heading h1") && loginCss.includes("-webkit-text-fill-color:#fff!important"), "Login headings and helper copy must explicitly render white text.");
 assert.ok(loginCss.includes("background:rgba(15,86,153,.82)!important") && loginCss.includes("color:#fff!important"), "Login button and status surfaces must retain white text on translucent blue glass.");
 assert.ok(loginCss.includes("html body:not(.authenticated) main #message:empty") && loginCss.includes("display:none!important"), "Empty login status messages must not render as a dark bar.");
