@@ -1,3 +1,9 @@
+## 1.1.39 — 2026-10-15
+- Refresh ikon SODARAMU untuk favicon browser dan ikon aplikasi web/PWA menggunakan aset SVG baru yang kompatibel dengan browser modern.
+- Perbarui metadata manifest PWA: nama SODARAMU, ikon, warna tema, dan cache-busting versi 1.1.39.
+- Perbarui ikon launcher native Android, label aplikasi menjadi SODARAMU, dan naikkan versi APK ke 1.2.21 (versionCode 24).
+- Tidak mengubah autentikasi, API, maupun penyimpanan data.
+
 ## 1.1.38 — 2026-10-15
 - Membagi dokumen asesmen saat dicetak menjadi enam halaman formulir dengan rentang nomor pertanyaan yang mengikuti PDF referensi, lalu empat halaman lampiran foto terpisah.
 - Menyediakan halaman foto 7–10 meskipun foto belum diunggah; halaman tetap berurutan dan berubah menjadi foto aktual saat berkas dilampirkan.
