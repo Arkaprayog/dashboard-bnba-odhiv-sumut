@@ -1,25 +1,25 @@
 {
-  "name": "Sahabat ODHIV Sumatera Utara",
+  "name": "SODARAMU",
   "short_name": "SODARAMU",
-  "description": "Sahabat ODHIV Sumatera Utara",
+  "description": "SODARAMU — Sahabat ODHIV Damping Rangkul Mu",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#163847",
-  "theme_color": "#163847",
+  "background_color": "#e4f7f2",
+  "theme_color": "#2d6a4f",
   "icons": [
     {
-      "src": "/sodaramu-icon.svg",
+      "src": "/sodaramu-icon.svg?v=1.1.39",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "/sodaramu-icon.svg",
+      "src": "/sodaramu-icon.svg?v=1.1.39",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "maskable"
     }
   ],
-  "version": "1.1.38"
+  "version": "1.1.39"
 }
