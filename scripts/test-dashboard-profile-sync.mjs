@@ -3,6 +3,15 @@ import assert from "node:assert/strict";
 
 const dashboard = readFileSync("public/index.html", "utf8");
 const transparentCss = readFileSync("public/transparent-theme.css", "utf8");
+const headerActionCss = readFileSync("public/action-buttons-horizontal-v1.css", "utf8");
+assert.match(dashboard, /class="owner-header-actions action-bar-container"/);
+assert.match(dashboard, /class="top-actions action-buttons-group"/);
+assert.match(dashboard, /id="notificationBellButton"[^>]*class="bell-button glass-icon-btn"|class="bell-button glass-icon-btn"[^>]*id="notificationBellButton"/);
+assert.match(dashboard, /id="settingsButton"[^>]*class="settings-button glass-icon-btn"|class="settings-button glass-icon-btn"[^>]*id="settingsButton"/);
+assert.match(dashboard, /id="logoutButton"[^>]*class="dashbtn glass-icon-btn"|class="dashbtn glass-icon-btn"[^>]*id="logoutButton"/);
+assert.match(headerActionCss, /flex-direction:\s*row\s*!important/);
+assert.match(headerActionCss, /justify-content:\s*flex-end\s*!important/);
+
 const manifest = JSON.parse(readFileSync("public/manifest.json", "utf8"));
 const offlinePage = readFileSync("android-app/app/src/main/assets/offline.html", "utf8");
 const suratLainnya = readFileSync("public/surat-lainnya.html", "utf8");
@@ -33,9 +42,9 @@ assert.match(dashboard, /id="logoutButton"/);
 assert.match(dashboard, /aria-label="Keluar"/);
 assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='owner' AND active=1/);
 assert.match(worker, /owner_profile_update/);
-assert.equal(pkg.version, "1.1.38");
+assert.equal(pkg.version, "1.1.39");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
-assert.ok(dashboard.includes('href="/assessment-print-10-pages-v1.css?v=1.1.38"'), "assessment must load the dedicated ten-page print stylesheet.");
+assert.ok(dashboard.includes('href="/assessment-print-10-pages-v1.css?v=1.1.39"'), "assessment must load the dedicated ten-page print stylesheet.");
 assert.ok(dashboard.includes('pageIndexForQuestion') && dashboard.includes('assessment-print-page'), "assessment fields must be partitioned into six print pages.");
 assert.ok(dashboard.includes('HALAMAN 7 — LAMPIRAN FOTO DIRI (CLOSE-UP PPKS)') && dashboard.includes('HALAMAN 8 — LAMPIRAN FOTO KTP') && dashboard.includes('HALAMAN 9 — LAMPIRAN FOTO KARTU KELUARGA (KK)') && dashboard.includes('HALAMAN 10 — LAMPIRAN FOTO RUMAH TAMPAK DEPAN'), "all four photo appendices must be generated in the required order.");
 assert.ok(assessmentPrintCss.includes('size:A4 portrait') && assessmentPrintCss.includes('page-break-before:always') && assessmentPrintCss.includes('assessment-print-photo-page'), "print stylesheet must force A4 page breaks for the four appendices.");
