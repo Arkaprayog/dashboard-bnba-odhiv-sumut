@@ -1,0 +1,23 @@
+/* Authenticated dashboard must never display the login card beside/over the workspace. */
+html body.authenticated #loginCard,
+html body.authenticated .login-card,
+html body.authenticated #gateForm{
+  display:none!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+html body.authenticated main{
+  display:block!important;
+  grid-template-columns:minmax(0,1fr)!important;
+}
+html body.authenticated #dashboard[hidden]{
+  display:none!important;
+}
+html body.authenticated #dashboard:not([hidden]){
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
