@@ -1,0 +1,248 @@
+/* Owner questionnaire — responsive glass polish v1.0.0 */
+#questionnaireView {
+  width: 100%;
+  max-width: 980px;
+  margin-inline: auto;
+  padding: clamp(10px, 2.5vw, 22px);
+  color: #fff;
+}
+#questionnaireView .dashhead {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  text-align: center;
+}
+#questionnaireView .dashhead > div { width: 100%; }
+#questionnaireView .dashhead h2 {
+  margin: 0 0 8px;
+  color: #fff;
+  font-size: clamp(1.35rem, 4vw, 2rem);
+  line-height: 1.2;
+  letter-spacing: .01em;
+  text-wrap: balance;
+}
+#questionnaireView .dashhead p {
+  max-width: 650px;
+  margin: 0 auto;
+  color: rgba(255,255,255,.82);
+  line-height: 1.65;
+}
+#ownerQuestionnaireForm {
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+  padding: clamp(14px, 3vw, 28px);
+  border: 1px solid rgba(255,255,255,.24);
+  border-radius: 24px;
+  background: rgba(255,255,255,.075);
+  box-shadow: 0 18px 48px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.12);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  color: #fff;
+  box-sizing: border-box;
+}
+#ownerQuestionnaireForm > h3 {
+  margin: 0 0 8px;
+  color: #fff;
+  font-size: clamp(1.05rem, 3vw, 1.3rem);
+  line-height: 1.35;
+}
+#ownerQuestionnaireForm > .scroll-hint {
+  margin: 0 0 22px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255,255,255,.17);
+  border-radius: 14px;
+  background: rgba(255,255,255,.055);
+  color: rgba(255,255,255,.83);
+  font-size: .92rem;
+  line-height: 1.6;
+}
+#ownerQuestionnaireForm .owner-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+#ownerQuestionnaireForm .dashfield {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+  gap: 7px;
+  padding: 13px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 16px;
+  background: rgba(255,255,255,.035);
+}
+#ownerQuestionnaireForm .dashfield > label {
+  display: block;
+  color: rgba(255,255,255,.95);
+  font-size: .82rem;
+  font-weight: 750;
+  line-height: 1.5;
+  letter-spacing: .035em;
+}
+#ownerQuestionnaireForm .dashfield input:not([type="file"]),
+#ownerQuestionnaireForm .dashfield select,
+#ownerQuestionnaireForm .dashfield textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 11px 13px;
+  border: 1px solid rgba(255,255,255,.27);
+  border-radius: 12px;
+  outline: none;
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  font: inherit;
+  line-height: 1.45;
+  box-sizing: border-box;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+#ownerQuestionnaireForm .dashfield input::placeholder,
+#ownerQuestionnaireForm .dashfield textarea::placeholder { color: rgba(255,255,255,.6); }
+#ownerQuestionnaireForm .dashfield select option {
+  color: #172033;
+  background: #fff;
+}
+#ownerQuestionnaireForm .dashfield input[readonly] {
+  background: rgba(255,255,255,.045);
+  color: rgba(255,255,255,.76);
+}
+#ownerQuestionnaireForm .dashfield input:focus-visible,
+#ownerQuestionnaireForm .dashfield select:focus-visible,
+#ownerQuestionnaireForm .dashfield textarea:focus-visible,
+#ownerQuestionnaireForm .dashfield input[type="file"]:focus-visible {
+  border-color: rgba(255,255,255,.85);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.13);
+}
+#ownerQuestionnaireForm .dashfield small {
+  color: rgba(255,255,255,.72);
+  font-size: .8rem;
+  line-height: 1.5;
+}
+#ownerQuestionnaireForm .dashfield input[type="file"] {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  border: 1px dashed rgba(255,255,255,.38);
+  border-radius: 12px;
+  background: rgba(255,255,255,.055);
+  color: rgba(255,255,255,.9);
+  font: inherit;
+  font-size: .86rem;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+#ownerQuestionnaireForm .dashfield input[type="file"]::file-selector-button {
+  margin: 0 10px 6px 0;
+  padding: 8px 11px;
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 9px;
+  background: rgba(255,255,255,.14);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+#ownerQuestionnaireForm #oqWhatsappLink {
+  align-self: flex-start;
+  color: #fff;
+  font-size: .88rem;
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+#ownerQuestionnaireForm fieldset.dashpanel {
+  margin: 20px 0 0 !important;
+  padding: 16px clamp(12px, 2.5vw, 22px) 18px;
+  border: 1px solid rgba(255,255,255,.23);
+  border-radius: 18px;
+  background: rgba(255,255,255,.045);
+  color: #fff;
+  min-width: 0;
+}
+#ownerQuestionnaireForm fieldset legend {
+  padding: 0 8px;
+  color: #fff;
+  font-size: .95rem;
+  font-weight: 800;
+}
+#ownerQuestionnaireForm fieldset label {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 46px;
+  margin: 8px 0 !important;
+  padding: 10px 13px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 12px;
+  background: rgba(255,255,255,.045);
+  color: #fff;
+  line-height: 1.45;
+  cursor: pointer;
+}
+#ownerQuestionnaireForm fieldset input[type="radio"] {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 auto;
+  accent-color: #fff;
+}
+#ownerQuestionnaireForm .owner-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 22px;
+}
+#ownerQuestionnaireForm .owner-form-actions .dashbtn {
+  min-height: 46px;
+  min-width: 170px;
+  padding: 11px 20px;
+  border: 1px solid rgba(255,255,255,.35);
+  border-radius: 13px;
+  background: rgba(255,255,255,.13);
+  color: #fff;
+  font: inherit;
+  font-weight: 800;
+  box-shadow: 0 8px 20px rgba(0,0,0,.12);
+  cursor: pointer;
+  transition: transform .18s ease, background .18s ease, border-color .18s ease;
+}
+#ownerQuestionnaireForm .owner-form-actions .dashbtn:hover {
+  background: rgba(255,255,255,.21);
+  border-color: rgba(255,255,255,.6);
+}
+#ownerQuestionnaireForm .owner-form-actions .dashbtn:active { transform: translateY(1px); }
+#ownerQuestionnaireForm .owner-form-actions .dashbtn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+#ownerQuestionnaireForm #ownerQuestionnaireMessage {
+  margin: 14px 0 0;
+  color: #fff;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 620px) {
+  #questionnaireView { padding: 8px 4px 18px; }
+  #questionnaireView .dashhead { margin-bottom: 13px; }
+  #ownerQuestionnaireForm {
+    padding: 13px;
+    border-radius: 19px;
+  }
+  #ownerQuestionnaireForm .owner-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 11px;
+  }
+  #ownerQuestionnaireForm .dashfield { padding: 11px; border-radius: 14px; }
+  #ownerQuestionnaireForm .dashfield > label { font-size: .8rem; }
+  #ownerQuestionnaireForm .owner-form-actions { flex-direction: column; }
+  #ownerQuestionnaireForm .owner-form-actions .dashbtn { width: 100%; min-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #ownerQuestionnaireForm * { transition: none !important; scroll-behavior: auto !important; }
+}
