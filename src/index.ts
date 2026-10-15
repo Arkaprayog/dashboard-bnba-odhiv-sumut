@@ -1485,8 +1485,16 @@ export default {
           updated_by TEXT NOT NULL
         )`).run();
         if (request.method === "GET") {
-          const rows = await env.DB.prepare("SELECT id,created_at,updated_at,created_by FROM integrated_assessments ORDER BY updated_at DESC LIMIT 100").all<{id:string;created_at:string;updated_at:string;created_by:string}>();
-          return reply({ items: rows.results || [] });
+          const rows = await env.DB.prepare("SELECT id,answers_json,created_at,updated_at,created_by FROM integrated_assessments ORDER BY updated_at DESC LIMIT 100").all<{id:string;answers_json:string;created_at:string;updated_at:string;created_by:string}>();
+          const items = (rows.results || []).map(row => {
+            let respondentName = "";
+            try {
+              const answers = JSON.parse(row.answers_json) as Record<string, unknown>;
+              if (typeof answers.q16 === "string") respondentName = answers.q16.trim().slice(0, 160);
+            } catch {}
+            return { id: row.id, created_at: row.created_at, updated_at: row.updated_at, created_by: row.created_by, respondent_name: respondentName };
+          });
+          return reply({ items });
         }
         let body: { id?: unknown; answers?: unknown };
         try { body = await request.json() as typeof body; } catch { return reply({ error: "Format data asesmen tidak valid." }, 400); }
