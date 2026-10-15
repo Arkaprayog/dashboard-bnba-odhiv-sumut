@@ -245,7 +245,7 @@ jobs:
             ['API replies have a default-deny CSP and same-origin response policy', worker.includes("default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'") && worker.includes('"cross-origin-resource-policy": "same-origin"') && worker.includes('"x-permitted-cross-domain-policies": "none"')],
             ['owner bootstrap enforces stronger passwords and secure helper contract', worker.includes('password.length < 14') && worker.includes('password minimal 14 karakter') && adminScript.includes('read -r -s -p "Password owner') && adminScript.includes('X-Owner-Bootstrap-Token') && adminScript.includes('Origin: $ORIGIN') && adminScript.includes('sahabatodhivsumut.web.id') && !adminScript.includes('PASSWORD="$3"') && !adminScript.includes('dashboard-bnba-odhiv-sumut.aryprayoga139.workers.dev')],
             ['notification logging redacts raw exception messages', worker.includes(`notification_record_failed", { action, stage: "record" }`) && !worker.includes(`notification_record_failed", { action, message:`)],
-            ['copyright notice visible', html.includes('© 2026 Data Base ODHIV Sumatera Utara')],
+            ['copyright notice visible', html.includes('© 2026 Data Base Kemensos RI DRSKPNO')],
           ];
           for (const [name, ok] of checks) {
             console.log((ok ? 'PASS ' : 'FAIL ') + name);

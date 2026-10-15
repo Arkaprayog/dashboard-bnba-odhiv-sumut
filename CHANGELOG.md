@@ -1,3 +1,18 @@
+## 1.1.38 — 2026-10-15
+- Membagi dokumen asesmen saat dicetak menjadi enam halaman formulir dengan rentang nomor pertanyaan yang mengikuti PDF referensi, lalu empat halaman lampiran foto terpisah.
+- Menyediakan halaman foto 7–10 meskipun foto belum diunggah; halaman tetap berurutan dan berubah menjadi foto aktual saat berkas dilampirkan.
+- Menambahkan stylesheet cetak A4 khusus, mempertahankan antarmuka layar dengan Glassmorphism, dan menampilkan nilai input pada hasil cetak.
+- Memperbarui nama lampiran terakhir menjadi “FOTO RUMAH TAMPAK DEPAN”.
+- Versi web 1.1.38.
+
+## 1.1.37 — 2026-10-15
+- Update test otomatis agar memvalidasi teks hak cipta baru “Data Base Kemensos RI DRSKPNO”.
+- Selaraskan versi web, manifest, dan cache aset ke 1.1.37.
+
+## 1.1.36 — 2026-10-15
+- Ganti teks hak cipta halaman akses awal dan footer menjadi “Data Base Kemensos RI DRSKPNO”.
+- Selaraskan versi web dan cache aset ke 1.1.36.
+
 ## 1.1.35 — 2026-10-15
 - Ganti nama menu Asesmen menjadi From Asesmen Terintegrasi.
 - Ganti tombol CETAK / SIMPAN PDF menjadi Print; nama keluaran cetak mengikuti nama responden pada pertanyaan 16.
