@@ -32,7 +32,7 @@ assert.match(dashboard, /id="logoutButton"/);
 assert.match(dashboard, /aria-label="Keluar"/);
 assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='owner' AND active=1/);
 assert.match(worker, /owner_profile_update/);
-assert.equal(pkg.version, "1.1.32");
+assert.equal(pkg.version, "1.1.33");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
 assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.1"') && dashboard.includes('href="/transparent-theme.css?v=2.0.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
 assert.ok(transparentCss.includes("--sahabat-glass-blur:16px") && transparentCss.includes("--sahabat-glass-bg:rgba(15,23,42,.70)") && transparentCss.includes("color:#fff!important"), "shared theme must use glassmorphism, blur 16px, and white typography.");
