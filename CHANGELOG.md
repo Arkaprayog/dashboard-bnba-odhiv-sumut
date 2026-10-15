@@ -1,3 +1,7 @@
+## 1.1.36 — 2026-10-15
+- Ganti teks hak cipta halaman akses awal dan footer menjadi “Data Base Kemensos RI DRSKPNO”.
+- Selaraskan versi web dan cache aset ke 1.1.36.
+
 ## 1.1.35 — 2026-10-15
 - Ganti nama menu Asesmen menjadi From Asesmen Terintegrasi.
 - Ganti tombol CETAK / SIMPAN PDF menjadi Print; nama keluaran cetak mengikuti nama responden pada pertanyaan 16.
