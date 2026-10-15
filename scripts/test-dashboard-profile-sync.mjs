@@ -37,7 +37,7 @@ assert.equal(manifest.version, pkg.version, "PWA manifest version must match the
 assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.1"') && dashboard.includes('href="/transparent-theme.css?v=2.0.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
 assert.ok(transparentCss.includes("--sahabat-glass-blur:16px") && transparentCss.includes("--sahabat-glass-bg:rgba(15,23,42,.70)") && transparentCss.includes("color:#fff!important"), "shared theme must use glassmorphism, blur 16px, and white typography.");
 assert.match(gradle, /versionCode 23/);
-assert.match(gradle, /versionName '1\.2\.19'/);
+assert.match(gradle, /versionName '1\\.2\\.20'/);
 assert.match(changelog, /^## 1\.1\.18/m);
 assert.ok(dashboard.includes("Versi " + pkg.version), "dashboard display version must match package.json");
 assert.match(dashboard, /href="\/surat-tugas\.html">Buka &amp; Edit Surat Tugas/);
