@@ -1,3 +1,10 @@
+## 1.1.35 — 2026-10-15
+- Ganti nama menu Asesmen menjadi From Asesmen Terintegrasi.
+- Ganti tombol CETAK / SIMPAN PDF menjadi Print; nama keluaran cetak mengikuti nama responden pada pertanyaan 16.
+- Tampilkan nama responden pada daftar asesmen tersimpan agar catatan mudah dikenali.
+- Sesuaikan pertanyaan 69 (bukti kepemilikan tanah) dan 70 (tinggal bersama) menjadi pilihan tunggal sesuai PDF acuan.
+- Naikkan versi web dan cache aset ke 1.1.35.
+
 ## 1.1.34 — 2026-10-15
 - Terapkan stylesheet glassmorphism global yang konsisten pada panel, kartu, form, tombol, tabel, dan kontrol di seluruh aplikasi.
 - Hilangkan latar solid dan bayangan berat pada permukaan aplikasi; gunakan kaca transparan, blur 14px, border putih tipis, dan teks putih.
