@@ -1,7 +1,6 @@
-:root{--ink:#111;--line:#d7dde2}
 *{box-sizing:border-box}
 body{margin:0;font-family:"Times New Roman",serif}
-.toolbar{position:sticky;top:0;z-index:5;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;padding:12px;border-bottom:1px solid var(--line);font:14px Arial,sans-serif}
+.toolbar{position:sticky;top:0;z-index:5;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;padding:12px;font:14px Arial,sans-serif}
 .toolbar a,.toolbar button{border-radius:999px;padding:10px 16px;text-decoration:none;font:600 14px Arial,sans-serif;cursor:pointer}
 .hint{width:100%;text-align:center;font-size:12px}
 .paper{width:min(210mm,calc(100% - 24px));min-height:297mm;margin:22px auto;padding:22mm 25mm 20mm;font-size:12pt;line-height:1.35}.letterhead{display:grid;grid-template-columns:85px minmax(0,1fr);gap:14px;align-items:center;padding:0 0 11px;margin-bottom:25px;text-align:center}.letterhead img{width:85px;height:77px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}.letterhead strong{display:block;font-size:12pt;line-height:1.28}.letterhead small{display:block;font-size:8.5pt;line-height:1.35;margin-top:4px}.date-line{display:block;width:100%;text-align:right;margin:0 0 18px;break-inside:avoid;page-break-inside:avoid}
@@ -9,62 +8,34 @@ body{margin:0;font-family:"Times New Roman",serif}
 @page{size:A4 portrait;margin:0}
 @media(max-width:650px){.paper{width:100%;min-height:0;margin:0;padding:18mm 15mm;font-size:11pt}.letterhead{grid-template-columns:68px minmax(0,1fr);gap:8px}.letterhead img{width:68px;height:62px}.letterhead strong{font-size:10pt}.letterhead small{font-size:7.5pt}.section{grid-template-columns:76px 12px 1fr}.signature{width:65%}.toolbar{position:static}}
 @media print{.toolbar{display:none!important}.paper{width:210mm;min-height:297mm;margin:0;padding:22mm 25mm 20mm;font-size:12pt}.letterhead{grid-template-columns:85px minmax(0,1fr);margin-bottom:22px}.letterhead img{width:85px;height:77px}.date-line{text-align:right}}
-
-
-:root{--ink:#fff!important;--line:rgba(255,255,255,.32)!important;--paper:rgba(3,17,27,.17)!important}
 html,body{min-height:100%}
-body{background-position:center center!important;background-attachment:fixed!important}
 body:not(.authenticated)::before,body:not(.authenticated)::after{display:none!important;content:none!important}
 body input::placeholder,body textarea::placeholder{opacity:1!important}
-body :is(main:not(.paper),header:not(.letterhead),footer,nav,.topbar,.toolbar,.panel,.card,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.stat,.profile,.staff,.notice,.notice-card,.form-card,.link-box,.table-wrap,.message,.status,.warning,dialog,fieldset,.hero,.quick-card,.workspace-card,.dashboard-card,.settings-panel,.notification-panel,.profile-bar,.login-panel,.menu-card,.info-card,.stat-card,.quick-link,.profile-setup,.section-card,.panel-card,.form,.data-card,.settings-row,.notification-item,.assessment-section-title,.assessment-subtitle,.profile-setup,.link-box,.to,.letter-date-line){-webkit-backdrop-filter:blur(18px) saturate(118%)!important}
-body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save){backdrop-filter:blur(14px)!important}
-body .paper{-webkit-backdrop-filter:blur(18px)!important}
 body :is([hidden],template){display:none!important}
-@media(prefers-reduced-transparency:reduce){body :is(main:not(.paper),header:not(.letterhead),footer,nav,.topbar,.toolbar,.panel,.card,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.stat,.profile,.staff,.notice,.form-card,.table-wrap,.settings-panel,.notification-panel,.paper){-webkit-backdrop-filter:none!important}}
 @media print{
- body .paper{-webkit-backdrop-filter:none!important}
  body :is(.topbar,.toolbar,.no-print,.editor-panel){display:none!important}
 }
-
-
-body :is(main:not(.paper),section:not(.paper),article,aside,header:not(.letterhead),footer,nav,form,fieldset,dialog,.card,.panel,.topbar,.toolbar,.workspace,.workspace-card,.dashboard-card,.owner-card,.profile-card,.profile-panel,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.modal-content,.drawer,.menu-card,.quick-card,.quick-link,.stat-card,.overview-card,.overview-panel,.status-card,.notice-card,.upload-card,.document-card,.assessment-card){backdrop-filter:blur(18px) saturate(125%)!important}
 body :is(input,textarea,select,option,[contenteditable="true"])::placeholder{opacity:1!important}
-body :is(.profile-actions,.owner-actions,.account-actions,.header-actions,.profile-controls,.action-icons,.icon-actions,.icon-button-group){backdrop-filter:none!important}
-@media print{body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){-webkit-backdrop-filter:none!important}}
 
 
-body .owner-header-actions,body .top-actions{position:relative!important;border:0!important;-webkit-backdrop-filter:none!important}
+body .owner-header-actions,body .top-actions{position:relative!important}
 body .owner-header-actions{position:absolute!important;top:16px!important;right:16px!important;z-index:50!important}
 body .top-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:12px!important}
-body :is(#notificationBellButton,#settingsButton,#logoutButton){width:56px!important;height:56px!important;min-width:56px!important;min-height:56px!important;aspect-ratio:1/1!important;flex:0 0 56px!important;padding:0!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border:1px solid rgba(255,255,255,.42)!important;backdrop-filter:blur(18px) saturate(125%)!important}
+body :is(#notificationBellButton,#settingsButton,#logoutButton){width:56px!important;height:56px!important;min-width:56px!important;min-height:56px!important;aspect-ratio:1/1!important;flex:0 0 56px!important;padding:0!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
 body :is(#notificationBellButton,#settingsButton,#logoutButton)::before,body :is(#notificationBellButton,#settingsButton,#logoutButton)::after{content:none!important;display:none!important}
 body :is(#notificationBellButton,#settingsButton,#logoutButton) svg{width:24px!important;height:24px!important;flex:0 0 24px!important}
 @media(max-width:640px){body .owner-header-actions{top:10px!important;right:10px!important}body .top-actions{gap:8px!important}body :is(#notificationBellButton,#settingsButton,#logoutButton){width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;flex-basis:44px!important}body :is(#notificationBellButton,#settingsButton,#logoutButton) svg{width:20px!important;height:20px!important}}
-body :is(main:not(.paper),section:not(.paper),article,aside,header:not(.letterhead),footer,nav,form,fieldset,dialog,.card,.panel,.topbar,.toolbar,.workspace,.workspace-card,.dashboard-card,.owner-card,.profile-card,.profile-panel,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.modal-content,.drawer,.menu-card,.quick-card,.quick-link,.stat-card,.overview-card,.overview-panel,.status-card,.notice-card,.upload-card,.document-card,.assessment-card){backdrop-filter:blur(18px) saturate(125%)!important}
-@media print{body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){-webkit-backdrop-filter:none!important}}
 @media screen{
-body :is(main,header:not(.letterhead),nav,aside,section:not(.paper),article:not(.paper),form,fieldset,dialog,.card,.panel,.glass-card,.dashboard-card,.menu-card,.sidebar,.navbar,.modal-content,.menu-item,.dashboard-container,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.drawer,.quick-card,.quick-link,.stat-card,.status-card,.notice-card,.upload-card,.document-card,.assessment-card,.workspace-card,.profile-card,.profile-panel,.stat,.staff,.profile,.notice,.field,.message,.status,.warning,.topbar,.toolbar,.shell,.top-actions,.owner-header-actions,.settings-row,.notification-item,.news-card,.respondent-stat,.respondent-quiz-panel,.respondent-quiz-note){-webkit-backdrop-filter:blur(16px)!important;border-radius:16px!important}
-body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save,.owner-edit,.settings-button,.bell-button){backdrop-filter:blur(16px)!important}
-body :is(input,select,textarea,[contenteditable="true"]){backdrop-filter:blur(8px)!important}
+body :is(main,header:not(.letterhead),nav,aside,section:not(.paper),article:not(.paper),form,fieldset,dialog,.card,.panel,.glass-card,.dashboard-card,.menu-card,.sidebar,.navbar,.modal-content,.menu-item,.dashboard-container,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.drawer,.quick-card,.quick-link,.stat-card,.status-card,.notice-card,.upload-card,.document-card,.assessment-card,.workspace-card,.profile-card,.profile-panel,.stat,.staff,.profile,.notice,.field,.message,.status,.warning,.topbar,.toolbar,.shell,.top-actions,.owner-header-actions,.settings-row,.notification-item,.news-card,.respondent-stat,.respondent-quiz-panel,.respondent-quiz-note){border-radius:16px!important}
 body :is(input,textarea)::placeholder{opacity:1!important}
-body .paper{border-radius:0!important;backdrop-filter:none!important}
-body .paper :is(section,article,header,form,fieldset,.card,.panel,.topbar,.toolbar,.field,.status,.warning){-webkit-backdrop-filter:none!important;border-radius:0!important}
+body .paper{border-radius:0!important}
+body .paper :is(section,article,header,form,fieldset,.card,.panel,.topbar,.toolbar,.field,.status,.warning){border-radius:0!important}
 }
 @media print{
-body .paper{-webkit-backdrop-filter:none!important}
 body :is(.topbar,.toolbar,.no-print,.editor-panel){display:none!important}
 }
 
 
-:root{--sahabat-glass-border:rgba(255,255,255,.22);--sahabat-glass-blur:16px}
-body :is(main,header,section,article,aside,nav,form,fieldset,dialog,[role=dialog],[class*="card"],[class*="panel"],[class*="menu"],[class*="modal"],[class*="box"],[class*="section"],.owner-card,.dashpanel,.app-nav,.overview-card,.overview-panel,.respondent-stat,.news-card,.notification-panel,.settings-panel,.datawrap,.card){-webkit-backdrop-filter:blur(16px)!important}
-body :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea,.link-url,.workflow-control){backdrop-filter:blur(16px)!important}
+:root{--sahabat-glass-blur:16px}
 body :is(input,textarea,select)::placeholder,body :is(input,textarea)::placeholder{opacity:1!important}
-body :is(button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button,.assessment-upload){backdrop-filter:blur(16px)!important}
 body :is(input,select,textarea,button,a):focus-visible{outline-offset:2px}
-body:not(.authenticated) main{backdrop-filter:blur(16px)!important}
-body:not(.authenticated) .field input,body:not(.authenticated) input[type=password],body:not(.authenticated) input[type=text]{border:1px solid rgba(255,255,255,.38)!important;-webkit-backdrop-filter:blur(16px)!important}
-body:not(.authenticated) .submit,body:not(.authenticated) .toggle{-webkit-backdrop-filter:blur(16px)!important}
-.assessment-paper{-webkit-backdrop-filter:none!important}
-@media(prefers-reduced-transparency:reduce){body :is(main,header,section,article,aside,nav,form,fieldset,dialog,[role=dialog],[class*="card"],[class*="panel"],[class*="menu"],[class*="modal"],[class*="box"],[class*="section"],.owner-card,.dashpanel,.card){-webkit-backdrop-filter:none!important}}
-@media print{body,body *{-webkit-backdrop-filter:none!important}}

@@ -1,18 +1,17 @@
-:root{--white:#fff;--blue:#0875d1;--line:rgba(255,255,255,.23);--glass-strong:rgba(0,28,75,.72)}
 *{box-sizing:border-box}
 html{min-height:100%}
-body{margin:0;min-height:100svh;font:16px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background-image:url("/danau-toba/photo-2.jpg?v=1.2.9");isolation:isolate;position:relative}
+body{margin:0;min-height:100svh;font:16px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;isolation:isolate;position:relative}
 body:before{content:"";position:fixed;inset:0;z-index:-1}
 .shell{width:min(1160px,calc(100% - 28px));margin:0 auto;padding:22px 0 30px}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 16px;border:1px solid var(--line);border-radius:18px;backdrop-filter:blur(14px)}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 16px;border-radius:18px}
 .brand{display:flex;align-items:center;gap:12px;min-width:0}
-.brand-mark{width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.35);border-radius:14px}
+.brand-mark{width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center;border-radius:14px}
 .brand-mark svg{width:27px;height:27px}
 .brand-name{display:block;font-size:clamp(.92rem,2.5vw,1.08rem);font-weight:850;line-height:1.25;letter-spacing:.01em}
 .brand-sub{display:block;margin-top:3px;font-size:.78rem;line-height:1.35}
 .top-link{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:9px 13px;border-radius:11px;text-decoration:none;font-weight:750;font-size:.88rem;white-space:nowrap;transition:background .18s ease,transform .18s ease}
 .top-link:hover{transform:translateY(-1px)}
-.hero{position:relative;overflow:hidden;margin:18px 0;padding:clamp(22px,5vw,48px);border-radius:24px;-webkit-backdrop-filter:blur(12px)}
+.hero{position:relative;overflow:hidden;margin:18px 0;padding:clamp(22px,5vw,48px);border-radius:24px}
 .hero:after{content:"";position:absolute;width:280px;height:280px;right:-100px;top:-145px;border-radius:50%;pointer-events:none}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;margin:0 0 13px;font-size:.77rem;font-weight:850;letter-spacing:.13em;text-transform:uppercase}
 .eyebrow:before{content:"";width:23px;height:2px;border-radius:2px}
@@ -25,7 +24,7 @@ h1{position:relative;z-index:1;max-width:780px;margin:0;font-size:clamp(1.8rem,5
 .section-heading h2{margin:0;font-size:clamp(1.15rem,3vw,1.45rem);font-weight:850;letter-spacing:-.02em}
 .section-heading p{margin:4px 0 0;font-size:.86rem}
 .menu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
-.menu-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:270px;padding:clamp(19px,3vw,27px);overflow:hidden;border-radius:21px;-webkit-backdrop-filter:blur(11px);transition:transform .2s ease,border-color .2s ease,background .2s ease}
+.menu-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:270px;padding:clamp(19px,3vw,27px);overflow:hidden;border-radius:21px;transition:transform .2s ease,border-color .2s ease,background .2s ease}
 .menu-card:hover{transform:translateY(-3px)}
 .card-top{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%}
 .symbol{width:57px;height:57px;display:grid;place-items:center;border-radius:17px}
@@ -34,9 +33,9 @@ h1{position:relative;z-index:1;max-width:780px;margin:0;font-size:clamp(1.8rem,5
 .menu-card h3{margin:19px 0 8px;font-size:clamp(1.1rem,2.5vw,1.36rem);line-height:1.25;font-weight:850}
 .menu-card p{margin:0 0 22px;max-width:470px;font-size:.92rem;line-height:1.65}
 .card-link{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin-top:auto;min-height:47px;padding:11px 14px;border-radius:12px;text-decoration:none;font-weight:800;font-size:.9rem;transition:filter .18s ease,transform .18s ease}
-.card-link:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.card-link:hover{transform:translateY(-1px)}
 .card-link svg{width:18px;height:18px;flex:0 0 auto}
-.notice{display:flex;align-items:flex-start;gap:12px;margin-top:16px;padding:15px 17px;border:1px solid rgba(255,255,255,.19);border-radius:15px;font-size:.84rem;line-height:1.6}
+.notice{display:flex;align-items:flex-start;gap:12px;margin-top:16px;padding:15px 17px;border-radius:15px;font-size:.84rem;line-height:1.6}
 .notice svg{width:21px;height:21px;flex:0 0 auto;margin-top:1px}
 .footer{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:22px 3px 0;font-size:.77rem}
 .footer-mark{display:flex;align-items:center;gap:7px}
@@ -45,56 +44,24 @@ h1{position:relative;z-index:1;max-width:780px;margin:0;font-size:clamp(1.8rem,5
 @media(max-width:680px){.shell{width:min(100% - 20px,560px);padding-top:10px}.topbar{padding:11px 12px;border-radius:15px}.brand-mark{width:39px;height:39px;flex-basis:39px}.brand-sub{font-size:.71rem}.top-link{font-size:.8rem;padding:8px 10px}.hero{margin:12px 0;padding:23px 19px;border-radius:19px}.menu-grid{grid-template-columns:1fr;gap:11px}.menu-card{min-height:0;padding:19px;border-radius:18px}.menu-card h3{margin-top:15px}.menu-card p{margin-bottom:17px}.section-heading{margin-top:22px}.notice{padding:13px}.footer{margin-top:17px}}
 @media(max-width:420px){.topbar{align-items:flex-start;flex-wrap:wrap}.top-link{width:100%}.brand{width:100%}.hero-meta{gap:7px}.meta-chip{font-size:.74rem;padding:6px 9px}.hero{padding:22px 16px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
-@media screen{
- .topbar,.hero,main>.card,main>section,.menu-card,.panel,.info-card,.stat-card,.quick-card,.workspace-card,.dashboard-card,.notice-card{backdrop-filter:blur(18px)!important}
- .top-link,.card-link,button,.btn{backdrop-filter:blur(12px)}
-}
-
-
-:root{--ink:#fff!important;--line:rgba(255,255,255,.32)!important;--paper:rgba(3,17,27,.17)!important}
 html,body{min-height:100%}
-body{background-position:center center!important;background-attachment:fixed!important}
 body:not(.authenticated)::before,body:not(.authenticated)::after{display:none!important;content:none!important}
 body input::placeholder,body textarea::placeholder{opacity:1!important}
-body :is(main:not(.paper),header:not(.letterhead),footer,nav,.topbar,.toolbar,.panel,.card,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.stat,.profile,.staff,.notice,.notice-card,.form-card,.link-box,.table-wrap,.message,.status,.warning,dialog,fieldset,.hero,.quick-card,.workspace-card,.dashboard-card,.settings-panel,.notification-panel,.profile-bar,.login-panel,.menu-card,.info-card,.stat-card,.quick-link,.profile-setup,.section-card,.panel-card,.form,.data-card,.settings-row,.notification-item,.assessment-section-title,.assessment-subtitle,.profile-setup,.link-box,.to,.letter-date-line){-webkit-backdrop-filter:blur(18px) saturate(118%)!important}
-body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save){backdrop-filter:blur(14px)!important}
-body .paper{-webkit-backdrop-filter:blur(18px)!important}
 body :is([hidden],template){display:none!important}
-@media(prefers-reduced-transparency:reduce){body :is(main:not(.paper),header:not(.letterhead),footer,nav,.topbar,.toolbar,.panel,.card,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.stat,.profile,.staff,.notice,.form-card,.table-wrap,.settings-panel,.notification-panel,.paper){-webkit-backdrop-filter:none!important}}
 @media print{
- body .paper{-webkit-backdrop-filter:none!important}
  body :is(.topbar,.toolbar,.no-print,.editor-panel){display:none!important}
 }
-
-
-body :is(main:not(.paper),section:not(.paper),article,aside,header:not(.letterhead),footer,nav,form,fieldset,dialog,.card,.panel,.topbar,.toolbar,.workspace,.workspace-card,.dashboard-card,.owner-card,.profile-card,.profile-panel,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.modal-content,.drawer,.menu-card,.quick-card,.quick-link,.stat-card,.overview-card,.overview-panel,.status-card,.notice-card,.upload-card,.document-card,.assessment-card){backdrop-filter:blur(18px) saturate(125%)!important}
 body :is(input,textarea,select,option,[contenteditable="true"])::placeholder{opacity:1!important}
-body :is(.profile-actions,.owner-actions,.account-actions,.header-actions,.profile-controls,.action-icons,.icon-actions,.icon-button-group){backdrop-filter:none!important}
-@media print{body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){-webkit-backdrop-filter:none!important}}
-body :is(main:not(.paper),section:not(.paper),article,aside,header:not(.letterhead),footer,nav,form,fieldset,dialog,.card,.panel,.topbar,.toolbar,.workspace,.workspace-card,.dashboard-card,.owner-card,.profile-card,.profile-panel,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.modal-content,.drawer,.menu-card,.quick-card,.quick-link,.stat-card,.overview-card,.overview-panel,.status-card,.notice-card,.upload-card,.document-card,.assessment-card){backdrop-filter:blur(18px) saturate(125%)!important}
-@media print{body :is(main,section,article,aside,header,footer,nav,form,fieldset,.card,.panel,.paper){-webkit-backdrop-filter:none!important}}
 @media screen{
-body :is(main,header:not(.letterhead),nav,aside,section:not(.paper),article:not(.paper),form,fieldset,dialog,.card,.panel,.glass-card,.dashboard-card,.menu-card,.sidebar,.navbar,.modal-content,.menu-item,.dashboard-container,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.drawer,.quick-card,.quick-link,.stat-card,.status-card,.notice-card,.upload-card,.document-card,.assessment-card,.workspace-card,.profile-card,.profile-panel,.stat,.staff,.profile,.notice,.field,.message,.status,.warning,.topbar,.toolbar,.shell,.top-actions,.owner-header-actions,.settings-row,.notification-item,.news-card,.respondent-stat,.respondent-quiz-panel,.respondent-quiz-note){-webkit-backdrop-filter:blur(16px)!important;border-radius:16px!important}
-body :is(button,.btn,.dashbtn,.top-link,.submit,.primary,.secondary,.workflow-save,.owner-edit,.settings-button,.bell-button){backdrop-filter:blur(16px)!important}
-body :is(input,select,textarea,[contenteditable="true"]){backdrop-filter:blur(8px)!important}
+body :is(main,header:not(.letterhead),nav,aside,section:not(.paper),article:not(.paper),form,fieldset,dialog,.card,.panel,.glass-card,.dashboard-card,.menu-card,.sidebar,.navbar,.modal-content,.menu-item,.dashboard-container,.dashpanel,.overview-card,.overview-panel,.owner-card,.app-nav,.settings-panel,.notification-panel,.login-panel,.form-card,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.drawer,.quick-card,.quick-link,.stat-card,.status-card,.notice-card,.upload-card,.document-card,.assessment-card,.workspace-card,.profile-card,.profile-panel,.stat,.staff,.profile,.notice,.field,.message,.status,.warning,.topbar,.toolbar,.shell,.top-actions,.owner-header-actions,.settings-row,.notification-item,.news-card,.respondent-stat,.respondent-quiz-panel,.respondent-quiz-note){border-radius:16px!important}
 body :is(input,textarea)::placeholder{opacity:1!important}
-body .paper{border-radius:0!important;backdrop-filter:none!important}
+body .paper{border-radius:0!important}
 }
 @media print{
-body .paper{-webkit-backdrop-filter:none!important}
 body :is(.topbar,.toolbar,.no-print,.editor-panel){display:none!important}
 }
 
 
-:root{--sahabat-glass-border:rgba(255,255,255,.22);--sahabat-glass-blur:16px}
-body :is(main,header,section,article,aside,nav,form,fieldset,dialog,[role=dialog],[class*="card"],[class*="panel"],[class*="menu"],[class*="modal"],[class*="box"],[class*="section"],.owner-card,.dashpanel,.app-nav,.overview-card,.overview-panel,.respondent-stat,.news-card,.notification-panel,.settings-panel,.datawrap,.card){-webkit-backdrop-filter:blur(16px)!important}
-body :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea,.link-url,.workflow-control){backdrop-filter:blur(16px)!important}
+:root{--sahabat-glass-blur:16px}
 body :is(input,textarea,select)::placeholder,body :is(input,textarea)::placeholder{opacity:1!important}
-body :is(button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button,.assessment-upload){backdrop-filter:blur(16px)!important}
 body :is(input,select,textarea,button,a):focus-visible{outline-offset:2px}
-body:not(.authenticated) main{backdrop-filter:blur(16px)!important}
-body:not(.authenticated) .field input,body:not(.authenticated) input[type=password],body:not(.authenticated) input[type=text]{border:1px solid rgba(255,255,255,.38)!important;-webkit-backdrop-filter:blur(16px)!important}
-body:not(.authenticated) .submit,body:not(.authenticated) .toggle{-webkit-backdrop-filter:blur(16px)!important}
-.assessment-paper{-webkit-backdrop-filter:none!important}
-@media(prefers-reduced-transparency:reduce){body :is(main,header,section,article,aside,nav,form,fieldset,dialog,[role=dialog],[class*="card"],[class*="panel"],[class*="menu"],[class*="modal"],[class*="box"],[class*="section"],.owner-card,.dashpanel,.card){-webkit-backdrop-filter:none!important}}
-@media print{body,body *{-webkit-backdrop-filter:none!important}}
