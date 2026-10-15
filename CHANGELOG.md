@@ -1,3 +1,8 @@
+## 1.1.39 — 2026-10-16
+- Kunci tombol Notifikasi, Pengaturan, dan Keluar pada header dalam satu baris horizontal rata kanan.
+- Pertahankan ID tombol dan event handler yang sudah ada agar fungsi notifikasi, pengaturan, dan logout tidak berubah.
+- Tambahkan stylesheet khusus aksi header tanpa mengubah logika API atau autentikasi.
+
 ## 1.1.38 — 2026-10-15
 - Membagi dokumen asesmen saat dicetak menjadi enam halaman formulir dengan rentang nomor pertanyaan yang mengikuti PDF referensi, lalu empat halaman lampiran foto terpisah.
 - Menyediakan halaman foto 7–10 meskipun foto belum diunggah; halaman tetap berurutan dan berubah menjadi foto aktual saat berkas dilampirkan.
