@@ -1,3 +1,18 @@
+## 1.1.34 — 2026-10-15
+- Terapkan stylesheet glassmorphism global yang konsisten pada panel, kartu, form, tombol, tabel, dan kontrol di seluruh aplikasi.
+- Hilangkan latar solid dan bayangan berat pada permukaan aplikasi; gunakan kaca transparan, blur 14px, border putih tipis, dan teks putih.
+- Pertahankan logika HTML/JavaScript, handler, API, dan struktur data; pengecualian print menjaga lembar PDF tetap layak cetak.
+- Selaraskan versi rilis ke 1.1.34.
+
+## 1.1.33 — 2026-10-15
+- Susun seluruh input foto dan tombol Form Asesmen Terintegrasi dalam satu kolom vertikal, dengan urutan yang jelas di ponsel maupun desktop.
+- Bersihkan efek bayangan pada kontrol asesmen, pertahankan teks putih dan permukaan glass transparan, serta perbesar area pemilihan berkas.
+- Selaraskan versi aplikasi, manifest PWA, cache stylesheet, dokumentasi, dan pemeriksaan rilis menjadi 1.1.33.
+
+## 1.1.32 — 2026-10-15
+- Perbaiki tampilan mobile Kuisioner Responden dan From Asesmen Terintegrasi; pastikan label pilihan dan tombol tetap terbaca horizontal.
+- Sinkronkan versi web dan PWA menjadi 1.1.32; validasi versi rilis memakai nilai package.json yang aktif.
+
 ## 1.1.31 — 2026-10-15
 - Perbaiki layout profil owner responsif: foto dan tombol Edit profil di kolom kiri, identitas di kanan, ikon aksi dalam baris terpisah.
 - Gabungkan CSS profil ke stylesheet dashboard terpusat agar lolos pemeriksaan rilis; samakan versi web/PWA menjadi 1.1.31.
