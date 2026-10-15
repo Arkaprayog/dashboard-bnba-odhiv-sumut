@@ -1,0 +1,183 @@
+/* SODARAMU global glass system v1.1.34
+   Presentation-only overrides: preserve all existing HTML, handlers, API calls and data flow.
+   Print output is intentionally excluded from the glass treatment. */
+:root {
+  --sod-glass-bg: rgba(20, 20, 20, .25);
+  --sod-glass-border: rgba(255, 255, 255, .20);
+  --sod-glass-border-strong: rgba(255, 255, 255, .32);
+  --sod-glass-blur: 14px;
+  --sod-glass-radius: 20px;
+  --sod-glass-text: #fff;
+}
+html { color-scheme: dark; }
+body {
+  color: var(--sod-glass-text);
+}
+body :where(#loginCard, #dashboard, #ownerCard, .app-view, .dashhead,
+  .dashpanel, .dashboard-card, .stat-card, .panel, .card, .modal,
+  .modal-content, .dialog, .dropdown-menu, .assessment-paper,
+  #ownerQuestionnaireForm, #questionnaireView, #assessmentView,
+  #databaseView, #formatsView, #newsView, #respondentQuizView,
+  .login-form, .login-password-field, .field, .dashfield,
+  .assessment-actions, .assessment-upload, .assessment-photo-preview,
+  .assessment-action-row, .owner-form-grid, .owner-form-actions,
+  .news-card, .database-card, .table-wrap, .table-container) {
+  color: var(--sod-glass-text);
+}
+body :where(#loginCard, #dashboard, #ownerCard, .app-view, .dashhead,
+  .dashpanel, .dashboard-card, .stat-card, .panel, .card, .modal,
+  .modal-content, .dialog, .dropdown-menu, .assessment-paper,
+  #ownerQuestionnaireForm, #questionnaireView, #assessmentView,
+  #databaseView, #formatsView, #newsView, #respondentQuizView,
+  .login-form, .login-password-field, .field, .dashfield,
+  .assessment-actions, .assessment-upload, .assessment-photo-preview,
+  .assessment-action-row, .owner-form-grid, .owner-form-actions,
+  .news-card, .database-card, .table-wrap, .table-container) {
+  background-color: var(--sod-glass-bg) !important;
+  background-image: none !important;
+  -webkit-backdrop-filter: blur(var(--sod-glass-blur));
+  backdrop-filter: blur(var(--sod-glass-blur));
+  border-color: var(--sod-glass-border) !important;
+  box-shadow: none !important;
+}
+body :where(#loginCard, #ownerCard, .app-view, .dashhead, .dashpanel,
+  .dashboard-card, .stat-card, .panel, .card, .modal-content, .dialog,
+  .assessment-paper, #ownerQuestionnaireForm, .login-form, .news-card,
+  .database-card, .table-wrap, .table-container) {
+  border: 1px solid var(--sod-glass-border) !important;
+  border-radius: var(--sod-glass-radius) !important;
+}
+body :where(h1,h2,h3,h4,h5,h6,p,label,legend,small,strong,em,span,
+  li,dt,dd,th,td,.dashmsg,.login-tagline,.login-subtitle,.login-label,
+  .assessment-label,.assessment-no,.assessment-section-title,
+  .assessment-subtitle,.assessment-footnote,.app-version,.foot) {
+  color: #fff;
+  text-shadow: none;
+}
+body :where(a:not(.dashbtn):not(.submit):not(.button)) {
+  color: #fff;
+  text-decoration-color: rgba(255,255,255,.65);
+}
+body :where(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  select, textarea) {
+  color: #fff !important;
+  background: rgba(255,255,255,.08) !important;
+  border: 1px solid var(--sod-glass-border) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  caret-color: #fff;
+}
+body :where(input,select,textarea)::placeholder {
+  color: rgba(255,255,255,.76) !important;
+  opacity: 1;
+}
+body :where(select option) {
+  color: #fff;
+  background: #263d59;
+}
+body :where(input[type="file"]) {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  color: #fff !important;
+  background: rgba(255,255,255,.06) !important;
+  border: 1px solid var(--sod-glass-border) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+body :where(input[type="file"])::file-selector-button {
+  margin: 0 10px 0 0;
+  padding: 9px 13px;
+  color: #fff;
+  background: rgba(255,255,255,.14);
+  border: 1px solid var(--sod-glass-border);
+  border-radius: 9px;
+  font: inherit;
+  font-weight: 700;
+}
+body :where(button, .dashbtn, .submit, .button, .toggle) {
+  color: #fff;
+  border: 1px solid var(--sod-glass-border) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+body :where(button:not(.login-submit):not(.submit-primary):not([data-variant="primary"]),
+  .dashbtn:not(.primary):not(.is-primary), .toggle) {
+  background: rgba(255,255,255,.08) !important;
+}
+body :where(button, input, select, textarea, a):focus-visible {
+  outline: 2px solid rgba(255,255,255,.95);
+  outline-offset: 3px;
+}
+body :where(button:disabled, input:disabled, select:disabled, textarea:disabled) {
+  opacity: .58;
+  cursor: not-allowed;
+}
+body :where(table) {
+  color: #fff;
+  background: transparent !important;
+  border-color: var(--sod-glass-border) !important;
+}
+body :where(th, td) {
+  background: rgba(255,255,255,.045) !important;
+  border-color: var(--sod-glass-border) !important;
+}
+body :where(hr) { border-color: var(--sod-glass-border); }
+body :where(.assessment-action-row, .assessment-photo-row, .assessment-actions) {
+  gap: 12px;
+}
+#assessmentView .assessment-actions,
+#assessmentView .assessment-action-row,
+#assessmentView .assessment-photo-row {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  gap: 12px !important;
+}
+#assessmentView .assessment-upload,
+#assessmentView .assessment-action-row > *,
+#assessmentView #assessmentSavedList {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 52px;
+}
+#assessmentView .assessment-upload {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 10px !important;
+  padding: 16px !important;
+  font-weight: 750 !important;
+}
+#assessmentView #assessmentSave {
+  background: rgba(255,255,255,.22) !important;
+  border-color: rgba(255,255,255,.6) !important;
+}
+#assessmentView #assessmentReset {
+  background: rgba(255,255,255,.035) !important;
+  border-color: rgba(255,255,255,.38) !important;
+}
+@media (max-width: 600px) {
+  body :where(#loginCard, #ownerCard, .app-view, .dashhead,
+    .dashpanel, .dashboard-card, .stat-card, .panel, .card,
+    #ownerQuestionnaireForm, .assessment-paper) {
+    border-radius: 16px !important;
+  }
+  body :where(input, select, textarea, button) { font-size: 16px; }
+}
+/* Keep official paper/PDF output white and printable. */
+@media print {
+  body :where(#loginCard, #dashboard, #ownerCard, .app-view, .dashhead,
+    .dashpanel, .dashboard-card, .stat-card, .panel, .card, .modal,
+    .modal-content, .dialog, .dropdown-menu, .assessment-paper,
+    #ownerQuestionnaireForm, #questionnaireView, #assessmentView,
+    #databaseView, #formatsView, #newsView, #respondentQuizView) {
+    color: #000 !important;
+    background: #fff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+  }
+}
