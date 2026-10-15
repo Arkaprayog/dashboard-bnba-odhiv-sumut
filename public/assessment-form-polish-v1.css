@@ -462,3 +462,5 @@ html body.authenticated #dashboard #assessmentView .assessment-answer {
   #assessmentView .assessment-choice .print-check { display: inline !important; }
   #assessmentView .assessment-row { page-break-inside: avoid; }
 }
+
+#assessmentView[hidden] { display: none !important; }
