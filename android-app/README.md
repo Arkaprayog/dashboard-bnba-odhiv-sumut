@@ -5,10 +5,10 @@ https://sahabatodhivsumut.web.id/
 
 ## Version alignment — 15 October 2026
 
-- Android package version: **1.2.20** (`versionCode 23`).
-- Debug package: `1.2.20-debug`; expected artifact: `Sahabat-ODHIV-Sumut-APK-debug-v1.2.20`.
-- Signed release package: `1.2.20`; expected artifact: `Sahabat-ODHIV-Sumut-APK-release-v1.2.20`.
-- The online dashboard currently uses web version **1.1.38**. The APK loads the canonical HTTPS dashboard; online menu and backend changes become available when the website is deployed, while the native Android shell, permission behavior, camera/gallery handling, and offline fallback require a new APK build.
+- Android package version: **1.2.21** (`versionCode 24`).
+- Debug package: `1.2.21-debug`; expected artifact: `Sahabat-ODHIV-Sumut-APK-debug-v1.2.21`.
+- Signed release package: `1.2.21`; expected artifact: `Sahabat-ODHIV-Sumut-APK-release-v1.2.21`.
+- The online dashboard currently uses web version **1.1.39**. The APK loads the canonical HTTPS dashboard; online menu and backend changes become available when the website is deployed, while the native Android shell, permission behavior, camera/gallery handling, and offline fallback require a new APK build.
 - Android and web use separate version sequences because they are independently packaged. Successful GitHub Actions artifacts are not the same as a published entry on the GitHub Releases page.
 
 ## What this build does
@@ -72,3 +72,9 @@ Background push notifications use the existing browser Web Push implementation. 
 - No microphone/audio capture, video capture, silent location collection, or background media collection is implemented.
 
 Camera/gallery chooser behavior is implemented in the WebView upload flow, but it must still be tested on a physical Android device with the actual dashboard photo-upload fields.
+
+
+## SODARAMU launcher icon — 1.2.21
+- Web icon source: `public/sodaramu-icon.svg`; HTML favicon, Apple touch icon, and PWA manifest reference this versioned asset.
+- Android launcher icon resource: `app/src/main/res/drawable/ic_sahabat_icon.xml`, referenced by `android:icon` and `android:roundIcon` in `AndroidManifest.xml`.
+- Rebuild the APK after pulling this commit; the icon resource and app label are packaged into the APK at build time, so an already-installed APK will not change until a new APK is installed.
