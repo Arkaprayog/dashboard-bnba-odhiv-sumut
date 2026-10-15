@@ -1,0 +1,168 @@
+/* SODARAMU form mobile UI fix v1.1.32
+   Keep white typography and true translucent glass surfaces.
+   Scoped to owner questionnaire and assessment controls. */
+#questionnaireView,
+#assessmentView {
+  width: 100%;
+  min-width: 0;
+  color: #fff;
+}
+#questionnaireView *,
+#assessmentView * {
+  box-sizing: border-box;
+}
+#ownerQuestionnaireForm,
+#assessmentView .assessment-paper {
+  min-width: 0;
+  color: #fff;
+  background: rgba(255,255,255,.08);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-color: rgba(255,255,255,.24);
+}
+#ownerQuestionnaireForm .owner-form-grid,
+#assessmentView .assessment-action-row,
+#assessmentView .assessment-photo-row {
+  min-width: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+#ownerQuestionnaireForm fieldset.dashpanel {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 16px;
+  overflow: visible;
+  color: #fff;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.26);
+  border-radius: 16px;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+#ownerQuestionnaireForm fieldset legend {
+  max-width: 100%;
+  padding: 0 8px;
+  color: #fff;
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+#ownerQuestionnaireForm fieldset label {
+  display: grid !important;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: center;
+  justify-content: start;
+  gap: 12px !important;
+  width: 100%;
+  min-width: 0;
+  min-height: 56px;
+  margin: 10px 0 !important;
+  padding: 14px 16px;
+  color: #fff;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 14px;
+  line-height: 1.45;
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+  writing-mode: horizontal-tb !important;
+  cursor: pointer;
+}
+#ownerQuestionnaireForm fieldset label:has(input:checked) {
+  background: rgba(255,255,255,.16);
+  border-color: rgba(255,255,255,.75);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+}
+#ownerQuestionnaireForm fieldset input[type="radio"] {
+  display: block;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  margin: 0;
+  accent-color: #fff;
+}
+#ownerQuestionnaireForm .owner-form-actions .dashbtn,
+#assessmentView .assessment-action-row .dashbtn {
+  min-width: 0;
+  min-height: 48px;
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 14px;
+  color: #fff;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
+  border: 1px solid rgba(255,255,255,.35);
+  border-radius: 14px;
+  background: rgba(255,255,255,.08);
+}
+#ownerQuestionnaireForm #submitOwnerQuestionnaire,
+#assessmentView #assessmentSave {
+  color: #fff;
+  background: #176b52;
+  border: 1px solid rgba(255,255,255,.72);
+  box-shadow: 0 8px 20px rgba(0,0,0,.18);
+}
+#ownerQuestionnaireForm #resetOwnerQuestionnaire,
+#assessmentView #assessmentReset {
+  color: #fff;
+  background: transparent;
+  border: 1px solid rgba(255,175,175,.82);
+}
+#assessmentView #assessmentPrint,
+#assessmentView #assessmentLoad {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.5);
+}
+#assessmentView #assessmentSavedList {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  color: #fff;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.35);
+  border-radius: 12px;
+}
+#assessmentView #assessmentSavedList option {
+  color: #172033;
+  background: #fff;
+}
+#assessmentView .assessment-upload {
+  min-width: 0;
+  max-width: 100%;
+  color: #fff;
+  background: rgba(255,255,255,.08) !important;
+  border-color: rgba(255,255,255,.3) !important;
+  overflow-wrap: anywhere;
+}
+#assessmentView .assessment-upload input[type="file"] {
+  min-width: 0;
+  max-width: 100%;
+  color: #fff;
+  background: rgba(255,255,255,.08);
+}
+#ownerQuestionnaireForm button:focus-visible,
+#assessmentView button:focus-visible,
+#ownerQuestionnaireForm input:focus-visible,
+#assessmentView select:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+@media (max-width: 480px) {
+  #questionnaireView { padding: 8px; }
+  #ownerQuestionnaireForm { padding: 14px; border-radius: 18px; }
+  #ownerQuestionnaireForm .owner-form-grid { grid-template-columns: minmax(0,1fr); gap: 10px; }
+  #ownerQuestionnaireForm fieldset.dashpanel { padding: 12px; }
+  #ownerQuestionnaireForm fieldset label { padding: 13px 12px; }
+  #ownerQuestionnaireForm .owner-form-actions { display: grid; grid-template-columns: minmax(0,1fr); }
+  #ownerQuestionnaireForm .owner-form-actions .dashbtn { width: 100%; min-width: 0; }
+  #assessmentView .assessment-action-row,
+  #assessmentView .assessment-photo-row { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+  #assessmentView .assessment-action-row { gap: 8px !important; }
+  #assessmentView .assessment-action-row .dashbtn { padding: 11px 8px !important; font-size: .8rem !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #ownerQuestionnaireForm *,
+  #assessmentView * { transition: none !important; }
+}
