@@ -39,7 +39,7 @@ assert.ok(dashboard.includes('rel="icon" type="image/svg+xml" href="/sodaramu-ic
 assert.ok(dashboard.includes('rel="apple-touch-icon" href="/sodaramu-icon.svg?v=1.1.39"'), "home-screen icon must use the current SODARAMU icon.");
 assert.ok(manifest.icons.every(icon => icon.src === "/sodaramu-icon.svg?v=1.1.39"), "PWA icons must use the current SODARAMU icon.");
 assert.match(readFileSync("android-app/app/src/main/res/drawable/ic_sahabat_icon.xml", "utf8"), /#DFF8F3/);
-assert.match(readFileSync("android-app/app/src/main/res/values/strings.xml", "utf8"), /<string name="app_name">SODARAMU<\\/string>/);
+assert.match(readFileSync("android-app/app/src/main/res/values/strings.xml", "utf8"), /<string name="app_name">SODARAMU<\/string>/);
 assert.ok(dashboard.includes('href="/assessment-print-10-pages-v1.css?v=1.1.38"'), "assessment must load the dedicated ten-page print stylesheet.");
 assert.ok(dashboard.includes('pageIndexForQuestion') && dashboard.includes('assessment-print-page'), "assessment fields must be partitioned into six print pages.");
 assert.ok(dashboard.includes('HALAMAN 7 — LAMPIRAN FOTO DIRI (CLOSE-UP PPKS)') && dashboard.includes('HALAMAN 8 — LAMPIRAN FOTO KTP') && dashboard.includes('HALAMAN 9 — LAMPIRAN FOTO KARTU KELUARGA (KK)') && dashboard.includes('HALAMAN 10 — LAMPIRAN FOTO RUMAH TAMPAK DEPAN'), "all four photo appendices must be generated in the required order.");
