@@ -5,8 +5,12 @@
 }
 @media print {
   body.assessment-print-mode * { visibility: hidden !important; }
+  body.assessment-print-mode #appNavigation,
+  body.assessment-print-mode .app-shell > :not(#assessmentView),
+  body.assessment-print-mode #assessmentView > .assessment-no-print { display: none !important; }
   body.assessment-print-mode #assessmentView,
-  body.assessment-print-mode #assessmentView * { visibility: visible !important; }
+  body.assessment-print-mode #assessmentView #assessmentPaper,
+  body.assessment-print-mode #assessmentView #assessmentPaper * { visibility: visible !important; }
   body.assessment-print-mode #assessmentView {
     display: block !important;
     position: static !important;
