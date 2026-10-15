@@ -34,11 +34,13 @@ assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='ow
 assert.match(worker, /owner_profile_update/);
 assert.equal(pkg.version, "1.1.30");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
-assert.ok(dashboard.includes('href="style.css?v=1.1.38"') && dashboard.includes('href="login.css?v=1.1.38"'), "Login and global CSS must use the same cache-busted theme version.");
+assert.ok(dashboard.includes('href="style.css?v=1.1.39"') && dashboard.includes('href="login.css?v=1.1.39"'), "Login and global CSS must use the same cache-busted theme version.");
 assert.ok(!dashboard.includes("body:not(.authenticated) main :not(button):not(.submit):not(svg):not(path):not(img){color:#123b67!important"), "High-specificity blue text override must not affect the Login page.");
 assert.ok(dashboard.includes("body.authenticated main :not(button):not(.submit):not(svg):not(path):not(img){color:#123b67!important"), "Blue text override must be restricted to authenticated dashboard content.");
 assert.ok(loginCss.includes("background:rgba(24,32,35,.22)!important") && loginCss.includes("backdrop-filter:blur(8px) saturate(115%)!important"), "Login card must use the clear translucent glass surface.");
 assert.ok(loginCss.includes("html body:not(.authenticated) main .login-heading h1") && loginCss.includes("-webkit-text-fill-color:#fff!important"), "Login headings and helper copy must explicitly render white text.");
+const inlineStyleBlocks = [...dashboard.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)].map(match => match[1]).join("\n");
+assert.doesNotMatch(inlineStyleBlocks, /body\s*:\s*not\(\s*\.authenticated\s*\)/i, "Legacy Login selectors must live in login.css, not repeated inline styles.");
 assert.ok(loginCss.includes("background:rgba(15,86,153,.82)!important") && loginCss.includes("color:#fff!important"), "Login button and status surfaces must retain white text on translucent blue glass.");
 assert.ok(loginCss.includes("html body:not(.authenticated) main #message:empty") && loginCss.includes("display:none!important"), "Empty login status messages must not render as a dark bar.");
 assert.ok(loginCss.includes("-webkit-backdrop-filter:blur(8px) saturate(115%)!important;") && loginCss.includes("backdrop-filter:blur(8px) saturate(115%)!important;"), "Standard and WebKit glass blur declarations must match.");
@@ -104,5 +106,5 @@ for (const path of themedPages) {
 }
 
 assert.ok(dashboard.includes('id="sahabat-glassmorphism-fix-v1-1-30"'), "login and dashboard visual override must load after legacy styles");
-assert.ok(dashboard.includes("body:not(.authenticated) .field input") && dashboard.includes("background:rgba(15,23,42,.70)!important"), "login password input must be translucent dark glass, not white");
+assert.ok(loginCss.includes("html body:not(.authenticated) #password") && loginCss.includes("background:transparent!important"), "Login password field styling must live in the dedicated stylesheet.");
 console.log("PASS global glass theme, hill background, owner profile sync, CI version gate, Android artifacts, and release documentation are synchronized");
