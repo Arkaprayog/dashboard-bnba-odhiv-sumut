@@ -1,3 +1,8 @@
+## 1.1.40 — 2026-10-16
+- Pertegas pembungkus ikon Notifikasi, Pengaturan, dan Keluar: flex satu baris, rata kanan, tidak membungkus, dan jarak 12px.
+- Perjelas pemisah cetak untuk enam halaman form dan empat halaman lampiran foto pada format A4.
+- Sinkronkan versi web, PWA, dan cache aset ke 1.1.40; logika autentikasi, API, dan penyimpanan asesmen tetap dipertahankan.
+
 ## 1.1.39 — 2026-10-16
 - Kunci tombol Notifikasi, Pengaturan, dan Keluar pada header dalam satu baris horizontal rata kanan.
 - Pertahankan ID tombol dan event handler yang sudah ada agar fungsi notifikasi, pengaturan, dan logout tidak berubah.
