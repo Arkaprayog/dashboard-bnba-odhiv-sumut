@@ -1,0 +1,169 @@
+/* Dashboard layout v4 — authoritative mobile centering fix.
+   Scope is based on the visible dashboard, not a body class that may be absent.
+   Keep this file last in the stylesheet order. */
+html, body {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+html { overflow-x: clip !important; }
+body:has(#dashboard:not([hidden])) {
+  display: block !important;
+  position: relative !important;
+  padding: 12px 0 24px !important;
+  overflow-x: clip !important;
+}
+body:has(#dashboard:not([hidden])) > main,
+body:has(#dashboard:not([hidden])) main {
+  display: block !important;
+  position: relative !important;
+  inset: auto !important;
+  float: none !important;
+  transform: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 auto !important;
+  padding: 12px 0 !important;
+  box-sizing: border-box !important;
+  text-align: left !important;
+  border-radius: 0 !important;
+}
+body:has(#dashboard:not([hidden])) #loginCard,
+body:has(#dashboard:not([hidden])) .login-card,
+body:has(#dashboard:not([hidden])) #gateForm {
+  display: none !important;
+  visibility: hidden !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard,
+body:has(#dashboard:not([hidden])) #dashboard:not([hidden]) {
+  display: block !important;
+  position: relative !important;
+  inset: auto !important;
+  float: none !important;
+  transform: none !important;
+  width: 92% !important;
+  max-width: 480px !important;
+  min-width: 0 !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard > *,
+body:has(#dashboard:not([hidden])) #dashboard .app-view,
+body:has(#dashboard:not([hidden])) #dashboard .dashhead,
+body:has(#dashboard:not([hidden])) #dashboard .overview-grid,
+body:has(#dashboard:not([hidden])) #dashboard .overview-panels,
+body:has(#dashboard:not([hidden])) #dashboard .owner-form-grid,
+body:has(#dashboard:not([hidden])) #dashboard .owner-form-actions,
+body:has(#dashboard:not([hidden])) #dashboard .app-nav {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-card {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-items: center !important;
+  justify-items: stretch !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 auto 16px !important;
+  padding: 16px !important;
+  gap: 14px !important;
+  box-sizing: border-box !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-profile-side,
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary,
+body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions,
+body:has(#dashboard:not([hidden])) #dashboard .top-actions {
+  position: static !important;
+  inset: auto !important;
+  float: none !important;
+  transform: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-profile-side,
+body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions,
+body:has(#dashboard:not([hidden])) #dashboard .top-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-profile-side {
+  flex-direction: column !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary {
+  text-align: center !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary h3,
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary p {
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .app-nav {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  margin: 16px auto !important;
+  padding: 10px !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .app-nav button {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 52px !important;
+  margin: 0 !important;
+  padding: 10px 8px !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .overview-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .overview-panels {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard :is(.app-view,.overview-card,.overview-panel,.dashpanel,.notification-panel,.settings-panel,.datawrap,.datatable) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+@media (min-width: 700px) {
+  body:has(#dashboard:not([hidden])) #dashboard { max-width: 760px !important; }
+  body:has(#dashboard:not([hidden])) #dashboard .owner-card {
+    grid-template-columns: minmax(88px, 110px) minmax(0, 1fr) !important;
+    text-align: left !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .owner-summary { text-align: left !important; }
+  body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions { grid-column: 1 / -1 !important; }
+  body:has(#dashboard:not([hidden])) #dashboard .overview-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+  body:has(#dashboard:not([hidden])) #dashboard .overview-panels { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 380px) {
+  body:has(#dashboard:not([hidden])) #dashboard { width: 94% !important; }
+  body:has(#dashboard:not([hidden])) #dashboard .owner-card { padding: 12px !important; }
+  body:has(#dashboard:not([hidden])) #dashboard .app-nav { gap: 7px !important; padding: 7px !important; }
+  body:has(#dashboard:not([hidden])) #dashboard .app-nav button { padding: 9px 5px !important; font-size: .82rem !important; }
+}
