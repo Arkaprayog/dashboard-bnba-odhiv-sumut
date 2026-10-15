@@ -1,0 +1,42 @@
+/* Login Glass v5: remove the grey inner band beneath the password and submit button. */
+html body:has(#loginCard) #loginCard > form.login-form,
+html body:has(#loginCard) #loginCard > form.login-form::before,
+html body:has(#loginCard) #loginCard > form.login-form::after,
+html body:has(#loginCard) #loginCard > form.login-form .login-message,
+html body:has(#loginCard) #loginCard > form.login-form .login-message::before,
+html body:has(#loginCard) #loginCard > form.login-form .login-message::after,
+html body:has(#loginCard) #loginCard > .login-security,
+html body:has(#loginCard) #loginCard > .login-security::before,
+html body:has(#loginCard) #loginCard > .login-security::after {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  filter: none !important;
+}
+html body:has(#loginCard) #loginCard > form.login-form {
+  display: grid !important;
+  gap: 12px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+html body:has(#loginCard) #loginCard > form.login-form .login-message:empty {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+html body:has(#loginCard) #loginCard > .login-security {
+  display: flex !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 0 16px !important;
+  border-radius: 0 !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
