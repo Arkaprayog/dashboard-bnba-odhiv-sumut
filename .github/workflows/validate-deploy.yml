@@ -392,8 +392,17 @@ jobs:
         env:
           APP_URL: https://sahabatodhivsumut.web.id
         run: |
-          page_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --dump-header /tmp/sahabat-headers.txt --output /tmp/sahabat-dashboard.html --write-out '%{http_code}' "$APP_URL/?v=$GITHUB_SHA" -H 'Cache-Control: no-cache')"
-          test "$page_status" = "200" || (echo "::error::Sahabat dashboard page returned HTTP $page_status." && exit 1)
+          page_status="000"
+          for attempt in $(seq 1 12); do
+            if page_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --dump-header /tmp/sahabat-headers.txt --output /tmp/sahabat-dashboard.html --write-out '%{http_code}' "$APP_URL/?v=$GITHUB_SHA" -H 'Cache-Control: no-cache')"; then :; else page_status="000"; fi
+            if [ "$page_status" = "200" ] && grep -Fq 'href="style.css?v=1.1.39"' /tmp/sahabat-dashboard.html && grep -Fq 'href="login.css?v=1.1.39"' /tmp/sahabat-dashboard.html; then
+              echo "Production page and CSS cache version are current (attempt $attempt)."
+              break
+            fi
+            echo "Waiting for production Worker/asset propagation (attempt $attempt/12, HTTP $page_status)."
+            sleep 5
+          done
+          test "$page_status" = "200" || (echo "::error::Sahabat dashboard page returned HTTP $page_status after retries." && exit 1)
           grep -Eiq '^strict-transport-security:[[:space:]]*max-age=15552000' /tmp/sahabat-headers.txt || (echo "::error::HSTS header is missing or has unexpected max-age." && exit 1)
           grep -Eiq '^x-frame-options:[[:space:]]*DENY' /tmp/sahabat-headers.txt || (echo "::error::X-Frame-Options DENY is missing." && exit 1)
           grep -Eiq '^x-content-type-options:[[:space:]]*nosniff' /tmp/sahabat-headers.txt || (echo "::error::X-Content-Type-Options nosniff is missing." && exit 1)
@@ -403,10 +412,20 @@ jobs:
           grep -q 'ownerProfileForm' /tmp/sahabat-dashboard.html || (echo "::error::Owner profile UI is missing." && exit 1)
           grep -Fq 'href="style.css?v=1.1.39"' /tmp/sahabat-dashboard.html || (echo "::error::Global CSS cache version is not updated." && exit 1)
           grep -Fq 'href="login.css?v=1.1.39"' /tmp/sahabat-dashboard.html || (echo "::error::Dedicated Login CSS is missing or stale." && exit 1)
-          login_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-login.css --write-out '%{http_code}|%{content_type}' "$APP_URL/login.css?v=1.1.39&verify=$GITHUB_SHA")"
-          login_css_status="${login_css_response%%|*}"
-          login_css_type="${login_css_response#*|}"
-          test "$login_css_status" = "200" || (echo "::error::Dedicated Login stylesheet returned HTTP $login_css_status." && exit 1)
+          login_css_status="000"
+          login_css_type=""
+          for attempt in $(seq 1 12); do
+            if login_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-login.css --write-out '%{http_code}|%{content_type}' "$APP_URL/login.css?v=1.1.39&verify=$GITHUB_SHA")"; then :; else login_css_response="000|"; fi
+            login_css_status="${login_css_response%%|*}"
+            login_css_type="${login_css_response#*|}"
+            if [ "$login_css_status" = "200" ] && [[ "$login_css_type" == text/css* ]] && grep -Fq 'background:rgba(24,32,35,.22)!important' /tmp/sahabat-login.css && grep -Fq 'html body:not(.authenticated) main #message:empty' /tmp/sahabat-login.css; then
+              echo "Production Login CSS content is current (attempt $attempt)."
+              break
+            fi
+            echo "Waiting for Login CSS asset propagation (attempt $attempt/12, HTTP $login_css_status)."
+            sleep 5
+          done
+          test "$login_css_status" = "200" || (echo "::error::Dedicated Login stylesheet returned HTTP $login_css_status after retries." && exit 1)
           case "$login_css_type" in text/css*) ;; *) echo "::error::Login stylesheet has unexpected content type: $login_css_type." && exit 1 ;; esac
           grep -Fq 'background:rgba(24,32,35,.22)!important' /tmp/sahabat-login.css || (echo "::error::Live Login stylesheet does not contain the expected translucent glass surface." && exit 1)
           grep -Fq 'html body:not(.authenticated) main .login-heading h1' /tmp/sahabat-login.css || (echo "::error::High-specificity white Login typography rules are missing." && exit 1)
