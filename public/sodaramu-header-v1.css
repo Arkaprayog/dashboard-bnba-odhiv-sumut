@@ -1,0 +1,81 @@
+/* SODARAMU header copy — v1.0.0 */
+.login-brand,
+.login-brand h1,
+.login-brand .login-tagline,
+.login-brand .login-subtitle {
+  text-align: center !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+.login-brand h1 {
+  margin: 8px 0 4px !important;
+  font-size: clamp(2rem, 7vw, 2.6rem) !important;
+  font-weight: 800 !important;
+  line-height: 1.08 !important;
+  letter-spacing: .045em !important;
+}
+.login-brand .login-tagline {
+  margin: 0 0 5px !important;
+  font-size: clamp(.98rem, 3.8vw, 1.12rem) !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+.login-brand .login-subtitle {
+  margin: 0 auto !important;
+  max-width: 34rem !important;
+  font-size: clamp(.88rem, 3.5vw, 1rem) !important;
+  font-weight: 500 !important;
+  line-height: 1.45 !important;
+}
+.login-brand {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+.sodaramu-dashboard-brand {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto 16px !important;
+  padding: 16px 12px !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  background: rgba(255,255,255,.08) !important;
+  background-color: rgba(255,255,255,.08) !important;
+  border: 1px solid rgba(255,255,255,.25) !important;
+  border-radius: 18px !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  backdrop-filter: blur(14px) !important;
+  box-shadow: none !important;
+}
+.sodaramu-dashboard-brand > div {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  text-align: center !important;
+}
+.sodaramu-dashboard-brand strong {
+  display: block !important;
+  margin: 0 !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  font-size: clamp(1.8rem, 7vw, 2.5rem) !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  letter-spacing: .045em !important;
+}
+.sodaramu-dashboard-brand .dashboard-tagline,
+.sodaramu-dashboard-brand small {
+  display: block !important;
+  margin: 0 !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  font-size: clamp(.88rem, 3.5vw, 1.05rem) !important;
+  font-weight: 500 !important;
+  line-height: 1.45 !important;
+  overflow-wrap: normal !important;
+  text-align: center !important;
+}
