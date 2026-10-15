@@ -56,7 +56,7 @@ assert.ok(debugWorkflow.includes("Sahabat-ODHIV-Sumut-APK-debug-v1.2.20"), "debu
 assert.ok(androidReadme.includes("Android package version: **1.2.20** (`versionCode 23`)"), "Android README must match Gradle version");
 assert.ok(androidReadme.includes("web version **1.1.31**"), "Android README must state current web version");
 assert.ok(rootReadme.includes("release version `1.2.20` (version code `23`)"), "root README must match Android release version");
-assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.19"), "root README artifact link name must match release workflow");
+assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.20"), "root README artifact link name must match release workflow");
 assert.ok(dashboard.includes('href="/transparent-theme.css?v=2.0.0"'), "dashboard must load the shared transparent stylesheet.");
 assert.match(dashboard, /id="notificationBellButton"/);
 assert.ok(dashboardCss.includes("#editOwnerProfile"), "edit-profile pill style must be present in extracted layout CSS.");
