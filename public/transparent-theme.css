@@ -1,27 +1,91 @@
-/* Sahabat ODHIV Sumut — transparent UI base v2.0.0
-   Legacy color declarations were removed from HTML style blocks and style attributes.
-   Keep the page's real background photo; all app surfaces are transparent. */
-:root{color-scheme:dark;--surface:transparent;--line:rgba(255,255,255,.42);--text:#fff}
-html,body{background-color:transparent!important;color:var(--text)!important}
-body{color:var(--text)!important}
-body::before,body::after{background:none!important;box-shadow:none!important}
-main,section,article,aside,nav,header,footer,form,fieldset,dialog,[role="dialog"],
-[class*="card"],[class*="panel"],[class*="box"],[class*="section"],[class*="modal"],
+/* Sahabat ODHIV Sumut — centralized glassmorphism theme v2.0.0
+   Visual rules live here only. Structural layout is in app-layout.css. */
+:root{
+  color-scheme:dark;
+  --sahabat-glass-bg:rgba(15,23,42,.70);
+  --sahabat-glass-soft:rgba(255,255,255,.10);
+  --sahabat-glass-border:rgba(255,255,255,.42);
+  --sahabat-glass-blur:16px;
+  --sahabat-text:#fff;
+  --sahabat-text-muted:rgba(255,255,255,.88);
+  --sahabat-glass-shadow:0 12px 34px rgba(0,0,0,.22);
+}
+html,body{min-height:100%;color:var(--sahabat-text)!important;background-color:transparent!important}
+body{
+  color:#fff!important;
+  background-color:#14202b!important;
+  background-image:url("/danau-toba/photo-1.jpg?v=2.0.0")!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-attachment:fixed!important;
+  -webkit-text-fill-color:#fff;
+}
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:rgba(0,0,0,.18)!important;
+  opacity:1!important;
+  clip-path:none!important;
+}
+body:after{background:none!important;box-shadow:none!important}
+html body,html body *{color:#fff!important}
+html body :is(input,select,textarea,button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button,.assessment-upload,.form-control){
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border-color:var(--sahabat-glass-border)!important;
+}
+html body :is(main,section,article,aside,nav,header,footer,form,fieldset,dialog,[role="dialog"],
+[class*="card"],[class*="panel"],[class*="box"],[class*="modal"],
 .owner-card,.dashpanel,.overview-card,.overview-panel,.notification-panel,.settings-panel,
-.app-nav,.app-nav button,.respondent-stat,.news-card,.assessment-panel,.questionnaire-panel,
-.database-panel,.content-card,.surface,.glass,.glass-card{
- background:transparent!important;background-color:transparent!important;background-image:none!important;
- box-shadow:none!important;color:var(--text)!important;
- border-color:var(--line)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important
+.app-nav,.respondent-stat,.news-card,.assessment-panel,.questionnaire-panel,.database-panel,
+.content-card,.surface,.glass,.glass-card,.login-card,.auth-card,.login-panel,.auth-panel){
+  background:var(--sahabat-glass-bg)!important;
+  background-color:var(--sahabat-glass-bg)!important;
+  background-image:none!important;
+  border-color:var(--sahabat-glass-border)!important;
+  box-shadow:var(--sahabat-glass-shadow)!important;
+  backdrop-filter:blur(var(--sahabat-glass-blur)) saturate(120%)!important;
+  -webkit-backdrop-filter:blur(var(--sahabat-glass-blur)) saturate(120%)!important;
+  color:#fff!important;
 }
-input,select,textarea,button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button,
-.assessment-upload,.form-control{
- background:transparent!important;background-color:transparent!important;background-image:none!important;
- box-shadow:none!important;color:var(--text)!important;-webkit-text-fill-color:var(--text)!important;
- border-color:var(--line)!important
+html body :is(input,select,textarea,.form-control){
+  background:rgba(255,255,255,.06)!important;
+  background-color:rgba(255,255,255,.06)!important;
+  border:1px solid var(--sahabat-glass-border)!important;
+  box-shadow:none!important;
+  border-radius:10px;
 }
-input::placeholder,textarea::placeholder{color:rgba(255,255,255,.75)!important}
-table,thead,tbody,tr,th,td{background:transparent!important;background-color:transparent!important;background-image:none!important;color:var(--text)!important}
-a,a:visited{color:var(--text)!important}
-.assessment-paper{background:transparent!important;background-color:transparent!important;color:var(--text)!important;box-shadow:none!important}
-@media print{.assessment-paper{background:#fff!important;color:#111!important}}
+html body :is(input,textarea)::placeholder{color:rgba(255,255,255,.82)!important;-webkit-text-fill-color:rgba(255,255,255,.82)!important;opacity:1}
+html body :is(button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button,.assessment-upload){
+  background:rgba(255,255,255,.12)!important;
+  background-color:rgba(255,255,255,.12)!important;
+  border:1px solid var(--sahabat-glass-border)!important;
+  box-shadow:none!important;
+}
+html body :is(button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button,.assessment-upload):hover,
+html body :is(button,.btn,.dashbtn,.submit,.workflow-save,.owner-edit,.settings-button,.bell-button,.assessment-upload):focus-visible{
+  background:rgba(255,255,255,.22)!important;
+  border-color:rgba(255,255,255,.8)!important;
+}
+html body table,html body thead,html body tbody,html body tr,html body th,html body td{
+  background:transparent!important;background-color:transparent!important;color:#fff!important;border-color:rgba(255,255,255,.24)!important
+}
+html body input:focus,html body select:focus,html body textarea:focus{
+  outline:2px solid rgba(255,255,255,.72)!important;outline-offset:2px!important
+}
+html body a,html body a:visited{color:#fff!important}
+html body a:hover{text-decoration-color:#fff!important}
+html body .assessment-paper{background:rgba(15,23,42,.70)!important;color:#fff!important}
+@media screen and (max-width:768px){body{background-attachment:scroll!important}}
+@media print{
+  html body,html body *{color:#111!important;-webkit-text-fill-color:#111!important}
+  html body{background:#fff!important}
+  html body :is(main,section,article,aside,nav,header,footer,form,fieldset,dialog,[role="dialog"],[class*="card"],[class*="panel"],[class*="box"],[class*="modal"],.assessment-paper){
+    background:#fff!important;background-color:#fff!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-color:#777!important
+  }
+  html body :is(input,select,textarea,button,.btn){color:#111!important;-webkit-text-fill-color:#111!important;background:#fff!important}
+}
