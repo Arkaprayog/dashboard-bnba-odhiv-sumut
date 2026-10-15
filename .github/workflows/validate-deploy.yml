@@ -399,8 +399,8 @@ jobs:
           page_status="000"
           for attempt in $(seq 1 12); do
             if page_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --dump-header /tmp/sahabat-headers.txt --output /tmp/sahabat-dashboard.html --write-out '%{http_code}' "$APP_URL/?v=$GITHUB_SHA" -H 'Cache-Control: no-cache')"; then :; else page_status="000"; fi
-            if [ "$page_status" = "200" ] && grep -Fq 'href="style.css?v=1.1.39"' /tmp/sahabat-dashboard.html && grep -Fq 'href="login.css?v=1.1.39"' /tmp/sahabat-dashboard.html; then
-              echo "Production page and CSS cache version are current (attempt $attempt)."
+            if [ "$page_status" = "200" ] && grep -Fq 'href="/app-layout.css?v=2.0.0"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/transparent-theme.css?v=2.0.0"' /tmp/sahabat-dashboard.html; then
+              echo "Production page and centralized glass theme references are current (attempt $attempt)."
               break
             fi
             echo "Waiting for production Worker/asset propagation (attempt $attempt/12, HTTP $page_status)."
@@ -414,31 +414,16 @@ jobs:
           grep -Eiq '^cross-origin-resource-policy:[[:space:]]*same-origin' /tmp/sahabat-headers.txt || (echo "::error::Cross-Origin-Resource-Policy same-origin is missing." && exit 1)
           grep -qi '<html' /tmp/sahabat-dashboard.html || (echo "::error::Sahabat dashboard response is not HTML." && exit 1)
           grep -q 'ownerProfileForm' /tmp/sahabat-dashboard.html || (echo "::error::Owner profile UI is missing." && exit 1)
-          grep -Fq 'href="style.css?v=1.1.39"' /tmp/sahabat-dashboard.html || (echo "::error::Global CSS cache version is not updated." && exit 1)
-          grep -Fq 'href="login.css?v=1.1.39"' /tmp/sahabat-dashboard.html || (echo "::error::Dedicated Login CSS is missing or stale." && exit 1)
-          login_css_status="000"
-          login_css_type=""
-          for attempt in $(seq 1 12); do
-            if login_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-login.css --write-out '%{http_code}|%{content_type}' "$APP_URL/login.css?v=1.1.39&verify=$GITHUB_SHA")"; then :; else login_css_response="000|"; fi
-            login_css_status="${login_css_response%%|*}"
-            login_css_type="${login_css_response#*|}"
-            if [ "$login_css_status" = "200" ] && [[ "$login_css_type" == text/css* ]] && grep -Fq 'background:rgba(24,32,35,.22)!important' /tmp/sahabat-login.css && grep -Fq 'html body:not(.authenticated) main #message:empty' /tmp/sahabat-login.css; then
-              echo "Production Login CSS content is current (attempt $attempt)."
-              break
-            fi
-            echo "Waiting for Login CSS asset propagation (attempt $attempt/12, HTTP $login_css_status)."
-            sleep 5
-          done
-          test "$login_css_status" = "200" || (echo "::error::Dedicated Login stylesheet returned HTTP $login_css_status after retries." && exit 1)
-          case "$login_css_type" in text/css*) ;; *) echo "::error::Login stylesheet has unexpected content type: $login_css_type." && exit 1 ;; esac
-          grep -Fq 'background:rgba(24,32,35,.22)!important' /tmp/sahabat-login.css || (echo "::error::Live Login stylesheet does not contain the expected translucent glass surface." && exit 1)
-          grep -Fq 'html body:not(.authenticated) main .login-heading h1' /tmp/sahabat-login.css || (echo "::error::High-specificity white Login typography rules are missing." && exit 1)
-          grep -Fq 'html body:not(.authenticated) main #message:empty' /tmp/sahabat-login.css || (echo "::error::Empty Login status placeholder still has no explicit hide rule." && exit 1)
-          grep -Fq 'display:none!important' /tmp/sahabat-login.css || (echo "::error::Empty Login status message should be hidden." && exit 1)
-          grep -Fq -- '-webkit-backdrop-filter:blur(8px) saturate(115%)!important;' /tmp/sahabat-login.css || (echo "::error::WebKit Login glass blur is inconsistent." && exit 1)
-          grep -Fq 'backdrop-filter:blur(8px) saturate(115%)!important;' /tmp/sahabat-login.css || (echo "::error::Standard Login glass blur is inconsistent." && exit 1)
-          ! grep -Fq 'body:not(.authenticated) main :not(button):not(.submit):not(svg):not(path):not(img){color:#123b67!important' /tmp/sahabat-dashboard.html || (echo "::error::Legacy high-specificity blue Login text override returned." && exit 1)
-          echo "Verified live Login CSS asset, white typography rules, glass surface and cache version."
+          ! grep -Eiq 'href="(style|login)\.css\?v=' /tmp/sahabat-dashboard.html || (echo "::error::Legacy stylesheet references returned to the dashboard." && exit 1)
+          theme_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-theme.css --write-out '%{http_code}|%{content_type}' "$APP_URL/transparent-theme.css?v=2.0.0&verify=$GITHUB_SHA")"
+          theme_status="\${theme_response%%|*}"
+          theme_type="\${theme_response#*|}"
+          test "$theme_status" = "200" || (echo "::error::Shared glass theme returned HTTP $theme_status." && exit 1)
+          case "$theme_type" in text/css*) ;; *) echo "::error::Shared glass theme has unexpected content type: $theme_type." && exit 1 ;; esac
+          grep -Fq -- '--sahabat-glass-blur:16px' /tmp/sahabat-theme.css || (echo "::error::Shared glass theme blur token is missing." && exit 1)
+          grep -Fq -- '--sahabat-glass-bg:rgba(15,23,42,.70)' /tmp/sahabat-theme.css || (echo "::error::Shared glass surface token is missing." && exit 1)
+          grep -Fq 'color:#fff!important' /tmp/sahabat-theme.css || (echo "::error::Shared glass theme white typography rule is missing." && exit 1)
+          echo "Verified live dashboard, security headers and centralized glass theme."
           for photo in 1 2 3; do
             photo_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output "/tmp/sahabat-toba-photo-$photo.jpg" --write-out '%{http_code}|%{content_type}' "$APP_URL/danau-toba/photo-$photo.jpg?v=1.2.9")"
             photo_status="${photo_response%%|*}"
