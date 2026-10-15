@@ -3,6 +3,15 @@ import assert from "node:assert/strict";
 
 const dashboard = readFileSync("public/index.html", "utf8");
 const transparentCss = readFileSync("public/transparent-theme.css", "utf8");
+const headerActionCss = readFileSync("public/action-buttons-horizontal-v1.css", "utf8");
+assert.match(dashboard, /class="owner-header-actions action-bar-container"/);
+assert.match(dashboard, /class="top-actions action-buttons-group"/);
+assert.match(dashboard, /id="notificationBellButton"[^>]*class="bell-button glass-icon-btn"|class="bell-button glass-icon-btn"[^>]*id="notificationBellButton"/);
+assert.match(dashboard, /id="settingsButton"[^>]*class="settings-button glass-icon-btn"|class="settings-button glass-icon-btn"[^>]*id="settingsButton"/);
+assert.match(dashboard, /id="logoutButton"[^>]*class="dashbtn glass-icon-btn"|class="dashbtn glass-icon-btn"[^>]*id="logoutButton"/);
+assert.match(headerActionCss, /flex-direction:\\s*row\\s*!important/);
+assert.match(headerActionCss, /justify-content:\\s*flex-end\\s*!important/);
+
 const manifest = JSON.parse(readFileSync("public/manifest.json", "utf8"));
 const offlinePage = readFileSync("android-app/app/src/main/assets/offline.html", "utf8");
 const suratLainnya = readFileSync("public/surat-lainnya.html", "utf8");
