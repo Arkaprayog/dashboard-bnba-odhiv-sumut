@@ -73,8 +73,9 @@
 <link rel="stylesheet" href="/assessment-form-polish-v1.css?v=1.0.0">
   <link rel="stylesheet" href="/owner-questionnaire-polish-v1.css?v=1.0.0">
   <link rel="stylesheet" href="/home-profile-polish-v1.css?v=1.0.0">
-  <link rel="stylesheet" href="/form-mobile-ui-v1.css?v=1.1.35">
-  <link rel="stylesheet" href="/glass-system-v1.css?v=1.1.35">
+  <link rel="stylesheet" href="/form-mobile-ui-v1.css?v=1.1.37">
+  <link rel="stylesheet" href="/glass-system-v1.css?v=1.1.37">
+  <link rel="stylesheet" href="/assessment-print-v1.css?v=1.1.37">
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
@@ -108,7 +109,7 @@
     <hr class="login-divider">
     <footer class="login-footer">
       <p>Halaman Akses Awal · Data Responden Tetap Dilindungi</p>
-      <p class="login-version">Versi 1.1.35</p>
+      <p class="login-version">Versi 1.1.37</p>
       <p class="login-copyright">© 2026 Data Base ODHIV Sumatera Utara · Hak cipta dilindungi</p>
     </footer>
   </section>
@@ -341,7 +342,7 @@
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.35</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.37</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi<br>© 2026 Data Base ODHIV Sumatera Utara · Hak cipta dilindungi</p>
 </main>
@@ -1378,9 +1379,18 @@ document.getElementById('assessmentPrint').addEventListener('click',()=>{
  const respondentName=String(document.querySelector('#assessmentFields [name="q16"]')?.value||'').trim();
  const safeName=respondentName.replace(/[\\/:*?"<>|]+/g,' ').replace(/\s+/g,' ').trim().slice(0,100);
  const originalTitle=document.title;
- document.title='From Asesmen Terintegrasi'+(safeName?' - '+safeName:'');
- window.addEventListener('afterprint',()=>{document.title=originalTitle;},{once:true});
+ const photoOrder=[["assessmentPhotoSelf","FOTO DIRI"],["assessmentPhotoKtp","FOTO KTP"],["assessmentPhotoKk","FOTO KK"],["assessmentPhotoHome","FOTO RUMAH TAMPAK DEPAN"]];
+ const missing=photoOrder.filter(([id])=>!assessmentPhotos[id]);
+ const title='From Asesmen Terintegrasi'+(safeName?' - '+safeName:'');
+ document.title=title;
+ document.body.classList.add('assessment-print-mode');
+ assessmentMessage.textContent=missing.length
+  ? 'Print akan mencetak formulir dan '+(photoOrder.length-missing.length)+' foto yang tersedia. Foto belum diunggah: '+missing.map(x=>x[1]).join(', ')+'.'
+  : 'Print akan mencetak formulir diikuti 4 halaman foto lampiran.';
+ const cleanup=()=>{document.body.classList.remove('assessment-print-mode');document.title=originalTitle;window.removeEventListener('afterprint',cleanup);};
+ window.addEventListener('afterprint',cleanup);
  window.print();
+  // Keep print mode active until mobile Chrome closes its asynchronous print preview.
 });
 document.getElementById('assessmentReset').addEventListener('click',()=>{if(confirm('Kosongkan semua jawaban dan foto pada form? Data yang sudah tersimpan di database tidak dihapus.')){form.reset();document.querySelectorAll('.assessment-number input').forEach(i=>i.value='');Object.keys(assessmentPhotos).forEach(key=>delete assessmentPhotos[key]);photoPreview?.replaceChildren();printPhotos?.replaceChildren();currentAssessmentId=null;assessmentMessage.textContent='Form dan foto dikosongkan. Data tersimpan di database tidak dihapus.'}});
 window.addEventListener('dashboard:authenticated',()=>{

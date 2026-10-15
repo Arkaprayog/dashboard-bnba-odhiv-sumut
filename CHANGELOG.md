@@ -1,3 +1,16 @@
+## 1.1.37 — 2026-10-15
+- Fix print mode on mobile: keep the print state active until the browser fires `afterprint`; removed the one-second cleanup timer that could restore the full dashboard before the preview captures the page.
+- Hide assessment upload/actions and dashboard navigation from the print output.
+- Bump web release metadata to 1.1.37.
+- Limitation: the six-page original PDF is not yet embedded as the print template, so exact source-PDF parity is not yet complete.
+
+## 1.1.36 — 2026-10-15
+- Tambah mode cetak khusus asesmen agar kontrol dashboard tidak ikut tercetak.
+- Foto lampiran dicetak sebagai halaman tersendiri setelah area formulir, sesuai urutan Foto Diri, Foto KTP, Foto KK, Foto Rumah Tampak Depan.
+- Foto yang belum diunggah tidak membuat halaman lampiran kosong.
+- Gunakan judul cetak berdasarkan nama responden dan perbarui cache stylesheet cetak.
+- Catatan: templat PDF asli enam halaman belum tertanam di aset aplikasi; kesamaan 100% dengan lembar asli belum dapat diklaim pada versi ini.
+
 ## 1.1.35 — 2026-10-15
 - Ganti nama menu Asesmen menjadi From Asesmen Terintegrasi.
 - Ganti tombol CETAK / SIMPAN PDF menjadi Print; nama keluaran cetak mengikuti nama responden pada pertanyaan 16.

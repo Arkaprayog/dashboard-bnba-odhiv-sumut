@@ -1,0 +1,83 @@
+/* Print layout for assessment photo attachments. The four attachment types print after the assessment content. */
+@page { size: A4 portrait; margin: 12mm; }
+@media screen {
+  #assessmentPrintPhotos { display: none; }
+}
+@media print {
+  body.assessment-print-mode * { visibility: hidden !important; }
+  body.assessment-print-mode #appNavigation,
+  body.assessment-print-mode .app-shell > :not(#assessmentView),
+  body.assessment-print-mode #assessmentView > .assessment-no-print { display: none !important; }
+  body.assessment-print-mode #assessmentView,
+  body.assessment-print-mode #assessmentView #assessmentPaper,
+  body.assessment-print-mode #assessmentView #assessmentPaper * { visibility: visible !important; }
+  body.assessment-print-mode #assessmentView {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  body.assessment-print-mode .assessment-no-print,
+  body.assessment-print-mode #assessmentPhotoPreviews,
+  body.assessment-print-mode .assessment-photo-previews { display: none !important; }
+  body.assessment-print-mode #assessmentPaper {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  body.assessment-print-mode #assessmentPrintPhotos { display: block !important; }
+  body.assessment-print-mode .assessment-print-photo-page {
+    display: flex !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 273mm !important;
+    min-height: 273mm !important;
+    max-height: 273mm !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    page-break-before: always !important;
+    break-before: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    padding: 6mm 0 !important;
+    margin: 0 !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  body.assessment-print-mode .assessment-print-photo-page h2 {
+    width: 100% !important;
+    margin: 0 0 8mm !important;
+    text-align: center !important;
+    color: #000 !important;
+    font-size: 18pt !important;
+  }
+  body.assessment-print-mode .assessment-print-photo-page img {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 235mm !important;
+    object-fit: contain !important;
+    margin: 0 auto !important;
+  }
+  body.assessment-print-mode .assessment-print-photo-page p { display: none !important; }
+  body.assessment-print-mode .assessment-print-photo-page:last-child { page-break-after: auto !important; break-after: auto !important; }
+  body.assessment-print-mode #assessmentPaper :where(input,textarea,select) {
+    color: #000 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    appearance: none !important;
+  }
+}
