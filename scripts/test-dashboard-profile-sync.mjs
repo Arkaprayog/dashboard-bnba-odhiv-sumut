@@ -81,11 +81,11 @@ assert.ok(dashboard.includes('HALAMAN 7 — LAMPIRAN FOTO DIRI (CLOSE-UP PPKS)')
 assert.ok(dashboard.includes('href="/assessment-glass-layout-v1.css?v=1.1.51"'), "latest glass layout stylesheet must be loaded after legacy styles.");
 assert.ok(dashboard.includes('id="assessmentClearForm"') && dashboard.includes("Kosongkan Lembar Asesmen"), "assessment view must provide a full-width clear-sheet action.");
 assert.ok(dashboard.includes('data-photo-preview="assessmentPhotoSelf"') && dashboard.includes('data-photo-preview="assessmentPhotoKtp"') && dashboard.includes('data-photo-preview="assessmentPhotoKk"') && dashboard.includes('data-photo-preview="assessmentPhotoHome"'), "four PPKS photo cards must have distinct auto-populated preview slots.");
-assert.doesNotMatch(dashboard, /<input\\s+type="file"[^>]*id="assessmentPhoto(?:Self|Ktp|Kk|Home)"/, "manual file inputs for assessment photos must be removed.");
+assert.doesNotMatch(dashboard, /<input\s+type="file"[^>]*id="assessmentPhoto(?:Self|Ktp|Kk|Home)"/, "manual file inputs for assessment photos must be removed.");
 assert.ok(dashboard.includes("respondentSelect?.addEventListener('change'") && dashboard.includes("loadSelectedAssessmentRespondent();") && dashboard.includes("fetch('/api/respondent-photo?id='"), "selecting a respondent automatically retrieves photos through the private same-origin endpoint.");
 assert.ok(dashboard.includes("clearAssessmentForm({clearSelection:false,showMessage:false})") && dashboard.includes("Asesmen yang sudah tersimpan di Data Asesmen PPKS tidak dihapus"), "clearing the worksheet does not delete saved assessment records.");
-assert.match(assessmentGlassCss, /grid-template-columns:repeat\\(2,minmax\\(0,1fr)\\)/, "photo cards must use a two-column layout.");
-assert.match(assessmentGlassCss, /backdrop-filter:blur\\(18px\\)/, "photo cards must use translucent glass blur.");
+assert.match(assessmentGlassCss, /grid-template-columns:repeat\(2,minmax\(0,1fr)\)/, "photo cards must use a two-column layout.");
+assert.match(assessmentGlassCss, /backdrop-filter:blur\(18px\)/, "photo cards must use translucent glass blur.");
 
 assert.ok(assessmentPrintCss.includes('size:A4 portrait') && assessmentPrintCss.includes('page-break-before:always') && assessmentPrintCss.includes('assessment-print-photo-page'), "print stylesheet must force A4 page breaks for the four appendices.");
 assert.ok(dashboard.includes('Data Base Kemensos RI DRSKPNO'), "login copyright must use the requested institution text.");
