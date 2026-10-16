@@ -556,12 +556,12 @@ jobs:
           test "$initial_css_status" = "200" || (echo "::error::Public initial intake CSS returned HTTP $initial_css_status." && exit 1)
           case "$initial_css_type" in text/css*) ;; *) echo "::error::Public initial intake CSS has unexpected content type: $initial_css_type." && exit 1 ;; esac
           grep -Fq '.intake-consent' /tmp/sahabat-initial-intake.css || (echo "::error::Public initial intake consent styles are missing or stale." && exit 1)
-          clinic_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-clinic-qr.css --write-out '%{http_code}|%{content_type}' "$APP_URL/barcode-layanan-layout.css?v=1.0.0&verify=$GITHUB_SHA")"
+          clinic_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-clinic-qr.css --write-out '%{http_code}|%{content_type}' "$APP_URL/barcode-layanan-layout.css?v=1.0.1&verify=$GITHUB_SHA")"
           clinic_css_status="${clinic_css_response%%|*}"
           clinic_css_type="${clinic_css_response#*|}"
           test "$clinic_css_status" = "200" || (echo "::error::Clinic QR print CSS returned HTTP $clinic_css_status." && exit 1)
           case "$clinic_css_type" in text/css*) ;; *) echo "::error::Clinic QR print CSS has unexpected content type: $clinic_css_type." && exit 1 ;; esac
-          grep -Fq '@media print' /tmp/sahabat-clinic-qr.css || (echo "::error::Clinic QR print styles are missing." && exit 1)
+          grep -Fq '@media print' /tmp/sahabat-clinic-qr.css && grep -Fq '.qr-code-shell' /tmp/sahabat-clinic-qr.css && grep -Fq '.qr-logo-backing' /tmp/sahabat-clinic-qr.css && grep -Fq 'width:19%' /tmp/sahabat-clinic-qr.css || (echo "::error::Clinic QR print/centered-logo styles are missing or stale." && exit 1)
           intake_manager_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-intake-manager.css --write-out '%{http_code}' "$APP_URL/initial-intake-manager.css?v=1.0.0&verify=$GITHUB_SHA")"
           test "$intake_manager_status" = "200" || (echo "::error::Owner follow-up list CSS returned HTTP $intake_manager_status." && exit 1)
           grep -Fq '.initial-intake-scroll' /tmp/sahabat-intake-manager.css || (echo "::error::Owner follow-up list CSS is missing or stale." && exit 1)
