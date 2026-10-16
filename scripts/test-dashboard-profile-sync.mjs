@@ -103,7 +103,7 @@ assert.match(dashboard, /id="notificationBellButton"/);
 
 assert.match(dashboard, /id="ownerLiveClock"[^>]*role="timer"/, "owner profile must contain a live clock");
 assert.match(dashboard, /window\.setInterval\(updateOwnerLiveClock, 1000\)/, "owner clock must update every second");
-assert.match(dashboard, /Live \\${date} \\${time}/, "clock must use Live date and time text");
+assert.ok(dashboard.includes('Live ${date} ${time}'), "clock must use Live date and time text");
 const ownerCardCss = readFileSync("public/single-layer-floating-dashboard-v1.css", "utf8");
 const cleanCardCss = readFileSync("public/dashboard-card-clean-v1.css", "utf8");
 assert.match(ownerCardCss, /\.owner-header-actions\{[\s\S]*?margin-left:auto!important/, "owner action group must be pushed to the right");
