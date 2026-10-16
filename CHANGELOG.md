@@ -1,4 +1,5 @@
 ## 1.1.59 — 2026-10-16
+- Sejajarkan nama profil owner dengan ikon lonceng, pengaturan, dan keluar; rapikan tata letak NIP, instansi, dan jam agar responsif.
 - Mengubah batas minimum kata sandi tim kerja menjadi 6 karakter pada pendaftaran owner, login anggota, dan pengaturan ulang kata sandi.
 - Menjaga kata sandi owner tetap mengikuti kebijakan keamanan yang lebih kuat.
 - Memperbarui versi web/PWA menjadi 1.1.59.
