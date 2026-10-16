@@ -241,3 +241,12 @@ body:has(#dashboard:not([hidden])) #dashboard .owner-summary a,body:has(#dashboa
 .assessment-empty-state{padding:18px 4px;}
 .assessment-empty-state h2{margin:0 0 8px;font-size:1.15rem;}
 .assessment-empty-state p{margin:0;opacity:.82;line-height:1.55;}
+
+/* Empty integrated-assessment pages and expandable parent menu. */
+.app-nav-group-title{appearance:none;border:0;background:transparent;text-align:left;font:inherit;cursor:pointer;border-radius:8px;}
+.app-nav-group-title:focus-visible{outline:2px solid currentColor;outline-offset:2px;}
+.app-nav-group:not(.is-expanded) .assessment-submenu{display:none;}
+.assessment-submenu{display:contents;}
+.assessment-empty-state{padding:18px 4px;}
+.assessment-empty-state h2{margin:0 0 8px;font-size:1.15rem;}
+.assessment-empty-state p{margin:0;opacity:.82;line-height:1.55;}
