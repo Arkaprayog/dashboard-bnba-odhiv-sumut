@@ -1160,6 +1160,7 @@ export default {
           if (!petugas) return reply({ error: "Sesi petugas berakhir. Buka kembali tautan dari admin." }, 401);
           const csrf = request.headers.get("X-CSRF-Token");
           if (!csrf || csrf !== petugas.csrf_token) return reply({ error: "Token keamanan tidak valid. Muat ulang halaman." }, 403);
+          if (petugas.profile_completed) return reply({ error: "Profil sudah terdaftar. Silakan login kembali untuk menggunakan akun tim kerja." }, 409);
           const contentLength = Number(request.headers.get("content-length") || "0");
           if (contentLength > 11 * 1024 * 1024) return reply({ error: "Ukuran foto profil melebihi batas 10 MB." }, 413);
           let form: FormData;
