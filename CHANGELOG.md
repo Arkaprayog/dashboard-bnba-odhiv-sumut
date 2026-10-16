@@ -1,3 +1,9 @@
+## 1.1.44 — 2026-10-16
+- Perbaiki kegagalan cetak/simpan PDF dengan mengurai data URL foto langsung ke Uint8Array tanpa fetch(data:), yang diblokir kebijakan CSP.
+- Tambahkan pesan kesalahan spesifik untuk pemuatan template PDF dan penyimpanan asesmen.
+- Perbaiki pemisah baris tag stylesheet agar stylesheet dashboard single-layer benar-benar dimuat.
+- Selaraskan versi web/PWA ke 1.1.44 dan Android ke 1.2.24 (versionCode 27).
+
 ## 1.1.43 — 2026-10-16
 - Redesign dashboard dengan konsep single-layer glassmorphism: latar pemandangan tetap dominan dan kontainer dekoratif bertumpuk dihilangkan.
 - Ubah menu utama menjadi grid Floating Action Buttons berbingkai biru langit, responsif, dan mudah diakses.
