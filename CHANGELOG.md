@@ -1,3 +1,10 @@
+## 1.1.56 — 2026-10-16
+- Memperbaiki akar masalah tata letak owner: aturan lama di app-layout.css dengan selector :has() dan !important mengalahkan aturan CSS sebelumnya dan memaksa ikon aksi ke baris lain.
+- Tambahkan aturan final berspesifisitas setara/lebih tinggi pada stylesheet yang dimuat setelah app-layout.css.
+- Susun satu baris: foto dan tombol edit di kiri, identitas di tengah, ikon notifikasi/pengaturan/keluar di kanan atas. Jam dipindah ke baris kecil terpisah agar tidak menutupi konten.
+- Perkecil ikon dan profil secara responsif pada layar ponsel.
+- Perbarui cache-buster dan versi web/PWA ke 1.1.56; tambahkan uji regresi untuk CSS yang menang pada cascade.
+
 ## 1.1.55 — 2026-10-16
 - Ringkas kartu profil owner dengan grid responsif agar foto/profil tetap di kiri dan identitas berada di sisi kanan.
 - Pindahkan ikon notifikasi, pengaturan, dan keluar ke sudut kanan atas kartu, rata kanan dan sejajar dengan baris nama.

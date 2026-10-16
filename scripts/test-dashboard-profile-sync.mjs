@@ -71,14 +71,14 @@ assert.match(floatingMenuCss, /border:1\.5px solid #7dd3fc/, "main menu buttons 
 assert.ok(dashboard.includes("function assessmentDataUrlToBytes(dataUrl)"), "PDF builder must decode image data URLs without fetch() so CSP connect-src does not block them.");
 assert.ok(!dashboard.includes("fetch(saved.dataUrl)"), "PDF builder must not fetch data: URLs.");
 assert.ok(dashboard.includes("assessmentDataUrlToBytes(saved.dataUrl)"), "PDF builder must embed photo bytes directly from the local data URL.");
-assert.ok(dashboard.includes('href="/single-layer-floating-dashboard-v1.css?v=1.1.55"'), "single-layer dashboard stylesheet must be linked.");
+assert.ok(dashboard.includes('href="/single-layer-floating-dashboard-v1.css?v=1.1.56"'), "single-layer dashboard stylesheet must be linked.");
 assert.ok(!dashboard.includes('">\\n  <link rel="stylesheet" href="/single-layer-floating-dashboard-v1.css'), "stylesheet tags must use a real newline, not a literal backslash-n.");
 assert.match(dashboard, /id="settingsButton"/);
 assert.match(dashboard, /id="logoutButton"/);
 assert.match(dashboard, /aria-label="Keluar"/);
 assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='owner' AND active=1/);
 assert.match(worker, /owner_profile_update/);
-assert.equal(pkg.version, "1.1.55");
+assert.equal(pkg.version, "1.1.56");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
 assert.ok(dashboard.includes('href="/assessment-print-10-pages-v1.css?v=1.1.46"'), "assessment must load the dedicated ten-page print stylesheet.");
 assert.ok(dashboard.includes('pageIndexForQuestion') && dashboard.includes('assessment-print-page'), "assessment fields must be partitioned into six print pages.");
@@ -130,6 +130,11 @@ assert.match(dashboard, /id="ownerLiveClock"[^>]*role="timer"/, "owner profile m
 assert.match(dashboard, /window\.setInterval\(updateOwnerLiveClock, 1000\)/, "owner clock must update every second");
 assert.ok(dashboard.includes('Live ${date} ${time}'), "clock must use Live date and time text");
 const ownerCardCss = readFileSync("public/single-layer-floating-dashboard-v1.css", "utf8");
+assert.ok(ownerCardCss.includes('body:has(#dashboard:not([hidden])) #dashboard .owner-card{'), "the final owner card rule must match the high-specificity selector that previously overrode the layout.");
+assert.ok(ownerCardCss.includes('grid-template-areas:"profile summary actions" ". clock clock"!important'), "profile, summary, and all actions must share the first grid row, with the clock separated beneath.");
+assert.ok(ownerCardCss.includes('grid-area:actions!important') && ownerCardCss.includes('position:static!important'), "owner actions must no longer be absolutely positioned or moved to a separate full-width row.");
+assert.ok(ownerCardCss.includes('grid-area:clock!important'), "live clock must use its own compact grid row.");
+assert.ok(ownerCardCss.lastIndexOf("Root-cause correction v1.1.56") > ownerCardCss.lastIndexOf("Final alignment:"), "the specificity fix must be appended after all previous competing owner rules.");
 const cleanCardCss = readFileSync("public/dashboard-card-clean-v1.css", "utf8");
 assert.match(ownerCardCss, /\.owner-header-actions\{[\s\S]*?margin-left:auto!important/, "owner action group must be pushed to the right");
 assert.match(ownerCardCss, /\.owner-live-clock\{[\s\S]*?color:#808000/, "owner live clock must be olive green");
@@ -137,9 +142,6 @@ assert.ok(dashboard.includes('href="/dashboard-card-clean-v1.css?v=1.1.49"'), "f
 assert.match(cleanCardCss, /background: transparent !important/);
 assert.match(cleanCardCss, /backdrop-filter: none !important/);
 assert.match(cleanCardCss, /#notificationBellButton/);
-assert.match(ownerCardCss, /grid-template-columns:minmax\(0,1fr\) auto/);
-assert.match(ownerCardCss, /\.owner-header-actions\{[\s\S]*?justify-self:end/);
-assert.match(ownerCardCss, /\.owner-summary\{padding-top:clamp\(42px/);
 assert.match(cleanCardCss, /#settingsButton/);
 assert.match(cleanCardCss, /#logoutButton/);
 

@@ -417,7 +417,7 @@ jobs:
           page_status="000"
           for attempt in $(seq 1 12); do
             if page_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --dump-header /tmp/sahabat-headers.txt --output /tmp/sahabat-dashboard.html --write-out '%{http_code}' "$APP_URL/?v=$GITHUB_SHA" -H 'Cache-Control: no-cache')"; then :; else page_status="000"; fi
-            if [ "$page_status" = "200" ] && grep -Fq 'href="/app-layout.css?v=2.0.5"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/transparent-theme.css?v=2.0.0"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/dashboard-card-clean-v1.css?v=1.1.49"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/assessment-glass-layout-v1.css?v=1.1.52"' /tmp/sahabat-dashboard.html && grep -Fq 'name="application-version" content="1.1.55"' /tmp/sahabat-dashboard.html && grep -Fq 'RANCANGAN ANGGARAN BELANJA' /tmp/sahabat-dashboard.html && grep -Fq 'RAB NUTRISI' /tmp/sahabat-dashboard.html && grep -Fq 'RAB KEWIRAUSAHAAN' /tmp/sahabat-dashboard.html && grep -Fq 'id="rabHomeChoices" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'Kosongkan Lembar Asesmen' /tmp/sahabat-dashboard.html && grep -Fq 'data-photo-preview="assessmentPhotoHome"' /tmp/sahabat-dashboard.html; then
+            if [ "$page_status" = "200" ] && grep -Fq 'href="/app-layout.css?v=2.0.5"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/transparent-theme.css?v=2.0.0"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/dashboard-card-clean-v1.css?v=1.1.49"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/assessment-glass-layout-v1.css?v=1.1.52"' /tmp/sahabat-dashboard.html && grep -Fq 'name="application-version" content="1.1.56"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/single-layer-floating-dashboard-v1.css?v=1.1.56"' /tmp/sahabat-dashboard.html && grep -Fq 'RANCANGAN ANGGARAN BELANJA' /tmp/sahabat-dashboard.html && grep -Fq 'RAB NUTRISI' /tmp/sahabat-dashboard.html && grep -Fq 'RAB KEWIRAUSAHAAN' /tmp/sahabat-dashboard.html && grep -Fq 'id="rabHomeChoices" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'Kosongkan Lembar Asesmen' /tmp/sahabat-dashboard.html && grep -Fq 'data-photo-preview="assessmentPhotoHome"' /tmp/sahabat-dashboard.html; then
               echo "Production page and centralized glass theme references are current (attempt $attempt)."
               break
             fi
@@ -425,6 +425,13 @@ jobs:
             sleep 5
           done
           test "$page_status" = "200" || (echo "::error::Sahabat dashboard page returned HTTP $page_status after retries." && exit 1)
+          owner_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-owner-layout.css --write-out '%{http_code}|%{content_type}' "$APP_URL/single-layer-floating-dashboard-v1.css?v=1.1.56&verify=$GITHUB_SHA")"
+          owner_css_status="${owner_css_response%%|*}"
+          owner_css_type="${owner_css_response#*|}"
+          test "$owner_css_status" = "200" || (echo "::error::Owner layout CSS returned HTTP $owner_css_status." && exit 1)
+          case "$owner_css_type" in text/css*) ;; *) echo "::error::Owner layout CSS has unexpected content type: $owner_css_type." && exit 1 ;; esac
+          grep -Fq 'grid-template-areas:"profile summary actions" ". clock clock"!important' /tmp/sahabat-owner-layout.css || (echo "::error::Deployed owner CSS does not align actions with the profile row." && exit 1)
+          grep -Fq 'Root-cause correction v1.1.56' /tmp/sahabat-owner-layout.css || (echo "::error::Deployed owner layout CSS is stale." && exit 1)
           grep -Eiq '^strict-transport-security:[[:space:]]*max-age=15552000' /tmp/sahabat-headers.txt || (echo "::error::HSTS header is missing or has unexpected max-age." && exit 1)
           grep -Eiq '^x-frame-options:[[:space:]]*DENY' /tmp/sahabat-headers.txt || (echo "::error::X-Frame-Options DENY is missing." && exit 1)
           grep -Eiq '^x-content-type-options:[[:space:]]*nosniff' /tmp/sahabat-headers.txt || (echo "::error::X-Content-Type-Options nosniff is missing." && exit 1)
@@ -460,7 +467,7 @@ jobs:
           grep -Fq 'width:min(100%,190px)!important' /tmp/sahabat-assessment-glass.css || (echo "::error::Assessment photo cards are not size bounded." && exit 1)
           grep -Fq 'grid-auto-rows:max-content!important' /tmp/sahabat-assessment-glass.css || (echo "::error::Assessment photo card grid can still stretch rows." && exit 1)
           ! grep -Eiq '<input[[:space:]]+type="file"[^>]*id="assessmentPhoto(Self|Ktp|Kk|Home)"' /tmp/sahabat-dashboard.html || (echo "::error::Manual upload controls remain in the assessment form." && exit 1)
-          echo "Verified live dashboard version 1.1.55 with automatic PPKS photo cards, full-width clear-sheet action, clean card CSS, security headers and glass layout."
+          echo "Verified live dashboard version 1.1.56 with automatic PPKS photo cards, full-width clear-sheet action, clean card CSS, security headers and glass layout."
           for photo in 1 2 3; do
             photo_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output "/tmp/sahabat-toba-photo-$photo.jpg" --write-out '%{http_code}|%{content_type}' "$APP_URL/danau-toba/photo-$photo.jpg?v=1.2.9")"
             photo_status="${photo_response%%|*}"
