@@ -33,3 +33,12 @@
  .initial-intake-table tbody td[colspan]{display:table-cell;white-space:normal}
 }
 .initial-intake-table td:last-child .dashbtn:focus-visible{outline:2px solid #7dd3fc;outline-offset:2px}
+
+/* Keep the respondent number visible beside the WhatsApp send button. */
+.initial-intake-table td:nth-child(3){min-width:250px}
+.initial-intake-whatsapp-content{display:flex;align-items:center;gap:10px;flex-wrap:nowrap;min-width:0}
+.initial-intake-phone-number{display:inline-block;white-space:nowrap;font-variant-numeric:tabular-nums}
+.initial-intake-whatsapp-btn{display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 auto!important;width:auto!important;min-width:96px;max-width:none!important;min-height:38px!important;margin:0!important;padding:8px 13px!important;white-space:nowrap!important;word-break:normal!important;overflow-wrap:normal!important}
+.initial-intake-whatsapp-btn:disabled{opacity:.4;cursor:not-allowed}
+.initial-intake-table td:last-child{min-width:130px;width:130px}
+.initial-intake-done-btn{min-width:100px!important;max-width:120px!important;white-space:nowrap!important}

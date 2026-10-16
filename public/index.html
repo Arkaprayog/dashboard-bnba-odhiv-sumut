@@ -84,7 +84,7 @@
 <link rel="stylesheet" href="/assessment-glass-layout-v1.css?v=1.1.52">
 <link rel="stylesheet" href="/owner-profile-header-final-v2.css?v=1.1.62">
 <link rel="stylesheet" href="/respondent-qr-center-v1.css?v=1.0.1">
-<link rel="stylesheet" href="/initial-intake-manager.css?v=1.0.2">
+<link rel="stylesheet" href="/initial-intake-manager.css?v=1.0.3">
 <link rel="stylesheet" href="/assessment-transparent-v1.css?v=1.0.1">
 </head>
 <body>
@@ -548,23 +548,23 @@ async function loadInitialIntakes(){
    const cell=value=>{const td=document.createElement('td');td.textContent=value||'—';tr.append(td);return td;};
    const timeCell=cell(formatIntakeTime(item.created_at));timeCell.dataset.label='Waktu masuk';
    const nameCell=cell(item.preferred_name);nameCell.dataset.label='Nama';
-   const phoneCell=cell(item.phone?('+'+String(item.phone).replace(/^\+/,'')):'—');phoneCell.dataset.label='WhatsApp';
-   if(item.phone){const a=document.createElement('a');a.href='https://wa.me/'+encodeURIComponent(item.phone);a.target='_blank';a.rel='noopener noreferrer';a.textContent='Buka WhatsApp';a.setAttribute('aria-label','Buka WhatsApp untuk '+(item.preferred_name||'responden'));phoneCell.replaceChildren(a);}
-   const statusCell=cell(intakeStatusLabel(item.status));statusCell.dataset.label='Status';
-   statusCell.className='initial-intake-status status-'+(item.status||'baru');
-   const actionCell=document.createElement('td');actionCell.dataset.label='Aksi';
+   const phoneCell=cell(item.phone?('+'+String(item.phone).replace(/^\\+/,'')):'—');phoneCell.dataset.label='WhatsApp';
+   const phoneLabel=document.createElement('span');phoneLabel.className='initial-intake-phone-number';phoneLabel.textContent=item.phone?('+'+String(item.phone).replace(/^\\+/,'')):'—';
    const followupUrl=new URL(googleFollowupFormUrl);
    followupUrl.searchParams.set('usp','pp_url');
    followupUrl.searchParams.set('entry.1060152272',item.preferred_name||'');
    const messageText='Halo, '+(item.preferred_name||'').trim()+'. Terima kasih sudah mengisi pendaftaran awal. Silakan lanjutkan kuesioner melalui tautan ini: '+followupUrl.toString()+' Nama Anda sudah terisi otomatis. Mohon lengkapi pertanyaan lainnya, periksa kembali jawaban, lalu kirim saat sudah siap. Jika saat ini belum sempat, Anda boleh melanjutkan nanti.';
-   const waButton=document.createElement('button');waButton.type='button';waButton.className='dashbtn';waButton.textContent='Siapkan WhatsApp + Google Forms';
+   const waButton=document.createElement('button');waButton.type='button';waButton.className='dashbtn initial-intake-whatsapp-btn';waButton.textContent='WhatsApp';
+   waButton.disabled=!normalizedWaNumber(item.phone);
+   waButton.setAttribute('aria-label','Kirim pesan WhatsApp dan tautan kuisioner kepada '+(item.preferred_name||'responden'));
    waButton.addEventListener('click',()=>{const digits=normalizedWaNumber(item.phone);if(!digits){message.textContent='Nomor WhatsApp tidak valid; periksa data awal.';return;}window.open('https://wa.me/'+digits+'?text='+encodeURIComponent(messageText),'_blank','noopener,noreferrer');});
-   actionCell.append(waButton);
-   const sentButton=document.createElement('button');sentButton.type='button';sentButton.className='dashbtn';sentButton.textContent='Tandai link terkirim';sentButton.disabled=item.status==='link_dikirim'||item.status==='selesai';
-   sentButton.addEventListener('click',()=>updateInitialIntakeStatus(item.id,'link_dikirim'));actionCell.append(sentButton);
-   const doneButton=document.createElement('button');doneButton.type='button';doneButton.className='dashbtn';doneButton.textContent='Tandai selesai';doneButton.disabled=item.status==='selesai';
+   const phoneContent=document.createElement('div');phoneContent.className='initial-intake-whatsapp-content';phoneContent.append(phoneLabel,waButton);phoneCell.replaceChildren(phoneContent);
+   const statusCell=cell(intakeStatusLabel(item.status));statusCell.dataset.label='Status';
+   statusCell.className='initial-intake-status status-'+(item.status||'baru');
+   const actionCell=document.createElement('td');actionCell.dataset.label='Aksi';
+   const doneButton=document.createElement('button');doneButton.type='button';doneButton.className='dashbtn initial-intake-done-btn';doneButton.textContent='Selesai';doneButton.disabled=item.status==='selesai';
+   doneButton.setAttribute('aria-label','Tandai kuisioner '+(item.preferred_name||'responden')+' selesai');
    doneButton.addEventListener('click',()=>updateInitialIntakeStatus(item.id,'selesai'));actionCell.append(doneButton);
-   if(item.status!=='baru'){const resetButton=document.createElement('button');resetButton.type='button';resetButton.className='dashbtn secondary';resetButton.textContent='Kembalikan ke baru';resetButton.addEventListener('click',()=>updateInitialIntakeStatus(item.id,'baru'));actionCell.append(resetButton);}
    tr.append(actionCell);tbody.append(tr);
   }
   message.textContent='Data tindak lanjut dimuat: '+payload.items.length+' pendaftaran. Google Forms belum terdeteksi otomatis; owner perlu memeriksa respons di Google Sheets sebelum menandai “Selesai”.';
