@@ -103,14 +103,8 @@ jobs:
           cp node_modules/pdf-lib/dist/pdf-lib.min.js public/vendor/pdf-lib.min.js
           test -s public/vendor/pdf-lib.min.js
           echo "Bundled self-hosted pdf-lib browser runtime."
-      - name: Bundle PDF generator within the same-origin assets
-        run: |
-          set -euo pipefail
-          mkdir -p public/vendor
-          test -s node_modules/pdf-lib/dist/pdf-lib.min.js
-          cp node_modules/pdf-lib/dist/pdf-lib.min.js public/vendor/pdf-lib.min.js
-          test -s public/vendor/pdf-lib.min.js
-          echo "Bundled self-hosted pdf-lib browser runtime."
+
+
       - name: Validate safe owner bootstrap helper
         run: bash -n scripts/setup-admin.sh
       - name: Test trusted news URL policy
@@ -369,6 +363,14 @@ jobs:
           PY
       - name: Install dependencies
         run: npm install
+      - name: Bundle PDF generator within the same-origin assets
+        run: |
+          set -euo pipefail
+          mkdir -p public/vendor
+          test -s node_modules/pdf-lib/dist/pdf-lib.min.js
+          cp node_modules/pdf-lib/dist/pdf-lib.min.js public/vendor/pdf-lib.min.js
+          test -s public/vendor/pdf-lib.min.js
+          echo "Bundled self-hosted pdf-lib browser runtime."
       - name: Check Cloudflare secrets are configured
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
