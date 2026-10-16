@@ -621,15 +621,31 @@ async function loadStage1Data(){
    followupUrl.searchParams.set('usp','pp_url');
    followupUrl.searchParams.set('entry.1060152272',item.name||'');
    followupUrl.searchParams.set('entry.953124160',item.assistance||'');
-   const messageText='Halo, '+(item.name||'')+'. Silakan lengkapi kuesioner lanjutan melalui tautan berikut. Jawaban yang sudah tersedia akan terisi otomatis; mohon periksa kembali sebelum mengirim. '+followupUrl.toString();
+   const buildStage1ReplyMessage=()=>{
+    const hourText=new Intl.DateTimeFormat('id-ID',{timeZone:'Asia/Jakarta',hour:'2-digit',hourCycle:'h23'}).format(new Date());
+    const hour=Number(hourText);
+    const greeting=hour>=4&&hour<11?'Pagi':hour>=11&&hour<15?'Siang':hour>=15&&hour<18?'Sore':'Malam';
+    return 'Halo '+(item.name||'').trim()+', selamat '+greeting+'.\\n\\n'+
+     'Saya Deny Arifin Martyon, Pendamping ODHIV dari Kementerian Sosial RI.\\n\\n'+
+     'Terima kasih telah berminat untuk ikut dalam program layanan ATENSI dari KEMENTERIAN SOSIAL RI.\\n'+
+     'Untuk melengkapi data kamu, silakan isi link di bawah ini:\\n'+followupUrl.toString()+'\\n\\n'+
+     'Jika kamu punya pertanyaan seputar program layanan ATENSI dari Kementerian Sosial RI, silakan hubungi saya langsung melalui pesan ini.\\n\\n'+
+     'Semoga sehat selalu untuk kamu ya 😊\\n\\n'+
+     'Terima kasih,\\n'+
+     'Deny Arifin Martyon\\n'+
+     'PENDAMPING ODHIV\\n'+
+     'DIREKTORAT REHABILITASI SOSIAL KORBAN PENYALAHGUNAAN NARKOBA DAN ODHIV\\n'+
+     'KEMENTERIAN SOSIAL RI';
+   };
    const followupButton=document.createElement('button');
-   followupButton.type='button';followupButton.className='dashbtn';followupButton.textContent='Kirim Kuesioner Lanjutan';
-   followupButton.setAttribute('aria-label','Siapkan pesan kuesioner lanjutan untuk '+(item.name||'responden'));
+   followupButton.type='button';followupButton.className='dashbtn';followupButton.textContent='Siapkan Balasan WhatsApp + Google Forms';
+   followupButton.setAttribute('aria-label','Siapkan balasan WhatsApp dan tautan kuesioner lanjutan untuk '+(item.name||'responden'));
    followupButton.addEventListener('click',async()=>{
+    const messageText=buildStage1ReplyMessage();
     if(digits){window.open('https://wa.me/'+digits+'?text='+encodeURIComponent(messageText),'_blank','noopener,noreferrer');}
     else{
-     try{await navigator.clipboard.writeText(messageText);message.textContent='Nomor WhatsApp tidak tersedia. Pesan beserta tautan berhasil disalin untuk '+(item.name||'responden')+'.';}
-     catch{message.textContent='Nomor WhatsApp tidak tersedia. Salin tautan ini secara manual: '+followupUrl.toString();}
+     try{await navigator.clipboard.writeText(messageText);message.textContent='Nomor WhatsApp tidak tersedia. Pesan balasan lengkap beserta tautan berhasil disalin untuk '+(item.name||'responden')+'.';}
+     catch{message.textContent='Nomor WhatsApp tidak tersedia. Pesan belum dapat disalin; periksa nomor WhatsApp responden dan coba lagi.';}
     }
    });
    actionCell.append(followupButton);tr.append(actionCell);
