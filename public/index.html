@@ -248,9 +248,14 @@
       </form>
     </section>
     <section class="app-view" id="assessmentView" hidden aria-label="From Asesmen Terintegrasi">
-      <div class="assessment-empty-state"><h2>Lembar Asesmen Terintegrasi</h2><p>Halaman telah dikosongkan sesuai permintaan.</p></div>
-      <div id="assessmentLegacyContent" hidden>
+      <div id="assessmentLegacyContent">
       <div class="dashhead assessment-no-print"><div><h2>Form Asesmen Terintegrasi</h2><p>Direktorat Jenderal Rehabilitasi Sosial · Semua jawaban opsional</p></div><div class="assessment-actions assessment-action-rows">
+          <div class="assessment-action-row assessment-respondent-picker">
+            <label for="assessmentRespondentSelect">Pilih responden dari database</label>
+            <select id="assessmentRespondentSelect" class="workflow-control"><option value="">Memuat daftar responden setelah login…</option></select>
+            <button class="dashbtn" type="button" id="assessmentLoadRespondent">Muat identitas & foto</button>
+            <span id="assessmentRespondentStatus" role="status" aria-live="polite"></span>
+          </div>
           <div class="assessment-action-row assessment-photo-row" aria-label="Foto pendukung">
             <label class="assessment-upload">FOTO DIRI<input type="file" id="assessmentPhotoSelf" accept="image/*" capture="user"></label>
             <label class="assessment-upload">FOTO KTP<input type="file" id="assessmentPhotoKtp" accept="image/*"></label>
@@ -262,7 +267,8 @@
             <button class="dashbtn" type="button" id="assessmentReset">KOSONGKAN FORM</button>
           </div>
           <div class="assessment-action-row">
-            <button class="dashbtn" type="button" id="assessmentPrint">Print</button>
+            <button class="dashbtn" type="button" id="assessmentPrint">Cetak</button>
+            <button class="dashbtn" type="button" id="assessmentSavePdf">Simpan PDF</button>
           </div>
           <div id="assessmentPhotoPreviews" class="assessment-photo-previews" aria-live="polite"></div>
         </div></div>
@@ -279,11 +285,9 @@
         <section id="assessmentPrintPhotos" class="assessment-print-photos" aria-label="Lampiran foto asesmen"></section>
       </div>
       <p class="dashmsg assessment-no-print" id="assessmentMessage" role="status" aria-live="polite">Simpan ke database hanya tersedia setelah login dengan peran owner/admin. Data asesmen bersifat rahasia.</p>
-    </div>
     </section>
     <section class="app-view" id="assessmentSavedView" hidden aria-label="Data Asesmen Tersimpan">
-      <div class="assessment-empty-state"><h2>Data Asesmen Tersimpan</h2><p>Halaman telah dikosongkan sesuai permintaan.</p></div>
-      <div id="assessmentSavedLegacyContent" hidden>
+      <div id="assessmentSavedLegacyContent">
       <div class="dashhead"><div><h2>Data Asesmen Tersimpan</h2><p>Daftar asesmen yang tersimpan secara privat. Pilih data untuk membukanya kembali di Lembar Asesmen Terintegrasi.</p></div><button class="dashbtn" type="button" id="refreshSavedAssessments">Perbarui daftar</button></div>
       <p class="dashmsg" id="assessmentSavedMessage" role="status" aria-live="polite">Daftar asesmen akan dimuat setelah login.</p>
       <select id="assessmentSavedList" aria-label="Pilih asesmen tersimpan" hidden><option value="">Pilih asesmen tersimpan</option></select>
@@ -1222,6 +1226,7 @@ document.getElementById('logoutButton').addEventListener('click',async()=>{
  }catch(error){}
 })();
 </script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" defer></script>
 <script id="assessmentLogic">
 (()=>{
 const photoInputs=[
@@ -1308,6 +1313,112 @@ groups.forEach(group=>{if(group.title)host.append(el('div','assessment-section-t
  function findNextQuestion(nodes,start){for(let j=start;j<nodes.length;j++){const row=nodes[j].matches?.('.assessment-row')?nodes[j]:null;if(row){const raw=row.querySelector('.assessment-no')?.textContent?.trim();if(/^\d+$/.test(raw))return Number(raw);}}return 91;}
  sourceNodes.forEach((node,index)=>{if(node.nodeType!==Node.ELEMENT_NODE)return;if(node.classList.contains('assessment-row')){const raw=node.querySelector('.assessment-no')?.textContent?.trim();const n=/^\d+$/.test(raw)?Number(raw):91;pageNodes[pageIndexForQuestion(n)].append(node);}else{pageNodes[pageIndexForQuestion(findNextQuestion(sourceNodes,index+1))].append(node);}});
  host.replaceChildren(...pageNodes);
+
+const respondentSelect=document.getElementById('assessmentRespondentSelect');
+const respondentStatus=document.getElementById('assessmentRespondentStatus');
+let assessmentRespondentItems=[];
+const normAssessmentKey=value=>String(value??'').normalize('NFKD').toLocaleLowerCase().replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+function assessmentHeader(headers,patterns){return headers.find(h=>patterns.some(p=>p.test(normAssessmentKey(h))))||'';}
+async function loadAssessmentRespondents(){
+ if(!respondentSelect)return;
+ respondentSelect.replaceChildren(new Option('Memuat responden…',''));
+ try{
+  const response=await fetch('/api/respondents',{credentials:'same-origin',cache:'no-store'});
+  const payload=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(payload.error||'Data responden tidak dapat dimuat.');
+  const headers=Array.isArray(payload.headers)?payload.headers:[];
+  assessmentRespondentItems=Array.isArray(payload.items)?payload.items:[];
+  const nameHeader=assessmentHeader(headers,[/^namalengkap$/]);
+  const nikHeader=assessmentHeader(headers,[/^nik$/]);
+  respondentSelect.replaceChildren(new Option('Pilih responden…',''));
+  assessmentRespondentItems.forEach((item,index)=>{
+   const name=String(nameHeader?item[nameHeader]??'':'').trim();
+   const nik=String(nikHeader?item[nikHeader]??'':'').trim();
+   respondentSelect.add(new Option((name||'Tanpa nama')+(nik?' · NIK '+nik:''),String(index)));
+  });
+  respondentStatus.textContent='Daftar responden: '+assessmentRespondentItems.length+'. Data dimuat setelah login.';
+ }catch(error){respondentSelect.replaceChildren(new Option('Gagal memuat responden',''));respondentStatus.textContent=error instanceof Error?error.message:'Gagal memuat data responden.';}
+}
+function assessmentDriveId(value){
+ const raw=String(value??'').trim();if(!raw)return '';
+ try{const u=new URL(raw);if(u.hostname==='drive.google.com'||u.hostname==='docs.google.com'){const m=u.pathname.match(/\/file\/d\/([A-Za-z0-9_-]+)/i);return m?.[1]||u.searchParams.get('id')||'';} }catch{}
+ return /^[A-Za-z0-9_-]{15,}$/.test(raw)?raw:'';
+}
+function assessmentDataUrl(blob){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||''));reader.onerror=()=>reject(new Error('Foto tidak dapat dibaca.'));reader.readAsDataURL(blob);});}
+async function loadSelectedAssessmentRespondent(){
+ const index=respondentSelect?.value;
+ if(index===''||index==null){respondentStatus.textContent='Pilih responden terlebih dahulu.';return;}
+ const item=assessmentRespondentItems[Number(index)];if(!item){respondentStatus.textContent='Responden tidak ditemukan. Muat ulang daftar.';return;}
+ const headers=Object.keys(item);
+ const nameHeader=assessmentHeader(headers,[/^namalengkap$/]);
+ const nikHeader=assessmentHeader(headers,[/^nik$/]);
+ const name=String(nameHeader?item[nameHeader]??'':'').trim();
+ const nik=String(nikHeader?item[nikHeader]??'':'').trim();
+ const nameInput=document.querySelector('#assessmentFields [name="q16"]');
+ const nikInput=document.querySelector('#assessmentFields [name="q23"]');
+ if(nameInput)nameInput.value=name;if(nikInput)nikInput.value=nik;
+ const specs=[
+  ['assessmentPhotoSelf',[ /^fotodiri$/, /^fotoidentitasdiri$/ ],'FOTO DIRI'],
+  ['assessmentPhotoKtp',[ /^fotoktp$/ ],'FOTO KTP'],
+  ['assessmentPhotoKk',[ /^fotokk$/, /^fotokartukeluarga$/ ],'FOTO KK'],
+  ['assessmentPhotoHome',[ /^fotorumahtampakdepan$/, /^fotodepanrumah$/ ],'FOTO RUMAH TAMPAK DEPAN']
+ ];
+ let loaded=0,missing=[];
+ for(const [inputId,patterns,label] of specs){
+  const header=assessmentHeader(headers,patterns);const id=assessmentDriveId(header?item[header]:'');
+  const input=document.getElementById(inputId);if(input)input.value='';
+  if(!id){renderAssessmentPhoto(inputId,label,'','');missing.push(label);continue;}
+  try{
+   const response=await fetch('/api/respondent-photo?id='+encodeURIComponent(id),{credentials:'same-origin',cache:'no-store'});
+   if(!response.ok)throw new Error('HTTP '+response.status);
+   const blob=await response.blob();if(!blob.type.startsWith('image/'))throw new Error('Berkas bukan gambar');
+   renderAssessmentPhoto(inputId,label,await assessmentDataUrl(blob),label+' — '+name);loaded++;
+  }catch(error){renderAssessmentPhoto(inputId,label,'','');missing.push(label);}
+ }
+ respondentStatus.textContent='Identitas dimuat untuk '+(name||'responden terpilih')+'. Foto berhasil dimuat: '+loaded+'/4.'+(missing.length?' Belum tersedia: '+missing.join(', ')+'.':'');
+ assessmentMessage.textContent=missing.length?'Identitas dimuat, tetapi sebagian foto tidak dapat diakses. Periksa izin/tautan Drive sebelum membuat PDF.':'Identitas dan empat foto responden berhasil dimuat. Periksa data sebelum membuat PDF.';
+}
+async function buildAssessmentPdf(){
+ if(!window.PDFLib)throw new Error('Pustaka PDF belum termuat. Periksa koneksi internet lalu muat ulang halaman.');
+ const response=await fetch('/assessment-template.pdf',{credentials:'same-origin',cache:'no-store'});
+ if(!response.ok)throw new Error('Template PDF tidak dapat dimuat (HTTP '+response.status+').');
+ const pdfDoc=await PDFLib.PDFDocument.load(await response.arrayBuffer());
+ if(pdfDoc.getPageCount()!==6)throw new Error('Template harus tepat 6 halaman; ditemukan '+pdfDoc.getPageCount()+'.');
+ const pageSize=[595.28,841.89];
+ const specs=[['assessmentPhotoSelf','HALAMAN 7 — FOTO DIRI'],['assessmentPhotoKtp','HALAMAN 8 — FOTO KTP'],['assessmentPhotoKk','HALAMAN 9 — FOTO KARTU KELUARGA (KK)'],['assessmentPhotoHome','HALAMAN 10 — FOTO RUMAH TAMPAK DEPAN']];
+ for(const [inputId,label] of specs){
+  const page=pdfDoc.addPage(pageSize);page.drawText(label,{x:42,y:790,size:13});
+  const saved=assessmentPhotos[inputId];
+  if(saved?.dataUrl){
+   const imageBytes=await (await fetch(saved.dataUrl)).arrayBuffer();
+   const image=saved.dataUrl.startsWith('data:image/png')?await pdfDoc.embedPng(imageBytes):await pdfDoc.embedJpg(imageBytes);
+   const dims=image.scale(1),maxW=510,maxH=690,scale=Math.min(maxW/dims.width,maxH/dims.height,1);
+   page.drawImage(image,{x:(pageSize[0]-dims.width*scale)/2,y:55+(maxH-dims.height*scale)/2,width:dims.width*scale,height:dims.height*scale});
+  }else page.drawText('Foto belum tersedia — '+label,{x:42,y:400,size:12});
+ }
+ return new Blob([await pdfDoc.save()],{type:'application/pdf'});
+}
+function assessmentPdfFilename(){
+ const name=String(document.querySelector('#assessmentFields [name="q16"]')?.value||'responden').normalize('NFKD').replace(/[^a-zA-Z0-9_-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,70)||'responden';
+ return 'asesmen-terintegrasi-'+name+'.pdf';
+}
+async function saveAssessmentPdf(printInstead){
+ const button=document.getElementById(printInstead?'assessmentPrint':'assessmentSavePdf');if(button)button.disabled=true;
+ try{
+  const blob=await buildAssessmentPdf(),url=URL.createObjectURL(blob);
+  if(printInstead){
+   const frame=document.createElement('iframe');frame.style.position='fixed';frame.style.right='0';frame.style.bottom='0';frame.style.width='1px';frame.style.height='1px';frame.style.border='0';frame.setAttribute('aria-hidden','true');frame.src=url;document.body.append(frame);
+   frame.onload=()=>{try{frame.contentWindow.focus();frame.contentWindow.print();}catch(error){assessmentMessage.textContent='PDF siap, tetapi jendela cetak tidak dapat dibuka. Gunakan Simpan PDF.';}setTimeout(()=>{frame.remove();URL.revokeObjectURL(url);},60000);};
+  }else{
+   const a=document.createElement('a');a.href=url;a.download=assessmentPdfFilename();document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+  }
+  assessmentMessage.textContent='PDF dibuat: 10 halaman (6 halaman template + 4 halaman lampiran foto). Periksa hasil sebelum dibagikan.';
+ }catch(error){assessmentMessage.textContent=error instanceof Error?error.message:'PDF gagal dibuat.';}
+ finally{if(button)button.disabled=false;}
+}
+document.getElementById('assessmentLoadRespondent')?.addEventListener('click',loadSelectedAssessmentRespondent);
+document.getElementById('assessmentSavePdf')?.addEventListener('click',()=>saveAssessmentPdf(false));
+
 let currentAssessmentId=null;
 const assessmentMessage=document.getElementById('assessmentMessage');
 const savedList=document.getElementById('assessmentSavedList');
@@ -1413,20 +1524,15 @@ saveAssessmentButton.addEventListener('click',async()=>{
  }catch(error){assessmentMessage.textContent=assessmentErrorText(error);}
  finally{saveAssessmentButton.disabled=false;}
 });
-document.getElementById('assessmentPrint').addEventListener('click',()=>{
- const respondentName=String(document.querySelector('#assessmentFields [name="q16"]')?.value||'').trim();
- const safeName=respondentName.replace(/[\\/:*?"<>|]+/g,' ').replace(/\s+/g,' ').trim().slice(0,100);
- const originalTitle=document.title;document.title='From Asesmen Terintegrasi'+(safeName?' - '+safeName:'');
- document.body.classList.add('assessment-print-mode');
- const restore=()=>{document.title=originalTitle;document.body.classList.remove('assessment-print-mode');};
- window.addEventListener('afterprint',restore,{once:true});window.print();
-});
+document.getElementById('assessmentPrint').addEventListener('click',()=>saveAssessmentPdf(true));
 document.getElementById('assessmentReset').addEventListener('click',()=>{if(confirm('Kosongkan semua jawaban dan foto pada form? Data yang sudah tersimpan di database tidak dihapus.')){form.reset();document.querySelectorAll('.assessment-number input').forEach(i=>i.value='');Object.keys(assessmentPhotos).forEach(key=>delete assessmentPhotos[key]);photoPreview?.replaceChildren();printPhotos?.replaceChildren();photoInputs.forEach(([id,label])=>ensurePhotoPage(id,label));currentAssessmentId=null;assessmentMessage.textContent='Form dan foto dikosongkan. Data tersimpan di database tidak dihapus.'}});
 window.addEventListener('dashboard:authenticated',()=>{
  if(!csrfToken)return;
+ loadAssessmentRespondents();
  refreshSavedAssessments().catch(error=>{assessmentMessage.textContent='Daftar asesmen belum dapat dimuat. '+assessmentErrorText(error);});
 });
 if(typeof csrfToken!=='undefined'&&csrfToken){
+ loadAssessmentRespondents();
  refreshSavedAssessments().catch(error=>{assessmentMessage.textContent='Daftar asesmen belum dapat dimuat. '+assessmentErrorText(error);});
 }else{
  assessmentMessage.textContent='Login sebagai owner/admin untuk menyimpan dan memuat asesmen. Data baru tersimpan setelah tombol SIMPAN ASESMEN berhasil.';
