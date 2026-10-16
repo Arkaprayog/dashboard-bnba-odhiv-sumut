@@ -316,7 +316,7 @@ jobs:
 
   deploy:
     name: Deploy and health-check production Worker
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && contains(github.event.head_commit.message, '[deploy-production]'))
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 30
