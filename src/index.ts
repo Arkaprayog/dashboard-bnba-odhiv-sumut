@@ -1541,6 +1541,94 @@ export default {
           }
         }
 
+
+        // Public first-stage contact intake. Keep the initial form minimal: no NIK, health details, address, or photos.
+        if (url.pathname === "/api/public-initial-intake" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const contentLength = Number(request.headers.get("content-length") || "0");
+          if (contentLength > 32 * 1024) return reply({ error: "Formulir terlalu besar." }, 413);
+          let form: FormData;
+          try { form = await request.formData(); } catch { return reply({ error: "Format formulir tidak valid." }, 400); }
+          // Quietly accept honeypot submissions without storing them.
+          if (String(form.get("website") || "").trim()) {
+            return reply({ ok: true, message: "Terima kasih. Jika diperlukan, petugas akan menghubungi Anda secara privat." });
+          }
+          const preferredName = String(form.get("preferredName") || "").trim().replace(/\\s+/g, " ").slice(0, 100);
+          const rawPhone = String(form.get("phone") || "").trim();
+          const consent = ["on", "yes", "true", "1"].includes(String(form.get("consent") || "").toLowerCase());
+          let phone = rawPhone.replace(/\\D/g, "");
+          if (phone.startsWith("0")) phone = "62" + phone.slice(1);
+          else if (phone.startsWith("8")) phone = "62" + phone;
+          if (preferredName.length < 2 || !/^[1-9]\\d{8,14}$/.test(phone)) {
+            return reply({ error: "Masukkan nama panggilan/nama (minimal 2 karakter) dan nomor WhatsApp yang valid." }, 400);
+          }
+          if (!consent) return reply({ error: "Persetujuan untuk dihubungi melalui WhatsApp diperlukan sebelum mengirim formulir." }, 400);
+
+          const now = Math.floor(Date.now() / 1000);
+          try {
+            await env.DB.prepare("CREATE TABLE IF NOT EXISTS public_initial_intakes (id TEXT PRIMARY KEY, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, preferred_name TEXT NOT NULL, phone TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'baru', consent_at INTEGER NOT NULL)").run();
+            await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_public_initial_intakes_created ON public_initial_intakes(created_at DESC)").run();
+            await env.DB.prepare("CREATE TABLE IF NOT EXISTS public_initial_intake_attempts (id INTEGER PRIMARY KEY AUTOINCREMENT, ip_hash TEXT NOT NULL, created_at INTEGER NOT NULL)").run();
+            await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_public_initial_intake_attempts_ip_time ON public_initial_intake_attempts(ip_hash,created_at)").run();
+            await env.DB.prepare("DELETE FROM public_initial_intake_attempts WHERE created_at<?").bind(now - 86400).run();
+            const clientIp = request.headers.get("CF-Connecting-IP") || "unknown";
+            const ipHash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(clientIp)));
+            const recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM public_initial_intake_attempts WHERE ip_hash=? AND created_at>?")
+              .bind(ipHash, now - 3600).first<{ n: number }>();
+            if ((recent?.n || 0) >= 10) return reply({ error: "Batas pengiriman sementara tercapai. Silakan coba kembali nanti." }, 429, { "retry-after": "3600" });
+            await env.DB.prepare("INSERT INTO public_initial_intake_attempts(ip_hash,created_at) VALUES(?,?)").bind(ipHash, now).run();
+            const id = crypto.randomUUID();
+            await env.DB.prepare("INSERT INTO public_initial_intakes(id,created_at,updated_at,preferred_name,phone,status,consent_at) VALUES(?,?,?,?,?,'baru',?)")
+              .bind(id, now, now, preferredName, phone, now).run();
+            return reply({ ok: true, message: "Terima kasih. Data awal tersimpan. Petugas akan mengirim tautan kuesioner lanjutan melalui WhatsApp secara privat." });
+          } catch (error) {
+            const incidentId = logIncident("public_initial_intake_failed", error, { path: url.pathname, stage: "d1_intake_save" });
+            return reply({ error: "Pendaftaran awal belum berhasil disimpan. Coba lagi nanti. ID insiden: " + incidentId }, 503);
+          }
+        }
+
+        if (url.pathname === "/api/owner/initial-intakes" && request.method === "GET") {
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login ke dashboard owner." }, 401);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan melihat data tindak lanjut." }, 403);
+          try {
+            await env.DB.prepare("CREATE TABLE IF NOT EXISTS public_initial_intakes (id TEXT PRIMARY KEY, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, preferred_name TEXT NOT NULL, phone TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'baru', consent_at INTEGER NOT NULL)").run();
+            await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_public_initial_intakes_created ON public_initial_intakes(created_at DESC)").run();
+            const result = await env.DB.prepare("SELECT id,created_at,updated_at,preferred_name,phone,status FROM public_initial_intakes ORDER BY created_at DESC LIMIT 250").all<{ id: string; created_at: number; updated_at: number; preferred_name: string; phone: string; status: string }>();
+            return reply({ items: result.results || [], csrfToken: admin.csrf_token });
+          } catch (error) {
+            const incidentId = logIncident("owner_initial_intakes_load_failed", error, { path: url.pathname, stage: "d1_intake_read" });
+            return reply({ error: "Daftar tindak lanjut belum dapat dimuat. ID insiden: " + incidentId }, 503);
+          }
+        }
+
+        if (url.pathname === "/api/owner/initial-intakes/status" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login ke dashboard owner." }, 401);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengubah status tindak lanjut." }, 403);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          let body: { id?: unknown; status?: unknown };
+          try { body = await request.json() as typeof body; } catch { return reply({ error: "Format pembaruan tidak valid." }, 400); }
+          const id = typeof body.id === "string" ? body.id : "";
+          const status = typeof body.status === "string" ? body.status : "";
+          if (!/^[0-9a-f-]{36}$/i.test(id) || !["baru", "link_dikirim", "selesai"].includes(status)) {
+            return reply({ error: "Data status tindak lanjut tidak valid." }, 400);
+          }
+          try {
+            await env.DB.prepare("CREATE TABLE IF NOT EXISTS public_initial_intakes (id TEXT PRIMARY KEY, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, preferred_name TEXT NOT NULL, phone TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'baru', consent_at INTEGER NOT NULL)").run();
+            const result = await env.DB.prepare("UPDATE public_initial_intakes SET status=?,updated_at=? WHERE id=?")
+              .bind(status, Math.floor(Date.now() / 1000), id).run();
+            if (result.meta.changes !== 1) return reply({ error: "Data tindak lanjut tidak ditemukan." }, 404);
+            try { await audit(env, admin.id, "initial_intake_status_change"); } catch { /* Status is already committed; audit is best effort. */ }
+            return reply({ ok: true, message: "Status tindak lanjut diperbarui." });
+          } catch (error) {
+            const incidentId = logIncident("owner_initial_intake_status_failed", error, { path: url.pathname, stage: "d1_intake_update" });
+            return reply({ error: "Status tindak lanjut belum berhasil diperbarui. ID insiden: " + incidentId }, 503);
+          }
+        }
+
         if (url.pathname === "/api/owner-questionnaire" && request.method === "POST") {
           if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
           const admin = await sessionAdmin(request, env);
