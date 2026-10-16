@@ -1,3 +1,9 @@
+## 1.1.52 — 2026-10-16
+- Tetapkan kartu FOTO DIRI, FOTO KTP, FOTO KK, dan FOTO RUMAH menjadi kotak dengan rasio tetap 1:1 dan batas ukuran maksimum 190 px.
+- Hentikan peregangan kartu dan area foto mengikuti tinggi baris; atur ulang kisi agar tinggi mengikuti ukuran kartu, dengan ukuran lebih ringkas untuk layar ponsel.
+- Pertahankan susunan foto dua kolom pada ponsel, efek glass transparan, label yang terbaca, dan gambar dengan proporsi asli.
+- Selaraskan cache CSS dan versi web/PWA ke 1.1.52.
+
 ## 1.1.51 — 2026-10-16
 - Jadikan pemilihan responden otomatis memuat identitas dan empat foto melalui endpoint foto privat; hapus semua kontrol unggah manual dari Form Asesmen Terintegrasi.
 - Tambahkan tombol **Kosongkan Lembar Asesmen** selebar baris, tanpa menghapus asesmen yang sudah tersimpan.
