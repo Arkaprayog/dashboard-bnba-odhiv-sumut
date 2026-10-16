@@ -1,3 +1,8 @@
+## 1.1.50 — 2026-10-16
+- Tambahkan tombol **Hapus asesmen** pada setiap kartu di menu Data Asesmen PPKS, dengan dialog konfirmasi sebelum penghapusan permanen.
+- Lindungi penghapusan dengan sesi owner/admin, pemeriksaan Origin, token CSRF, validasi ID, dan pencatatan audit tanpa menyimpan isi jawaban asesmen.
+- Perbarui tampilan tombol hapus pada desktop/ponsel dan selaraskan versi web/PWA ke 1.1.50.
+
 ## 1.1.49 — 2026-10-16
 - Perkuat override terakhir untuk menetralkan background, blur, border, filter, dan bayangan yang ditetapkan ulang oleh stylesheet kaca lama.
 - Tambah cache-buster 1.1.49 agar browser memuat CSS bersih yang baru; versi web/PWA 1.1.49, Android 1.2.28 (versionCode 31).
