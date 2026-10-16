@@ -975,7 +975,7 @@ export default {
           const phone = typeof body.phone === "string" ? body.phone.trim() : "";
           const password = typeof body.password === "string" ? body.password : "";
           if (name.length < 2 || name.length > 120 ||
-              !["PENDAMPING SEBAYA", "PENJANGKAU LAPANGAN"].includes(position) ||
+              !["PENDAMPING LAPANGAN", "PENJANGKAU LAPANGAN"].includes(position) ||
               !/^\+?[0-9 ()-]{8,30}$/.test(phone) || password.length < 8 || password.length > 128) {
             return reply({ error: "Nama, jabatan, nomor HP/WA, atau kata sandi belum valid. Kata sandi minimal 8 karakter." }, 400);
           }
