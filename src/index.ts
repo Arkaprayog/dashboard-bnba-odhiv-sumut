@@ -444,6 +444,116 @@ async function audit(env: Env, adminId: string, action: string) {
   }
 }
 
+
+async function handlePublicQuestionnaire(request: Request, env: Env): Promise<Response> {
+  if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+  const contentLength = Number(request.headers.get("content-length") || "0");
+  if (contentLength > 18 * 1024 * 1024) return reply({ error: "Total kiriman terlalu besar. Maksimal 8 MB per foto." }, 413);
+  if (!env.GOOGLE_SHEET_ID || !env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !env.GOOGLE_PRIVATE_KEY) {
+    return reply({ error: "Integrasi penyimpanan belum siap. Data belum dikirim. Gunakan Google Forms sementara atau hubungi pengelola." }, 503);
+  }
+  let stage = "rate_limit";
+  let accessToken = "";
+  const uploadedIds: string[] = [];
+  try {
+    await env.DB.prepare("CREATE TABLE IF NOT EXISTS public_questionnaire_attempts (id INTEGER PRIMARY KEY AUTOINCREMENT, ip_hash TEXT NOT NULL, created_at INTEGER NOT NULL)").run();
+    await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_public_questionnaire_ip_time ON public_questionnaire_attempts(ip_hash,created_at)").run();
+    const clientIp = request.headers.get("CF-Connecting-IP") || "unknown";
+    const ipHash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(clientIp)));
+    const now = Math.floor(Date.now() / 1000);
+    await env.DB.prepare("DELETE FROM public_questionnaire_attempts WHERE created_at<?").bind(now - 86400).run();
+    const attempts = await env.DB.prepare("SELECT COUNT(*) AS n FROM public_questionnaire_attempts WHERE ip_hash=? AND created_at>?").bind(ipHash, now - 3600).first<{ n: number }>();
+    if ((attempts?.n || 0) >= 10) return reply({ error: "Batas pengiriman sementara tercapai. Coba kembali nanti atau gunakan Google Forms." }, 429, { "retry-after": "3600" });
+    await env.DB.prepare("INSERT INTO public_questionnaire_attempts(ip_hash,created_at) VALUES(?,?)").bind(ipHash, now).run();
+
+    stage = "parse_form";
+    let form: FormData;
+    try { form = await request.formData(); } catch { return reply({ error: "Format formulir tidak valid." }, 400); }
+    if (String(form.get("website") || "").trim()) return reply({ error: "Formulir tidak valid." }, 400);
+    if (String(form.get("consent") || "") !== "on") return reply({ error: "Persetujuan penggunaan data wajib dicentang." }, 400);
+    const get = (key: string) => String(form.get(key) || "").trim();
+    const nama=get("namaLengkap"), nik=get("nik"), ageText=get("usia"), usia=Number(ageText);
+    const gender=get("jenisKelamin"), alamat=get("alamatDomisili"), kota=get("kotaDomisili");
+    const pekerjaan=get("pekerjaan"), phone=get("noHpWa"), bantuan=get("jenisBantuan");
+    const timestamp=new Intl.DateTimeFormat("id-ID",{timeZone:"Asia/Jakarta",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date());
+    const selfPhoto=form.get("fotoDiri"), ktpPhoto=form.get("fotoKtp");
+    if (!nama || nama.length>160 || !/^\d{16}$/.test(nik) || !/^\d{1,3}$/.test(ageText) || !Number.isInteger(usia) || usia<0 || usia>120 ||
+        !["Laki-laki","Perempuan"].includes(gender) || !alamat || alamat.length>400 || !kota || kota.length>120 ||
+        !pekerjaan || pekerjaan.length>160 || !/^\+?[0-9 ()-]{8,30}$/.test(phone) ||
+        !["BANTUAN NUTRISI","BANTUAN KEWIRAUSAHAAN"].includes(bantuan)) {
+      return reply({error:"Periksa isian wajib. NIK harus 16 digit, usia 0–120, dan pilih satu jenis bantuan."},400);
+    }
+    const validPhoto=(value:FormDataEntryValue|null):value is File=>value instanceof File&&["image/jpeg","image/png","image/webp"].includes(value.type)&&value.size>0&&value.size<=8*1024*1024;
+    if(!validPhoto(selfPhoto)||!validPhoto(ktpPhoto))return reply({error:"Foto diri dan KTP wajib JPG, PNG, atau WebP, maksimal 8 MB per foto."},400);
+
+    stage="google_access_token";
+    accessToken=await googleAccessToken(env);
+    const sheetsBase="https://sheets.googleapis.com/v4/spreadsheets/"+encodeURIComponent(env.GOOGLE_SHEET_ID);
+    stage="sheets_read_metadata";
+    const metaResponse=await fetch(sheetsBase+"?fields=sheets.properties.title,sheets.properties.sheetId",{headers:{authorization:"Bearer "+accessToken}});
+    if(!metaResponse.ok)throw new Error("Google Sheets metadata HTTP "+metaResponse.status);
+    const sheetMeta=await metaResponse.json() as {sheets?:Array<{properties?:{title?:string;sheetId?:number}}>};
+    if(!(sheetMeta.sheets||[]).some(sheet=>sheet.properties?.title==="Kuisioner Owner")){
+      stage="sheets_create_tab";
+      const created=await fetch(sheetsBase+":batchUpdate",{method:"POST",headers:{authorization:"Bearer "+accessToken,"content-type":"application/json"},body:JSON.stringify({requests:[{addSheet:{properties:{title:"Kuisioner Owner"}}}]})});
+      if(!created.ok)throw new Error("Google Sheets create tab HTTP "+created.status);
+    }
+    const tab="'Kuisioner Owner'";
+    const headers=["Timestamp","NAMA LENGKAP","NIK","USIA","JENIS KELAMIN","ALAMAT DOMISILI SAAT INI","KOTA DOMISILI SAAT INI","PEKERJAAN","NO HP/WA","FOTO DIRI","FOTO KTP","JENIS BANTUAN","TELAH DIDATA OLEH","POSISI JABATAN PETUGAS","NO HP/WA PETUGAS"];
+    const headerRange=encodeURIComponent(tab+"!A1:O1");
+    stage="sheets_read_headers";
+    const headerResponse=await fetch(sheetsBase+"/values/"+headerRange,{headers:{authorization:"Bearer "+accessToken}});
+    if(!headerResponse.ok)throw new Error("Google Sheets header HTTP "+headerResponse.status);
+    const headerPayload=await headerResponse.json() as {values?:string[][]};
+    const currentHeaders=headerPayload.values?.[0]||[];
+    if(!currentHeaders.some(value=>String(value||"").trim())){
+      stage="sheets_write_headers";
+      const write=await fetch(sheetsBase+"/values/"+headerRange+"?valueInputOption=RAW",{method:"PUT",headers:{authorization:"Bearer "+accessToken,"content-type":"application/json"},body:JSON.stringify({values:[headers]})});
+      if(!write.ok)throw new Error("Google Sheets write headers HTTP "+write.status);
+    }else{
+      if(!headers.slice(0,12).every((expected,index)=>String(currentHeaders[index]||"").trim()===expected))return reply({error:"Struktur kolom Kuisioner Owner tidak sesuai. Data tidak disimpan agar kolom tidak tertukar; hubungi pengelola."},503);
+      const attribution=currentHeaders.slice(12,15).map(value=>String(value||"").trim());
+      if(attribution.every(value=>!value)){
+        stage="sheets_write_attribution_headers";
+        const write=await fetch(sheetsBase+"/values/"+encodeURIComponent(tab+"!M1:O1")+"?valueInputOption=RAW",{method:"PUT",headers:{authorization:"Bearer "+accessToken,"content-type":"application/json"},body:JSON.stringify({values:[headers.slice(12,15)]})});
+        if(!write.ok)throw new Error("Google Sheets attribution headers HTTP "+write.status);
+      }else if(attribution.some((value,index)=>value!==headers[index+12]))return reply({error:"Kolom atribusi Kuisioner Owner tidak sesuai. Data tidak disimpan; hubungi pengelola."},503);
+    }
+
+    stage="sheets_duplicate_check";
+    const nikResponse=await fetch(sheetsBase+"/values/"+encodeURIComponent(tab+"!C2:C2000"),{headers:{authorization:"Bearer "+accessToken}});
+    if(!nikResponse.ok)throw new Error("Google Sheets duplicate check HTTP "+nikResponse.status);
+    const nikPayload=await nikResponse.json() as {values?:string[][]};
+    if((nikPayload.values||[]).some(row=>String(row[0]||"").trim()===nik))return reply({error:"NIK ini sudah tercatat pada formulir Sahabat ODHIV Sumut. Jangan kirim ulang; hubungi petugas untuk memeriksa atau memperbarui data."},409);
+
+    const submissionId=crypto.randomUUID();
+    const uploadPrivatePhoto=async(photo:File,label:string)=>{
+      const ext=photo.type==="image/png"?".png":photo.type==="image/webp"?".webp":".jpg";
+      const metadata={name:"Responden-"+submissionId+"-"+label+ext,mimeType:photo.type};
+      const uploadForm=new FormData();uploadForm.append("metadata",new Blob([JSON.stringify(metadata)],{type:"application/json; charset=UTF-8"}));uploadForm.append("file",photo,"foto"+ext);
+      stage=label==="foto-diri"?"drive_upload_self_photo":"drive_upload_ktp_photo";
+      const response=await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,mimeType",{method:"POST",headers:{authorization:"Bearer "+accessToken},body:uploadForm});
+      if(!response.ok)throw new Error("Google Drive photo upload HTTP "+response.status);
+      const result=await response.json() as {id?:string;mimeType?:string};
+      if(!result.id||result.mimeType!==photo.type)throw new Error("Google Drive returned an invalid photo reference.");
+      uploadedIds.push(result.id);return "https://drive.google.com/file/d/"+result.id+"/view";
+    };
+    const selfUrl=await uploadPrivatePhoto(selfPhoto,"foto-diri"),ktpUrl=await uploadPrivatePhoto(ktpPhoto,"foto-ktp");
+    stage="sheets_append";
+    const append=await fetch(sheetsBase+"/values/"+encodeURIComponent(tab+"!A:O")+":append?valueInputOption=RAW&insertDataOption=INSERT_ROWS",{
+      method:"POST",headers:{authorization:"Bearer "+accessToken,"content-type":"application/json"},
+      body:JSON.stringify({majorDimension:"ROWS",values:[[timestamp,nama,nik,String(usia),gender,alamat,kota,pekerjaan,phone,selfUrl,ktpUrl,bantuan,"RESPONDEN MANDIRI","MANDIRI",""]]})
+    });
+    if(!append.ok)throw new Error("Google Sheets append HTTP "+append.status);
+    try{await recordNotification(env,"Respons baru dari kuesioner","Ada pengiriman kuesioner responden mandiri. Masuk ke dashboard untuk meninjau.","new_form_response");}catch{console.warn("public_questionnaire_notification_failed");}
+    return reply({ok:true,message:"Kuesioner berhasil dikirim. Terima kasih.",timestamp});
+  }catch(error){
+    if(accessToken)for(const id of uploadedIds){try{await fetch("https://www.googleapis.com/drive/v3/files/"+encodeURIComponent(id),{method:"DELETE",headers:{authorization:"Bearer "+accessToken}});}catch{}}
+    const incidentId=logIncident("public_questionnaire_submit_failed",error,{path:"/api/public-questionnaire",stage,providerStatus:safeProviderHttpStatus(error)});
+    return reply({error:"Kuesioner belum berhasil disimpan. Coba kembali atau gunakan Google Forms. ID insiden: "+incidentId},503);
+  }
+}
+
 export default {
   async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
     ctx.waitUntil((async () => {
@@ -1283,6 +1393,10 @@ export default {
               .bind(Math.floor(Date.now() / 1000), petugas.id_hash).run();
           }
           return reply({ ok: true }, 200, { "set-cookie": "team_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0" });
+        }
+
+        if (url.pathname === "/api/public-questionnaire" && request.method === "POST") {
+          return await handlePublicQuestionnaire(request, env);
         }
 
         if (url.pathname === "/api/team-questionnaire" && request.method === "POST") {
