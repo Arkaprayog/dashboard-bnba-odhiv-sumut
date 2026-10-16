@@ -417,7 +417,7 @@ jobs:
           page_status="000"
           for attempt in $(seq 1 12); do
             if page_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --dump-header /tmp/sahabat-headers.txt --output /tmp/sahabat-dashboard.html --write-out '%{http_code}' "$APP_URL/?v=$GITHUB_SHA" -H 'Cache-Control: no-cache')"; then :; else page_status="000"; fi
-            if [ "$page_status" = "200" ] && grep -Fq 'href="/app-layout.css?v=2.0.2"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/transparent-theme.css?v=2.0.0"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/dashboard-card-clean-v1.css?v=1.1.49"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/assessment-glass-layout-v1.css?v=1.1.52"' /tmp/sahabat-dashboard.html && grep -Fq 'name="application-version" content="1.1.52"' /tmp/sahabat-dashboard.html && grep -Fq 'Kosongkan Lembar Asesmen' /tmp/sahabat-dashboard.html && grep -Fq 'data-photo-preview="assessmentPhotoHome"' /tmp/sahabat-dashboard.html; then
+            if [ "$page_status" = "200" ] && grep -Fq 'href="/app-layout.css?v=2.0.3"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/transparent-theme.css?v=2.0.0"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/dashboard-card-clean-v1.css?v=1.1.49"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/assessment-glass-layout-v1.css?v=1.1.52"' /tmp/sahabat-dashboard.html && grep -Fq 'name="application-version" content="1.1.53"' /tmp/sahabat-dashboard.html && grep -Fq 'RANCANGAN ANGGARAN BELANJA' /tmp/sahabat-dashboard.html && grep -Fq 'RAB NUTRISI' /tmp/sahabat-dashboard.html && grep -Fq 'RAB KEWIRAUSAHAAN' /tmp/sahabat-dashboard.html && grep -Fq 'id="rabSubmenu" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'Kosongkan Lembar Asesmen' /tmp/sahabat-dashboard.html && grep -Fq 'data-photo-preview="assessmentPhotoHome"' /tmp/sahabat-dashboard.html; then
               echo "Production page and centralized glass theme references are current (attempt $attempt)."
               break
             fi
@@ -460,7 +460,7 @@ jobs:
           grep -Fq 'width:min(100%,190px)!important' /tmp/sahabat-assessment-glass.css || (echo "::error::Assessment photo cards are not size bounded." && exit 1)
           grep -Fq 'grid-auto-rows:max-content!important' /tmp/sahabat-assessment-glass.css || (echo "::error::Assessment photo card grid can still stretch rows." && exit 1)
           ! grep -Eiq '<input[[:space:]]+type="file"[^>]*id="assessmentPhoto(Self|Ktp|Kk|Home)"' /tmp/sahabat-dashboard.html || (echo "::error::Manual upload controls remain in the assessment form." && exit 1)
-          echo "Verified live dashboard version 1.1.52 with automatic PPKS photo cards, full-width clear-sheet action, clean card CSS, security headers and glass layout."
+          echo "Verified live dashboard version 1.1.53 with automatic PPKS photo cards, full-width clear-sheet action, clean card CSS, security headers and glass layout."
           for photo in 1 2 3; do
             photo_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output "/tmp/sahabat-toba-photo-$photo.jpg" --write-out '%{http_code}|%{content_type}' "$APP_URL/danau-toba/photo-$photo.jpg?v=1.2.9")"
             photo_status="${photo_response%%|*}"

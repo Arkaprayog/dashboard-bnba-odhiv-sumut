@@ -250,3 +250,12 @@ body:has(#dashboard:not([hidden])) #dashboard .owner-summary a,body:has(#dashboa
 .assessment-empty-state{padding:18px 4px;}
 .assessment-empty-state h2{margin:0 0 8px;font-size:1.15rem;}
 .assessment-empty-state p{margin:0;opacity:.82;line-height:1.55;}
+
+/* Expandable RAB menu; closed until requested, closes on other navigation or outside click. */
+#appNavigation .rab-nav-group{display:flex;flex-direction:column;gap:8px;min-width:0;position:relative}
+#appNavigation .rab-nav-group-title{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:64px;padding:14px 12px;border:1.5px solid #7dd3fc;border-radius:20px;color:#fff;background:rgba(9,35,57,.48);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font:inherit;font-size:clamp(.78rem,1.05vw,.96rem);font-weight:750;text-align:center;text-transform:uppercase;letter-spacing:.035em;line-height:1.35;overflow-wrap:anywhere;cursor:pointer}
+#appNavigation .rab-nav-group-title:hover,#appNavigation .rab-nav-group.is-expanded .rab-nav-group-title{background:rgba(56,189,248,.22);border-color:#bae6fd}
+#appNavigation .rab-submenu{display:flex;flex-direction:column;gap:8px;min-width:0;padding:8px;border:1px solid rgba(125,211,252,.6);border-radius:16px;background:rgba(6,32,50,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+#appNavigation .rab-submenu[hidden]{display:none!important}
+#appNavigation .rab-submenu .app-nav-subitem{width:100%;min-width:0;min-height:42px;padding:10px 12px;border:1px solid rgba(125,211,252,.58);border-radius:12px;color:#fff;background:rgba(255,255,255,.08);font:inherit;font-size:.84rem;font-weight:750;text-align:center;cursor:pointer}
+@media(max-width:650px){#appNavigation .rab-nav-group-title{min-height:64px;padding:10px 8px;font-size:.78rem}#appNavigation .rab-submenu{padding:6px}}

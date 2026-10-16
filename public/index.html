@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="id">
 <head>
-<link rel="stylesheet" href="/app-layout.css?v=2.0.2">
+<link rel="stylesheet" href="/app-layout.css?v=2.0.3">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="no-referrer">
@@ -39,7 +39,7 @@
 
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#07545b">
-<meta name="application-version" content="1.1.52">
+<meta name="application-version" content="1.1.53">
 
 
 
@@ -79,7 +79,7 @@
   <link rel="stylesheet" href="/form-mobile-ui-v1.css?v=1.1.40">
   <link rel="stylesheet" href="/glass-system-v1.css?v=2.0.2">
   <link rel="stylesheet" href="/assessment-print-10-pages-v1.css?v=1.1.46">
-  <link rel="stylesheet" href="/single-layer-floating-dashboard-v1.css?v=1.1.48">
+  <link rel="stylesheet" href="/single-layer-floating-dashboard-v1.css?v=1.1.53">
   <link rel="stylesheet" href="/dashboard-card-clean-v1.css?v=1.1.49">
 <link rel="stylesheet" href="/assessment-glass-layout-v1.css?v=1.1.52">
 </head>
@@ -115,7 +115,7 @@
     <hr class="login-divider">
     <footer class="login-footer">
       <p>Halaman Akses Awal · Data Responden Tetap Dilindungi</p>
-      <p class="login-version">Versi 1.1.52</p>
+      <p class="login-version">Versi 1.1.53</p>
       <p class="login-copyright">© 2026 Data Base Kemensos RI DRSKPNO · Hak cipta dilindungi</p>
     </footer>
   </section>
@@ -176,6 +176,7 @@
       <button type="button" data-view="questionnaire">KUISIONER</button>
       <button type="button" data-view="respondentQuiz">KUISIONER RESPONDEN</button>
       <button type="button" data-view="formats">DOKUMEN</button>
+      <div class="app-nav-group rab-nav-group" id="rabNavGroup"><button type="button" class="app-nav-group-title" id="rabNavToggle" aria-expanded="false" aria-controls="rabSubmenu">RANCANGAN ANGGARAN BELANJA <span aria-hidden="true">⌄</span></button><div class="assessment-submenu rab-submenu" id="rabSubmenu" hidden><button type="button" class="app-nav-subitem" data-rab-view="rabNutrition">RAB NUTRISI</button><button type="button" class="app-nav-subitem" data-rab-view="rabEntrepreneurship">RAB KEWIRAUSAHAAN</button></div></div>
     </nav>
     <section class="app-view" id="homeView" aria-label="Beranda Statistik">
       <div class="dashhead"><div><h2>Beranda Statistik</h2><p>Ringkasan data responden dari kuesioner</p></div><button class="dashbtn" id="refreshOverview" type="button">Perbarui statistik</button></div>
@@ -333,6 +334,8 @@
         <p>Jawaban yang dikirim responden disimpan oleh Google Forms. Jika formulir telah ditautkan ke Google Sheets, respons juga tercatat di spreadsheet tersebut. Penyimpanan atau sinkronisasi ke Dashboard dan Data PPKS mengikuti koneksi sumber data yang sudah dikonfigurasi; menu ini menyediakan tautan dan kode QR, bukan koneksi baru ke Drive atau Data PPKS.</p>
       </div>
     </section>
+    <section class="app-view" id="rabNutritionView" hidden aria-label="RAB Nutrisi"><div class="dashhead"><div><h2>RAB NUTRISI</h2><p>Rancangan Anggaran Belanja Nutrisi</p></div></div><div class="assessment-empty-state"><p>Ruang RAB Nutrisi siap disiapkan. Formulir dan perhitungan anggaran belum dibuat pada tahap ini.</p></div></section>
+    <section class="app-view" id="rabEntrepreneurshipView" hidden aria-label="RAB Kewirausahaan"><div class="dashhead"><div><h2>RAB KEWIRAUSAHAAN</h2><p>Rancangan Anggaran Belanja Kewirausahaan</p></div></div><div class="assessment-empty-state"><p>Ruang RAB Kewirausahaan siap disiapkan. Formulir dan perhitungan anggaran belum dibuat pada tahap ini.</p></div></section>
     <section class="app-view" id="formatsView" hidden aria-label="Format dokumen">
       <div class="dashhead"><div><h2>Dokumen</h2><p>Surat yang sudah tersedia dan dapat dibuka, disunting, lalu dicetak atau disimpan sebagai PDF.</p></div></div>
       <div class="overview-grid">
@@ -374,7 +377,7 @@
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.52</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.53</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi<br>© 2026 Data Base Kemensos RI DRSKPNO · Hak cipta dilindungi</p>
 </main>
@@ -436,12 +439,20 @@ let overviewRows=[];
 let overviewHeaders=[];
 let newsItems=[];
 function setAppView(view){
- const views={home:document.getElementById('homeView'),database:document.getElementById('databaseView'),questionnaire:document.getElementById('questionnaireView'),assessment:document.getElementById('assessmentView'),assessmentSaved:document.getElementById('assessmentSavedView'),formats:document.getElementById('formatsView'),news:document.getElementById('newsView'),respondentQuiz:document.getElementById('respondentQuizView')};
+ const views={home:document.getElementById('homeView'),database:document.getElementById('databaseView'),questionnaire:document.getElementById('questionnaireView'),assessment:document.getElementById('assessmentView'),assessmentSaved:document.getElementById('assessmentSavedView'),formats:document.getElementById('formatsView'),news:document.getElementById('newsView'),respondentQuiz:document.getElementById('respondentQuizView'),rabNutrition:document.getElementById('rabNutritionView'),rabEntrepreneurship:document.getElementById('rabEntrepreneurshipView')};
  Object.entries(views).forEach(([key,node])=>{if(node)node.hidden=key!==view;});
  document.querySelectorAll('#appNavigation [data-view]').forEach(button=>{if(button.dataset.view===view)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
  if(view==='news'&&!newsItems.length)loadNews();
 }
 document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button&&!button.hidden)setAppView(button.dataset.view);});
+const rabNavGroup=document.getElementById('rabNavGroup'),rabNavToggle=document.getElementById('rabNavToggle'),rabSubmenu=document.getElementById('rabSubmenu');
+function closeRabSubmenu(){rabNavGroup.classList.remove('is-expanded');rabNavToggle.setAttribute('aria-expanded','false');rabSubmenu.hidden=true;}
+rabNavToggle.addEventListener('click',()=>{if(rabSubmenu.hidden){rabSubmenu.hidden=false;rabNavGroup.classList.add('is-expanded');rabNavToggle.setAttribute('aria-expanded','true');}else closeRabSubmenu();});
+document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button&&!button.hidden)closeRabSubmenu();});
+rabSubmenu.addEventListener('click',event=>{const button=event.target.closest('[data-rab-view]');if(button){setAppView(button.dataset.rabView);closeRabSubmenu();}});
+document.addEventListener('click',event=>{if(!rabNavGroup.contains(event.target))closeRabSubmenu();});
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeRabSubmenu();});
+
 document.getElementById('openRespondentQuiz').addEventListener('click',()=>window.open('https://sahabatodhivsumut.web.id/kuisioner-responden.html','_blank','noopener,noreferrer'));
 document.getElementById('copyRespondentQuiz').addEventListener('click',async()=>{const message=document.getElementById('respondentQuizMessage');try{await navigator.clipboard.writeText('https://sahabatodhivsumut.web.id/kuisioner-responden.html');message.textContent='Link kuisioner berhasil disalin.';}catch{message.textContent='Salin link ini secara manual: https://sahabatodhivsumut.web.id/kuisioner-responden.html';}});
 

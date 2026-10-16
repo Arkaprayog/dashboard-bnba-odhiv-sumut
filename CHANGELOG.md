@@ -1,3 +1,10 @@
+## 1.1.53 — 2026-10-16
+- Tambahkan menu RANCANGAN ANGGARAN BELANJA pada dashboard.
+- RAB NUTRISI dan RAB KEWIRAUSAHAAN hanya tampil setelah menu induk diklik.
+- Submenu otomatis tertutup saat menu utama lain dipilih, submenu dipilih, area luar diklik, atau tombol Escape ditekan.
+- Tambahkan halaman awal untuk kedua submenu; formulir dan perhitungan anggaran belum dibuat pada rilis ini.
+- Perbarui versi web/PWA dan cache stylesheet.
+
 ## 1.1.52 — 2026-10-16
 - Tetapkan kartu FOTO DIRI, FOTO KTP, FOTO KK, dan FOTO RUMAH menjadi kotak dengan rasio tetap 1:1 dan batas ukuran maksimum 190 px.
 - Hentikan peregangan kartu dan area foto mengikuti tinggi baris; atur ulang kisi agar tinggi mengikuti ukuran kartu, dengan ukuran lebih ringkas untuk layar ponsel.
