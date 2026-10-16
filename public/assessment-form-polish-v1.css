@@ -464,3 +464,9 @@ html body.authenticated #dashboard #assessmentView .assessment-answer {
 }
 
 #assessmentView[hidden] { display: none !important; }
+
+/* Assessment respondent selector: compact, accessible, and responsive. */
+.assessment-respondent-picker{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem}
+.assessment-respondent-picker>label{font-weight:700}
+.assessment-respondent-picker select{width:min(100%,34rem);min-width:14rem;max-width:100%}
+.assessment-respondent-picker [role="status"]{flex-basis:100%;font-size:.9rem;overflow-wrap:anywhere}
