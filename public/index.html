@@ -39,7 +39,7 @@
 
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#07545b">
-<meta name="application-version" content="1.1.49">
+<meta name="application-version" content="1.1.50">
 
 
 
@@ -114,7 +114,7 @@
     <hr class="login-divider">
     <footer class="login-footer">
       <p>Halaman Akses Awal · Data Responden Tetap Dilindungi</p>
-      <p class="login-version">Versi 1.1.49</p>
+      <p class="login-version">Versi 1.1.50</p>
       <p class="login-copyright">© 2026 Data Base Kemensos RI DRSKPNO · Hak cipta dilindungi</p>
     </footer>
   </section>
@@ -359,7 +359,7 @@
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.49</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.50</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi<br>© 2026 Data Base Kemensos RI DRSKPNO · Hak cipta dilindungi</p>
 </main>
@@ -1514,7 +1514,8 @@ function applyAssessmentAnswers(answers){
    detail.append(el('h3','',label),el('p','', 'Terakhir diperbarui: '+(updated||'Tidak tersedia')),el('p','assessment-saved-id','ID: '+id));
    const actions=el('div','assessment-saved-card-actions');
    const load=el('button','dashbtn','Buka asesmen');load.type='button';load.addEventListener('click',()=>loadSavedAssessment(id));
-   actions.append(load);card.append(detail,actions);cards.append(card);
+   const remove=el('button','dashbtn assessment-delete-btn','Hapus asesmen');remove.type='button';remove.addEventListener('click',()=>deleteSavedAssessment(id,label,remove));
+   actions.append(load,remove);card.append(detail,actions);cards.append(card);
   });
   status.textContent='Jumlah asesmen tersimpan: '+items.length+'. Data hanya dapat diakses setelah login.';
  }
@@ -1531,6 +1532,31 @@ function applyAssessmentAnswers(answers){
    document.getElementById('assessmentSavedMessage').textContent=error instanceof Error?error.message:'Gagal memuat asesmen.';
   }
  }
+
+ async function deleteSavedAssessment(id,label,button){
+  if(!id)return;
+  const confirmed=window.confirm('Hapus '+label+'?\n\nData asesmen akan dihapus permanen dan tidak dapat dipulihkan.');
+  if(!confirmed)return;
+  const status=document.getElementById('assessmentSavedMessage');
+  button.disabled=true;status.textContent='Menghapus asesmen…';
+  try{
+   const response=await fetch('/api/assessments/item?id='+encodeURIComponent(id),{method:'DELETE',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken}});
+   const payload=await response.json().catch(()=>({}));
+   if(!response.ok||!payload.ok)throw new Error(payload.error||('Hapus asesmen gagal (HTTP '+response.status+').'));
+   if(currentAssessmentId===id)currentAssessmentId=null;
+   try{
+    await refreshSavedAssessments();
+    status.textContent='Asesmen berhasil dihapus.';
+   }catch(refreshError){
+    status.textContent='Asesmen berhasil dihapus, tetapi daftar belum diperbarui. Tekan Perbarui daftar.';
+   }
+  }catch(error){
+   status.textContent=error instanceof Error?error.message:'Asesmen gagal dihapus.';
+  }finally{
+   if(button.isConnected)button.disabled=false;
+  }
+ }
+
  document.getElementById('refreshSavedAssessments').addEventListener('click',()=>refreshSavedAssessments().catch(error=>{document.getElementById('assessmentSavedMessage').textContent=assessmentErrorText(error);}));
  document.getElementById('assessmentLoad')?.addEventListener('click',()=>loadSavedAssessment(savedList.value));
 function assessmentErrorText(error){
