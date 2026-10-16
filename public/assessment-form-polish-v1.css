@@ -602,3 +602,61 @@ html body.authenticated #dashboard #assessmentView .assessment-upload {
   #assessmentView .assessment-pdf-actions { flex-direction: row !important; flex-wrap: nowrap !important; gap: 8px !important; }
   #assessmentView .assessment-pdf-actions > button { flex: 1 1 50% !important; width: 50% !important; max-width: 50% !important; min-width: 0 !important; font-size: .84rem !important; }
 }
+
+/* VERSION 1.1.42 — FORCE PHOTO PICKERS INTO ONE HORIZONTAL ROW */
+html body.authenticated #dashboard #assessmentView .assessment-actions .assessment-photo-row {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  padding: 2px 2px 10px !important;
+  box-sizing: border-box !important;
+  -webkit-overflow-scrolling: touch;
+}
+html body.authenticated #dashboard #assessmentView .assessment-actions .assessment-photo-row > .assessment-upload {
+  display: flex !important;
+  flex: 1 0 calc(25% - 8px) !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  width: auto !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 10px 8px !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  overflow-wrap: anywhere !important;
+}
+html body.authenticated #dashboard #assessmentView .assessment-actions .assessment-photo-row > .assessment-upload input[type="file"] {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin-top: 7px !important;
+  font-size: 10px !important;
+  line-height: 1.25 !important;
+}
+html body.authenticated #dashboard #assessmentView .assessment-actions .assessment-photo-row > .assessment-upload input[type="file"]::file-selector-button {
+  display: block !important;
+  max-width: 100% !important;
+  margin: 0 auto 5px !important;
+  padding: 6px 5px !important;
+  font-size: 10px !important;
+  white-space: normal !important;
+}
+@media (max-width: 600px) {
+  html body.authenticated #dashboard #assessmentView .assessment-actions .assessment-photo-row > .assessment-upload {
+    flex: 0 0 132px !important;
+    width: 132px !important;
+    min-width: 132px !important;
+    min-height: 90px !important;
+  }
+}
