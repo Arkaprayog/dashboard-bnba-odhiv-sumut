@@ -47,6 +47,11 @@
 <p class="muted">Profil harus dilengkapi sebelum formulir pendataan dapat digunakan. Data nama, jabatan, dan nomor HP/WA mengikuti pendaftaran admin.</p>
 <div class="staff"><strong id="setupName"></strong><span id="setupPosition"></span><span id="setupPhone"></span></div>
 <form id="profileForm" style="margin-top:16px">
+<div class="grid">
+<div class="field"><label for="teamProfileName">Nama Anggota *</label><input id="teamProfileName" name="namaAnggota" autocomplete="name" maxlength="120" required></div>
+<div class="field"><label for="teamProfilePosition">Jabatan *</label><select id="teamProfilePosition" name="jabatan" required><option value="">Pilih jabatan</option><option value="PENDAMPING LAPANGAN">Pendamping Sebaya</option><option value="PENJANGKAU LAPANGAN">Penjangkau Lapangan</option></select></div>
+<div class="field"><label for="teamProfilePhone">No. HP/WA *</label><input id="teamProfilePhone" name="nomorHpWa" type="tel" inputmode="tel" maxlength="30" autocomplete="tel" required></div>
+</div>
 <div class="profile-upload"><label for="fotoProfil">Foto Profil Petugas * (maksimal 10 MB)</label><p class="profile-hint">Unggah foto diri yang jelas. Format JPG, PNG, atau WebP.</p><input id="fotoProfil" name="fotoProfil" type="file" accept="image/jpeg,image/png,image/webp" required><img id="profilePreview" class="preview" alt="Pratinjau foto profil"><div id="profileFileState" class="photo-state">Belum ada foto profil dipilih.</div></div>
 <div class="actions" style="margin-top:14px"><button id="profileSaveButton" class="btn" type="submit">Simpan Profil</button></div>
 <div id="profileMessage" class="message" role="status" aria-live="polite"></div>
@@ -114,6 +119,9 @@
   document.getElementById('setupName').textContent=staff.name;
   document.getElementById('setupPosition').textContent='Jabatan: '+staff.position;
   document.getElementById('setupPhone').textContent='HP/WA: '+staff.phone;
+  document.getElementById('teamProfileName').value=staff.name||'';
+  document.getElementById('teamProfilePosition').value=staff.position||'';
+  document.getElementById('teamProfilePhone').value=staff.phone||'';
  };
  const showLoggedIn=async data=>{
   csrfToken=data.csrfToken||csrfToken;
