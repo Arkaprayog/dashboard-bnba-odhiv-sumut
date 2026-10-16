@@ -1675,7 +1675,7 @@ export default {
               let googleDetail = "";
               try {
                 const errorPayload = await response.json() as { error?: { message?: string } };
-                googleDetail = String(errorPayload.error?.message || "").replace(/\\s+/g, " ").slice(0, 180);
+                googleDetail = String(errorPayload.error?.message || "").replace(/ {2,}/g, " ").slice(0, 180);
               } catch { /* Respons Google bukan JSON. */ }
               return reply({ error: "Data kuesioner tahap 1 gagal dibaca (HTTP " + response.status + ")." + (googleDetail ? " Detail: " + googleDetail : "") }, 502);
             }
