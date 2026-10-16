@@ -1,3 +1,9 @@
+## 1.1.46 — 2026-10-16
+- Ratakan menu DATA ASESMEN PPKS dan FROM ASESMEN TERINTEGRASI sebagai tombol menu utama, lalu hapus menu induk “From Asesmen Terintegrasi”.
+- Ganti label menjadi DATABASE PPKS, DATA ASESMEN PPKS, FROM ASESMEN TERINTEGRASI, dan KUISIONER; urutan tujuh menu serta seluruh huruf kapital mengikuti permintaan.
+- Perbarui grid floating action buttons menjadi empat kolom pada layar lebar dan dua kolom pada tablet/ponsel, dengan bingkai sky blue dan hover yang ringan.
+- Pertahankan batas akses menu asesmen untuk owner/admin; selaraskan versi web/PWA ke 1.1.46 dan Android ke 1.2.25 (versionCode 28).
+
 ## 1.1.45 — 2026-10-16
 - Pasang aset `public/logos/app icon-template.png` sebagai favicon, Apple Touch Icon, dan ikon PWA melalui manifest.
 - Tambahkan gaya CSS komponen pratinjau ikon SODARAMU yang responsif, terpusat, bersudut squircle, dan memiliki bayangan halus.
