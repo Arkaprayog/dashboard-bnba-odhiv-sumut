@@ -1,46 +1,48 @@
 /* SODARAMU — transparent, no-fill assessment interface.
-   Scope: on-screen assessment only. Keep the A4 print stylesheet and existing form logic intact. */
+   Scope: on-screen assessment only. Preserve the official A4 print presentation and form behavior. */
 @media screen {
-  #assessmentView,
-  #assessmentView * {
+  html body.authenticated #dashboard .app-view#assessmentView,
+  html body.authenticated #dashboard .app-view#assessmentView * {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
     box-shadow: none !important;
     text-shadow: none !important;
+    filter: none !important;
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
   }
 
-  #assessmentView {
-    color: #fff;
+  html body.authenticated #dashboard .app-view#assessmentView {
+    color: #fff !important;
   }
 
-  #assessmentView .dashhead,
-  #assessmentView .assessment-actions,
-  #assessmentView .assessment-respondent-picker,
-  #assessmentView .assessment-reset-row,
-  #assessmentView .assessment-photo-card,
-  #assessmentView .assessment-photo-card-image,
-  #assessmentView .assessment-photo-previews,
-  #assessmentView .assessment-photo-preview,
-  #assessmentView .assessment-paper,
-  #assessmentView .assessment-brand,
-  #assessmentView .assessment-number,
-  #assessmentView .assessment-print-page,
-  #assessmentView .assessment-print-photo-page,
-  #assessmentView .assessment-section-title,
-  #assessmentView .assessment-subtitle,
-  #assessmentView .assessment-row,
-  #assessmentView .assessment-no,
-  #assessmentView .assessment-label,
-  #assessmentView .assessment-answer,
-  #assessmentView .assessment-options,
-  #assessmentView .assessment-choice,
-  #assessmentView .assessment-signature,
-  #assessmentView .signature-space,
-  #assessmentView .assessment-pdf-actions,
-  #assessmentView .assessment-upload,
-  #assessmentView .assessment-photo-placeholder {
-    background: transparent !important;
-    background-color: transparent !important;
+  html body.authenticated #dashboard .app-view#assessmentView .dashhead,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-actions,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-respondent-picker,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-reset-row,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-photo-card,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-photo-card-image,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-photo-previews,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-photo-preview,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-paper,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-brand,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-number,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-print-page,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-print-photo-page,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-section-title,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-subtitle,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-row,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-no,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-label,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-answer,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-options,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-choice,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-signature,
+  html body.authenticated #dashboard .app-view#assessmentView .signature-space,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-pdf-actions,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-upload,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-photo-placeholder {
     border-color: rgba(255, 255, 255, .32) !important;
     box-shadow: none !important;
     text-shadow: none !important;
@@ -48,31 +50,31 @@
     backdrop-filter: none !important;
   }
 
-  #assessmentView .dashhead {
+  html body.authenticated #dashboard .app-view#assessmentView .dashhead {
     border: 0 !important;
     border-bottom: 1px solid rgba(255, 255, 255, .34) !important;
     border-radius: 0 !important;
     padding: 0 0 14px !important;
   }
 
-  #assessmentView .assessment-paper {
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-paper {
     border: 1px solid rgba(255, 255, 255, .34) !important;
     border-radius: 0 !important;
   }
 
-  #assessmentView .assessment-brand {
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-brand {
     border: 0 !important;
     border-bottom: 1px solid rgba(255, 255, 255, .28) !important;
     border-radius: 0 !important;
     padding-bottom: 14px !important;
   }
 
-  #assessmentView .assessment-number {
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-number {
     border: 1px solid rgba(255, 255, 255, .34) !important;
     border-radius: 0 !important;
   }
 
-  #assessmentView .assessment-section-title {
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-section-title {
     border: 0 !important;
     border-bottom: 1px solid rgba(255, 255, 255, .36) !important;
     border-radius: 0 !important;
@@ -80,13 +82,13 @@
     color: #fff !important;
   }
 
-  #assessmentView .assessment-subtitle {
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-subtitle {
     border-radius: 0 !important;
     color: #fff !important;
     padding: 10px 4px !important;
   }
 
-  #assessmentView .assessment-row {
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-row {
     border: 0 !important;
     border-bottom: 1px solid rgba(255, 255, 255, .24) !important;
     border-radius: 0 !important;
@@ -94,45 +96,49 @@
     transition: none !important;
   }
 
-  #assessmentView .assessment-no {
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-no {
     border: 0 !important;
     border-radius: 0 !important;
     color: #fff !important;
   }
 
-  #assessmentView .assessment-label,
-  #assessmentView .assessment-answer,
-  #assessmentView .assessment-choice,
-  #assessmentView .assessment-photo-label,
-  #assessmentView .assessment-photo-caption,
-  #assessmentView .assessment-photo-placeholder,
-  #assessmentView .assessment-respondent-picker label {
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-label,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-answer,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-choice,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-photo-label,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-photo-caption,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-photo-placeholder,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-respondent-picker label {
     color: #fff !important;
   }
 
-  #assessmentView .assessment-photo-card {
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-photo-card {
     border: 1px solid rgba(255, 255, 255, .32) !important;
     border-radius: 0 !important;
   }
 
-  #assessmentView .assessment-photo-card-image,
-  #assessmentView .assessment-photo-preview {
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-photo-card-image,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-photo-preview {
     border: 1px solid rgba(255, 255, 255, .26) !important;
     border-radius: 0 !important;
   }
 
-  #assessmentView .assessment-photo-card-image img,
-  #assessmentView .assessment-photo-preview img {
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-photo-card-image img,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-photo-preview img {
     box-shadow: none !important;
     filter: none !important;
   }
 
-  #assessmentView input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
-  #assessmentView textarea,
-  #assessmentView select,
-  #assessmentView .workflow-control {
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-answer > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-answer > textarea,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-answer > select,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-number input,
+  html body.authenticated #dashboard .app-view#assessmentView #assessmentRespondentSelect,
+  html body.authenticated #dashboard .app-view#assessmentView select.workflow-control,
+  html body.authenticated #dashboard .app-view#assessmentView textarea {
     background: transparent !important;
     background-color: transparent !important;
+    background-image: none !important;
     border: 1px solid rgba(255, 255, 255, .36) !important;
     border-radius: 0 !important;
     box-shadow: none !important;
@@ -141,32 +147,33 @@
     backdrop-filter: none !important;
   }
 
-  #assessmentView input::placeholder,
-  #assessmentView textarea::placeholder {
+  html body.authenticated #dashboard .app-view#assessmentView input::placeholder,
+  html body.authenticated #dashboard .app-view#assessmentView textarea::placeholder {
     color: rgba(255, 255, 255, .68) !important;
     opacity: 1 !important;
   }
 
-  #assessmentView input:focus,
-  #assessmentView textarea:focus,
-  #assessmentView select:focus {
+  html body.authenticated #dashboard .app-view#assessmentView input:focus,
+  html body.authenticated #dashboard .app-view#assessmentView textarea:focus,
+  html body.authenticated #dashboard .app-view#assessmentView select:focus {
     background: transparent !important;
     border-color: #fff !important;
     outline: 1px solid rgba(255, 255, 255, .55) !important;
     outline-offset: 2px !important;
   }
 
-  #assessmentView input[type="checkbox"],
-  #assessmentView input[type="radio"] {
+  html body.authenticated #dashboard .app-view#assessmentView input[type="checkbox"],
+  html body.authenticated #dashboard .app-view#assessmentView input[type="radio"] {
     background: transparent !important;
     box-shadow: none !important;
   }
 
-  #assessmentView button,
-  #assessmentView .dashbtn,
-  #assessmentView .assessment-pdf-actions button {
+  html body.authenticated #dashboard .app-view#assessmentView button,
+  html body.authenticated #dashboard .app-view#assessmentView .dashbtn,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-pdf-actions button {
     background: transparent !important;
     background-color: transparent !important;
+    background-image: none !important;
     border: 1px solid rgba(255, 255, 255, .46) !important;
     border-radius: 0 !important;
     box-shadow: none !important;
@@ -177,38 +184,32 @@
     transition: border-color .15s ease !important;
   }
 
-  #assessmentView button:hover,
-  #assessmentView .dashbtn:hover,
-  #assessmentView .assessment-pdf-actions button:hover {
+  html body.authenticated #dashboard .app-view#assessmentView button:hover,
+  html body.authenticated #dashboard .app-view#assessmentView .dashbtn:hover,
+  html body.authenticated #dashboard .app-view#assessmentView .assessment-pdf-actions button:hover {
     background: transparent !important;
     border-color: #fff !important;
   }
 
-  #assessmentView .assessment-photo-placeholder,
-  #assessmentView #assessmentRespondentStatus,
-  #assessmentView #assessmentMessage {
-    text-shadow: none !important;
-  }
-
   @media (max-width: 560px) {
-    #assessmentView .assessment-row {
+    html body.authenticated #dashboard .app-view#assessmentView .assessment-row {
       grid-template-columns: 28px minmax(0, 1fr) !important;
       gap: 5px 10px !important;
     }
 
-    #assessmentView .assessment-row > .assessment-no {
+    html body.authenticated #dashboard .app-view#assessmentView .assessment-row > .assessment-no {
       grid-column: 1 !important;
       grid-row: 1 / span 2 !important;
       align-self: start !important;
       padding: 0 !important;
     }
 
-    #assessmentView .assessment-row > .assessment-label {
+    html body.authenticated #dashboard .app-view#assessmentView .assessment-row > .assessment-label {
       grid-column: 2 !important;
       padding: 0 0 3px !important;
     }
 
-    #assessmentView .assessment-row > .assessment-answer {
+    html body.authenticated #dashboard .app-view#assessmentView .assessment-row > .assessment-answer {
       grid-column: 2 !important;
       padding: 0 !important;
     }
