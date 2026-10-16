@@ -1232,13 +1232,17 @@ export default {
               .bind(name, position, phone, newReference, await hashTeamToken(rotatedInvite), petugas.id).run();
             if (saved.meta.changes !== 1) throw new Error("Petugas tidak aktif atau profil tidak dapat diperbarui.");
             databaseCommitted = true;
+            try {
+              await env.DB.prepare("UPDATE team_sessions SET revoked_at=? WHERE petugas_id=? AND revoked_at IS NULL")
+                .bind(Math.floor(Date.now() / 1000), petugas.id).run();
+            } catch { console.warn("team_onboarding_session_revoke_failed"); }
 
             // Clean up the previous private KV object only after the new reference is committed.
             const previous = parsePrivateTeamPhotoReference(petugas.profile_photo_id);
             if (previous) {
               try { await env.TEAM_PROFILE_PHOTOS.delete(previous.key); } catch { /* Best-effort cleanup; the new profile is already saved. */ }
             }
-            return reply({ ok: true, message: "Profil berhasil dilengkapi." });
+            return reply({ ok: true, message: "Profil berhasil dilengkapi. Silakan login menggunakan nomor HP/WA dan kata sandi dari owner." }, 200, { "set-cookie": "team_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0" });
           } catch (error) {
             if (objectWritten && !databaseCommitted) {
               try { await env.TEAM_PROFILE_PHOTOS.delete(objectKey); } catch { /* Best-effort cleanup of an unreferenced upload. */ }
