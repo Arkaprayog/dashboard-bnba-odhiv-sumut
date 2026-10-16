@@ -1,80 +1,47 @@
-/* SODARAMU dashboard card cleanup v1.1.48
-   Final override loaded after legacy themes. Remove all card/panel glass, white haze,
-   backdrop blur, decorative border and shadow from the authenticated dashboard only. */
-@media screen {
-  html body.authenticated #dashboard :is(
-    section, article, aside, nav, header, footer, form, fieldset,
-    .owner-card, .owner-profile-side, .owner-summary, .owner-header-actions, .top-actions,
-    .app-view, .app-nav, .overview-grid, .overview-panels, .overview-card, .overview-panel,
-    .notification-panel, .settings-panel, .dashpanel, .content-card, .questionnaire-panel,
-    .database-panel, .assessment-panel, .document-card, .respondent-stat, .stat-box,
-    .assessment-box, .form-container, .datawrap, .table-wrap, .table-responsive,
-    .database-table-wrap, [class*="card"], [class*="panel"], [class*="glass"],
-    [class*="surface"], [class*="box"], [class*="container"], [class*="wrap"],
-    [class*="overview"], [class*="stat"]
-  ) {
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
-    border-color: transparent !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    filter: none !important;
-  }
-
-  html body.authenticated #dashboard #ownerCard {
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
-    border: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-
-  /* Keep the three owner actions clickable, but remove their frosted/white backing. */
-  html body.authenticated #dashboard :is(
-    #notificationBellButton, #settingsButton, #logoutButton
-  ) {
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
-    border: 0 !important;
-    border-radius: 50% !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    filter: none !important;
-  }
-  html body.authenticated #dashboard :is(
-    #notificationBellButton, #settingsButton, #logoutButton
-  ):hover,
-  html body.authenticated #dashboard :is(
-    #notificationBellButton, #settingsButton, #logoutButton
-  ):focus-visible {
-    background: transparent !important;
-    background-color: transparent !important;
-    box-shadow: none !important;
-    outline: 2px solid #7dd3fc !important;
-    outline-offset: 2px !important;
-  }
-
-  html body.authenticated #dashboard .owner-live-clock {
-    background: transparent !important;
-    background-color: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    color: #808000 !important;
-  }
-
-  /* Keep form controls, the blue menu-button outlines, avatar and readable text intact. */
-  html body.authenticated #dashboard #appNavigation > button {
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
+/* SODARAMU v1.1.49 — hard override for legacy glass styles.
+   Keep dashboard background visible; remove card/profile/action glass backgrounds and blur.
+   Loaded last, after every legacy stylesheet. */
+html body.authenticated #dashboard :is(
+  .owner-card,.owner-profile-side,.owner-summary,.owner-header-actions,.top-actions,
+  .app-view,.overview-grid,.overview-card,.overview-panel,.notification-panel,.settings-panel,
+  .dashpanel,.content-card,.questionnaire-panel,.database-panel,.assessment-panel,
+  .document-card,.respondent-stat,.stat-box,.assessment-box,.form-container,.datawrap,
+  .table-wrap,.table-responsive,.database-table-wrap,.news-card,.profile-card,.profile-panel,
+  .stat-card,.status-card,.notice-card,.upload-card,.assessment-card,.workspace-card,
+  .menu-card,.quick-card,.quick-link,.info-card,.data-card,.section-card,.panel-card,
+  .settings-row,.notification-item,.respondent-quiz-panel,.respondent-quiz-note,
+  [class*="card"],[class*="panel"],[class*="glass"],[class*="surface"],[class*="container"],
+  [class*="overview"],[class*="stat"]
+) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
 }
+html body.authenticated #dashboard,
+html body.authenticated #dashboard .owner-card,
+html body.authenticated #dashboard .owner-profile-side,
+html body.authenticated #dashboard .owner-summary,
+html body.authenticated #dashboard .owner-header-actions,
+html body.authenticated #dashboard .top-actions,
+html body.authenticated #dashboard :is(#notificationBellButton,#settingsButton,#logoutButton),
+html body.authenticated #dashboard :is(#notificationBellButton,#settingsButton,#logoutButton):hover,
+html body.authenticated #dashboard :is(#notificationBellButton,#settingsButton,#logoutButton):focus-visible {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+}
+html body.authenticated #dashboard .owner-card { border-radius:0!important; padding:12px 0!important; }
+html body.authenticated #dashboard .owner-avatar { box-shadow:none!important; backdrop-filter:none!important; }
+html body.authenticated #dashboard #appNavigation > button { box-shadow:none!important; backdrop-filter:none!important; -webkit-backdrop-filter:none!important; }
+html body.authenticated #dashboard .owner-live-clock { background:transparent!important; border:0!important; box-shadow:none!important; backdrop-filter:none!important; -webkit-backdrop-filter:none!important; color:#808000!important; }
