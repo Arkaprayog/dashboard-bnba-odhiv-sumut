@@ -83,7 +83,7 @@
   <link rel="stylesheet" href="/dashboard-card-clean-v1.css?v=1.1.49">
 <link rel="stylesheet" href="/assessment-glass-layout-v1.css?v=1.1.52">
 <link rel="stylesheet" href="/owner-profile-header-final-v2.css?v=1.1.62">
-<link rel="stylesheet" href="/respondent-qr-center-v1.css?v=1.0.1">
+<link rel="stylesheet" href="/respondent-qr-center-v1.css?v=1.0.1">\n<link rel="stylesheet" href="/initial-intake-manager.css?v=1.0.0">
 <link rel="stylesheet" href="/assessment-transparent-v1.css?v=1.0.1">
 </head>
 <body>
@@ -209,7 +209,20 @@
         <article class="overview-card"><small>Formulir owner</small><strong style="display:block;font-size:1.08rem;margin:8px 0">KUISIONER OWNER</strong><p>Gunakan formulir owner yang sudah ada. Isian dan proses simpan tetap seperti sebelumnya.</p><button type="button" class="dashbtn" data-questionnaire-action="owner">Buka Kuisioner Owner</button></article>
         <article class="overview-card"><small>Manajemen anggota</small><strong style="display:block;font-size:1.08rem;margin:8px 0">KUISIONER TIM KERJA</strong><p>Tambahkan anggota, tetapkan kata sandi awal, dan kirim link pendaftaran lewat WhatsApp.</p><button type="button" class="dashbtn" data-questionnaire-action="team">Tambahkan Tim Kerja</button></article>
         <article class="overview-card"><small>Data gabungan</small><strong style="display:block;font-size:1.08rem;margin:8px 0">DATA KUISIONER THP 1</strong><p>Lihat jawaban Kuisioner Owner dan Tim Kerja dalam satu tabel dengan tautan foto dan WhatsApp.</p><button type="button" class="dashbtn" data-questionnaire-action="stage1">Buka Data Tahap 1</button></article>
+        <article class="overview-card"><small>Pendaftaran publik</small><strong style="display:block;font-size:1.08rem;margin:8px 0">BARCODE LAYANAN KESEHATAN</strong><p>Responden mengisi tahap awal singkat tanpa NIK, foto, atau informasi kesehatan. Owner kemudian mengirim tautan Google Forms secara privat.</p><a class="dashbtn" href="/barcode-layanan.html" target="_blank" rel="noopener noreferrer">Buka Barcode / Cetak</a></article>
       </div>
+
+      <section class="overview-panel initial-intake-manager" aria-labelledby="initialIntakesHeading">
+        <div class="dashhead"><div><h3 id="initialIntakesHeading">TINDAK LANJUT KUISIONER AWAL</h3><p>Daftar ini berisi nama panggilan/nama dan nomor WhatsApp yang diberikan dengan persetujuan responden. Data awal disimpan terpisah dan hanya dapat dilihat owner/admin.</p></div><button type="button" class="dashbtn" id="refreshInitialIntakes">Muat Ulang Daftar</button></div>
+        <p class="dashmsg" id="initialIntakesMessage" role="status" aria-live="polite">Daftar dimuat saat menu Kuisioner dibuka.</p>
+        <p class="scroll-hint">Tandai “Link terkirim” setelah pesan benar-benar dikirim. Tandai “Selesai” hanya setelah respons ditemukan di Google Sheets.</p>
+        <div class="table-wrap initial-intake-scroll">
+          <table class="initial-intake-table">
+            <thead><tr><th>Waktu masuk</th><th>Nama</th><th>WhatsApp</th><th>Status</th><th>Aksi</th></tr></thead>
+            <tbody id="initialIntakesRows"><tr><td colspan="5">Belum ada data dimuat.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
     </section>
     <section class="app-view" id="teamQuestionnaireView" hidden aria-label="Tambahkan Tim Kerja">
       <div class="dashhead"><div><h2>Tambahkan Tim Kerja</h2><p>Daftarkan anggota, kemudian kirim tautan pendaftaran awal melalui WhatsApp.</p></div><button type="button" class="dashbtn" data-questionnaire-back>Menu Kuisioner</button></div>
@@ -492,6 +505,7 @@ function setAppView(view){
  Object.entries(views).forEach(([key,node])=>{if(node)node.hidden=key!==view;});
  const activeNavView=['questionnaire','teamQuestionnaire','stage1Data'].includes(view)?'questionnaireHub':view;document.querySelectorAll('#appNavigation [data-view]').forEach(button=>{if(button.dataset.view===activeNavView)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
  if(view==='news'&&!newsItems.length)loadNews();
+ if(view==='questionnaireHub')loadInitialIntakes();
 }
 document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button&&!button.hidden)setAppView(button.dataset.view);});
 
@@ -503,6 +517,59 @@ document.querySelectorAll('[data-questionnaire-action]').forEach(button=>button.
 }));
 document.querySelectorAll('[data-questionnaire-back]').forEach(button=>button.addEventListener('click',()=>setAppView('questionnaireHub')));
 function normalizedWaNumber(value){let number=String(value||'').replace(/\D/g,'');if(number.startsWith('0'))number='62'+number.slice(1);else if(number.startsWith('8'))number='62'+number;return number;}
+
+let initialIntakesCsrf='';
+const googleFollowupFormUrl='https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform';
+function intakeStatusLabel(status){return status==='link_dikirim'?'Link terkirim':status==='selesai'?'Selesai':'Belum ditindaklanjuti';}
+function formatIntakeTime(seconds){if(!seconds)return '—';try{return new Intl.DateTimeFormat('id-ID',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Jakarta'}).format(new Date(Number(seconds)*1000));}catch{return '—';}}
+async function updateInitialIntakeStatus(id,status){
+ const msg=document.getElementById('initialIntakesMessage');
+ try{
+  const response=await fetch('/api/owner/initial-intakes/status',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','X-CSRF-Token':initialIntakesCsrf},body:JSON.stringify({id,status})});
+  const payload=await response.json().catch(()=>({}));
+  if(!response.ok||!payload.ok)throw new Error(payload.error||'Status belum dapat diperbarui.');
+  msg.textContent=payload.message||'Status diperbarui.';
+  await loadInitialIntakes();
+ }catch(error){msg.textContent=error instanceof Error?error.message:'Status belum dapat diperbarui.';}
+}
+async function loadInitialIntakes(){
+ const message=document.getElementById('initialIntakesMessage'),tbody=document.getElementById('initialIntakesRows');
+ if(!message||!tbody)return;
+ message.textContent='Memuat daftar tindak lanjut…';tbody.replaceChildren();
+ try{
+  const response=await fetch('/api/owner/initial-intakes',{credentials:'same-origin',cache:'no-store'});
+  const payload=await response.json().catch(()=>({}));
+  if(!response.ok||!Array.isArray(payload.items))throw new Error(payload.error||'Daftar tindak lanjut belum dapat dimuat.');
+  initialIntakesCsrf=payload.csrfToken||'';
+  if(!payload.items.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=5;td.textContent='Belum ada pendaftaran awal dari barcode layanan kesehatan.';tr.append(td);tbody.append(tr);}
+  for(const item of payload.items){
+   const tr=document.createElement('tr');
+   const cell=value=>{const td=document.createElement('td');td.textContent=value||'—';tr.append(td);return td;};
+   cell(formatIntakeTime(item.created_at));cell(item.preferred_name);
+   const phoneCell=cell(item.phone?('+'+String(item.phone).replace(/^\+/,'')):'—');
+   if(item.phone){const a=document.createElement('a');a.href='https://wa.me/'+encodeURIComponent(item.phone);a.target='_blank';a.rel='noopener noreferrer';a.textContent='Buka WhatsApp';a.setAttribute('aria-label','Buka WhatsApp untuk '+(item.preferred_name||'responden'));phoneCell.replaceChildren(a);}
+   const statusCell=cell(intakeStatusLabel(item.status));
+   statusCell.className='initial-intake-status status-'+(item.status||'baru');
+   const actionCell=document.createElement('td');
+   const followupUrl=new URL(googleFollowupFormUrl);
+   followupUrl.searchParams.set('usp','pp_url');
+   followupUrl.searchParams.set('entry.1060152272',item.preferred_name||'');
+   const messageText='Halo, '+(item.preferred_name||'').trim()+'. Terima kasih sudah mengisi pendaftaran awal. Silakan lanjutkan kuesioner melalui tautan ini: '+followupUrl.toString()+' Nama Anda sudah terisi otomatis. Mohon lengkapi pertanyaan lainnya, periksa kembali jawaban, lalu kirim saat sudah siap. Jika saat ini belum sempat, Anda boleh melanjutkan nanti.';
+   const waButton=document.createElement('button');waButton.type='button';waButton.className='dashbtn';waButton.textContent='Siapkan WhatsApp + Google Forms';
+   waButton.addEventListener('click',()=>{const digits=normalizedWaNumber(item.phone);if(!digits){message.textContent='Nomor WhatsApp tidak valid; periksa data awal.';return;}window.open('https://wa.me/'+digits+'?text='+encodeURIComponent(messageText),'_blank','noopener,noreferrer');});
+   actionCell.append(waButton);
+   const sentButton=document.createElement('button');sentButton.type='button';sentButton.className='dashbtn';sentButton.textContent='Tandai link terkirim';sentButton.disabled=item.status==='link_dikirim'||item.status==='selesai';
+   sentButton.addEventListener('click',()=>updateInitialIntakeStatus(item.id,'link_dikirim'));actionCell.append(sentButton);
+   const doneButton=document.createElement('button');doneButton.type='button';doneButton.className='dashbtn';doneButton.textContent='Tandai selesai';doneButton.disabled=item.status==='selesai';
+   doneButton.addEventListener('click',()=>updateInitialIntakeStatus(item.id,'selesai'));actionCell.append(doneButton);
+   if(item.status!=='baru'){const resetButton=document.createElement('button');resetButton.type='button';resetButton.className='dashbtn secondary';resetButton.textContent='Kembalikan ke baru';resetButton.addEventListener('click',()=>updateInitialIntakeStatus(item.id,'baru'));actionCell.append(resetButton);}
+   tr.append(actionCell);tbody.append(tr);
+  }
+  message.textContent='Data tindak lanjut dimuat: '+payload.items.length+' pendaftaran. Google Forms belum terdeteksi otomatis; owner perlu memeriksa respons di Google Sheets sebelum menandai “Selesai”.';
+ }catch(error){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=5;td.textContent=error instanceof Error?error.message:'Daftar gagal dimuat.';tr.append(td);tbody.append(tr);message.textContent='Daftar tindak lanjut belum berhasil dimuat.';}
+}
+document.getElementById('refreshInitialIntakes')?.addEventListener('click',loadInitialIntakes);
+
 const teamEntryForm=document.getElementById('dashboardTeamForm');
 const teamEntryMessage=document.getElementById('dashboardTeamMessage');
 const teamInviteBox=document.getElementById('dashboardTeamInviteBox');
