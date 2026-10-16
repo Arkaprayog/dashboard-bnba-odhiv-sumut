@@ -542,6 +542,7 @@ jobs:
           test "$public_form_probe_status" = "400" || (echo "::error::Public questionnaire endpoint must reject a honeypot probe before saving data (HTTP 400 expected, got $public_form_probe_status)." && cat /tmp/sahabat-public-form-probe.json && exit 1)
           grep -Fq 'Formulir tidak valid.' /tmp/sahabat-public-form-probe.json || (echo "::error::Public questionnaire honeypot did not return the expected safe rejection." && exit 1)
           echo "Verified public questionnaire endpoint is configured and rejects the honeypot probe before any sheet/photo write."
+          grep -Fq 'BARCODE LAYANAN KESEHATAN' /tmp/sahabat-dashboard.html && grep -Fq 'href="/barcode-layanan.html"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/initial-intake-manager.css?v=1.0.0"' /tmp/sahabat-dashboard.html || (echo "::error::Dashboard does not expose the clinic QR or owner follow-up table styles." && exit 1)
           clinic_qr_status="$(curl --connect-timeout 5 --max-time 20 --location --max-redirs 5 --silent --show-error --output /tmp/sahabat-clinic-qr.html --write-out '%{http_code}' "$APP_URL/barcode-layanan.html")"
           test "$clinic_qr_status" = "200" || (echo "::error::Clinic QR page returned HTTP $clinic_qr_status." && exit 1)
           grep -Fq 'Pindai barcode' /tmp/sahabat-clinic-qr.html && grep -Fq 'create-qr-code' /tmp/sahabat-clinic-qr.html && grep -Fq 'kuisioner-awal.html' /tmp/sahabat-clinic-qr.html || (echo "::error::Clinic QR page is missing its QR destination or public initial form." && exit 1)
