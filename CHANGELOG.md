@@ -1,4 +1,6 @@
 ## 1.1.58 — 2026-10-16
+- Menambahkan tiga pilihan menu kuisioner owner, tim kerja, dan data gabungan tahap 1 tanpa mengubah handler formulir owner.
+- Tautan onboarding tim menjadi satu kali setelah profil berhasil disimpan; login berikutnya memakai nomor HP/WA dan kata sandi dari owner.
 - Owner menetapkan kata sandi awal saat mendaftarkan anggota tim kerja; kata sandi disimpan menggunakan PBKDF2-SHA256 dengan salt acak.
 - Tautan WhatsApp digunakan untuk pendaftaran awal; login berikutnya memakai nomor HP/WA dan kata sandi dari owner.
 - Mempertahankan sesi tim terpisah dari sesi owner/admin; database PPKS dan asesmen tetap dibatasi untuk owner/admin.
