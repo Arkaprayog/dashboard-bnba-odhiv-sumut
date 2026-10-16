@@ -1,3 +1,11 @@
+## 1.1.41 — 2026-10-16
+- Susun empat pemilih foto asesmen secara horizontal: empat kolom pada layar lebar dan dua kolom pada ponsel.
+- Pindahkan tombol CETAK dan SIMPAN ke bawah lembar pengisian asesmen, di luar area cetak.
+- Ganti label SIMPAN PDF menjadi SIMPAN dan hapus tombol SIMPAN ASESMEN serta KOSONGKAN FORM.
+- Tombol SIMPAN menyimpan asesmen ke penyimpanan privat lalu mengunduh PDF 10 halaman; tombol CETAK tetap mencetak PDF.
+- Terapkan huruf kapital pada label dan tombol tanpa mengubah kapitalisasi nilai yang diketik pengguna.
+- Selaraskan versi web/PWA ke 1.1.41 dan Android ke 1.2.21 (versionCode 24).
+
 ## 1.1.40 — 2026-10-16
 - Pertegas pembungkus ikon Notifikasi, Pengaturan, dan Keluar: flex satu baris, rata kanan, tidak membungkus, dan jarak 12px.
 - Perjelas pemisah cetak untuk enam halaman form dan empat halaman lampiran foto pada format A4.
