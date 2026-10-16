@@ -134,7 +134,7 @@ assert.ok(ownerCardCss.includes('body:has(#dashboard:not([hidden])) #dashboard .
 assert.ok(ownerCardCss.includes('grid-template-areas:"profile summary actions" ". clock clock"!important'), "profile, summary, and all actions must share the first grid row, with the clock separated beneath.");
 assert.ok(ownerCardCss.includes('grid-area:actions!important') && ownerCardCss.includes('position:static!important'), "owner actions must no longer be absolutely positioned or moved to a separate full-width row.");
 assert.ok(ownerCardCss.includes('grid-area:clock!important'), "live clock must use its own compact grid row.");
-assert.ok(ownerCardCss.lastIndexOf("Root-cause correction v1.1.57") > ownerCardCss.lastIndexOf("Final alignment:"), "the specificity fix must be appended after all previous competing owner rules.");
+assert.ok(ownerCardCss.lastIndexOf("v1.1.57: final compact owner header override") > ownerCardCss.lastIndexOf("Root-cause correction v1.1.56"), "the compact override must come after the root-cause specificity fix.");
 const cleanCardCss = readFileSync("public/dashboard-card-clean-v1.css", "utf8");
 assert.match(ownerCardCss, /\.owner-header-actions\{[\s\S]*?margin-left:auto!important/, "owner action group must be pushed to the right");
 assert.match(ownerCardCss, /\.owner-live-clock\{[\s\S]*?color:#808000/, "owner live clock must be olive green");
