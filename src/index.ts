@@ -1112,12 +1112,19 @@ export default {
           type TeamLoginRow = { id: string; display_name: string; position: string; phone: string; profile_completed: number; password_hash: string; password_salt: string };
           let petugas: TeamLoginRow | null = null;
           if (token.length >= 40 && token.length <= 100 && name.length >= 2 && name.length <= 120) {
+            const inviteHash = await hashTeamToken(token);
             petugas = await env.DB.prepare("SELECT id,display_name,position,phone,profile_completed,password_hash,password_salt FROM team_petugas_v2 WHERE token_hash=? AND active=1")
-              .bind(await hashTeamToken(token)).first<TeamLoginRow>();
+              .bind(inviteHash).first<TeamLoginRow>();
             const normalizeName = (value: string) => value.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("id-ID");
             if (!petugas || normalizeName(name) !== normalizeName(petugas.display_name)) {
               return reply({ error: "Nama tidak cocok dengan petugas yang terdaftar pada tautan ini." }, 401);
             }
+            if (petugas.profile_completed) return reply({ error: "Tautan pendaftaran ini sudah digunakan. Login menggunakan nomor HP/WA dan kata sandi dari owner." }, 401);
+            // An invitation link is single-use: rotate its stored hash as soon as it creates the first session.
+            const rotatedInvite = b64(crypto.getRandomValues(new Uint8Array(32)));
+            const consumed = await env.DB.prepare("UPDATE team_petugas_v2 SET token_hash=? WHERE id=? AND token_hash=? AND active=1 AND profile_completed=0")
+              .bind(await hashTeamToken(rotatedInvite), petugas.id, inviteHash).run();
+            if (consumed.meta.changes !== 1) return reply({ error: "Tautan pendaftaran sudah digunakan atau tidak aktif. Hubungi owner." }, 409);
           } else {
             if (!/^\+?[0-9 ()-]{8,30}$/.test(phone) || password.length < 8 || password.length > 128) {
               return reply({ error: "Masukkan nomor HP/WA dan kata sandi yang diberikan owner." }, 400);
@@ -1162,6 +1169,12 @@ export default {
           if (contentLength > 11 * 1024 * 1024) return reply({ error: "Ukuran foto profil melebihi batas 10 MB." }, 413);
           let form: FormData;
           try { form = await request.formData(); } catch { return reply({ error: "Formulir profil tidak valid." }, 400); }
+          const name = String(form.get("namaAnggota") || petugas.display_name).trim().replace(/\s+/g, " ");
+          const position = String(form.get("jabatan") || petugas.position).trim().toUpperCase();
+          const phone = String(form.get("nomorHpWa") || petugas.phone).trim();
+          if (name.length < 2 || name.length > 120 || !["PENDAMPING LAPANGAN", "PENJANGKAU LAPANGAN"].includes(position) || !/^\+?[0-9 ()-]{8,30}$/.test(phone)) {
+            return reply({ error: "Nama anggota, jabatan, atau nomor HP/WA belum valid." }, 400);
+          }
           const file = form.get("fotoProfil");
           if (!(file instanceof File) || !["image/jpeg", "image/png", "image/webp"].includes(file.type) || !file.size || file.size > 10 * 1024 * 1024) {
             return reply({ error: "Foto profil wajib berupa JPG, PNG, atau WebP dan maksimal 10 MB." }, 400);
@@ -1176,8 +1189,8 @@ export default {
             await env.TEAM_PROFILE_PHOTOS.put(objectKey, await file.arrayBuffer());
             objectWritten = true;
             stage = "d1_commit";
-            const saved = await env.DB.prepare("UPDATE team_petugas_v2 SET profile_photo_id=?,profile_completed=1 WHERE id=? AND active=1")
-              .bind(newReference, petugas.id).run();
+            const saved = await env.DB.prepare("UPDATE team_petugas_v2 SET display_name=?,position=?,phone=?,profile_photo_id=?,profile_completed=1 WHERE id=? AND active=1 AND profile_completed=0")
+              .bind(name, position, phone, newReference, petugas.id).run();
             if (saved.meta.changes !== 1) throw new Error("Petugas tidak aktif atau profil tidak dapat diperbarui.");
             databaseCommitted = true;
 
@@ -1485,6 +1498,59 @@ export default {
             }
             const incidentId = logIncident("owner_questionnaire_submit_failed", error, { path: url.pathname, stage: requestStage });
             return reply({ error: (error instanceof Error ? error.message : "Kuesioner gagal disimpan.") + " (ID insiden: " + incidentId + ")" }, 503);
+          }
+        }
+
+        if (url.pathname === "/api/questionnaires/stage1" && request.method === "GET") {
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login ke dashboard owner." }, 401);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan melihat data kuesioner." }, 403);
+          if (!env.GOOGLE_SHEET_ID || !env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !env.GOOGLE_PRIVATE_KEY) {
+            return reply({ error: "Integrasi Google Sheets belum dikonfigurasi." }, 503);
+          }
+          try {
+            const accessToken = await googleAccessToken(env);
+            const range = encodeURIComponent("'Kuisioner Owner'!A1:O2000");
+            const response = await fetch("https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID) + "/values/" + range + "?valueRenderOption=FORMATTED_VALUE", {
+              headers: { authorization: "Bearer " + accessToken },
+            });
+            if (!response.ok) return reply({ error: "Data kuesioner tahap 1 gagal dibaca (HTTP " + response.status + ")." }, 502);
+            const payload = await response.json() as { values?: string[][] };
+            const rows = payload.values || [];
+            if (!rows.length) return reply({ items: [], csrfToken: admin.csrf_token });
+            const headers = rows[0].map(value => String(value || "").trim());
+            const get = (row: string[], label: string, fallback: number) => {
+              const index = headers.findIndex(value => value.toLocaleLowerCase("id-ID") === label.toLocaleLowerCase("id-ID"));
+              return String(row[index >= 0 ? index : fallback] || "").trim();
+            };
+            const fileId = (value: string) => {
+              const raw = String(value || "").trim();
+              if (/^[A-Za-z0-9_-]{10,200}$/.test(raw)) return raw;
+              const match = raw.match(/(?:\/file\/d\/|\/document\/d\/|[?&]id=)([A-Za-z0-9_-]{10,200})/i);
+              return match?.[1] || "";
+            };
+            const items = rows.slice(1).map((row, index) => {
+              const name = get(row, "NAMA LENGKAP", 1);
+              if (!name) return null;
+              return {
+                row: index + 2,
+                timestamp: get(row, "Timestamp", 0),
+                name,
+                nik: get(row, "NIK", 2),
+                age: get(row, "USIA", 3),
+                gender: get(row, "JENIS KELAMIN", 4),
+                selfPhotoId: fileId(get(row, "FOTO DIRI", 9)),
+                ktpPhotoId: fileId(get(row, "FOTO KTP", 10)),
+                address: get(row, "ALAMAT DOMISILI SAAT INI", 5),
+                city: get(row, "KOTA DOMISILI SAAT INI", 6),
+                assistance: get(row, "JENIS BANTUAN", 11),
+                phone: get(row, "NO HP/WA", 8),
+              };
+            }).filter((item): item is NonNullable<typeof item> => item !== null).reverse();
+            return reply({ items, csrfToken: admin.csrf_token });
+          } catch (error) {
+            const incidentId = logIncident("stage1_questionnaire_load_failed", error, { path: url.pathname });
+            return reply({ error: "Data kuesioner tahap 1 gagal dimuat. ID insiden: " + incidentId }, 503);
           }
         }
 
