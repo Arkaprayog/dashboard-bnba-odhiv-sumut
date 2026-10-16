@@ -1226,7 +1226,7 @@ document.getElementById('logoutButton').addEventListener('click',async()=>{
  }catch(error){}
 })();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" defer></script>
+<script src="/vendor/pdf-lib.min.js"></script>
 <script id="assessmentLogic">
 (()=>{
 const photoInputs=[
@@ -1334,7 +1334,7 @@ async function loadAssessmentRespondents(){
   assessmentRespondentItems.forEach((item,index)=>{
    const name=String(nameHeader?item[nameHeader]??'':'').trim();
    const nik=String(nikHeader?item[nikHeader]??'':'').trim();
-   respondentSelect.add(new Option((name||'Tanpa nama')+(nik?' · NIK '+nik:''),String(index)));
+   respondentSelect.add(new Option(name||'Tanpa nama',String(index)));
   });
   respondentStatus.textContent='Daftar responden: '+assessmentRespondentItems.length+'. Data dimuat setelah login.';
  }catch(error){respondentSelect.replaceChildren(new Option('Gagal memuat responden',''));respondentStatus.textContent=error instanceof Error?error.message:'Gagal memuat data responden.';}
@@ -1372,7 +1372,8 @@ async function loadSelectedAssessmentRespondent(){
    const response=await fetch('/api/respondent-photo?id='+encodeURIComponent(id),{credentials:'same-origin',cache:'no-store'});
    if(!response.ok)throw new Error('HTTP '+response.status);
    const blob=await response.blob();if(!blob.type.startsWith('image/'))throw new Error('Berkas bukan gambar');
-   renderAssessmentPhoto(inputId,label,await assessmentDataUrl(blob),label+' — '+name);loaded++;
+   const compressed=await compressAssessmentPhoto(new File([blob],label+'.jpg',{type:blob.type}));
+   renderAssessmentPhoto(inputId,label,compressed,label+' — '+name);loaded++;
   }catch(error){renderAssessmentPhoto(inputId,label,'','');missing.push(label);}
  }
  respondentStatus.textContent='Identitas dimuat untuk '+(name||'responden terpilih')+'. Foto berhasil dimuat: '+loaded+'/4.'+(missing.length?' Belum tersedia: '+missing.join(', ')+'.':'');
@@ -1384,19 +1385,37 @@ async function buildAssessmentPdf(){
  if(!response.ok)throw new Error('Template PDF tidak dapat dimuat (HTTP '+response.status+').');
  const pdfDoc=await PDFLib.PDFDocument.load(await response.arrayBuffer());
  if(pdfDoc.getPageCount()!==6)throw new Error('Template harus tepat 6 halaman; ditemukan '+pdfDoc.getPageCount()+'.');
- const pageSize=[595.28,841.89];
- const specs=[['assessmentPhotoSelf','HALAMAN 7 — FOTO DIRI'],['assessmentPhotoKtp','HALAMAN 8 — FOTO KTP'],['assessmentPhotoKk','HALAMAN 9 — FOTO KARTU KELUARGA (KK)'],['assessmentPhotoHome','HALAMAN 10 — FOTO RUMAH TAMPAK DEPAN']];
- for(const [inputId,label] of specs){
-  const page=pdfDoc.addPage(pageSize);page.drawText(label,{x:42,y:790,size:13});
-  const saved=assessmentPhotos[inputId];
-  if(saved?.dataUrl){
-   const imageBytes=await (await fetch(saved.dataUrl)).arrayBuffer();
-   const image=saved.dataUrl.startsWith('data:image/png')?await pdfDoc.embedPng(imageBytes):await pdfDoc.embedJpg(imageBytes);
-   const dims=image.scale(1),maxW=510,maxH=690,scale=Math.min(maxW/dims.width,maxH/dims.height,1);
-   page.drawImage(image,{x:(pageSize[0]-dims.width*scale)/2,y:55+(maxH-dims.height*scale)/2,width:dims.width*scale,height:dims.height*scale});
-  }else page.drawText('Foto belum tersedia — '+label,{x:42,y:400,size:12});
+ const photoSpecs=[['assessmentPhotoSelf','HALAMAN 7 — FOTO DIRI'],['assessmentPhotoKtp','HALAMAN 8 — FOTO KTP'],['assessmentPhotoKk','HALAMAN 9 — FOTO KARTU KELUARGA (KK)'],['assessmentPhotoHome','HALAMAN 10 — FOTO RUMAH TAMPAK DEPAN']];
+ const missingPhotos=photoSpecs.filter(([inputId])=>!assessmentPhotos[inputId]?.dataUrl);
+ if(missingPhotos.length)throw new Error('PDF belum dibuat. Empat foto wajib tersedia dahulu. Belum tersedia: '+missingPhotos.map(([id])=>({assessmentPhotoSelf:'Foto diri',assessmentPhotoKtp:'Foto KTP',assessmentPhotoKk:'Foto KK',assessmentPhotoHome:'Foto rumah tampak depan'}[id])).join(', ')+'.');
+ const pages=pdfDoc.getPages();
+ const font=await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+ const identityName=String(document.querySelector('#assessmentFields [name="q16"]')?.value||'').trim();
+ const identityNik=String(document.querySelector('#assessmentFields [name="q23"]')?.value||'').trim();
+ const cleanPdfText=value=>String(value).normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^\\x20-\\x7E]/g,' ').replace(/\\s+/g,' ').trim();
+ const identityPage=pages[0];
+ if(identityName){
+  let printableName=cleanPdfText(identityName);
+  while(printableName.length>1&&font.widthOfTextAtSize(printableName,9)>242)printableName=printableName.slice(0,-1);
+  identityPage.drawText(printableName,{x:298,y:258,size:9,font});
  }
- return new Blob([await pdfDoc.save()],{type:'application/pdf'});
+ if(identityNik){
+  const printableNik=cleanPdfText(identityNik).slice(0,24);
+  identityPage.drawText(printableNik,{x:298,y:66,size:9,font});
+ }
+ const pageSize=PDFLib.PageSizes.A4;
+ for(const [inputId,label] of photoSpecs){
+  const page=pdfDoc.addPage(pageSize);page.drawText(label,{x:42,y:790,size:13,font});
+  const saved=assessmentPhotos[inputId];
+  const imageBytes=await (await fetch(saved.dataUrl)).arrayBuffer();
+  const image=saved.dataUrl.startsWith('data:image/png')?await pdfDoc.embedPng(imageBytes):await pdfDoc.embedJpg(imageBytes);
+  const dims=image.scale(1),maxW=510,maxH=690,scale=Math.min(maxW/dims.width,maxH/dims.height,1);
+  page.drawImage(image,{x:(pageSize[0]-dims.width*scale)/2,y:55+(maxH-dims.height*scale)/2,width:dims.width*scale,height:dims.height*scale});
+ }
+ const output=new Blob([await pdfDoc.save()],{type:'application/pdf'});
+ const verify=await PDFLib.PDFDocument.load(await output.arrayBuffer());
+ if(verify.getPageCount()!==10)throw new Error('Validasi jumlah halaman gagal: seharusnya 10, ditemukan '+verify.getPageCount()+'.');
+ return output;
 }
 function assessmentPdfFilename(){
  const name=String(document.querySelector('#assessmentFields [name="q16"]')?.value||'responden').normalize('NFKD').replace(/[^a-zA-Z0-9_-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,70)||'responden';
