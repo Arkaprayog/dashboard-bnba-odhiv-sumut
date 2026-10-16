@@ -180,7 +180,7 @@ for (const path of themedPages) {
   assert.ok(html.includes('/transparent-theme.css?v=2.0.0'), path + " must load the current shared glass theme.");
   assert.doesNotMatch(html, /<style\b/i, path + " must not retain inline CSS blocks.");
   const slug = path === "public/index.html" ? "app" : path.split("/").pop().replace(/\.html$/, "");
-  const layoutHref = path === "public/index.html" ? '/app-layout.css?v=2.0.6' : '/' + slug + '-layout.css?v=2.0.0';
+  const layoutHref = path === "public/index.html" ? '/app-layout.css?v=2.0.6' : path === "public/kuisioner-responden.html" ? '/kuisioner-pilihan.css?v=1.0.0' : '/' + slug + '-layout.css?v=2.0.0';
   assert.ok(html.includes(layoutHref), path + " must load its extracted layout stylesheet.");
 }
 const hillBackground = readFileSync("public/dashboard-background.webp");
@@ -193,6 +193,18 @@ assert.ok(offlinePage.includes('<meta name="color-scheme" content="dark">'), "na
 assert.ok(offlinePage.includes("background-color:rgba(15,23,42,.75)!important") || offlinePage.includes("background:transparent"), "native offline surfaces must retain explicit surface styling.");
 assert.ok(offlinePage.includes("body,body *{color:#fff!important"), "native offline screen text must be white");
 assert.ok(offlinePage.includes("backdrop-filter:blur(16px)!important") || offlinePage.includes("background:transparent"), "native offline surfaces must use their configured surface style.");
+const respondentChooser = readFileSync("public/kuisioner-responden.html", "utf8");
+const integratedRespondentForm = readFileSync("public/kuesioner-mandiri.html", "utf8");
+const chooserCss = readFileSync("public/kuisioner-pilihan.css", "utf8");
+assert.ok(respondentChooser.includes('/kuisioner-pilihan.css?v=1.0.0'), "respondent chooser must load its responsive chooser stylesheet.");
+assert.ok(respondentChooser.includes('href="/kuesioner-mandiri.html"'), "respondent chooser must link to the public integrated form.");
+assert.ok(respondentChooser.includes("https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform"), "respondent chooser must preserve the existing Google Forms backup.");
+assert.ok(chooserCss.includes(".choice-grid") && chooserCss.includes("@media(max-width:650px)"), "respondent chooser must be responsive.");
+assert.ok(!respondentChooser.includes("window.location.replace(destination)") && !respondentChooser.includes("window.setTimeout(finish"), "respondent chooser must never force an automatic redirect.");
+assert.ok(integratedRespondentForm.includes('/api/public-questionnaire') && integratedRespondentForm.includes('name="consent"') && integratedRespondentForm.includes('name="website"'), "integrated public form must use the public submission API, explicit consent, and a honeypot.");
+assert.ok(!integratedRespondentForm.includes("team-login") && integratedRespondentForm.includes('capture="environment"') && integratedRespondentForm.includes('name="fotoDiri"'), "public form must not require staff login and must retain direct photo capture.");
+assert.ok(workerSource.includes('url.pathname === "/api/public-questionnaire"') && workerSource.includes("async function handlePublicQuestionnaire"), "Worker must expose the dedicated public submission route.");
+assert.ok(workerSource.includes("public_questionnaire_attempts") && workerSource.includes("sheets_duplicate_check") && workerSource.includes("RESPONDEN MANDIRI"), "public submission must include throttling, duplicate checking, and explicit respondent attribution.");
 assert.ok(dashboard.includes('href="/transparent-theme.css?v=2.0.0"'), "dashboard uses the replacement transparent theme.");
 assert.ok(transparentCss.includes("--sahabat-glass-bg:rgba(15,23,42,.70)") && transparentCss.includes("backdrop-filter:blur(var(--sahabat-glass-blur))"), "shared UI surfaces must use the centralized glass treatment.");
 assert.ok(dashboard.includes("owner-header-actions"), "owner header actions must remain available.");
