@@ -71,12 +71,12 @@
 <link rel="stylesheet" href="/sodaramu-header-v1.css?v=1.0.0">
 <link rel="stylesheet" href="/dashboard-responsive-v6.css?v=6.0.0">
 <link rel="stylesheet" href="/action-buttons-horizontal-v1.css?v=1.1.40">
-<link rel="stylesheet" href="/assessment-form-polish-v1.css?v=1.1.40">
+<link rel="stylesheet" href="/assessment-form-polish-v1.css?v=1.1.41">
   <link rel="stylesheet" href="/owner-questionnaire-polish-v1.css?v=1.0.0">
   <link rel="stylesheet" href="/home-profile-polish-v1.css?v=1.0.0">
   <link rel="stylesheet" href="/form-mobile-ui-v1.css?v=1.1.40">
-  <link rel="stylesheet" href="/glass-system-v1.css?v=2.0.1">
-  <link rel="stylesheet" href="/assessment-print-10-pages-v1.css?v=1.1.40">
+  <link rel="stylesheet" href="/glass-system-v1.css?v=2.0.2">
+  <link rel="stylesheet" href="/assessment-print-10-pages-v1.css?v=1.1.41">
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
@@ -110,7 +110,7 @@
     <hr class="login-divider">
     <footer class="login-footer">
       <p>Halaman Akses Awal · Data Responden Tetap Dilindungi</p>
-      <p class="login-version">Versi 1.1.40</p>
+      <p class="login-version">Versi 1.1.41</p>
       <p class="login-copyright">© 2026 Data Base Kemensos RI DRSKPNO · Hak cipta dilindungi</p>
     </footer>
   </section>
@@ -262,14 +262,6 @@
             <label class="assessment-upload">FOTO KK<input type="file" id="assessmentPhotoKk" accept="image/*"></label>
             <label class="assessment-upload">FOTO RUMAH TAMPAK DEPAN<input type="file" id="assessmentPhotoHome" accept="image/*" capture="environment"></label>
           </div>
-          <div class="assessment-action-row assessment-primary-actions" role="group" aria-label="Aksi penyimpanan asesmen">
-            <button class="dashbtn" type="button" id="assessmentSave">SIMPAN ASESMEN</button>
-            <button class="dashbtn" type="button" id="assessmentReset">KOSONGKAN FORM</button>
-          </div>
-          <div class="assessment-action-row assessment-pdf-actions" role="group" aria-label="Aksi dokumen asesmen">
-            <button class="dashbtn" type="button" id="assessmentPrint">Cetak</button>
-            <button class="dashbtn" type="button" id="assessmentSavePdf">Simpan PDF</button>
-          </div>
           <div id="assessmentPhotoPreviews" class="assessment-photo-previews" aria-live="polite"></div>
         </div></div>
       <div class="assessment-paper" id="assessmentPaper">
@@ -284,7 +276,11 @@
         <div class="assessment-signature"><p>Petugas</p><div class="signature-space"></div><p>( ........................................ )</p></div>
         <section id="assessmentPrintPhotos" class="assessment-print-photos" aria-label="Lampiran foto asesmen"></section>
       </div>
-      <p class="dashmsg assessment-no-print" id="assessmentMessage" role="status" aria-live="polite">Simpan ke database hanya tersedia setelah login dengan peran owner/admin. Data asesmen bersifat rahasia.</p>
+      <div class="assessment-pdf-actions assessment-no-print" role="group" aria-label="AKSI DOKUMEN ASESMEN">
+        <button class="dashbtn" type="button" id="assessmentPrint">CETAK</button>
+        <button class="dashbtn" type="button" id="assessmentSavePdf">SIMPAN</button>
+      </div>
+      <p class="dashmsg assessment-no-print" id="assessmentMessage" role="status" aria-live="polite">LOGIN SEBAGAI OWNER/ADMIN UNTUK MENYIMPAN ASESMEN DAN MEMBUAT PDF. DATA BERSIFAT RAHASIA.</p>
     </section>
     <section class="app-view" id="assessmentSavedView" hidden aria-label="Data Asesmen Tersimpan">
       <div id="assessmentSavedLegacyContent">
@@ -362,7 +358,7 @@
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.40</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.41</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi<br>© 2026 Data Base Kemensos RI DRSKPNO · Hak cipta dilindungi</p>
 </main>
@@ -1277,10 +1273,10 @@ photoInputs.forEach(([id,label])=>{
   const file=input.files&&input.files[0];if(!file)return;
   if(!file.type.startsWith("image/")){input.value="";renderAssessmentPhoto(id,label,"","");alert("Pilih berkas gambar untuk "+label+".");return;}
   if(file.size>8*1024*1024){input.value="";renderAssessmentPhoto(id,label,"","");alert("Ukuran gambar "+label+" maksimal 8 MB.");return;}
-  const saveButton=document.getElementById("assessmentSave");saveButton.disabled=true;
-  try{const dataUrl=await compressAssessmentPhoto(file);renderAssessmentPhoto(id,label,dataUrl,file.name);assessmentMessage.textContent=label+" siap dilampirkan. Tekan SIMPAN ASESMEN agar foto tersimpan bersama data.";}
+  const saveButton=document.getElementById("assessmentSavePdf");if(saveButton)saveButton.disabled=true;
+  try{const dataUrl=await compressAssessmentPhoto(file);renderAssessmentPhoto(id,label,dataUrl,file.name);assessmentMessage.textContent=label+" SIAP DILAMPIRKAN. TEKAN SIMPAN UNTUK MENYIMPAN ASESMEN DAN MENGUNDUH PDF.";}
   catch(error){input.value="";alert(error instanceof Error?error.message:"Foto gagal diproses.");}
-  finally{saveButton.disabled=false;}
+  finally{if(saveButton)saveButton.disabled=false;}
  });
 });
 
@@ -1445,7 +1441,7 @@ document.getElementById('assessmentSavePdf')?.addEventListener('click',()=>saveA
 let currentAssessmentId=null;
 const assessmentMessage=document.getElementById('assessmentMessage');
 const savedList=document.getElementById('assessmentSavedList');
-const saveAssessmentButton=document.getElementById('assessmentSave');
+const saveAssessmentButton=document.getElementById('assessmentSavePdf');
 function collectAssessmentAnswers(){
  const answers={};
  document.querySelectorAll('#assessmentPaper input, #assessmentPaper textarea, #assessmentPaper select').forEach(input=>{
@@ -1528,8 +1524,9 @@ function assessmentErrorText(error){
  if(/failed to fetch|networkerror|load failed/i.test(raw))return 'Koneksi ke server gagal. Periksa internet dan pastikan Anda login sebagai owner/admin, lalu coba kembali.';
  return raw;
 }
-saveAssessmentButton.addEventListener('click',async()=>{
- saveAssessmentButton.disabled=true;assessmentMessage.textContent='Menyimpan asesmen ke database…';
+async function saveAssessmentAndPdf(){
+ saveAssessmentButton.disabled=true;
+ assessmentMessage.textContent='MENYIMPAN ASESMEN KE DATABASE…';
  try{
   const requestBody=JSON.stringify({id:currentAssessmentId,answers:collectAssessmentAnswers()});
   if(requestBody.length>1500000)throw new Error('Data asesmen terlalu besar. Kurangi ukuran foto lampiran, lalu simpan kembali.');
@@ -1537,18 +1534,15 @@ saveAssessmentButton.addEventListener('click',async()=>{
   const payload=await response.json().catch(()=>({}));
   if(!response.ok||!payload.ok)throw new Error(payload.error||('Simpan asesmen gagal (HTTP '+response.status+').'));
   currentAssessmentId=payload.id;
-  assessmentMessage.textContent='Asesmen berhasil disimpan ke database. ID: '+currentAssessmentId;
-  try{
-   await refreshSavedAssessments();
-   savedList.value=currentAssessmentId;
-  }catch(refreshError){
-   assessmentMessage.textContent='Asesmen sudah tersimpan di database (ID: '+currentAssessmentId+'), tetapi daftar asesmen belum dapat diperbarui. Muat ulang daftar setelah koneksi pulih.';
-  }
- }catch(error){assessmentMessage.textContent=assessmentErrorText(error);}
+  assessmentMessage.textContent='ASESMEN TERSIMPAN. MENYIAPKAN PDF… ID: '+currentAssessmentId;
+  try{await refreshSavedAssessments();savedList.value=currentAssessmentId;}
+  catch(refreshError){assessmentMessage.textContent='ASESMEN TERSIMPAN (ID: '+currentAssessmentId+'), TETAPI DAFTAR BELUM DIPERBARUI.';}
+ }catch(error){assessmentMessage.textContent=assessmentErrorText(error);return;}
  finally{saveAssessmentButton.disabled=false;}
-});
+ await saveAssessmentPdf(false);
+}
+saveAssessmentButton?.addEventListener('click',saveAssessmentAndPdf);
 document.getElementById('assessmentPrint').addEventListener('click',()=>saveAssessmentPdf(true));
-document.getElementById('assessmentReset').addEventListener('click',()=>{if(confirm('Kosongkan semua jawaban dan foto pada form? Data yang sudah tersimpan di database tidak dihapus.')){form.reset();document.querySelectorAll('.assessment-number input').forEach(i=>i.value='');Object.keys(assessmentPhotos).forEach(key=>delete assessmentPhotos[key]);photoPreview?.replaceChildren();printPhotos?.replaceChildren();photoInputs.forEach(([id,label])=>ensurePhotoPage(id,label));currentAssessmentId=null;assessmentMessage.textContent='Form dan foto dikosongkan. Data tersimpan di database tidak dihapus.'}});
 window.addEventListener('dashboard:authenticated',()=>{
  if(!csrfToken)return;
  loadAssessmentRespondents();
@@ -1558,7 +1552,7 @@ if(typeof csrfToken!=='undefined'&&csrfToken){
  loadAssessmentRespondents();
  refreshSavedAssessments().catch(error=>{assessmentMessage.textContent='Daftar asesmen belum dapat dimuat. '+assessmentErrorText(error);});
 }else{
- assessmentMessage.textContent='Login sebagai owner/admin untuk menyimpan dan memuat asesmen. Data baru tersimpan setelah tombol SIMPAN ASESMEN berhasil.';
+ assessmentMessage.textContent='LOGIN SEBAGAI OWNER/ADMIN UNTUK MENYIMPAN DAN MEMUAT ASESMEN. DATA BARU TERSIMPAN SAAT MENEKAN SIMPAN.';
 }
 })();
 </script>
