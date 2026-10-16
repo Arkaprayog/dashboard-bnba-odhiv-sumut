@@ -1,0 +1,159 @@
+/* SODARAMU Single-Layer Floating Dashboard v1.1.43
+   Structural override: no stacked glass cards; transparent canvas + one glass layer on actionable controls. */
+:root{
+  --fab-glass:rgba(9,35,57,.48);
+  --fab-glass-hover:rgba(14,65,91,.68);
+  --fab-border:rgba(125,211,252,.72);
+  --fab-text:#fff;
+  --fab-muted:rgba(255,255,255,.88);
+  --fab-radius:20px;
+  --fab-blur:12px;
+}
+html,body{min-width:0;width:100%;max-width:100%}
+body.authenticated{
+  display:block!important;min-height:100svh;margin:0;padding:clamp(10px,2.5vw,28px);
+  overflow-x:hidden;background-color:transparent!important;
+}
+body.authenticated main{
+  width:min(100%,1440px)!important;max-width:1440px!important;margin:0 auto!important;
+  padding:clamp(8px,2vw,22px)!important;background:transparent!important;border:0!important;
+  border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;text-align:left!important;
+}
+body.authenticated #dashboard{
+  display:block;width:100%;max-width:100%;margin:0;padding:0;
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+/* Remove decorative brand bar and nested shells. Keep the profile itself as a single glass surface. */
+body.authenticated #dashboard .dashboard-landscape-brand{display:none!important}
+body.authenticated #dashboard .owner-card{
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;width:100%;margin:0 0 22px;padding:16px 18px;
+  background:var(--fab-glass)!important;border:1px solid var(--fab-border)!important;
+  border-radius:var(--fab-radius)!important;box-shadow:none!important;
+  backdrop-filter:blur(var(--fab-blur));-webkit-backdrop-filter:blur(var(--fab-blur));
+}
+body.authenticated #dashboard .owner-profile-side,
+body.authenticated #dashboard .owner-summary,
+body.authenticated #dashboard .owner-header-actions,
+body.authenticated #dashboard .top-actions{
+  background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:0!important;
+}
+body.authenticated #dashboard .owner-profile-side{display:flex;align-items:center;gap:10px}
+body.authenticated #dashboard .owner-avatar{width:64px;height:64px;flex:0 0 64px;object-fit:cover;border-radius:50%;border:2px solid var(--fab-border)}
+body.authenticated #dashboard .owner-summary{flex:1 1 240px;min-width:0}
+body.authenticated #dashboard .owner-summary h3{margin:0 0 4px;font-size:1.05rem}
+body.authenticated #dashboard .owner-summary p{margin:3px 0;overflow-wrap:anywhere}
+body.authenticated #dashboard .owner-header-actions{margin-left:auto}
+body.authenticated #dashboard .top-actions{display:flex;gap:9px;align-items:center}
+/* Navigation is a grid of floating actions, not a panel inside another panel. */
+body.authenticated #dashboard #appNavigation{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
+  width:100%;margin:0 0 24px;padding:0!important;background:transparent!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+body.authenticated #dashboard #appNavigation>button,
+body.authenticated #dashboard #appNavigation .app-nav-group-title,
+body.authenticated #dashboard #appNavigation .app-nav-subitem{
+  display:flex;align-items:center;justify-content:center;gap:9px;min-height:58px;width:100%;min-width:0;
+  padding:14px 16px!important;background:var(--fab-glass)!important;color:var(--fab-text)!important;
+  border:1px solid var(--fab-border)!important;border-radius:var(--fab-radius)!important;
+  box-shadow:none!important;backdrop-filter:blur(var(--fab-blur));-webkit-backdrop-filter:blur(var(--fab-blur));
+  font:inherit;font-weight:700;text-align:center;text-decoration:none;white-space:normal;overflow-wrap:anywhere;
+  cursor:pointer;transition:background .18s ease,border-color .18s ease,transform .18s ease;
+}
+body.authenticated #dashboard #appNavigation>button:hover,
+body.authenticated #dashboard #appNavigation .app-nav-group-title:hover,
+body.authenticated #dashboard #appNavigation .app-nav-subitem:hover,
+body.authenticated #dashboard #appNavigation>button[aria-current="page"]{
+  background:var(--fab-glass-hover)!important;border-color:#bae6fd!important;transform:translateY(-1px);
+}
+body.authenticated #dashboard #appNavigation .app-nav-group{display:contents}
+body.authenticated #dashboard #appNavigation .assessment-submenu{
+  display:contents!important;background:transparent!important;border:0!important;box-shadow:none!important;
+  padding:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+body.authenticated #dashboard #appNavigation .assessment-submenu[hidden]{display:none!important}
+/* Views sit directly on the scenic background. Only content controls/cards get one glass layer. */
+body.authenticated #dashboard .app-view{
+  display:block;width:100%;max-width:100%;margin:0 0 22px;padding:0!important;
+  background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+body.authenticated #dashboard .app-view[hidden],
+body.authenticated #dashboard [hidden]{display:none!important}
+body.authenticated #dashboard .dashhead{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  margin:0 0 16px;padding:0;background:transparent!important;border:0!important;box-shadow:none!important;
+}
+body.authenticated #dashboard .dashhead h2{margin:0;font-size:clamp(1.2rem,2.5vw,1.65rem);text-shadow:0 1px 4px rgba(0,0,0,.3)}
+body.authenticated #dashboard .dashhead p{margin:5px 0 0;color:var(--fab-muted)!important}
+body.authenticated #dashboard .overview-grid{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;
+  margin:0 0 20px;padding:0;background:transparent!important;border:0!important;box-shadow:none!important;
+}
+body.authenticated #dashboard .overview-card,
+body.authenticated #dashboard .overview-panel,
+body.authenticated #dashboard .notification-panel,
+body.authenticated #dashboard .settings-panel,
+body.authenticated #dashboard .dashpanel,
+body.authenticated #dashboard .content-card,
+body.authenticated #dashboard .questionnaire-panel,
+body.authenticated #dashboard .database-panel,
+body.authenticated #dashboard .assessment-panel,
+body.authenticated #dashboard .document-card,
+body.authenticated #dashboard .respondent-stat{
+  background:var(--fab-glass)!important;color:var(--fab-text)!important;
+  border:1px solid var(--fab-border)!important;border-radius:var(--fab-radius)!important;
+  box-shadow:none!important;backdrop-filter:blur(var(--fab-blur));-webkit-backdrop-filter:blur(var(--fab-blur));
+}
+body.authenticated #dashboard .overview-card{min-width:0;padding:18px}
+body.authenticated #dashboard .overview-card small{display:block;color:var(--fab-muted)!important}
+body.authenticated #dashboard .overview-card strong{display:block;margin-top:7px;font-size:clamp(1.35rem,3vw,2rem)}
+/* Single-layer floating action buttons throughout forms and submenus. */
+body.authenticated #dashboard :is(button,.dashbtn,.owner-edit,.glass-icon-btn,.workflow-save,.assessment-upload,.app-nav button,.submit){
+  max-width:100%;min-width:0;color:var(--fab-text)!important;
+  background:var(--fab-glass)!important;border:1px solid var(--fab-border)!important;
+  border-radius:var(--fab-radius)!important;box-shadow:none!important;
+  backdrop-filter:blur(var(--fab-blur));-webkit-backdrop-filter:blur(var(--fab-blur));
+  font-weight:700;transition:background .18s ease,border-color .18s ease;
+}
+body.authenticated #dashboard :is(button,.dashbtn,.owner-edit,.glass-icon-btn,.workflow-save,.assessment-upload,.app-nav button,.submit):hover{
+  background:var(--fab-glass-hover)!important;border-color:#bae6fd!important;
+}
+body.authenticated #dashboard .glass-icon-btn{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;padding:10px}
+body.authenticated #dashboard :is(input,select,textarea,.form-control,.workflow-control){
+  max-width:100%;min-width:0;box-sizing:border-box;color:#fff!important;
+  background:rgba(7,28,46,.48)!important;border:1px solid rgba(186,230,253,.45)!important;
+  border-radius:14px!important;box-shadow:none!important;
+}
+body.authenticated #dashboard :is(input,select,textarea)::placeholder{color:rgba(255,255,255,.78)!important}
+body.authenticated #dashboard :is(h1,h2,h3,h4,p,span,label,small,strong,summary,li,a,th,td){text-shadow:none}
+body.authenticated #dashboard :is(.owner-form-grid,.assessment-form-grid,.overview-panels,.overview-grid){min-width:0}
+body.authenticated #dashboard .datawrap{max-width:100%;overflow:auto;border:1px solid rgba(186,230,253,.3);border-radius:16px;background:rgba(4,22,37,.42)}
+body.authenticated #dashboard .datatable{background:transparent!important}
+body.authenticated #dashboard .datatable th{background:rgba(8,44,67,.9)!important}
+body.authenticated #dashboard .datatable td{background:rgba(8,33,51,.45)!important}
+body.authenticated #dashboard :focus-visible{outline:3px solid #bae6fd!important;outline-offset:3px}
+@media(max-width:900px){
+ body.authenticated #dashboard #appNavigation{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body.authenticated #dashboard .overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+ body.authenticated{padding:8px}
+ body.authenticated main{padding:4px!important}
+ body.authenticated #dashboard .owner-card{gap:12px;padding:12px;border-radius:18px!important}
+ body.authenticated #dashboard .owner-avatar{width:54px;height:54px;flex-basis:54px}
+ body.authenticated #dashboard #appNavigation{gap:9px}
+ body.authenticated #dashboard #appNavigation>button,
+ body.authenticated #dashboard #appNavigation .app-nav-group-title,
+ body.authenticated #dashboard #appNavigation .app-nav-subitem{min-height:54px;padding:12px 8px!important;font-size:.92rem}
+ body.authenticated #dashboard .overview-card{padding:13px}
+ body.authenticated #dashboard .dashhead{align-items:flex-start}
+ body.authenticated #dashboard .dashhead .dashbtn{width:auto}
+}
+@media(prefers-reduced-motion:reduce){
+ body.authenticated #dashboard *{transition:none!important;scroll-behavior:auto!important}
+}
