@@ -7,19 +7,5 @@
   "display": "standalone",
   "background_color": "#163847",
   "theme_color": "#163847",
-  "icons": [
-    {
-      "src": "/sodaramu-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "/sodaramu-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "maskable"
-    }
-  ],
   "version": "1.1.44"
 }
