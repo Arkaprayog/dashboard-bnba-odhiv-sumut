@@ -232,3 +232,12 @@ body:has(#dashboard:not([hidden])) #dashboard .owner-summary a,body:has(#dashboa
 .assessment-saved-id{opacity:.75;font-size:.75rem!important}
 .assessment-saved-card-actions{flex:0 0 auto}
 @media(max-width:560px){.app-nav-group{padding:6px}.app-nav-group .app-nav-subitem{flex:1 1 100%;font-size:.84rem}.assessment-saved-card{align-items:flex-start;flex-direction:column}.assessment-saved-card-actions,.assessment-saved-card-actions .dashbtn{width:100%}}
+
+/* Empty integrated-assessment pages and expandable parent menu. */
+.app-nav-group-title{appearance:none;border:0;background:transparent;text-align:left;font:inherit;cursor:pointer;border-radius:8px;}
+.app-nav-group-title:focus-visible{outline:2px solid currentColor;outline-offset:2px;}
+.app-nav-group:not(.is-expanded) .assessment-submenu{display:none;}
+.assessment-submenu{display:contents;}
+.assessment-empty-state{padding:18px 4px;}
+.assessment-empty-state h2{margin:0 0 8px;font-size:1.15rem;}
+.assessment-empty-state p{margin:0;opacity:.82;line-height:1.55;}
