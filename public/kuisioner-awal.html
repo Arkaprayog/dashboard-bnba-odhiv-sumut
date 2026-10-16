@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#07545b">
+<title>Pendaftaran Awal | Sahabat ODHIV Sumut</title>
+<link rel="stylesheet" href="/transparent-theme.css?v=2.0.0">
+<link rel="stylesheet" href="/kuisioner-awal-layout.css?v=1.0.0">
+</head>
+<body>
+<div class="intake-wrap">
+<header class="intake-brand">
+<img src="/logos/kemensos.png" alt="Logo Kementerian Sosial Republik Indonesia" width="58" height="58">
+<div><strong>Sahabat ODHIV Sumut</strong><span>Pendaftaran awal</span></div>
+</header>
+<main>
+<section class="intake-hero">
+<p class="intake-kicker">TAHAP AWAL · KURANG DARI 1 MENIT</p>
+<h1>Mulai pendataan dengan mudah</h1>
+<p>Isi nama yang biasa digunakan dan nomor WhatsApp agar petugas dapat mengirim tautan kuesioner lanjutan secara privat. Anda boleh melanjutkan kuesioner lengkap nanti saat sudah punya waktu.</p>
+</section>
+<aside class="intake-privacy">
+<strong>Privasi Anda penting</strong>
+<p>Formulir awal ini tidak meminta NIK, foto, alamat rumah, atau informasi kesehatan. Data nama dan nomor WhatsApp disimpan di dashboard terbatas untuk tindak lanjut kuesioner dan tidak ditampilkan ke publik.</p>
+</aside>
+<form id="initialIntakeForm" class="intake-form" novalidate>
+<div class="intake-field">
+<label for="preferredName">Nama panggilan/nama *</label>
+<input id="preferredName" name="preferredName" maxlength="100" autocomplete="given-name" required>
+</div>
+<div class="intake-field">
+<label for="phone">Nomor WhatsApp aktif *</label>
+<input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Contoh: 081234567890" maxlength="30" required>
+<small>Nomor ini digunakan untuk mengirim tautan lanjutan dan pengingat yang diperlukan.</small>
+</div>
+<div class="intake-honeypot" aria-hidden="true"><label for="website">Biarkan kosong</label><input id="website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+<label class="intake-consent">
+<input id="consent" name="consent" type="checkbox" value="yes" required>
+<span>Saya setuju agar nama dan nomor WhatsApp saya disimpan secara terbatas untuk menerima tautan kuesioner lanjutan dan pengingat melalui WhatsApp. Saya dapat meminta petugas menghentikan pengingat.</span>
+</label>
+<div class="intake-actions">
+<button id="initialIntakeSubmit" class="intake-primary" type="submit">Kirim pendaftaran awal</button>
+<button class="intake-secondary" type="reset">Kosongkan</button>
+</div>
+<p id="initialIntakeMessage" class="intake-message" role="status" aria-live="polite"></p>
+</form>
+<section class="intake-next-step">
+<h2>Setelah mengirim</h2>
+<p>Petugas akan menghubungi Anda secara privat dan mengirim tautan Google Forms. Anda tidak perlu menyelesaikan seluruh kuesioner saat berada di layanan kesehatan.</p>
+</section>
+</main>
+<footer>Sahabat ODHIV Sumatera Utara · Data awal hanya untuk tindak lanjut</footer>
+</div>
+<script>
+(()=> {
+ const form=document.getElementById('initialIntakeForm');
+ const button=document.getElementById('initialIntakeSubmit');
+ const message=document.getElementById('initialIntakeMessage');
+ const phone=document.getElementById('phone');
+ phone.addEventListener('input',()=>{phone.value=phone.value.replace(/[^0-9+ ()-]/g,'').slice(0,30);});
+ form.addEventListener('submit',async event=>{
+  event.preventDefault();
+  message.textContent='';
+  message.className='intake-message';
+  if(!form.reportValidity())return;
+  button.disabled=true;
+  button.textContent='Menyimpan…';
+  message.textContent='Menyimpan pendaftaran awal dengan aman…';
+  try{
+   const response=await fetch('/api/public-initial-intake',{method:'POST',credentials:'same-origin',cache:'no-store',body:new FormData(form)});
+   const result=await response.json().catch(()=>({}));
+   if(!response.ok||!result.ok)throw new Error(result.error||'Pendaftaran awal belum berhasil disimpan.');
+   form.reset();
+   message.textContent=result.message||'Pendaftaran awal tersimpan. Petugas akan menghubungi Anda secara privat.';
+   message.className='intake-message success';
+  }catch(error){
+   message.textContent=error instanceof Error?error.message:'Pendaftaran awal gagal dikirim. Periksa koneksi lalu coba lagi.';
+   message.className='intake-message error';
+  }finally{
+   button.disabled=false;
+   button.textContent='Kirim pendaftaran awal';
+  }
+ });
+})();
+</script>
+</body>
+</html>
