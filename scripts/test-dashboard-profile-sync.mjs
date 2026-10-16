@@ -51,7 +51,7 @@ assert.deepEqual(mainMenu, [
 ], "main menu items, labels, capitalization, and order must match the requested sequence");
 assert.ok(!dashboard.includes("assessmentNavGroup") && !dashboard.includes("assessmentNavToggle") && !dashboard.includes("assessmentSubmenu"), "the old assessment parent submenu must be removed");
 assert.ok(dashboard.includes("button.hidden=!['owner','admin'].includes(currentDashboardRole)"), "assessment main buttons remain restricted to owner/admin");
-assert.ok(dashboard.includes("assessment-delete-btn") && dashboard.includes("'Hapus asesmen'") && dashboard.includes("window.confirm('Hapus '), "saved assessment cards offer a confirmation-protected delete action");
+assert.ok(dashboard.includes("assessment-delete-btn") && dashboard.includes("'Hapus asesmen'") && dashboard.includes("window.confirm('Hapus '"), "saved assessment cards offer a confirmation-protected delete action");
 assert.ok(dashboard.includes("method:'DELETE'") && dashboard.includes("'X-CSRF-Token':csrfToken"), "assessment delete request uses CSRF protection");
 assert.ok(worker.includes('request.method === "DELETE" && !isAllowedOrigin(request, env)') && worker.includes('DELETE FROM integrated_assessments WHERE id=?') && worker.includes('"assessment_deleted"'), "assessment deletion is origin-checked, audited, and scoped to the selected record");
 assert.ok(worker.includes('if (!csrf || csrf !== admin.csrf_token)') && worker.includes('admin.role !== "owner" && admin.role !== "admin"'), "assessment deletion requires a valid privileged session and CSRF token");
