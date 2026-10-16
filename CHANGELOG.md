@@ -1,3 +1,9 @@
+## 1.1.51 — 2026-10-16
+- Jadikan pemilihan responden otomatis memuat identitas dan empat foto melalui endpoint foto privat; hapus semua kontrol unggah manual dari Form Asesmen Terintegrasi.
+- Tambahkan tombol **Kosongkan Lembar Asesmen** selebar baris, tanpa menghapus asesmen yang sudah tersimpan.
+- Tata kartu foto menjadi dua kolom (Foto Diri/KTP lalu Foto KK/Rumah Tampak Depan) dengan efek glass transparan dan responsif.
+- Selaraskan versi web/PWA, CSS glass asesmen, dan pemeriksaan CI ke 1.1.51.
+
 ## 1.1.50 — 2026-10-16
 - Tambahkan tombol **Hapus asesmen** pada setiap kartu di menu Data Asesmen PPKS, dengan dialog konfirmasi sebelum penghapusan permanen.
 - Lindungi penghapusan dengan sesi owner/admin, pemeriksaan Origin, token CSRF, validasi ID, dan pencatatan audit tanpa menyimpan isi jawaban asesmen.
