@@ -170,12 +170,8 @@
       <button type="button" data-view="questionnaire">▧ Kuesioner</button>
       <button type="button" data-view="formats">▤ Dokumen</button>
       <button type="button" data-view="respondentQuiz">▧ Kuisioner Responden</button>
-      <div class="app-nav-group" id="assessmentNavGroup" hidden>
-        <button type="button" class="app-nav-group-title" id="assessmentNavToggle" aria-expanded="false" aria-controls="assessmentSubmenu">▧ From Asesmen Terintergrasi</button><div id="assessmentSubmenu" class="assessment-submenu">
-        <button type="button" class="app-nav-subitem" data-view="assessment">Lembar Asesmen Terintegrasi</button>
-        <button type="button" class="app-nav-subitem" data-view="assessmentSaved">Data Asesmen Tersimpan</button>
-        </div>
-      </div>
+      <button type="button" data-view="assessment" hidden>Lembar Asesmen Terintegrasi</button>
+      <button type="button" data-view="assessmentSaved" hidden>Data Asesmen Tersimpan</button>
     </nav>
     <section class="app-view" id="homeView" aria-label="Beranda Statistik">
       <div class="dashhead"><div><h2>Beranda Statistik</h2><p>Ringkasan data responden dari kuesioner</p></div><button class="dashbtn" id="refreshOverview" type="button">Perbarui statistik</button></div>
@@ -427,9 +423,7 @@ function setAppView(view){
  document.querySelectorAll('#appNavigation [data-view]').forEach(button=>{if(button.dataset.view===view)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
  if(view==='news'&&!newsItems.length)loadNews();
 }
-const assessmentNavToggle=document.getElementById('assessmentNavToggle');
-if(assessmentNavToggle){assessmentNavToggle.addEventListener('click',()=>{const group=document.getElementById('assessmentNavGroup');const expanded=assessmentNavToggle.getAttribute('aria-expanded')==='true';assessmentNavToggle.setAttribute('aria-expanded',String(!expanded));group?.classList.toggle('is-expanded',!expanded);});}
-document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button){setAppView(button.dataset.view);if(button.dataset.view==='assessment'||button.dataset.view==='assessmentSaved'){assessmentNavToggle?.setAttribute('aria-expanded','true');document.getElementById('assessmentNavGroup')?.classList.add('is-expanded');}}});
+document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button&&!button.hidden)setAppView(button.dataset.view);});
 document.getElementById('openRespondentQuiz').addEventListener('click',()=>window.open('https://sahabatodhivsumut.web.id/kuisioner-responden.html','_blank','noopener,noreferrer'));
 document.getElementById('copyRespondentQuiz').addEventListener('click',async()=>{const message=document.getElementById('respondentQuizMessage');try{await navigator.clipboard.writeText('https://sahabatodhivsumut.web.id/kuisioner-responden.html');message.textContent='Link kuisioner berhasil disalin.';}catch{message.textContent='Salin link ini secara manual: https://sahabatodhivsumut.web.id/kuisioner-responden.html';}});
 
@@ -679,7 +673,7 @@ function showDashboard(admin,csrf){
  currentDashboardRole=String(admin?.role||'').toLowerCase();
  const ownerQuestionnaireButton=document.querySelector('#appNavigation [data-view="questionnaire"]');
  if(ownerQuestionnaireButton)ownerQuestionnaireButton.hidden=currentDashboardRole!=='owner';
- const assessmentGroup=document.getElementById('assessmentNavGroup');if(assessmentGroup)assessmentGroup.hidden=!['owner','admin'].includes(currentDashboardRole);
+ document.querySelectorAll('#appNavigation [data-view="assessment"],#appNavigation [data-view="assessmentSaved"]').forEach(button=>{button.hidden=!['owner','admin'].includes(currentDashboardRole);});
  document.body.classList.add('authenticated');
  form.hidden=true;
  dashboard.hidden=false;
@@ -703,7 +697,7 @@ function showLogin(text){
  dashboard.hidden=true;
  currentDashboardRole='';
  const ownerQuestionnaireButton=document.querySelector('#appNavigation [data-view="questionnaire"]');if(ownerQuestionnaireButton)ownerQuestionnaireButton.hidden=true;
- const assessmentGroup=document.getElementById('assessmentNavGroup');if(assessmentGroup)assessmentGroup.hidden=true;
+ document.querySelectorAll('#appNavigation [data-view="assessment"],#appNavigation [data-view="assessmentSaved"]').forEach(button=>{button.hidden=true;});
  document.body.classList.remove('authenticated');
  if(document.getElementById('appNavigation'))setAppView('home');
  form.hidden=false;
