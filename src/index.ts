@@ -985,7 +985,7 @@ export default {
           const passwordSalt = crypto.getRandomValues(new Uint8Array(16));
           const passwordDigest = await passwordHash(password, passwordSalt);
           await env.DB.prepare("INSERT INTO team_petugas_v2(id,display_name,position,phone,token_hash,active,created_by,password_hash,password_salt) VALUES(?,?,?,?,?,1,?,?,?)")
-            .bind(id, name, position, phone, await hashTeamToken(token), admin.id, hex(passwordDigest), hex(passwordSalt)).run();
+            .bind(id, name, position, phone, await hashTeamToken(token), admin.id, [...passwordDigest].map((value) => value.toString(16).padStart(2, "0")).join(""), [...passwordSalt].map((value) => value.toString(16).padStart(2, "0")).join("")).run();
           await audit(env, admin.id, "team_petugas_create");
           const origin = normalizeOrigin(env.APP_ORIGIN || new URL(request.url).origin);
           return reply({ ok: true, item: { id, display_name: name, position, phone, active: 1 }, link: origin + "/tim-pendataan.html?token=" + encodeURIComponent(token) }, 201);
