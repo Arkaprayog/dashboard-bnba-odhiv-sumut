@@ -84,7 +84,7 @@
 <link rel="stylesheet" href="/assessment-glass-layout-v1.css?v=1.1.52">
 <link rel="stylesheet" href="/owner-profile-header-final-v2.css?v=1.1.62">
 <link rel="stylesheet" href="/respondent-qr-center-v1.css?v=1.0.1">
-<link rel="stylesheet" href="/initial-intake-manager.css?v=1.0.0">
+<link rel="stylesheet" href="/initial-intake-manager.css?v=1.0.1">
 <link rel="stylesheet" href="/assessment-transparent-v1.css?v=1.0.1">
 </head>
 <body>
@@ -546,12 +546,13 @@ async function loadInitialIntakes(){
   for(const item of payload.items){
    const tr=document.createElement('tr');
    const cell=value=>{const td=document.createElement('td');td.textContent=value||'—';tr.append(td);return td;};
-   cell(formatIntakeTime(item.created_at));cell(item.preferred_name);
-   const phoneCell=cell(item.phone?('+'+String(item.phone).replace(/^\+/,'')):'—');
+   const timeCell=cell(formatIntakeTime(item.created_at));timeCell.dataset.label='Waktu masuk';
+   const nameCell=cell(item.preferred_name);nameCell.dataset.label='Nama';
+   const phoneCell=cell(item.phone?('+'+String(item.phone).replace(/^\+/,'')):'—');phoneCell.dataset.label='WhatsApp';
    if(item.phone){const a=document.createElement('a');a.href='https://wa.me/'+encodeURIComponent(item.phone);a.target='_blank';a.rel='noopener noreferrer';a.textContent='Buka WhatsApp';a.setAttribute('aria-label','Buka WhatsApp untuk '+(item.preferred_name||'responden'));phoneCell.replaceChildren(a);}
-   const statusCell=cell(intakeStatusLabel(item.status));
+   const statusCell=cell(intakeStatusLabel(item.status));statusCell.dataset.label='Status';
    statusCell.className='initial-intake-status status-'+(item.status||'baru');
-   const actionCell=document.createElement('td');
+   const actionCell=document.createElement('td');actionCell.dataset.label='Aksi';
    const followupUrl=new URL(googleFollowupFormUrl);
    followupUrl.searchParams.set('usp','pp_url');
    followupUrl.searchParams.set('entry.1060152272',item.preferred_name||'');
@@ -615,7 +616,7 @@ async function loadStage1Data(){
    const phoneCell=textCell(item.phone);
    const digits=normalizedWaNumber(item.phone);
    if(digits){phoneCell.replaceChildren();const a=document.createElement('a');a.href='https://wa.me/'+digits;a.target='_blank';a.rel='noopener noreferrer';a.textContent=item.phone;a.setAttribute('aria-label','Hubungi '+item.name+' melalui WhatsApp');phoneCell.append(a);}
-   const actionCell=document.createElement('td');
+   const actionCell=document.createElement('td');actionCell.dataset.label='Aksi';
    const followupUrl=new URL('https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform');
    followupUrl.searchParams.set('usp','pp_url');
    followupUrl.searchParams.set('entry.1060152272',item.name||'');
