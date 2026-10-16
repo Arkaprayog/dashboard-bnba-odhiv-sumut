@@ -333,3 +333,132 @@ html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard .owner-l
     height: 19px !important;
   }
 }
+
+
+/* v1.1.62 — Keep owner name, NIP, and unit in one vertical identity column.
+   Earlier grid rules placed the NIP and institution as independent parent-grid
+   items, allowing them to center under the combined available width. */
+html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard {
+  grid-template-columns: clamp(40px, 12vw, 72px) minmax(0, 1fr) auto !important;
+  grid-template-rows: auto auto !important;
+  grid-template-areas:
+    "profile summary actions"
+    "clock clock clock" !important;
+  align-items: start !important;
+}
+
+html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard .owner-summary {
+  grid-area: summary !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: max-content max-content max-content auto !important;
+  align-content: start !important;
+  align-items: start !important;
+  justify-items: start !important;
+  justify-self: stretch !important;
+  align-self: start !important;
+  gap: 5px 0 !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard #ownerName {
+  grid-area: auto !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  display: block !important;
+  justify-self: start !important;
+  align-self: start !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  overflow-wrap: anywhere !important;
+}
+
+html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard #ownerNipSummary {
+  grid-area: auto !important;
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+  display: block !important;
+  justify-self: start !important;
+  align-self: start !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  overflow-wrap: anywhere !important;
+  font-size: clamp(.72rem, 2.8vw, .9rem) !important;
+  line-height: 1.3 !important;
+}
+
+html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard #ownerInstitutionSummary {
+  grid-area: auto !important;
+  grid-column: 1 !important;
+  grid-row: 3 !important;
+  display: block !important;
+  justify-self: start !important;
+  align-self: start !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  overflow-wrap: anywhere !important;
+  font-size: clamp(.72rem, 2.8vw, .9rem) !important;
+  line-height: 1.3 !important;
+}
+
+html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard .owner-summary .owner-details {
+  grid-area: auto !important;
+  grid-column: 1 !important;
+  grid-row: 4 !important;
+  justify-self: start !important;
+  align-self: start !important;
+  width: 100% !important;
+  text-align: left !important;
+}
+
+html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard .owner-header-actions {
+  grid-area: actions !important;
+  align-self: start !important;
+  justify-self: end !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard .owner-live-clock {
+  grid-area: clock !important;
+  justify-self: end !important;
+  align-self: start !important;
+}
+
+@media (min-width: 641px) {
+  html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard {
+    grid-template-columns: 72px minmax(0, 1fr) auto !important;
+    column-gap: 18px !important;
+  }
+  html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard .owner-summary {
+    gap: 6px 0 !important;
+  }
+}
+
+@media (max-width: 380px) {
+  html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard {
+    grid-template-columns: 36px minmax(0, 1fr) auto !important;
+    column-gap: 4px !important;
+  }
+  html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard .owner-summary {
+    gap: 4px 0 !important;
+  }
+}
