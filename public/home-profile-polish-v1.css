@@ -230,3 +230,57 @@ body:has(#dashboard:not([hidden])) #dashboard #ownerCard .bell-count {
     animation: none !important;
   }
 }
+
+
+/* Profile action group stays flush-right; live clock sits at the card's lower-right corner. */
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard {
+  position: relative !important;
+  padding-bottom: 40px !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-header-actions {
+  margin-left: auto !important;
+  justify-self: end !important;
+  width: max-content !important;
+  max-width: 100% !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .top-actions {
+  margin-left: auto !important;
+  justify-content: flex-end !important;
+  flex-wrap: nowrap !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-live-clock {
+  position: absolute !important;
+  right: clamp(12px, 2vw, 22px) !important;
+  bottom: 10px !important;
+  display: block !important;
+  max-width: calc(100% - 24px) !important;
+  color: #808000 !important;
+  -webkit-text-fill-color: #808000 !important;
+  font-size: .76rem !important;
+  font-weight: 750 !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: .025em !important;
+  line-height: 1.3 !important;
+  text-align: right !important;
+  white-space: nowrap !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.28) !important;
+  pointer-events: none !important;
+}
+@media (max-width: 720px) {
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard {
+    grid-template-columns: 64px minmax(0, 1fr) !important;
+    align-items: start !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-header-actions {
+    grid-column: 1 / -1 !important;
+    justify-self: end !important;
+    width: 100% !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard .top-actions {
+    width: 100% !important;
+    justify-content: flex-end !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard #ownerCard .owner-live-clock {
+    font-size: .7rem !important;
+  }
+}
