@@ -1,0 +1,31 @@
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:#f8fafc;background:transparent;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5}
+.qr-page{max-width:760px;margin:0 auto;padding:clamp(14px,3vw,28px)}
+.qr-brand{display:flex;align-items:center;gap:12px;margin:0 0 20px}
+.qr-brand img{object-fit:contain;background:#fff;padding:5px;border-radius:10px}
+.qr-brand div{display:grid;gap:2px}.qr-brand strong{font-size:1.02rem}.qr-brand span{color:#cbd5e1;font-size:.88rem}
+.qr-poster{display:flex;align-items:center;flex-direction:column;text-align:center;gap:12px;padding:clamp(20px,5vw,36px);border:1px solid rgba(203,213,225,.3);border-radius:20px;background:rgba(15,23,42,.76);box-shadow:0 14px 34px rgba(2,6,23,.16)}
+.qr-kicker{margin:0;color:#7dd3fc;font-size:.78rem;font-weight:850;letter-spacing:.13em}
+.qr-poster h1{margin:0;font-size:clamp(1.7rem,5vw,2.4rem);line-height:1.15}
+.qr-lead{max-width:540px;margin:0;color:#e2e8f0}
+.qr-image{display:block;width:min(320px,75vw);height:auto;aspect-ratio:1;object-fit:contain;margin:8px auto;background:#fff;border-radius:8px;padding:12px}
+.qr-instruction{margin:0;font-weight:700}
+.qr-url{max-width:100%;overflow-wrap:anywhere;color:#7dd3fc;font-size:.9rem}
+.qr-privacy{max-width:520px;margin:4px 0 0;color:#cbd5e1;font-size:.85rem}
+.qr-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;margin:18px 0}
+.qr-actions button,.qr-actions a{min-height:42px;padding:10px 15px;border-radius:10px;border:1px solid rgba(203,213,225,.3);background:rgba(15,23,42,.78);color:#fff;font:inherit;font-weight:700;text-decoration:none;cursor:pointer}
+.qr-actions p{width:100%;text-align:center;margin:0;font-size:.85rem;overflow-wrap:anywhere}
+.qr-footer{text-align:center;color:#cbd5e1;font-size:.8rem;padding:10px}
+@media print{
+ @page{size:A4 portrait;margin:14mm}
+ body{background:#fff!important;color:#111827!important}
+ .qr-page{max-width:none;margin:0;padding:0}
+ .qr-brand{justify-content:center;margin-bottom:12mm}
+ .qr-brand img{width:48px;height:48px}
+ .qr-brand strong,.qr-brand span,.qr-lead,.qr-instruction,.qr-privacy,.qr-footer{color:#111827!important}
+ .qr-poster{background:#fff!important;color:#111827!important;border:1px solid #cbd5e1;box-shadow:none;padding:14mm 10mm}
+ .qr-kicker,.qr-url{color:#0f766e!important}
+ .qr-image{width:75mm;height:75mm;padding:4mm;border:1px solid #e5e7eb}
+ .no-print{display:none!important}
+ .qr-footer{margin-top:10mm}
+}
