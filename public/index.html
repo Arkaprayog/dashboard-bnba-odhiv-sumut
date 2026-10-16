@@ -71,12 +71,13 @@
 <link rel="stylesheet" href="/sodaramu-header-v1.css?v=1.0.0">
 <link rel="stylesheet" href="/dashboard-responsive-v6.css?v=6.0.0">
 <link rel="stylesheet" href="/action-buttons-horizontal-v1.css?v=1.1.40">
-<link rel="stylesheet" href="/assessment-form-polish-v1.css?v=1.1.41">
+<link rel="stylesheet" href="/assessment-form-polish-v1.css?v=1.1.44">
   <link rel="stylesheet" href="/owner-questionnaire-polish-v1.css?v=1.0.0">
   <link rel="stylesheet" href="/home-profile-polish-v1.css?v=1.0.0">
   <link rel="stylesheet" href="/form-mobile-ui-v1.css?v=1.1.40">
   <link rel="stylesheet" href="/glass-system-v1.css?v=2.0.2">
-  <link rel="stylesheet" href="/assessment-print-10-pages-v1.css?v=1.1.41">\n  <link rel="stylesheet" href="/single-layer-floating-dashboard-v1.css?v=1.1.43">
+  <link rel="stylesheet" href="/assessment-print-10-pages-v1.css?v=1.1.44">
+  <link rel="stylesheet" href="/single-layer-floating-dashboard-v1.css?v=1.1.44">
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
@@ -110,7 +111,7 @@
     <hr class="login-divider">
     <footer class="login-footer">
       <p>Halaman Akses Awal · Data Responden Tetap Dilindungi</p>
-      <p class="login-version">Versi 1.1.43</p>
+      <p class="login-version">Versi 1.1.44</p>
       <p class="login-copyright">© 2026 Data Base Kemensos RI DRSKPNO · Hak cipta dilindungi</p>
     </footer>
   </section>
@@ -358,7 +359,7 @@
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.43</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.44</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi<br>© 2026 Data Base Kemensos RI DRSKPNO · Hak cipta dilindungi</p>
 </main>
@@ -1379,11 +1380,26 @@ async function loadSelectedAssessmentRespondent(){
  assessmentMessage.textContent=missing.length?'Identitas dimuat, tetapi sebagian foto tidak dapat diakses. Periksa izin/tautan Drive sebelum membuat PDF.':'Identitas dan empat foto responden berhasil dimuat. Periksa data sebelum membuat PDF.';
  } finally {const loadButton=document.getElementById('assessmentLoadRespondent');if(loadButton)loadButton.disabled=false;}
 }
+function assessmentDataUrlToBytes(dataUrl){
+  const comma=dataUrl.indexOf(',');
+  if(comma<0)throw new Error('DATA FOTO TIDAK VALID.');
+  const header=dataUrl.slice(0,comma);
+  if(!/^data:image\/(?:jpeg|jpg|png);base64$/i.test(header))throw new Error('FORMAT FOTO TIDAK DIDUKUNG. GUNAKAN FOTO JPG ATAU PNG.');
+  let binary;
+  try{binary=atob(dataUrl.slice(comma+1));}catch{throw new Error('DATA FOTO TIDAK DAPAT DIBACA. PILIH ULANG FOTO TERSEBUT.');}
+  const bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+  return bytes;
+}
 async function buildAssessmentPdf(){
  if(!window.PDFLib)throw new Error('Pustaka PDF belum termuat. Periksa koneksi internet lalu muat ulang halaman.');
- const response=await fetch('/assessment-template.pdf',{credentials:'same-origin',cache:'no-store'});
+ let response;
+  try{response=await fetch('/assessment-template.pdf',{credentials:'same-origin',cache:'no-store'});}
+  catch(error){throw new Error('TEMPLATE PDF TIDAK DAPAT DIHUBUNGI. PERIKSA KONEKSI INTERNET DAN MUAT ULANG APLIKASI.');}
  if(!response.ok)throw new Error('Template PDF tidak dapat dimuat (HTTP '+response.status+').');
- const pdfDoc=await PDFLib.PDFDocument.load(await response.arrayBuffer());
+ let pdfDoc;
+  try{pdfDoc=await PDFLib.PDFDocument.load(await response.arrayBuffer());}
+  catch(error){throw new Error('TEMPLATE PDF RUSAK ATAU TIDAK LENGKAP. MUAT ULANG APLIKASI DAN COBA LAGI.');}
  if(pdfDoc.getPageCount()!==6)throw new Error('Template harus tepat 6 halaman; ditemukan '+pdfDoc.getPageCount()+'.');
  const photoSpecs=[['assessmentPhotoSelf','HALAMAN 7 — FOTO DIRI'],['assessmentPhotoKtp','HALAMAN 8 — FOTO KTP'],['assessmentPhotoKk','HALAMAN 9 — FOTO KARTU KELUARGA (KK)'],['assessmentPhotoHome','HALAMAN 10 — FOTO RUMAH TAMPAK DEPAN']];
  const missingPhotos=photoSpecs.filter(([inputId])=>!assessmentPhotos[inputId]?.dataUrl);
@@ -1407,7 +1423,7 @@ async function buildAssessmentPdf(){
  for(const [inputId,label] of photoSpecs){
   const page=pdfDoc.addPage(pageSize);page.drawText(label,{x:42,y:790,size:13,font});
   const saved=assessmentPhotos[inputId];
-  const imageBytes=await (await fetch(saved.dataUrl)).arrayBuffer();
+  const imageBytes=assessmentDataUrlToBytes(saved.dataUrl);
   const image=saved.dataUrl.startsWith('data:image/png')?await pdfDoc.embedPng(imageBytes):await pdfDoc.embedJpg(imageBytes);
   const dims=image.scale(1),maxW=510,maxH=690,scale=Math.min(maxW/dims.width,maxH/dims.height,1);
   page.drawImage(image,{x:(pageSize[0]-dims.width*scale)/2,y:55+(maxH-dims.height*scale)/2,width:dims.width*scale,height:dims.height*scale});
@@ -1530,7 +1546,9 @@ async function saveAssessmentAndPdf(){
  try{
   const requestBody=JSON.stringify({id:currentAssessmentId,answers:collectAssessmentAnswers()});
   if(requestBody.length>1500000)throw new Error('Data asesmen terlalu besar. Kurangi ukuran foto lampiran, lalu simpan kembali.');
-  const response=await fetch('/api/assessments',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:requestBody});
+  let response;
+  try{response=await fetch('/api/assessments',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:requestBody});}
+  catch(networkError){throw new Error('TIDAK DAPAT TERHUBUNG KE SERVER UNTUK MENYIMPAN ASESMEN. PERIKSA KONEKSI INTERNET, LALU COBA LAGI.');}
   const payload=await response.json().catch(()=>({}));
   if(!response.ok||!payload.ok)throw new Error(payload.error||('Simpan asesmen gagal (HTTP '+response.status+').'));
   currentAssessmentId=payload.id;
