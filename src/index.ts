@@ -1667,9 +1667,29 @@ export default {
           }
           try {
             const accessToken = await googleAccessToken(env);
-            // Open-ended columns avoid requesting rows beyond the tab grid limit.
+            const spreadsheetBase = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID);
+            const metadataResponse = await fetch(spreadsheetBase + "?fields=sheets.properties.title", {
+              headers: { authorization: "Bearer " + accessToken },
+            });
+            if (!metadataResponse.ok) {
+              let googleDetail = "";
+              try {
+                const errorPayload = await metadataResponse.json() as { error?: { message?: string } };
+                googleDetail = String(errorPayload.error?.message || "").replace(/ {2,}/g, " ").slice(0, 180);
+              } catch { /* Respons Google bukan JSON. */ }
+              return reply({ error: "Daftar tab Google Sheets gagal dibaca (HTTP " + metadataResponse.status + ")." + (googleDetail ? " Detail: " + googleDetail : "") }, 502);
+            }
+            const metadata = await metadataResponse.json() as { sheets?: Array<{ properties?: { title?: string } }> };
+            if (!(metadata.sheets || []).some(sheet => sheet.properties?.title === "Kuisioner Owner")) {
+              return reply({
+                items: [],
+                csrfToken: admin.csrf_token,
+                message: "Tab Kuisioner Owner belum tersedia. Setelah owner menyimpan kuesioner pertama, tab akan dibuat otomatis.",
+              });
+            }
+            // Read the tab's existing rows without an oversized fixed row limit.
             const range = encodeURIComponent("'Kuisioner Owner'!A:O");
-            const response = await fetch("https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID) + "/values/" + range + "?valueRenderOption=FORMATTED_VALUE", {
+            const response = await fetch(spreadsheetBase + "/values/" + range + "?valueRenderOption=FORMATTED_VALUE", {
               headers: { authorization: "Bearer " + accessToken },
             });
             if (!response.ok) {
