@@ -51,6 +51,11 @@ assert.deepEqual(mainMenu, [
 ], "main menu items, labels, capitalization, and order must match the requested sequence");
 assert.ok(!dashboard.includes("assessmentNavGroup") && !dashboard.includes("assessmentNavToggle") && !dashboard.includes("assessmentSubmenu"), "the old assessment parent submenu must be removed");
 assert.ok(dashboard.includes("button.hidden=!['owner','admin'].includes(currentDashboardRole)"), "assessment main buttons remain restricted to owner/admin");
+assert.ok(dashboard.includes("assessment-delete-btn") && dashboard.includes("'Hapus asesmen'") && dashboard.includes("window.confirm('Hapus '), "saved assessment cards offer a confirmation-protected delete action");
+assert.ok(dashboard.includes("method:'DELETE'") && dashboard.includes("'X-CSRF-Token':csrfToken"), "assessment delete request uses CSRF protection");
+assert.ok(worker.includes('request.method === "DELETE" && !isAllowedOrigin(request, env)') && worker.includes('DELETE FROM integrated_assessments WHERE id=?') && worker.includes('"assessment_deleted"'), "assessment deletion is origin-checked, audited, and scoped to the selected record");
+assert.ok(worker.includes('if (!csrf || csrf !== admin.csrf_token)') && worker.includes('admin.role !== "owner" && admin.role !== "admin"'), "assessment deletion requires a valid privileged session and CSRF token");
+
 const floatingMenuCss = readFileSync("public/single-layer-floating-dashboard-v1.css", "utf8");
 assert.match(floatingMenuCss, /grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/, "wide layout must use four menu columns");
 assert.match(floatingMenuCss, /text-transform:uppercase/, "all main menu buttons must use uppercase styling");
@@ -67,7 +72,7 @@ assert.match(dashboard, /id="logoutButton"/);
 assert.match(dashboard, /aria-label="Keluar"/);
 assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='owner' AND active=1/);
 assert.match(worker, /owner_profile_update/);
-assert.equal(pkg.version, "1.1.49");
+assert.equal(pkg.version, "1.1.50");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
 assert.ok(dashboard.includes('href="/assessment-print-10-pages-v1.css?v=1.1.46"'), "assessment must load the dedicated ten-page print stylesheet.");
 assert.ok(dashboard.includes('pageIndexForQuestion') && dashboard.includes('assessment-print-page'), "assessment fields must be partitioned into six print pages.");
@@ -75,7 +80,7 @@ assert.ok(dashboard.includes('HALAMAN 7 — LAMPIRAN FOTO DIRI (CLOSE-UP PPKS)')
 assert.ok(assessmentPrintCss.includes('size:A4 portrait') && assessmentPrintCss.includes('page-break-before:always') && assessmentPrintCss.includes('assessment-print-photo-page'), "print stylesheet must force A4 page breaks for the four appendices.");
 assert.ok(dashboard.includes('Data Base Kemensos RI DRSKPNO'), "login copyright must use the requested institution text.");
 
-assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.1"') && dashboard.includes('href="/transparent-theme.css?v=2.0.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
+assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.2"') && dashboard.includes('href="/transparent-theme.css?v=2.0.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
 assert.ok(transparentCss.includes("--sahabat-glass-blur:16px") && transparentCss.includes("--sahabat-glass-bg:rgba(15,23,42,.70)") && transparentCss.includes("color:#fff!important"), "shared theme must use glassmorphism, blur 16px, and white typography.");
 assert.match(gradle, /versionCode 31/);
 assert.ok(gradle.includes("versionName '1.2.28'"));
