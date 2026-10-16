@@ -1,3 +1,9 @@
+## 1.1.48 — 2026-10-16
+- Hapus seluruh latar kartu, efek blur kaca, garis dekoratif, dan bayangan dari semua panel/kartu di dashboard owner; foto latar tetap terlihat.
+- Hilangkan lapisan latar pada area foto/nama/NIP/unit kerja dan tombol ikon Notifikasi, Pengaturan, serta Keluar tanpa mengubah ID atau handler.
+- Tambahkan stylesheet cleanup sebagai aturan terakhir dan cache-buster baru agar perubahan tampilan tidak tertahan CSS lama.
+- Perbaiki pemeriksaan versi CI yang masih mengharapkan stylesheet/versi lama; selaraskan web/PWA ke 1.1.48 dan Android ke 1.2.27 (versionCode 30).
+
 ## 1.1.47 — 2026-10-16
 - Ratakan grup ikon notifikasi, pengaturan, dan keluar ke sisi kanan kartu profil menggunakan margin-left:auto tanpa mengganti ID/event handler.
 - Tambahkan jam lokal real-time “Live DD/MM/YYYY HH:mm:ss” di kanan bawah kartu, warna olive green; diperbarui setiap detik dan disegarkan saat tab kembali aktif.
