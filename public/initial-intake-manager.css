@@ -42,3 +42,14 @@
 .initial-intake-whatsapp-btn:disabled{opacity:.4;cursor:not-allowed}
 .initial-intake-table td:last-child{min-width:130px;width:130px}
 .initial-intake-done-btn{min-width:100px!important;max-width:120px!important;white-space:nowrap!important}
+
+/* Keep the Aksi control horizontal and prevent narrow mobile cells from stacking its label vertically. */
+.initial-intake-table td:last-child{min-width:150px!important;width:150px!important;white-space:nowrap!important;vertical-align:middle}
+.initial-intake-table td:last-child .dashbtn,
+.initial-intake-table td:last-child .initial-intake-done-btn{display:inline-flex!important;align-items:center;justify-content:center;width:auto!important;min-width:100px!important;max-width:140px!important;margin:0!important;padding:10px 14px!important;white-space:nowrap!important;word-break:keep-all!important;overflow-wrap:normal!important;line-height:1.25!important;text-align:center;flex:0 0 auto}
+@media(max-width:650px){
+ .initial-intake-table{min-width:820px}
+ .initial-intake-table td:last-child{min-width:150px!important;width:150px!important;max-width:150px!important;white-space:nowrap!important;padding-left:14px;padding-right:14px}
+ .initial-intake-table td:last-child .dashbtn,
+ .initial-intake-table td:last-child .initial-intake-done-btn{display:inline-flex!important;width:auto!important;min-width:100px!important;max-width:140px!important;margin:0!important;padding:10px 14px!important;white-space:nowrap!important;word-break:keep-all!important;overflow-wrap:normal!important}
+}
