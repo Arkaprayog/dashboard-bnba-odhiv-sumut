@@ -169,9 +169,10 @@
       <button type="button" data-view="formats">▤ Dokumen</button>
       <button type="button" data-view="respondentQuiz">▧ Kuisioner Responden</button>
       <div class="app-nav-group" id="assessmentNavGroup" hidden>
-        <div class="app-nav-group-title">▧ From Asesmen Terintergrasi</div>
+        <button type="button" class="app-nav-group-title" id="assessmentNavToggle" aria-expanded="false" aria-controls="assessmentSubmenu">▧ From Asesmen Terintergrasi</button><div id="assessmentSubmenu" class="assessment-submenu">
         <button type="button" class="app-nav-subitem" data-view="assessment">Lembar Asesmen Terintegrasi</button>
         <button type="button" class="app-nav-subitem" data-view="assessmentSaved">Data Asesmen Tersimpan</button>
+        </div>
       </div>
     </nav>
     <section class="app-view" id="homeView" aria-label="Beranda Statistik">
@@ -247,6 +248,8 @@
       </form>
     </section>
     <section class="app-view" id="assessmentView" hidden aria-label="From Asesmen Terintegrasi">
+      <div class="assessment-empty-state"><h2>Lembar Asesmen Terintegrasi</h2><p>Halaman telah dikosongkan sesuai permintaan.</p></div>
+      <div id="assessmentLegacyContent" hidden>
       <div class="dashhead assessment-no-print"><div><h2>Form Asesmen Terintegrasi</h2><p>Direktorat Jenderal Rehabilitasi Sosial · Semua jawaban opsional</p></div><div class="assessment-actions assessment-action-rows">
           <div class="assessment-action-row assessment-photo-row" aria-label="Foto pendukung">
             <label class="assessment-upload">FOTO DIRI<input type="file" id="assessmentPhotoSelf" accept="image/*" capture="user"></label>
@@ -276,12 +279,16 @@
         <section id="assessmentPrintPhotos" class="assessment-print-photos" aria-label="Lampiran foto asesmen"></section>
       </div>
       <p class="dashmsg assessment-no-print" id="assessmentMessage" role="status" aria-live="polite">Simpan ke database hanya tersedia setelah login dengan peran owner/admin. Data asesmen bersifat rahasia.</p>
+    </div>
     </section>
     <section class="app-view" id="assessmentSavedView" hidden aria-label="Data Asesmen Tersimpan">
+      <div class="assessment-empty-state"><h2>Data Asesmen Tersimpan</h2><p>Halaman telah dikosongkan sesuai permintaan.</p></div>
+      <div id="assessmentSavedLegacyContent" hidden>
       <div class="dashhead"><div><h2>Data Asesmen Tersimpan</h2><p>Daftar asesmen yang tersimpan secara privat. Pilih data untuk membukanya kembali di Lembar Asesmen Terintegrasi.</p></div><button class="dashbtn" type="button" id="refreshSavedAssessments">Perbarui daftar</button></div>
       <p class="dashmsg" id="assessmentSavedMessage" role="status" aria-live="polite">Daftar asesmen akan dimuat setelah login.</p>
       <select id="assessmentSavedList" aria-label="Pilih asesmen tersimpan" hidden><option value="">Pilih asesmen tersimpan</option></select>
       <div id="assessmentSavedCards" class="assessment-saved-list" aria-live="polite"><p>Belum ada daftar asesmen dimuat.</p></div>
+    </div>
     </section>
     <section class="app-view" id="respondentQuizView" hidden aria-label="Kuisioner Responden">
       <div class="dashhead"><div><h2>Kuisioner Responden</h2><p>Bagikan tautan resmi pada domain Sahabat ODHIV Sumut kepada responden atau pindai kode QR.</p></div></div>
@@ -418,7 +425,9 @@ function setAppView(view){
  document.querySelectorAll('#appNavigation [data-view]').forEach(button=>{if(button.dataset.view===view)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
  if(view==='news'&&!newsItems.length)loadNews();
 }
-document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button)setAppView(button.dataset.view);});
+const assessmentNavToggle=document.getElementById('assessmentNavToggle');
+if(assessmentNavToggle){assessmentNavToggle.addEventListener('click',()=>{const group=document.getElementById('assessmentNavGroup');const expanded=assessmentNavToggle.getAttribute('aria-expanded')==='true';assessmentNavToggle.setAttribute('aria-expanded',String(!expanded));group?.classList.toggle('is-expanded',!expanded);});}
+document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button){setAppView(button.dataset.view);if(button.dataset.view==='assessment'||button.dataset.view==='assessmentSaved'){assessmentNavToggle?.setAttribute('aria-expanded','true');document.getElementById('assessmentNavGroup')?.classList.add('is-expanded');}}});
 document.getElementById('openRespondentQuiz').addEventListener('click',()=>window.open('https://sahabatodhivsumut.web.id/kuisioner-responden.html','_blank','noopener,noreferrer'));
 document.getElementById('copyRespondentQuiz').addEventListener('click',async()=>{const message=document.getElementById('respondentQuizMessage');try{await navigator.clipboard.writeText('https://sahabatodhivsumut.web.id/kuisioner-responden.html');message.textContent='Link kuisioner berhasil disalin.';}catch{message.textContent='Salin link ini secara manual: https://sahabatodhivsumut.web.id/kuisioner-responden.html';}});
 
