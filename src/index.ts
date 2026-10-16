@@ -339,7 +339,13 @@ async function ensureTeamSchema(env: Env) {
       ip_hash TEXT NOT NULL,
       created_at INTEGER NOT NULL
     )`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS team_login_attempts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ip_hash TEXT NOT NULL,
+      created_at INTEGER NOT NULL
+    )`),
     env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_team_submission_ip_time ON team_submission_attempts(ip_hash,created_at)"),
+    env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_team_login_attempt_ip_time ON team_login_attempts(ip_hash,created_at)"),
     env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_team_petugas_active ON team_petugas(active,created_at)"),
     env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_team_petugas_v2_active ON team_petugas_v2(active,created_at)"),
     env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_team_sessions_petugas ON team_sessions(petugas_id,expires_at)"),
@@ -1109,6 +1115,14 @@ export default {
           const phone = typeof body.phone === "string" ? body.phone.trim() : "";
           const password = typeof body.password === "string" ? body.password : "";
           await ensureTeamSchema(env);
+          const attemptNow = Math.floor(Date.now() / 1000);
+          const clientIp = request.headers.get("CF-Connecting-IP") || "unknown";
+          const ipHash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(clientIp)));
+          await env.DB.prepare("DELETE FROM team_login_attempts WHERE created_at<?").bind(attemptNow - 86400).run();
+          const recentAttempts = await env.DB.prepare("SELECT COUNT(*) AS n FROM team_login_attempts WHERE ip_hash=? AND created_at>?")
+            .bind(ipHash, attemptNow - 900).first<{ n: number }>();
+          if ((recentAttempts?.n || 0) >= 20) return reply({ error: "Terlalu banyak percobaan login. Coba lagi dalam 15 menit." }, 429, { "retry-after": "900" });
+          await env.DB.prepare("INSERT INTO team_login_attempts(ip_hash,created_at) VALUES(?,?)").bind(ipHash, attemptNow).run();
           type TeamLoginRow = { id: string; display_name: string; position: string; phone: string; profile_completed: number; password_hash: string; password_salt: string };
           let petugas: TeamLoginRow | null = null;
           if (token.length >= 40 && token.length <= 100 && name.length >= 2 && name.length <= 120) {
