@@ -997,6 +997,34 @@ export default {
           return reply({ ok: true, item: { id, display_name: name, position, phone, active: 1 }, link: origin + "/tim-pendataan.html?token=" + encodeURIComponent(token) }, 201);
         }
 
+        if (url.pathname === "/api/team-petugas/password" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login ke dashboard admin." }, 401);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengelola kata sandi tim." }, 403);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          let body: { id?: unknown; password?: unknown };
+          try { body = await request.json() as typeof body; } catch { return reply({ error: "Format permintaan tidak valid." }, 400); }
+          const id = typeof body.id === "string" ? body.id.trim() : "";
+          const password = typeof body.password === "string" ? body.password : "";
+          if (!/^[0-9a-f-]{36}$/i.test(id) || password.length < 8 || password.length > 128) {
+            return reply({ error: "ID anggota tidak valid atau kata sandi kurang dari 8 karakter." }, 400);
+          }
+          await ensureTeamSchema(env);
+          const salt = crypto.getRandomValues(new Uint8Array(16));
+          const digest = await passwordHash(password, salt);
+          const passwordHex = [...digest].map(value => value.toString(16).padStart(2, "0")).join("");
+          const saltHex = [...salt].map(value => value.toString(16).padStart(2, "0")).join("");
+          const saved = await env.DB.prepare("UPDATE team_petugas_v2 SET password_hash=?,password_salt=? WHERE id=? AND active=1")
+            .bind(passwordHex, saltHex, id).run();
+          if (saved.meta.changes !== 1) return reply({ error: "Anggota tidak ditemukan atau sudah nonaktif." }, 404);
+          await env.DB.prepare("UPDATE team_sessions SET revoked_at=? WHERE petugas_id=? AND revoked_at IS NULL")
+            .bind(Math.floor(Date.now() / 1000), id).run();
+          await audit(env, admin.id, "team_petugas_password_reset");
+          return reply({ ok: true, message: "Kata sandi anggota diperbarui. Semua sesi anggota lama telah dikeluarkan." });
+        }
+
         if (url.pathname === "/api/team-petugas/revoke" && request.method === "POST") {
           if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
           const admin = await sessionAdmin(request, env);
