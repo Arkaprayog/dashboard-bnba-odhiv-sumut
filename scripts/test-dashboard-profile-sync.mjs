@@ -201,12 +201,27 @@ assert.ok(offlinePage.includes("backdrop-filter:blur(16px)!important") || offlin
 const respondentChooser = readFileSync("public/kuisioner-responden.html", "utf8");
 const integratedRespondentForm = readFileSync("public/kuesioner-mandiri.html", "utf8");
 const chooserCss = readFileSync("public/kuisioner-pilihan.css", "utf8");
+const initialIntakePage = readFileSync("public/kuisioner-awal.html", "utf8");
+const initialIntakeCss = readFileSync("public/kuisioner-awal-layout.css", "utf8");
+const clinicBarcodePage = readFileSync("public/barcode-layanan.html", "utf8");
+const clinicBarcodeCss = readFileSync("public/barcode-layanan-layout.css", "utf8");
+const intakeManagerCss = readFileSync("public/initial-intake-manager.css", "utf8");
 assert.ok(respondentChooser.includes('/kuisioner-pilihan.css?v=1.0.0'), "respondent chooser must load its responsive chooser stylesheet.");
 assert.ok(respondentChooser.includes('href="/kuesioner-mandiri.html"'), "respondent chooser must link to the public integrated form.");
 assert.ok(respondentChooser.includes("https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform"), "respondent chooser must preserve the existing Google Forms backup.");
 assert.ok(chooserCss.includes(".choice-grid") && chooserCss.includes("@media(max-width:650px)"), "respondent chooser must be responsive.");
 assert.ok(!respondentChooser.includes("window.location.replace(destination)") && !respondentChooser.includes("window.setTimeout(finish"), "respondent chooser must never force an automatic redirect.");
 assert.ok(integratedRespondentForm.includes('/api/public-questionnaire') && integratedRespondentForm.includes('name="consent"') && integratedRespondentForm.includes('name="website"'), "integrated public form must use the public submission API, explicit consent, and a honeypot.");
+
+assert.ok(initialIntakePage.includes('id="initialIntakeForm"') && initialIntakePage.includes('/api/public-initial-intake') && initialIntakePage.includes('name="preferredName"') && initialIntakePage.includes('name="phone"') && initialIntakePage.includes('name="consent"') && initialIntakePage.includes('name="website"'), "public first-stage intake must be short, consent-based, and protected by a honeypot.");
+assert.ok(!/name="(?:nik|fotoDiri|fotoKtp|alamatDomisili|jenisKelamin)"/.test(initialIntakePage), "public first-stage intake must not collect identity-document, photo, address, or health-adjacent details.");
+assert.ok(workerSource.includes('url.pathname === "/api/public-initial-intake"') && workerSource.includes('public_initial_intakes') && workerSource.includes('public_initial_intake_attempts'), "public initial intake must be stored in a separate private D1 table with IP-based throttling.");
+assert.ok(workerSource.includes('url.pathname === "/api/owner/initial-intakes"') && workerSource.includes('url.pathname === "/api/owner/initial-intakes/status"') && workerSource.includes('X-CSRF-Token'), "owner follow-up list and status updates must use authenticated and CSRF-protected API routes.");
+assert.ok(dashboard.includes('BARCODE LAYANAN KESEHATAN') && dashboard.includes('id="initialIntakesRows"') && dashboard.includes('/api/owner/initial-intakes') && dashboard.includes('Siapkan WhatsApp + Google Forms'), "owner dashboard must offer the clinic QR and track follow-up messages.");
+assert.ok(dashboard.includes('entry.1060152272') && dashboard.includes('Nama Anda sudah terisi otomatis') && dashboard.includes('Tandai selesai') && dashboard.includes('Google Sheets'), "follow-up link must prefill the known name field and avoid falsely auto-confirming completion.");
+assert.ok(clinicBarcodePage.includes('kuisioner-awal.html') && clinicBarcodePage.includes('create-qr-code') && clinicBarcodePage.includes('window.print()') && clinicBarcodePage.includes('copyQrLinkButton'), "clinic QR page must generate the generic intake QR and support printing/copying the link.");
+assert.ok(initialIntakeCss.includes('.intake-consent') && initialIntakeCss.includes('@media(max-width:480px)') && clinicBarcodeCss.includes('@media print') && intakeManagerCss.includes('.initial-intake-scroll'), "intake, printable QR, and owner status table must be mobile-friendly and printable.");
+
 assert.ok(!integratedRespondentForm.includes("team-login") && integratedRespondentForm.includes('capture="environment"') && integratedRespondentForm.includes('name="fotoDiri"'), "public form must not require staff login and must retain direct photo capture.");
 assert.ok(workerSource.includes('url.pathname === "/api/public-questionnaire"') && workerSource.includes("async function handlePublicQuestionnaire"), "Worker must expose the dedicated public submission route.");
 assert.ok(workerSource.includes("public_questionnaire_attempts") && workerSource.includes("sheets_duplicate_check") && workerSource.includes("RESPONDEN MANDIRI"), "public submission must include throttling, duplicate checking, and explicit respondent attribution.");
