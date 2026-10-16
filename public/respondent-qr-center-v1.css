@@ -1,0 +1,67 @@
+/* Fresh respondent questionnaire QR presentation — logo aligned by the same CSS grid cell. */
+html body.authenticated #dashboard .respondent-quiz-qr-frame {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: minmax(0, 1fr) !important;
+  place-items: stretch !important;
+  width: min(100%, 300px) !important;
+  max-width: 300px !important;
+  aspect-ratio: 1 / 1 !important;
+  margin: 10px auto !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  line-height: 0 !important;
+  box-sizing: border-box !important;
+  isolation: isolate !important;
+}
+html body.authenticated #dashboard .respondent-quiz-qr-frame > .respondent-quiz-qr {
+  grid-area: 1 / 1 / 2 / 2 !important;
+  display: block !important;
+  align-self: stretch !important;
+  justify-self: stretch !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  aspect-ratio: 1 / 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  box-sizing: border-box !important;
+  object-fit: fill !important;
+}
+html body.authenticated #dashboard .respondent-quiz-qr-frame > .respondent-quiz-qr-logo {
+  grid-area: 1 / 1 / 2 / 2 !important;
+  place-self: center !important;
+  position: relative !important;
+  inset: auto !important;
+  transform: none !important;
+  display: block !important;
+  width: clamp(48px, 20%, 60px) !important;
+  height: clamp(48px, 20%, 60px) !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+  max-width: 60px !important;
+  max-height: 60px !important;
+  margin: 0 !important;
+  padding: 5px !important;
+  border: 2px solid #fff !important;
+  border-radius: 12px !important;
+  box-sizing: border-box !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  background: #fff !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .18) !important;
+  z-index: 2 !important;
+}
+@media (max-width: 640px) {
+  html body.authenticated #dashboard .respondent-quiz-qr-frame {
+    width: min(100%, 280px) !important;
+  }
+  html body.authenticated #dashboard .respondent-quiz-qr-frame > .respondent-quiz-qr-logo {
+    width: 20% !important;
+    height: 20% !important;
+  }
+}
