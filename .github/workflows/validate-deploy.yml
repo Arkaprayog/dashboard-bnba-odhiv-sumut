@@ -529,7 +529,7 @@ jobs:
           test "$chooser_css_status" = "200" || (echo "::error::Questionnaire chooser CSS returned HTTP $chooser_css_status." && exit 1)
           case "$chooser_css_type" in text/css*) ;; *) echo "::error::Questionnaire chooser CSS has unexpected content type: $chooser_css_type." && exit 1 ;; esac
           grep -Fq '.choice-grid' /tmp/sahabat-chooser.css || (echo "::error::Questionnaire chooser CSS is stale." && exit 1)
-          internal_form_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-questionnaire-mandiri.html --write-out '%{http_code}' "$APP_URL/kuesioner-mandiri.html")"
+          internal_form_status="$(curl --connect-timeout 5 --max-time 20 --location --max-redirs 5 --silent --show-error --output /tmp/sahabat-questionnaire-mandiri.html --write-out '%{http_code}' "$APP_URL/kuesioner-mandiri.html")"
           test "$internal_form_status" = "200" || (echo "::error::Integrated public questionnaire page returned HTTP $internal_form_status." && exit 1)
           grep -Fq '/api/public-questionnaire' /tmp/sahabat-questionnaire-mandiri.html || (echo "::error::Integrated public questionnaire is missing its submission endpoint." && exit 1)
           grep -Fq 'name="consent"' /tmp/sahabat-questionnaire-mandiri.html && grep -Fq 'name="website"' /tmp/sahabat-questionnaire-mandiri.html || (echo "::error::Integrated public questionnaire consent or anti-spam field is missing." && exit 1)
