@@ -37,12 +37,18 @@ assert.ok(suratLainnya.indexOf('id="previewDate"') < suratLainnya.indexOf('class
 assert.match(suratLainnyaCss, /@media print\{[\s\S]*?\.letter-date-line\{width:100%;text-align:right/);
 assert.match(dashboard, /textContent=safeText\(profile\.institution\)\|\|'Unit kerja belum diisi'/);
 assert.match(dashboard, /id="notificationBellButton"/);
+
+assert.ok(dashboard.includes("function assessmentDataUrlToBytes(dataUrl)"), "PDF builder must decode image data URLs without fetch() so CSP connect-src does not block them.");
+assert.ok(!dashboard.includes("fetch(saved.dataUrl)"), "PDF builder must not fetch data: URLs.");
+assert.ok(dashboard.includes("assessmentDataUrlToBytes(saved.dataUrl)"), "PDF builder must embed photo bytes directly from the local data URL.");
+assert.ok(dashboard.includes('href="/single-layer-floating-dashboard-v1.css?v=1.1.44"'), "single-layer dashboard stylesheet must be linked.");
+assert.ok(!dashboard.includes('">\\n  <link rel="stylesheet" href="/single-layer-floating-dashboard-v1.css'), "stylesheet tags must use a real newline, not a literal backslash-n.");
 assert.match(dashboard, /id="settingsButton"/);
 assert.match(dashboard, /id="logoutButton"/);
 assert.match(dashboard, /aria-label="Keluar"/);
 assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='owner' AND active=1/);
 assert.match(worker, /owner_profile_update/);
-assert.equal(pkg.version, "1.1.43");
+assert.equal(pkg.version, "1.1.44");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
 assert.ok(dashboard.includes('href="/assessment-print-10-pages-v1.css?v=1.1.41"'), "assessment must load the dedicated ten-page print stylesheet.");
 assert.ok(dashboard.includes('pageIndexForQuestion') && dashboard.includes('assessment-print-page'), "assessment fields must be partitioned into six print pages.");
@@ -52,8 +58,8 @@ assert.ok(dashboard.includes('Data Base Kemensos RI DRSKPNO'), "login copyright 
 
 assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.1"') && dashboard.includes('href="/transparent-theme.css?v=2.0.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
 assert.ok(transparentCss.includes("--sahabat-glass-blur:16px") && transparentCss.includes("--sahabat-glass-bg:rgba(15,23,42,.70)") && transparentCss.includes("color:#fff!important"), "shared theme must use glassmorphism, blur 16px, and white typography.");
-assert.match(gradle, /versionCode 26/);
-assert.ok(gradle.includes("versionName '1.2.23'"));
+assert.match(gradle, /versionCode 27/);
+assert.ok(gradle.includes("versionName '1.2.24'"));
 assert.match(changelog, /^## 1\.1\.18/m);
 assert.ok(dashboard.includes("Versi " + pkg.version), "dashboard display version must match package.json");
 assert.match(dashboard, /href="\/surat-tugas\.html">Buka &amp; Edit Surat Tugas/);
@@ -67,12 +73,12 @@ assert.match(suratTugasCss, /@page\{size:A4 portrait;margin:0\}/);
 assert.match(suratTugas, /window\.print\(\)/);
 assert.ok(changelog.startsWith("## " + pkg.version), "changelog must begin with the current web package version");
 assert.ok(readFileSync(".github/workflows/validate-deploy.yml", "utf8").includes("typeof packageJson.version === 'string'"), "CI must compare release version dynamically");
-assert.ok(releaseWorkflow.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.23"), "release APK artifact must use the current Android version");
-assert.ok(debugWorkflow.includes("Sahabat-ODHIV-Sumut-APK-debug-v1.2.23"), "debug APK artifact must use the current Android version");
-assert.ok(androidReadme.includes("Android package version: **1.2.23** (`versionCode 26`)"), "Android README must match Gradle version");
+assert.ok(releaseWorkflow.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.24"), "release APK artifact must use the current Android version");
+assert.ok(debugWorkflow.includes("Sahabat-ODHIV-Sumut-APK-debug-v1.2.24"), "debug APK artifact must use the current Android version");
+assert.ok(androidReadme.includes("Android package version: **1.2.24** (`versionCode 27`)"), "Android README must match Gradle version");
 assert.ok(androidReadme.includes("web version **" + pkg.version + "**"), "Android README must state current web version");
-assert.ok(rootReadme.includes("release version `1.2.23` (version code `26`)"), "root README must match Android release version");
-assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.23"), "root README artifact link name must match release workflow");
+assert.ok(rootReadme.includes("release version `1.2.24` (version code `26`)"), "root README must match Android release version");
+assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.24"), "root README artifact link name must match release workflow");
 assert.ok(dashboard.includes('href="/transparent-theme.css?v=2.0.0"'), "dashboard must load the shared transparent stylesheet.");
 assert.match(dashboard, /id="notificationBellButton"/);
 assert.ok(dashboardCss.includes("#editOwnerProfile"), "edit-profile pill style must be present in extracted layout CSS.");
