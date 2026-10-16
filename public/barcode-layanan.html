@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#07545b">
+<title>Barcode Layanan Kesehatan | Sahabat ODHIV Sumut</title>
+<link rel="stylesheet" href="/transparent-theme.css?v=2.0.0">
+<link rel="stylesheet" href="/barcode-layanan-layout.css?v=1.0.0">
+</head>
+<body>
+<main class="qr-page">
+<header class="qr-brand"><img src="/logos/kemensos.png" alt="Logo Kementerian Sosial" width="56" height="56"><div><strong>Sahabat ODHIV Sumut</strong><span>Pendaftaran awal responden</span></div></header>
+<section class="qr-poster">
+<p class="qr-kicker">PENDAFTARAN AWAL</p>
+<h1>Mulai dari sini</h1>
+<p class="qr-lead">Pindai barcode untuk memberikan nama dan nomor WhatsApp. Petugas akan mengirim tautan kuesioner lanjutan secara privat.</p>
+<img id="clinicQrCode" class="qr-image" alt="Barcode menuju formulir pendaftaran awal" width="320" height="320">
+<p class="qr-instruction">Arahkan kamera ponsel ke barcode, lalu buka tautan yang muncul.</p>
+<a id="clinicIntakeLink" class="qr-url" href="/kuisioner-awal.html">Buka formulir pendaftaran awal</a>
+<p class="qr-privacy">Tahap awal tidak meminta NIK, foto, alamat rumah, atau informasi kesehatan. Pengisian kuesioner lengkap dapat dilanjutkan nanti.</p>
+</section>
+<div class="qr-actions no-print">
+<button type="button" id="printQrButton">Cetak barcode</button>
+<button type="button" id="copyQrLinkButton">Salin tautan</button>
+<a href="/index.html">Kembali ke aplikasi</a>
+<p id="qrPageMessage" role="status" aria-live="polite"></p>
+</div>
+<footer class="qr-footer">Sahabat ODHIV Sumatera Utara</footer>
+</main>
+<script>
+(()=> {
+ const target=new URL('/kuisioner-awal.html',window.location.origin).toString();
+ const image=new URL('https://api.qrserver.com/v1/create-qr-code/');
+ image.searchParams.set('size','320x320');
+ image.searchParams.set('margin','14');
+ image.searchParams.set('data',target);
+ document.getElementById('clinicQrCode').src=image.toString();
+ document.getElementById('clinicIntakeLink').href=target;
+ document.getElementById('clinicIntakeLink').textContent=target;
+ const message=document.getElementById('qrPageMessage');
+ document.getElementById('printQrButton').addEventListener('click',()=>window.print());
+ document.getElementById('copyQrLinkButton').addEventListener('click',async()=>{
+  try{await navigator.clipboard.writeText(target);message.textContent='Tautan pendaftaran awal disalin.';}
+  catch{message.textContent='Salin tautan ini secara manual: '+target;}
+ });
+})();
+</script>
+</body>
+</html>
