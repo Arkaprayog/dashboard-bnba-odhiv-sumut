@@ -194,3 +194,78 @@ body.authenticated #dashboard .owner-live-clock{
   body.authenticated #dashboard .owner-header-actions{margin-left:auto!important}
   body.authenticated #dashboard .owner-live-clock{right:12px;bottom:9px;font-size:.72rem}
 }
+
+/* Owner card compact header: keep identity on the left and icon actions on the top-right, aligned with owner name. */
+body.authenticated #dashboard .owner-card{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-rows:auto auto;
+  align-items:start;
+  column-gap:clamp(12px,2vw,26px);
+  row-gap:10px;
+  width:100%;
+  padding:clamp(12px,1.6vw,20px)!important;
+  min-height:0;
+  padding-bottom:clamp(12px,1.6vw,20px)!important;
+}
+body.authenticated #dashboard .owner-profile-side{
+  grid-column:1;
+  grid-row:1 / span 2;
+  align-self:center;
+  min-width:0;
+  gap:12px;
+}
+body.authenticated #dashboard .owner-summary{
+  grid-column:2;
+  grid-row:1;
+  align-self:center;
+  min-width:0;
+  text-align:right;
+}
+body.authenticated #dashboard .owner-summary h3{font-size:clamp(1rem,2vw,1.35rem);line-height:1.2}
+body.authenticated #dashboard .owner-summary p{font-size:clamp(.75rem,1.15vw,.95rem);line-height:1.35}
+body.authenticated #dashboard .owner-header-actions{
+  grid-column:2;
+  grid-row:1;
+  align-self:start;
+  justify-self:end;
+  margin:0!important;
+  min-width:0;
+  z-index:2;
+  transform:translateY(-2px);
+}
+body.authenticated #dashboard .owner-summary{padding-top:clamp(42px,5.5vw,58px)!important}
+body.authenticated #dashboard .owner-header-actions .top-actions{gap:clamp(5px,.8vw,10px)}
+body.authenticated #dashboard .owner-header-actions .glass-icon-btn{
+  width:clamp(38px,4.5vw,54px);
+  height:clamp(38px,4.5vw,54px);
+  min-width:clamp(38px,4.5vw,54px);
+  padding:8px!important;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+body.authenticated #dashboard .owner-header-actions .glass-icon-btn svg{width:clamp(19px,2.1vw,25px);height:clamp(19px,2.1vw,25px)}
+body.authenticated #dashboard .owner-live-clock{right:16px;bottom:10px;font-size:.68rem;opacity:.8}
+@media(max-width:640px){
+ body.authenticated #dashboard .owner-card{grid-template-columns:minmax(0,1fr) auto;column-gap:8px;row-gap:8px}
+ body.authenticated #dashboard .owner-profile-side{grid-row:1 / span 2;flex-direction:column;align-items:flex-start;align-self:center;gap:8px}
+ body.authenticated #dashboard .owner-avatar{width:48px;height:48px;flex-basis:48px}
+ body.authenticated #dashboard .owner-edit{padding:8px 10px!important;font-size:.76rem;white-space:nowrap}
+ body.authenticated #dashboard .owner-summary{padding-top:44px!important;grid-column:2;text-align:right}
+ body.authenticated #dashboard .owner-summary h3{font-size:.92rem;overflow-wrap:anywhere}
+ body.authenticated #dashboard .owner-summary p{font-size:.7rem}
+ body.authenticated #dashboard .owner-header-actions{grid-column:2;grid-row:1;justify-self:end;transform:none}
+ body.authenticated #dashboard .owner-header-actions .glass-icon-btn{width:34px;height:34px;min-width:34px;padding:6px!important}
+ body.authenticated #dashboard .owner-header-actions .top-actions{gap:4px}
+ body.authenticated #dashboard .owner-live-clock{right:10px;bottom:7px;font-size:.6rem}
+}
+@media(max-width:390px){
+ body.authenticated #dashboard .owner-card{grid-template-columns:76px minmax(0,1fr);column-gap:8px}
+ body.authenticated #dashboard .owner-profile-side{align-items:flex-start}
+ body.authenticated #dashboard .owner-avatar{width:42px;height:42px;flex-basis:42px}
+ body.authenticated #dashboard .owner-edit{font-size:.68rem;padding:7px 8px!important}
+ body.authenticated #dashboard .owner-summary h3{font-size:.84rem}
+ body.authenticated #dashboard .owner-summary p{font-size:.66rem}
+ body.authenticated #dashboard .owner-header-actions .glass-icon-btn{width:30px;height:30px;min-width:30px}
+}
