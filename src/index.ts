@@ -982,8 +982,8 @@ export default {
           const password = typeof body.password === "string" ? body.password : "";
           if (name.length < 2 || name.length > 120 ||
               !["PENDAMPING LAPANGAN", "PENJANGKAU LAPANGAN"].includes(position) ||
-              !/^\+?[0-9 ()-]{8,30}$/.test(phone) || password.length < 8 || password.length > 128) {
-            return reply({ error: "Nama, jabatan, nomor HP/WA, atau kata sandi belum valid. Kata sandi minimal 8 karakter." }, 400);
+              !/^\+?[0-9 ()-]{8,30}$/.test(phone) || password.length < 6 || password.length > 128) {
+            return reply({ error: "Nama, jabatan, nomor HP/WA, atau kata sandi belum valid. Kata sandi minimal 6 karakter." }, 400);
           }
           await ensureTeamSchema(env);
           const token = b64(crypto.getRandomValues(new Uint8Array(32)));
@@ -1008,8 +1008,8 @@ export default {
           try { body = await request.json() as typeof body; } catch { return reply({ error: "Format permintaan tidak valid." }, 400); }
           const id = typeof body.id === "string" ? body.id.trim() : "";
           const password = typeof body.password === "string" ? body.password : "";
-          if (!/^[0-9a-f-]{36}$/i.test(id) || password.length < 8 || password.length > 128) {
-            return reply({ error: "ID anggota tidak valid atau kata sandi kurang dari 8 karakter." }, 400);
+          if (!/^[0-9a-f-]{36}$/i.test(id) || password.length < 6 || password.length > 128) {
+            return reply({ error: "ID anggota tidak valid atau kata sandi kurang dari 6 karakter." }, 400);
           }
           await ensureTeamSchema(env);
           const salt = crypto.getRandomValues(new Uint8Array(16));
@@ -1163,7 +1163,7 @@ export default {
             }
             if (petugas.profile_completed) return reply({ error: "Tautan pendaftaran ini sudah digunakan. Login menggunakan nomor HP/WA dan kata sandi dari owner." }, 401);
           } else {
-            if (!/^\+?[0-9 ()-]{8,30}$/.test(phone) || password.length < 8 || password.length > 128) {
+            if (!/^\+?[0-9 ()-]{8,30}$/.test(phone) || password.length < 6 || password.length > 128) {
               return reply({ error: "Masukkan nomor HP/WA dan kata sandi yang diberikan owner." }, 400);
             }
             const candidates = await env.DB.prepare("SELECT id,display_name,position,phone,profile_completed,password_hash,password_salt FROM team_petugas_v2 WHERE active=1 ORDER BY created_at DESC LIMIT 500").all<TeamLoginRow>();
