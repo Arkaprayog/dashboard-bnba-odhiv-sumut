@@ -1,5 +1,6 @@
 import { readFileSync, statSync } from "node:fs";
 import assert from "node:assert/strict";
+import vm from "node:vm";
 
 const dashboard = readFileSync("public/index.html", "utf8");
 const transparentCss = readFileSync("public/transparent-theme.css", "utf8");
@@ -221,6 +222,13 @@ assert.ok(dashboard.includes('BARCODE LAYANAN KESEHATAN') && dashboard.includes(
 assert.ok(dashboard.includes('entry.1060152272') && dashboard.includes('Nama Anda sudah terisi otomatis') && dashboard.includes('Tandai selesai') && dashboard.includes('Google Sheets'), "follow-up link must prefill the known name field and avoid falsely auto-confirming completion.");
 assert.ok(clinicBarcodePage.includes('kuisioner-awal.html') && clinicBarcodePage.includes('create-qr-code') && clinicBarcodePage.includes('window.print()') && clinicBarcodePage.includes('copyQrLinkButton'), "clinic QR page must generate the generic intake QR and support printing/copying the link.");
 assert.ok(initialIntakeCss.includes('.intake-consent') && initialIntakeCss.includes('@media(max-width:480px)') && clinicBarcodeCss.includes('@media print') && intakeManagerCss.includes('.initial-intake-scroll'), "intake, printable QR, and owner status table must be mobile-friendly and printable.");
+
+for (const [fileName, source] of [["public/kuisioner-awal.html", initialIntakePage], ["public/barcode-layanan.html", clinicBarcodePage]]) {
+  const blocks = [...source.matchAll(/<script>([\\s\\S]*?)<\\/script>/gi)];
+  assert.equal(blocks.length, 1, fileName + " must contain exactly one inline script.");
+  new vm.Script(blocks[0][1], { filename: fileName + ":inline-script" });
+}
+
 
 assert.ok(!integratedRespondentForm.includes("team-login") && integratedRespondentForm.includes('capture="environment"') && integratedRespondentForm.includes('name="fotoDiri"'), "public form must not require staff login and must retain direct photo capture.");
 assert.ok(workerSource.includes('url.pathname === "/api/public-questionnaire"') && workerSource.includes("async function handlePublicQuestionnaire"), "Worker must expose the dedicated public submission route.");
