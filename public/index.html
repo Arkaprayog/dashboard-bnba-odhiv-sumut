@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="id">
 <head>
-<link rel="stylesheet" href="/app-layout.css?v=2.0.3">
+<link rel="stylesheet" href="/app-layout.css?v=2.0.4">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="no-referrer">
@@ -39,7 +39,7 @@
 
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#07545b">
-<meta name="application-version" content="1.1.53">
+<meta name="application-version" content="1.1.54">
 
 
 
@@ -79,7 +79,7 @@
   <link rel="stylesheet" href="/form-mobile-ui-v1.css?v=1.1.40">
   <link rel="stylesheet" href="/glass-system-v1.css?v=2.0.2">
   <link rel="stylesheet" href="/assessment-print-10-pages-v1.css?v=1.1.46">
-  <link rel="stylesheet" href="/single-layer-floating-dashboard-v1.css?v=1.1.53">
+  <link rel="stylesheet" href="/single-layer-floating-dashboard-v1.css?v=1.1.54">
   <link rel="stylesheet" href="/dashboard-card-clean-v1.css?v=1.1.49">
 <link rel="stylesheet" href="/assessment-glass-layout-v1.css?v=1.1.52">
 </head>
@@ -115,7 +115,7 @@
     <hr class="login-divider">
     <footer class="login-footer">
       <p>Halaman Akses Awal · Data Responden Tetap Dilindungi</p>
-      <p class="login-version">Versi 1.1.53</p>
+      <p class="login-version">Versi 1.1.54</p>
       <p class="login-copyright">© 2026 Data Base Kemensos RI DRSKPNO · Hak cipta dilindungi</p>
     </footer>
   </section>
@@ -176,10 +176,17 @@
       <button type="button" data-view="questionnaire">KUISIONER</button>
       <button type="button" data-view="respondentQuiz">KUISIONER RESPONDEN</button>
       <button type="button" data-view="formats">DOKUMEN</button>
-      <div class="app-nav-group rab-nav-group" id="rabNavGroup"><button type="button" class="app-nav-group-title" id="rabNavToggle" aria-expanded="false" aria-controls="rabSubmenu">RANCANGAN ANGGARAN BELANJA <span aria-hidden="true">⌄</span></button><div class="assessment-submenu rab-submenu" id="rabSubmenu" hidden><button type="button" class="app-nav-subitem" data-rab-view="rabNutrition">RAB NUTRISI</button><button type="button" class="app-nav-subitem" data-rab-view="rabEntrepreneurship">RAB KEWIRAUSAHAAN</button></div></div>
+      <button type="button" id="rabNavToggle" class="rab-nav-trigger" aria-expanded="false" aria-controls="rabHomeChoices">RANCANGAN ANGGARAN BELANJA</button>
     </nav>
     <section class="app-view" id="homeView" aria-label="Beranda Statistik">
       <div class="dashhead"><div><h2>Beranda Statistik</h2><p>Ringkasan data responden dari kuesioner</p></div><button class="dashbtn" id="refreshOverview" type="button">Perbarui statistik</button></div>
+      <section class="rab-home-choices" id="rabHomeChoices" hidden aria-label="Pilihan Rancangan Anggaran Belanja">
+        <div class="dashhead"><div><h2>RANCANGAN ANGGARAN BELANJA</h2><p>Pilih jenis rancangan anggaran yang ingin dibuka.</p></div></div>
+        <div class="overview-grid rab-choice-grid">
+          <article class="overview-card rab-choice-card"><small>Rancangan anggaran</small><strong style="display:block;font-size:1.15rem;margin:8px 0">RAB NUTRISI</strong><p>Rancangan Anggaran Belanja untuk kebutuhan nutrisi.</p><button type="button" class="dashbtn" data-rab-view="rabNutrition">Buka RAB Nutrisi</button></article>
+          <article class="overview-card rab-choice-card"><small>Rancangan anggaran</small><strong style="display:block;font-size:1.15rem;margin:8px 0">RAB KEWIRAUSAHAAN</strong><p>Rancangan Anggaran Belanja untuk kegiatan kewirausahaan.</p><button type="button" class="dashbtn" data-rab-view="rabEntrepreneurship">Buka RAB Kewirausahaan</button></article>
+        </div>
+      </section>
       <div class="overview-grid">
         <div class="overview-card"><small>Total responden</small><strong id="overviewTotal">—</strong></div>
         <div class="overview-card"><small>Kabupaten/kota terdata</small><strong id="overviewRegions">—</strong></div>
@@ -377,7 +384,7 @@
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.53</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.54</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi<br>© 2026 Data Base Kemensos RI DRSKPNO · Hak cipta dilindungi</p>
 </main>
@@ -445,15 +452,14 @@ function setAppView(view){
  if(view==='news'&&!newsItems.length)loadNews();
 }
 document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button&&!button.hidden)setAppView(button.dataset.view);});
-const rabNavGroup=document.getElementById('rabNavGroup'),rabNavToggle=document.getElementById('rabNavToggle'),rabSubmenu=document.getElementById('rabSubmenu');
-function closeRabSubmenu(){rabNavGroup.classList.remove('is-expanded');rabNavToggle.setAttribute('aria-expanded','false');rabSubmenu.hidden=true;}
-rabNavToggle.addEventListener('click',()=>{if(rabSubmenu.hidden){rabSubmenu.hidden=false;rabNavGroup.classList.add('is-expanded');rabNavToggle.setAttribute('aria-expanded','true');}else closeRabSubmenu();});
-document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button&&!button.hidden)closeRabSubmenu();});
-rabSubmenu.addEventListener('click',event=>{const button=event.target.closest('[data-rab-view]');if(button){setAppView(button.dataset.rabView);closeRabSubmenu();}});
-document.addEventListener('click',event=>{if(!rabNavGroup.contains(event.target))closeRabSubmenu();});
-document.addEventListener('keydown',event=>{if(event.key==='Escape')closeRabSubmenu();});
+const rabNavToggle=document.getElementById('rabNavToggle'),rabHomeChoices=document.getElementById('rabHomeChoices');
+function closeRabHomeChoices(){rabHomeChoices.hidden=true;rabNavToggle.setAttribute('aria-expanded','false');}
+rabNavToggle.addEventListener('click',()=>{const shouldOpen=rabHomeChoices.hidden;setAppView('home');rabHomeChoices.hidden=!shouldOpen;rabNavToggle.setAttribute('aria-expanded',String(shouldOpen));});
+document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button&&!button.hidden)closeRabHomeChoices();});
+rabHomeChoices.addEventListener('click',event=>{const button=event.target.closest('[data-rab-view]');if(button){closeRabHomeChoices();setAppView(button.dataset.rabView);}});
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeRabHomeChoices();});
 
-document.getElementById('openRespondentQuiz').addEventListener('click',()=>window.open('https://sahabatodhivsumut.web.id/kuisioner-responden.html','_blank','noopener,noreferrer'));
+ document.getElementById('openRespondentQuiz').addEventListener('click',()=>window.open('https://sahabatodhivsumut.web.id/kuisioner-responden.html','_blank','noopener,noreferrer'));
 document.getElementById('copyRespondentQuiz').addEventListener('click',async()=>{const message=document.getElementById('respondentQuizMessage');try{await navigator.clipboard.writeText('https://sahabatodhivsumut.web.id/kuisioner-responden.html');message.textContent='Link kuisioner berhasil disalin.';}catch{message.textContent='Salin link ini secara manual: https://sahabatodhivsumut.web.id/kuisioner-responden.html';}});
 
 document.getElementById('refreshOverview').addEventListener('click',()=>{if(overviewRows.length)renderOverview(overviewRows,overviewHeaders);else loadRespondents();});

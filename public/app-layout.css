@@ -259,3 +259,15 @@ body:has(#dashboard:not([hidden])) #dashboard .owner-summary a,body:has(#dashboa
 #appNavigation .rab-submenu[hidden]{display:none!important}
 #appNavigation .rab-submenu .app-nav-subitem{width:100%;min-width:0;min-height:42px;padding:10px 12px;border:1px solid rgba(125,211,252,.58);border-radius:12px;color:#fff;background:rgba(255,255,255,.08);font:inherit;font-size:.84rem;font-weight:750;text-align:center;cursor:pointer}
 @media(max-width:650px){#appNavigation .rab-nav-group-title{min-height:64px;padding:10px 8px;font-size:.78rem}#appNavigation .rab-submenu{padding:6px}}
+
+/* RAB options appear as document-style cards in the dashboard home area, not inside navigation. */
+#appNavigation .rab-nav-trigger{min-width:0;width:100%;min-height:58px;padding:13px 14px;border:1.5px solid rgba(125,211,252,.78);border-radius:18px;color:#fff;background:rgba(9,35,57,.38);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font:inherit;font-weight:750;font-size:clamp(.78rem,1vw,.94rem);line-height:1.35;text-align:center;letter-spacing:.025em;cursor:pointer}
+#appNavigation .rab-nav-trigger:hover,#appNavigation .rab-nav-trigger[aria-expanded="true"]{background:rgba(56,189,248,.2);border-color:#bae6fd}
+.rab-home-choices{margin:0 0 22px;padding:clamp(14px,2vw,24px);border:1px solid rgba(186,230,253,.48);border-radius:24px;background:rgba(219,234,254,.13);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 12px 30px rgba(8,35,60,.12)}
+.rab-home-choices[hidden]{display:none!important}
+.rab-home-choices .dashhead{margin-bottom:14px}
+.rab-home-choices .rab-choice-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.rab-home-choices .rab-choice-card{display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding:20px;border:1px solid rgba(255,255,255,.42);border-radius:20px;background:rgba(255,255,255,.22);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 24px rgba(15,40,65,.1)}
+.rab-home-choices .rab-choice-card p{flex:1;line-height:1.55}
+.rab-home-choices .rab-choice-card .dashbtn{margin-top:12px;max-width:100%}
+@media(max-width:650px){.rab-home-choices{padding:12px;border-radius:18px}.rab-home-choices .rab-choice-grid{grid-template-columns:minmax(0,1fr);gap:12px}.rab-home-choices .rab-choice-card{padding:16px}}
