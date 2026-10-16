@@ -1,3 +1,7 @@
+## 1.1.49 — 2026-10-16
+- Perkuat override terakhir untuk menetralkan background, blur, border, filter, dan bayangan yang ditetapkan ulang oleh stylesheet kaca lama.
+- Tambah cache-buster 1.1.49 agar browser memuat CSS bersih yang baru; versi web/PWA 1.1.49, Android 1.2.28 (versionCode 31).
+
 ## 1.1.48 — 2026-10-16
 - Hapus seluruh latar kartu, efek blur kaca, garis dekoratif, dan bayangan dari semua panel/kartu di dashboard owner; foto latar tetap terlihat.
 - Hilangkan lapisan latar pada area foto/nama/NIP/unit kerja dan tombol ikon Notifikasi, Pengaturan, serta Keluar tanpa mengubah ID atau handler.
