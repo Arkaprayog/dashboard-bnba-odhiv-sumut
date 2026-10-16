@@ -269,3 +269,29 @@ body.authenticated #dashboard .owner-live-clock{right:16px;bottom:10px;font-size
  body.authenticated #dashboard .owner-summary p{font-size:.66rem}
  body.authenticated #dashboard .owner-header-actions .glass-icon-btn{width:30px;height:30px;min-width:30px}
 }
+
+/* Final alignment: owner identity and icon actions share one horizontal header row. */
+body.authenticated #dashboard .owner-card{grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto;align-items:center;column-gap:clamp(10px,1.8vw,24px)}
+body.authenticated #dashboard .owner-profile-side{grid-column:1;grid-row:1;flex-direction:column;align-items:flex-start;gap:8px}
+body.authenticated #dashboard .owner-summary{grid-column:2;grid-row:1;text-align:left;padding-top:0!important;align-self:center}
+body.authenticated #dashboard .owner-header-actions{grid-column:3;grid-row:1;align-self:start;justify-self:end;transform:none}
+body.authenticated #dashboard .owner-summary h3{margin-top:0}
+@media(max-width:640px){
+ body.authenticated #dashboard .owner-card{grid-template-columns:54px minmax(0,1fr) auto;grid-template-rows:auto;column-gap:8px;align-items:start}
+ body.authenticated #dashboard .owner-profile-side{grid-column:1;grid-row:1;flex-direction:column;align-items:flex-start;gap:7px}
+ body.authenticated #dashboard .owner-summary{grid-column:2;grid-row:1;text-align:left;padding-top:0!important;align-self:start}
+ body.authenticated #dashboard .owner-header-actions{grid-column:3;grid-row:1;align-self:start;justify-self:end}
+ body.authenticated #dashboard .owner-avatar{width:46px;height:46px;flex-basis:46px}
+ body.authenticated #dashboard .owner-edit{white-space:normal;font-size:.68rem;padding:6px 7px!important}
+ body.authenticated #dashboard .owner-header-actions .glass-icon-btn{width:31px;height:31px;min-width:31px;padding:5px!important}
+ body.authenticated #dashboard .owner-header-actions .top-actions{flex-direction:column;gap:5px}
+ body.authenticated #dashboard .owner-summary h3{font-size:.84rem}
+ body.authenticated #dashboard .owner-summary p{font-size:.66rem}
+}
+@media(max-width:390px){
+ body.authenticated #dashboard .owner-card{grid-template-columns:44px minmax(0,1fr) 28px;column-gap:7px}
+ body.authenticated #dashboard .owner-avatar{width:38px;height:38px;flex-basis:38px}
+ body.authenticated #dashboard .owner-edit{font-size:.62rem;padding:5px!important}
+ body.authenticated #dashboard .owner-header-actions .glass-icon-btn{width:27px;height:27px;min-width:27px}
+ body.authenticated #dashboard .owner-header-actions .top-actions{gap:4px}
+}
