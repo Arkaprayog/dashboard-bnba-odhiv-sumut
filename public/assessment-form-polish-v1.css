@@ -470,3 +470,78 @@ html body.authenticated #dashboard #assessmentView .assessment-answer {
 .assessment-respondent-picker>label{font-weight:700}
 .assessment-respondent-picker select{width:min(100%,34rem);min-width:14rem;max-width:100%}
 .assessment-respondent-picker [role="status"]{flex-basis:100%;font-size:.9rem;overflow-wrap:anywhere}
+
+
+/* Assessment form: glassmorphism, readable fields, and horizontal PDF actions. */
+#assessmentView .assessment-paper {
+  background: rgba(255, 255, 255, 0.18) !important;
+  border: 1px solid rgba(255, 255, 255, 0.30) !important;
+  border-radius: 20px !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+#assessmentView .assessment-brand,
+#assessmentView .assessment-number,
+#assessmentView .assessment-section-title,
+#assessmentView .assessment-row,
+#assessmentView .assessment-choice {
+  background: rgba(255, 255, 255, 0.16) !important;
+  border-color: rgba(255, 255, 255, 0.32) !important;
+  border-radius: 16px;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+#assessmentView .assessment-pdf-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px !important;
+  width: 100%;
+}
+#assessmentView .assessment-pdf-actions > button {
+  flex: 0 1 auto;
+  min-width: 120px;
+  margin: 0 !important;
+}
+#assessmentView .assessment-actions .assessment-action-row {
+  gap: 10px;
+}
+#assessmentView .assessment-respondent-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+#assessmentView .assessment-respondent-picker select {
+  min-width: min(100%, 260px);
+  max-width: 100%;
+}
+#assessmentView .assessment-pdf-actions button:disabled,
+#assessmentView #assessmentSave:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+@media (max-width: 480px) {
+  #assessmentView .assessment-pdf-actions {
+    flex-direction: row !important;
+    flex-wrap: nowrap;
+  }
+  #assessmentView .assessment-pdf-actions > button {
+    flex: 1 1 0;
+    min-width: 0;
+    padding-inline: 10px;
+    white-space: normal;
+  }
+}
+@media print {
+  #assessmentView .assessment-paper {
+    background: #fff !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
