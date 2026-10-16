@@ -114,7 +114,7 @@
  const displayStaff=staff=>{
   currentStaff=staff;
   document.getElementById('profileName').textContent=staff.name;
-  document.getElementById('profilePosition').textContent='Jabatan: '+staff.position;
+  document.getElementById('profilePosition').textContent='Jabatan: '+(staff.position==='PENDAMPING LAPANGAN'?'Pendamping Sebaya':staff.position);
   document.getElementById('profilePhone').textContent='HP/WA: '+staff.phone;
   document.getElementById('setupName').textContent=staff.name;
   document.getElementById('setupPosition').textContent='Jabatan: '+staff.position;
@@ -198,7 +198,16 @@
    const response=await fetch('/api/team-profile',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken},body:new FormData(profileForm)});
    const data=await response.json().catch(()=>({}));
    if(!response.ok||!data.ok)throw new Error(data.error||'Profil belum berhasil disimpan.');
-   clearMessage(profileMessage);await loadSession();
+   await fetch('/api/team-logout',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-CSRF-Token':csrfToken}});
+   csrfToken='';currentStaff=null;
+   profileBar.hidden=true;profileSetup.hidden=true;intakeIntro.hidden=true;form.hidden=true;
+   document.getElementById('welcomeCard').hidden=false;loginForm.hidden=false;
+   document.getElementById('loginNameField').hidden=true;document.getElementById('loginName').required=false;
+   document.getElementById('loginPhoneField').hidden=false;document.getElementById('loginPasswordField').hidden=false;
+   document.getElementById('loginPhone').required=true;document.getElementById('loginPassword').required=true;
+   document.getElementById('loginPhone').value=document.getElementById('teamProfilePhone').value.trim();
+   linkToken='';history.replaceState(null,'',location.pathname);
+   showMessage(pageMessage,'Profil berhasil didaftarkan. Silakan login ke akun Anda menggunakan nomor HP/WA dan kata sandi yang diberikan owner.','ok');
   }catch(error){showMessage(profileMessage,error instanceof Error?error.message:'Profil gagal disimpan. Coba kembali.','error');}
   finally{profileSaveButton.disabled=false;profileSaveButton.textContent='Simpan Profil';}
  });
