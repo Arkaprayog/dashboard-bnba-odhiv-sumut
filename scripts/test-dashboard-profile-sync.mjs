@@ -71,14 +71,14 @@ assert.match(floatingMenuCss, /border:1\.5px solid #7dd3fc/, "main menu buttons 
 assert.ok(dashboard.includes("function assessmentDataUrlToBytes(dataUrl)"), "PDF builder must decode image data URLs without fetch() so CSP connect-src does not block them.");
 assert.ok(!dashboard.includes("fetch(saved.dataUrl)"), "PDF builder must not fetch data: URLs.");
 assert.ok(dashboard.includes("assessmentDataUrlToBytes(saved.dataUrl)"), "PDF builder must embed photo bytes directly from the local data URL.");
-assert.ok(dashboard.includes('href="/single-layer-floating-dashboard-v1.css?v=1.1.54"'), "single-layer dashboard stylesheet must be linked.");
+assert.ok(dashboard.includes('href="/single-layer-floating-dashboard-v1.css?v=1.1.55"'), "single-layer dashboard stylesheet must be linked.");
 assert.ok(!dashboard.includes('">\\n  <link rel="stylesheet" href="/single-layer-floating-dashboard-v1.css'), "stylesheet tags must use a real newline, not a literal backslash-n.");
 assert.match(dashboard, /id="settingsButton"/);
 assert.match(dashboard, /id="logoutButton"/);
 assert.match(dashboard, /aria-label="Keluar"/);
 assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='owner' AND active=1/);
 assert.match(worker, /owner_profile_update/);
-assert.equal(pkg.version, "1.1.54");
+assert.equal(pkg.version, "1.1.55");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
 assert.ok(dashboard.includes('href="/assessment-print-10-pages-v1.css?v=1.1.46"'), "assessment must load the dedicated ten-page print stylesheet.");
 assert.ok(dashboard.includes('pageIndexForQuestion') && dashboard.includes('assessment-print-page'), "assessment fields must be partitioned into six print pages.");
@@ -100,7 +100,7 @@ assert.ok(assessmentGlassCss.includes("backdrop-filter:blur(18px)"), "photo card
 assert.ok(assessmentPrintCss.includes('size:A4 portrait') && assessmentPrintCss.includes('page-break-before:always') && assessmentPrintCss.includes('assessment-print-photo-page'), "print stylesheet must force A4 page breaks for the four appendices.");
 assert.ok(dashboard.includes('Data Base Kemensos RI DRSKPNO'), "login copyright must use the requested institution text.");
 
-assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.4"') && dashboard.includes('href="/transparent-theme.css?v=2.0.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
+assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.5"') && dashboard.includes('href="/transparent-theme.css?v=2.0.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
 assert.ok(transparentCss.includes("--sahabat-glass-blur:16px") && transparentCss.includes("--sahabat-glass-bg:rgba(15,23,42,.70)") && transparentCss.includes("color:#fff!important"), "shared theme must use glassmorphism, blur 16px, and white typography.");
 assert.match(gradle, /versionCode 31/);
 assert.ok(gradle.includes("versionName '1.2.28'"));
@@ -137,6 +137,9 @@ assert.ok(dashboard.includes('href="/dashboard-card-clean-v1.css?v=1.1.49"'), "f
 assert.match(cleanCardCss, /background: transparent !important/);
 assert.match(cleanCardCss, /backdrop-filter: none !important/);
 assert.match(cleanCardCss, /#notificationBellButton/);
+assert.match(ownerCardCss, /grid-template-columns:minmax\(0,1fr\) auto/);
+assert.match(ownerCardCss, /\.owner-header-actions\{[\s\S]*?justify-self:end/);
+assert.match(ownerCardCss, /\.owner-summary\{padding-top:clamp\(42px/);
 assert.match(cleanCardCss, /#settingsButton/);
 assert.match(cleanCardCss, /#logoutButton/);
 
