@@ -167,17 +167,18 @@
  });
  loginForm.addEventListener('submit',async event=>{
   event.preventDefault();clearMessage(loginMessage);
-  const name=document.getElementById('loginName').value.trim();
-  if(!linkToken){showMessage(loginMessage,'Tautan tidak lengkap. Buka tautan dari WhatsApp yang diberikan admin.','error');return;}
-  if(!name){showMessage(loginMessage,'Masukkan nama petugas sesuai pendaftaran.','error');return;}
-  loginButton.disabled=true;loginButton.textContent='Memeriksa nama…';
+  const name=document.getElementById('loginName').value.trim(),phone=document.getElementById('loginPhone').value.trim(),password=document.getElementById('loginPassword').value;
+  if(linkToken&&!name){showMessage(loginMessage,'Masukkan nama sesuai pendaftaran owner.','error');return;}
+  if(!linkToken&&(!phone||password.length<8)){showMessage(loginMessage,'Masukkan nomor HP/WA dan kata sandi yang diberikan owner.','error');return;}
+  loginButton.disabled=true;loginButton.textContent='Memeriksa akun…';
   try{
-   const response=await fetch('/api/team-login',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json'},body:JSON.stringify({token:linkToken,name})});
+   const credentials=linkToken?{token:linkToken,name}:{phone,password};
+   const response=await fetch('/api/team-login',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json'},body:JSON.stringify(credentials)});
    const data=await response.json().catch(()=>({}));
    if(!response.ok||!data.ok)throw new Error(data.error||'Login tidak berhasil.');
    linkToken='';history.replaceState(null,'',location.pathname);
    await showLoggedIn(data);
-  }catch(error){showMessage(loginMessage,error instanceof Error?error.message:'Login gagal. Periksa nama dan tautan.','error');}
+  }catch(error){showMessage(loginMessage,error instanceof Error?error.message:'Login gagal. Periksa nomor HP/WA dan kata sandi.','error');}
   finally{loginButton.disabled=false;loginButton.textContent='Masuk ke Pendataan';}
  });
  profileForm.addEventListener('submit',async event=>{
@@ -221,10 +222,17 @@
   finally{submitButton.disabled=false;submitButton.textContent='Kirim Pendataan';}
  });
  if(linkToken&&linkToken.length>=40&&linkToken.length<=100){
+  document.getElementById('loginPhoneField').hidden=true;document.getElementById('loginPasswordField').hidden=true;
+  document.getElementById('loginPhone').required=false;document.getElementById('loginPassword').required=false;
+  document.getElementById('loginNameField').hidden=false;document.getElementById('loginName').required=true;
+  document.getElementById('loginHint').textContent='Pendaftaran awal: masukkan nama yang didaftarkan owner.';
   clearMessage(pageMessage);loginForm.hidden=false;
  }else{
+  document.getElementById('loginNameField').hidden=true;document.getElementById('loginName').required=false;
+  document.getElementById('loginPhoneField').hidden=false;document.getElementById('loginPasswordField').hidden=false;
+  document.getElementById('loginPhone').required=true;document.getElementById('loginPassword').required=true;
   loginForm.hidden=true;showMessage(pageMessage,'Memeriksa sesi petugas…','');
-  loadSession().catch(error=>failClosed('Sesi tidak aktif. Buka tautan pendataan yang Anda terima dari admin.'));
+  loadSession().catch(error=>{failClosed('Sesi tidak aktif. Login menggunakan nomor HP/WA dan kata sandi dari owner.');loginForm.hidden=false;});
  }
 })();
 </script>
