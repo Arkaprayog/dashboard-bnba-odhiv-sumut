@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "@block65/webcrypto-web-push": "^2.0.0",
-    "@simplewebauthn/server": "^13.1.2"
+    "@simplewebauthn/server": "^13.1.2",
+    "pdf-lib": "^1.17.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261010.1",
