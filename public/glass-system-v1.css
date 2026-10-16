@@ -181,3 +181,171 @@ body :where(.assessment-action-row, .assessment-photo-row, .assessment-actions) 
     box-shadow: none !important;
   }
 }
+
+
+/* ==========================================================
+   UNIVERSAL GLASSMORPHISM V2 — app-wide visual layer
+   White glass at 88% transparency; no heavy shadows.
+   Keep print documents readable and white.
+   ========================================================== */
+:root {
+  --sod-glass-bg: rgba(255, 255, 255, 0.12);
+  --sod-glass-bg-soft: rgba(255, 255, 255, 0.08);
+  --sod-glass-bg-hover: rgba(255, 255, 255, 0.18);
+  --sod-glass-border: rgba(255, 255, 255, 0.25);
+  --sod-glass-border-strong: rgba(255, 255, 255, 0.34);
+  --sod-glass-blur: 16px;
+  --sod-glass-radius: 24px;
+  --sod-glass-shadow: none;
+  --sod-glass-text: #fff;
+}
+
+/* Main views, cards, profile, metrics, forms, menus, modals and table shells */
+body :where(
+  #loginCard, #dashboard, #ownerCard, #ownerProfile, .owner-profile,
+  .app-view, .dashhead, .dashpanel, .dashboard-card, .stat-card,
+  .panel, .card, .modal, .modal-content, .dialog, .dropdown-menu,
+  .assessment-paper, #ownerQuestionnaireForm, #questionnaireView,
+  #assessmentView, #databaseView, #formatsView, #newsView,
+  #respondentQuizView, .login-form, .login-password-field, .field,
+  .dashfield, .assessment-actions, .assessment-upload,
+  .assessment-photo-preview, .assessment-action-row, .owner-form-grid,
+  .owner-form-actions, .news-card, .database-card, .table-wrap,
+  .table-container, .profile-card, .profile-box, .stat, .metric-card,
+  .menu-card, .nav-card, .submenu, .sub-menu, .navigation-card,
+  .dashboard-stat, .settings-panel, .notification-panel
+) {
+  background-color: var(--sod-glass-bg) !important;
+  background-image: none !important;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-color: var(--sod-glass-border) !important;
+  box-shadow: none !important;
+}
+
+/* Smooth universal shape for containers and cards */
+body :where(
+  #loginCard, #ownerCard, .app-view, .dashhead, .dashpanel,
+  .dashboard-card, .stat-card, .panel, .card, .modal-content,
+  .dialog, .dropdown-menu, .assessment-paper, #ownerQuestionnaireForm,
+  .login-form, .news-card, .database-card, .table-wrap,
+  .table-container, .profile-card, .profile-box, .stat, .metric-card,
+  .menu-card, .nav-card, .submenu, .sub-menu, .navigation-card,
+  .dashboard-stat, .settings-panel, .notification-panel
+) {
+  border: 1px solid var(--sod-glass-border) !important;
+  border-radius: 24px !important;
+}
+
+/* Navigation/menu buttons and action buttons share the same glass treatment */
+body :where(
+  button, .dashbtn, .submit, .button, .toggle, .nav-button,
+  .menu-button, .submenu-button, .menu-item, .nav-item > a,
+  .navigation a, .dashboard-menu a
+) {
+  border: 1px solid var(--sod-glass-border) !important;
+  border-radius: 24px !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  transition: background-color .18s ease, border-color .18s ease;
+}
+
+body :where(
+  button:not(.login-submit):not(.submit-primary):not([data-variant="primary"]),
+  .dashbtn:not(.primary):not(.is-primary), .toggle,
+  .nav-button, .menu-button, .submenu-button, .menu-item,
+  .nav-item > a, .navigation a, .dashboard-menu a
+) {
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+body :where(
+  button:hover, .dashbtn:hover, .toggle:hover,
+  .nav-button:hover, .menu-button:hover, .submenu-button:hover,
+  .menu-item:hover, .nav-item > a:hover, .navigation a:hover,
+  .dashboard-menu a:hover
+) {
+  background: rgba(255, 255, 255, 0.20) !important;
+  border-color: var(--sod-glass-border-strong) !important;
+}
+
+/* Fields stay transparent; preserve readable contrast and focus state */
+body :where(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  select, textarea
+) {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid var(--sod-glass-border) !important;
+  border-radius: 16px !important;
+  box-shadow: none !important;
+}
+
+/* Tables and statistics should not create opaque blocks */
+body :where(table, .table-wrap, .table-container) {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+body :where(th, td) {
+  background: rgba(255, 255, 255, 0.045) !important;
+  box-shadow: none !important;
+}
+
+/* Explicitly keep assessment document actions in one horizontal row */
+#assessmentView .assessment-pdf-actions,
+#assessmentView .assessment-actions .assessment-pdf-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+#assessmentView .assessment-pdf-actions > button {
+  flex: 1 1 0 !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 48px;
+  margin: 0 !important;
+}
+#assessmentView .assessment-pdf-actions > button,
+#assessmentView #assessmentSave,
+#assessmentView #assessmentReset {
+  border-radius: 24px !important;
+  box-shadow: none !important;
+}
+
+/* Responsive card spacing without changing application behavior */
+@media (max-width: 600px) {
+  body :where(
+    #loginCard, #ownerCard, .app-view, .dashhead, .dashpanel,
+    .dashboard-card, .stat-card, .panel, .card, .assessment-paper,
+    .profile-card, .profile-box, .metric-card, .menu-card, .nav-card
+  ) {
+    border-radius: 24px !important;
+  }
+  #assessmentView .assessment-pdf-actions > button {
+    padding-inline: 8px !important;
+    font-size: 14px !important;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* Print remains plain white, never glass */
+@media print {
+  body :where(
+    #loginCard, #dashboard, #ownerCard, .app-view, .dashhead,
+    .dashpanel, .dashboard-card, .stat-card, .panel, .card, .modal,
+    .modal-content, .dialog, .dropdown-menu, .assessment-paper,
+    #ownerQuestionnaireForm, #questionnaireView, #assessmentView,
+    #databaseView, #formatsView, #newsView, #respondentQuizView
+  ) {
+    color: #000 !important;
+    background: #fff !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+  }
+}
