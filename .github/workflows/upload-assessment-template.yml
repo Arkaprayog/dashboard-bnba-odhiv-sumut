@@ -1,0 +1,94 @@
+name: Upload original integrated assessment PDF
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_url:
+        description: "Direct GitHub file-attachment URL (upload the PDF to a repository issue/comment first)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: upload-assessment-template
+  cancel-in-progress: false
+
+jobs:
+  upload-pdf:
+    name: Verify and commit original six-page PDF
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Download and validate source PDF
+        env:
+          SOURCE_URL: ${{ inputs.source_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Accept only GitHub's own uploaded-file links. The redirect target is
+          # followed by curl; arbitrary external URLs are rejected up front.
+          case "$SOURCE_URL" in
+            https://github.com/user-attachments/files/*|https://github.com/user-attachments/assets/*) ;;
+            *)
+              echo "::error::Use a direct https://github.com/user-attachments/files/... or /assets/... URL."
+              exit 1
+              ;;
+          esac
+
+          mkdir -p public
+          curl --fail --show-error --silent --location --proto '=https' \
+            --tlsv1.2 --max-redirs 5 --connect-timeout 15 --max-time 120 \
+            "$SOURCE_URL" --output public/assessment-template.pdf
+
+          python3 - <<'PY'
+          from pathlib import Path
+          pdf = Path("public/assessment-template.pdf").read_bytes()
+          if not pdf.startswith(b"%PDF-"):
+              raise SystemExit("Downloaded file is not a valid PDF signature.")
+          if len(pdf) < 100_000:
+              raise SystemExit(f"PDF unexpectedly small: {len(pdf)} bytes.")
+          print(f"Downloaded PDF: {len(pdf)} bytes.")
+          PY
+
+          expected_sha256="39863874d95734a60c2b009402cc832b4b7b1788971346863c385adc10269954"
+          actual_sha256="$(sha256sum public/assessment-template.pdf | cut -d ' ' -f 1)"
+          if [[ "$actual_sha256" != "$expected_sha256" ]]; then
+            echo "::error::SHA-256 mismatch. Expected the original uploaded PDF; no repository write was made."
+            echo "Expected: $expected_sha256"
+            echo "Actual:   $actual_sha256"
+            exit 1
+          fi
+
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils
+          pages="$(pdfinfo public/assessment-template.pdf | awk '/^Pages:/ {print $2}')"
+          if [[ "$pages" != "6" ]]; then
+            echo "::error::Expected 6 PDF pages, found '$pages'."
+            exit 1
+          fi
+
+          echo "PDF verified: SHA-256 matches and page count is 6."
+
+      - name: Commit the PDF to the repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/assessment-template.pdf
+
+          if git diff --cached --quiet; then
+            echo "The exact verified PDF is already present; nothing to commit."
+            exit 0
+          fi
+
+          git commit -m "Add original integrated assessment PDF template"
+          git push origin HEAD:main
