@@ -392,3 +392,78 @@ body:has(#dashboard:not([hidden])) #dashboard .owner-live-clock{
     width:14px!important;height:14px!important;min-width:14px!important;max-width:14px!important;flex-basis:14px!important;
   }
 }
+
+
+/* v1.1.57: final compact owner header override. Keep photo, owner identity, and action icons on one line. */
+body:has(#dashboard:not([hidden])) #dashboard .owner-card{
+  display:grid!important;grid-template-columns:clamp(54px,7vw,78px) minmax(0,1fr) auto!important;
+  grid-template-areas:"profile summary actions" ". clock clock"!important;
+  align-items:center!important;gap:7px 10px!important;width:100%!important;max-width:none!important;min-width:0!important;
+  margin:0 0 12px!important;padding:10px 12px!important;min-height:0!important;box-sizing:border-box!important;
+  border-radius:16px!important;text-align:left!important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-profile-side{
+  grid-area:profile!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+  justify-content:center!important;gap:5px!important;width:auto!important;min-width:0!important;margin:0!important;padding:0!important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-avatar{
+  width:clamp(40px,4vw,52px)!important;height:clamp(40px,4vw,52px)!important;
+  min-width:clamp(40px,4vw,52px)!important;max-width:clamp(40px,4vw,52px)!important;
+  min-height:clamp(40px,4vw,52px)!important;max-height:clamp(40px,4vw,52px)!important;flex:0 0 auto!important;
+}
+body:has(#dashboard:not([hidden])) #dashboard #editOwnerProfile{
+  min-width:0!important;width:auto!important;padding:5px 7px!important;font-size:.68rem!important;line-height:1.15!important;border-radius:8px!important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary{
+  grid-area:summary!important;align-self:center!important;display:block!important;min-width:0!important;width:100%!important;
+  margin:0!important;padding:0!important;text-align:left!important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary h3{
+  margin:0 0 4px!important;padding:0!important;font-size:clamp(.9rem,1.7vw,1.15rem)!important;line-height:1.2!important;font-weight:800!important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary p,
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary details{
+  margin:2px 0!important;font-size:clamp(.68rem,1vw,.82rem)!important;line-height:1.28!important;overflow-wrap:anywhere!important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary #ownerInstitutionSummary{font-size:clamp(.64rem,.95vw,.78rem)!important;line-height:1.28!important}
+body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions{
+  grid-area:actions!important;position:static!important;inset:auto!important;display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-self:start!important;justify-self:end!important;align-items:center!important;justify-content:flex-end!important;gap:0!important;
+  width:auto!important;max-width:none!important;min-width:0!important;margin:0!important;padding:0!important;border:0!important;z-index:2!important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions .top-actions{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:flex-end!important;
+  gap:4px!important;width:auto!important;min-width:0!important;margin:0!important;padding:0!important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions :is(#notificationBellButton,#settingsButton,#logoutButton){
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 30px!important;
+  width:30px!important;min-width:30px!important;max-width:30px!important;height:30px!important;min-height:30px!important;max-height:30px!important;
+  padding:0!important;margin:0!important;border-radius:9px!important;box-sizing:border-box!important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions :is(#notificationBellButton,#settingsButton,#logoutButton) svg{
+  display:block!important;width:16px!important;height:16px!important;min-width:16px!important;max-width:16px!important;flex:0 0 16px!important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-live-clock{
+  grid-area:clock!important;position:static!important;inset:auto!important;display:block!important;width:100%!important;
+  margin:0!important;padding:2px 0 0!important;font-size:.58rem!important;line-height:1.2!important;text-align:right!important;
+}
+@media(max-width:640px){
+ body:has(#dashboard:not([hidden])) #dashboard .owner-card{grid-template-columns:46px minmax(0,1fr) auto!important;gap:6px!important;padding:9px!important}
+ body:has(#dashboard:not([hidden])) #dashboard .owner-avatar{width:38px!important;height:38px!important;min-width:38px!important;max-width:38px!important;min-height:38px!important;max-height:38px!important}
+ body:has(#dashboard:not([hidden])) #dashboard #editOwnerProfile{padding:4px 5px!important;font-size:.6rem!important}
+ body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions .top-actions{gap:3px!important}
+ body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions :is(#notificationBellButton,#settingsButton,#logoutButton){
+  flex-basis:26px!important;width:26px!important;min-width:26px!important;max-width:26px!important;height:26px!important;min-height:26px!important;max-height:26px!important;border-radius:7px!important
+ }
+ body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions :is(#notificationBellButton,#settingsButton,#logoutButton) svg{width:14px!important;height:14px!important;min-width:14px!important;max-width:14px!important;flex-basis:14px!important}
+ body:has(#dashboard:not([hidden])) #dashboard .owner-summary h3{font-size:clamp(.78rem,3.5vw,.92rem)!important}
+ body:has(#dashboard:not([hidden])) #dashboard .owner-summary p,body:has(#dashboard:not([hidden])) #dashboard .owner-summary details{font-size:clamp(.6rem,2.7vw,.7rem)!important}
+}
+@media(max-width:360px){
+ body:has(#dashboard:not([hidden])) #dashboard .owner-card{grid-template-columns:40px minmax(0,1fr) auto!important;gap:5px!important;padding:8px!important}
+ body:has(#dashboard:not([hidden])) #dashboard .owner-avatar{width:34px!important;height:34px!important;min-width:34px!important;max-width:34px!important;min-height:34px!important;max-height:34px!important}
+ body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions .top-actions{gap:2px!important}
+ body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions :is(#notificationBellButton,#settingsButton,#logoutButton){flex-basis:23px!important;width:23px!important;min-width:23px!important;max-width:23px!important;height:23px!important;min-height:23px!important;max-height:23px!important}
+ body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions :is(#notificationBellButton,#settingsButton,#logoutButton) svg{width:12px!important;height:12px!important;min-width:12px!important;max-width:12px!important;flex-basis:12px!important}
+}
+
