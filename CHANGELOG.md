@@ -1,3 +1,8 @@
+## 1.1.45 — 2026-10-16
+- Pasang aset `public/logos/app icon-template.png` sebagai favicon, Apple Touch Icon, dan ikon PWA melalui manifest.
+- Tambahkan gaya CSS komponen pratinjau ikon SODARAMU yang responsif, terpusat, bersudut squircle, dan memiliki bayangan halus.
+- Selaraskan versi web/PWA ke 1.1.45; versi Android native tidak diubah karena perubahan ini khusus aset web.
+
 ## 1.1.44 — 2026-10-16
 - Perbaiki kegagalan cetak/simpan PDF dengan mengurai data URL foto langsung ke Uint8Array tanpa fetch(data:), yang diblokir kebijakan CSP.
 - Tambahkan pesan kesalahan spesifik untuk pemuatan template PDF dan penyimpanan asesmen.
