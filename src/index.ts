@@ -1553,13 +1553,13 @@ export default {
           if (String(form.get("website") || "").trim()) {
             return reply({ ok: true, message: "Terima kasih. Jika diperlukan, petugas akan menghubungi Anda secara privat." });
           }
-          const preferredName = String(form.get("preferredName") || "").trim().replace(/\\s+/g, " ").slice(0, 100);
+          const preferredName = String(form.get("preferredName") || "").trim().replace(/\s+/g, " ").slice(0, 100);
           const rawPhone = String(form.get("phone") || "").trim();
           const consent = ["on", "yes", "true", "1"].includes(String(form.get("consent") || "").toLowerCase());
-          let phone = rawPhone.replace(/\\D/g, "");
+          let phone = rawPhone.replace(/\D/g, "");
           if (phone.startsWith("0")) phone = "62" + phone.slice(1);
           else if (phone.startsWith("8")) phone = "62" + phone;
-          if (preferredName.length < 2 || !/^[1-9]\\d{8,14}$/.test(phone)) {
+          if (preferredName.length < 2 || !/^[1-9]\d{8,14}$/.test(phone)) {
             return reply({ error: "Masukkan nama panggilan/nama (minimal 2 karakter) dan nomor WhatsApp yang valid." }, 400);
           }
           if (!consent) return reply({ error: "Persetujuan untuk dihubungi melalui WhatsApp diperlukan sebelum mengirim formulir." }, 400);
