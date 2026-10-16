@@ -67,7 +67,7 @@ assert.match(dashboard, /id="logoutButton"/);
 assert.match(dashboard, /aria-label="Keluar"/);
 assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='owner' AND active=1/);
 assert.match(worker, /owner_profile_update/);
-assert.equal(pkg.version, "1.1.48");
+assert.equal(pkg.version, "1.1.49");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
 assert.ok(dashboard.includes('href="/assessment-print-10-pages-v1.css?v=1.1.46"'), "assessment must load the dedicated ten-page print stylesheet.");
 assert.ok(dashboard.includes('pageIndexForQuestion') && dashboard.includes('assessment-print-page'), "assessment fields must be partitioned into six print pages.");
@@ -77,8 +77,8 @@ assert.ok(dashboard.includes('Data Base Kemensos RI DRSKPNO'), "login copyright 
 
 assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.1"') && dashboard.includes('href="/transparent-theme.css?v=2.0.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
 assert.ok(transparentCss.includes("--sahabat-glass-blur:16px") && transparentCss.includes("--sahabat-glass-bg:rgba(15,23,42,.70)") && transparentCss.includes("color:#fff!important"), "shared theme must use glassmorphism, blur 16px, and white typography.");
-assert.match(gradle, /versionCode 30/);
-assert.ok(gradle.includes("versionName '1.2.27'"));
+assert.match(gradle, /versionCode 31/);
+assert.ok(gradle.includes("versionName '1.2.28'"));
 assert.match(changelog, /^## 1\.1\.18/m);
 assert.ok(dashboard.includes("Versi " + pkg.version), "dashboard display version must match package.json");
 assert.match(dashboard, /href="\/surat-tugas\.html">Buka &amp; Edit Surat Tugas/);
@@ -92,12 +92,12 @@ assert.match(suratTugasCss, /@page\{size:A4 portrait;margin:0\}/);
 assert.match(suratTugas, /window\.print\(\)/);
 assert.ok(changelog.startsWith("## " + pkg.version), "changelog must begin with the current web package version");
 assert.ok(readFileSync(".github/workflows/validate-deploy.yml", "utf8").includes("typeof packageJson.version === 'string'"), "CI must compare release version dynamically");
-assert.ok(releaseWorkflow.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.27"), "release APK artifact must use the current Android version");
-assert.ok(debugWorkflow.includes("Sahabat-ODHIV-Sumut-APK-debug-v1.2.27"), "debug APK artifact must use the current Android version");
-assert.ok(androidReadme.includes("Android package version: **1.2.27** (`versionCode 30`)"), "Android README must match Gradle version");
+assert.ok(releaseWorkflow.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.28"), "release APK artifact must use the current Android version");
+assert.ok(debugWorkflow.includes("Sahabat-ODHIV-Sumut-APK-debug-v1.2.28"), "debug APK artifact must use the current Android version");
+assert.ok(androidReadme.includes("Android package version: **1.2.28** (`versionCode 31`)"), "Android README must match Gradle version");
 assert.ok(androidReadme.includes("web version **" + pkg.version + "**"), "Android README must state current web version");
-assert.ok(rootReadme.includes("release version `1.2.27` (version code `30`)"), "root README must match Android release version");
-assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.27"), "root README artifact link name must match release workflow");
+assert.ok(rootReadme.includes("release version `1.2.28` (version code `31`)"), "root README must match Android release version");
+assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.28"), "root README artifact link name must match release workflow");
 assert.ok(dashboard.includes('href="/transparent-theme.css?v=2.0.0"'), "dashboard must load the shared transparent stylesheet.");
 assert.match(dashboard, /id="notificationBellButton"/);
 
@@ -108,7 +108,7 @@ const ownerCardCss = readFileSync("public/single-layer-floating-dashboard-v1.css
 const cleanCardCss = readFileSync("public/dashboard-card-clean-v1.css", "utf8");
 assert.match(ownerCardCss, /\.owner-header-actions\{[\s\S]*?margin-left:auto!important/, "owner action group must be pushed to the right");
 assert.match(ownerCardCss, /\.owner-live-clock\{[\s\S]*?color:#808000/, "owner live clock must be olive green");
-assert.ok(dashboard.includes('href="/dashboard-card-clean-v1.css?v=1.1.48"'), "final card-cleanup stylesheet must be linked with a new cache key");
+assert.ok(dashboard.includes('href="/dashboard-card-clean-v1.css?v=1.1.49"'), "final card-cleanup stylesheet must be linked with a new cache key");
 assert.match(cleanCardCss, /background: transparent !important/);
 assert.match(cleanCardCss, /backdrop-filter: none !important/);
 assert.match(cleanCardCss, /#notificationBellButton/);
