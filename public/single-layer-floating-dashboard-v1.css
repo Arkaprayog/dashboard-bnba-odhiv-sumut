@@ -1,4 +1,4 @@
-/* SODARAMU Single-Layer Floating Dashboard v1.1.44
+/* SODARAMU Single-Layer Floating Dashboard v1.1.46
    Structural override: no stacked glass cards; transparent canvas + one glass layer on actionable controls. */
 :root{
   --fab-glass:rgba(9,35,57,.48);
@@ -47,35 +47,30 @@ body.authenticated #dashboard .owner-summary h3{margin:0 0 4px;font-size:1.05rem
 body.authenticated #dashboard .owner-summary p{margin:3px 0;overflow-wrap:anywhere}
 body.authenticated #dashboard .owner-header-actions{margin-left:auto}
 body.authenticated #dashboard .top-actions{display:flex;gap:9px;align-items:center}
-/* Navigation is a grid of floating actions, not a panel inside another panel. */
+/* Seven primary navigation actions: flat, uppercase floating buttons with sky-blue outlines. */
 body.authenticated #dashboard #appNavigation{
-  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;
   width:100%;margin:0 0 24px;padding:0!important;background:transparent!important;
   border:0!important;border-radius:0!important;box-shadow:none!important;
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
-body.authenticated #dashboard #appNavigation>button,
-body.authenticated #dashboard #appNavigation .app-nav-group-title,
-body.authenticated #dashboard #appNavigation .app-nav-subitem{
-  display:flex;align-items:center;justify-content:center;gap:9px;min-height:58px;width:100%;min-width:0;
-  padding:14px 16px!important;background:var(--fab-glass)!important;color:var(--fab-text)!important;
-  border:1px solid var(--fab-border)!important;border-radius:var(--fab-radius)!important;
-  box-shadow:none!important;backdrop-filter:blur(var(--fab-blur));-webkit-backdrop-filter:blur(var(--fab-blur));
-  font:inherit;font-weight:700;text-align:center;text-decoration:none;white-space:normal;overflow-wrap:anywhere;
-  cursor:pointer;transition:background .18s ease,border-color .18s ease,transform .18s ease;
+body.authenticated #dashboard #appNavigation>button{
+  display:flex;align-items:center;justify-content:center;min-height:64px;width:100%;min-width:0;
+  padding:14px 12px!important;background:var(--fab-glass)!important;color:var(--fab-text)!important;
+  border:1.5px solid #7dd3fc!important;border-radius:20px!important;
+  box-shadow:0 5px 16px rgba(0,0,0,.18)!important;
+  backdrop-filter:blur(var(--fab-blur));-webkit-backdrop-filter:blur(var(--fab-blur));
+  font:inherit;font-size:clamp(.78rem,1.05vw,.96rem);font-weight:750;text-align:center;
+  text-decoration:none;text-transform:uppercase;letter-spacing:.035em;line-height:1.35;
+  white-space:normal;overflow-wrap:anywhere;cursor:pointer;
+  transition:background .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease;
 }
 body.authenticated #dashboard #appNavigation>button:hover,
-body.authenticated #dashboard #appNavigation .app-nav-group-title:hover,
-body.authenticated #dashboard #appNavigation .app-nav-subitem:hover,
 body.authenticated #dashboard #appNavigation>button[aria-current="page"]{
-  background:var(--fab-glass-hover)!important;border-color:#bae6fd!important;transform:translateY(-1px);
+  background:rgba(56,189,248,.22)!important;border-color:#bae6fd!important;
+  box-shadow:0 7px 20px rgba(56,189,248,.2)!important;transform:translateY(-2px);
 }
-body.authenticated #dashboard #appNavigation .app-nav-group{display:contents}
-body.authenticated #dashboard #appNavigation .assessment-submenu{
-  display:contents!important;background:transparent!important;border:0!important;box-shadow:none!important;
-  padding:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
-}
-body.authenticated #dashboard #appNavigation .assessment-submenu[hidden]{display:none!important}
+body.authenticated #dashboard #appNavigation>button:active{transform:translateY(0)}
 /* Views sit directly on the scenic background. Only content controls/cards get one glass layer. */
 body.authenticated #dashboard .app-view{
   display:block;width:100%;max-width:100%;margin:0 0 22px;padding:0!important;
