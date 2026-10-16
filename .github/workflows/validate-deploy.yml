@@ -417,7 +417,7 @@ jobs:
           page_status="000"
           for attempt in $(seq 1 12); do
             if page_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --dump-header /tmp/sahabat-headers.txt --output /tmp/sahabat-dashboard.html --write-out '%{http_code}' "$APP_URL/?v=$GITHUB_SHA" -H 'Cache-Control: no-cache')"; then :; else page_status="000"; fi
-            if [ "$page_status" = "200" ] && grep -Fq 'href="/app-layout.css?v=2.0.1"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/transparent-theme.css?v=2.0.0"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/dashboard-card-clean-v1.css?v=1.1.49"' /tmp/sahabat-dashboard.html && grep -Fq 'name="application-version" content="1.1.49"' /tmp/sahabat-dashboard.html; then
+            if [ "$page_status" = "200" ] && grep -Fq 'href="/app-layout.css?v=2.0.2"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/transparent-theme.css?v=2.0.0"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/dashboard-card-clean-v1.css?v=1.1.49"' /tmp/sahabat-dashboard.html && grep -Fq 'name="application-version" content="1.1.50"' /tmp/sahabat-dashboard.html; then
               echo "Production page and centralized glass theme references are current (attempt $attempt)."
               break
             fi
@@ -432,6 +432,7 @@ jobs:
           grep -Eiq '^cross-origin-resource-policy:[[:space:]]*same-origin' /tmp/sahabat-headers.txt || (echo "::error::Cross-Origin-Resource-Policy same-origin is missing." && exit 1)
           grep -qi '<html' /tmp/sahabat-dashboard.html || (echo "::error::Sahabat dashboard response is not HTML." && exit 1)
           grep -q 'ownerProfileForm' /tmp/sahabat-dashboard.html || (echo "::error::Owner profile UI is missing." && exit 1)
+          grep -Fq 'Hapus asesmen' /tmp/sahabat-dashboard.html || (echo "::error::Saved assessment delete action is missing from dashboard HTML." && exit 1)
           ! grep -Eiq 'href="(style|login)\.css\?v=' /tmp/sahabat-dashboard.html || (echo "::error::Legacy stylesheet references returned to the dashboard." && exit 1)
           theme_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-theme.css --write-out '%{http_code}|%{content_type}' "$APP_URL/transparent-theme.css?v=2.0.0&verify=$GITHUB_SHA")"
           theme_status="${theme_response%%|*}"
@@ -448,7 +449,7 @@ jobs:
           case "$card_css_type" in text/css*) ;; *) echo "::error::Dashboard card cleanup CSS has unexpected content type: $card_css_type." && exit 1 ;; esac
           grep -Fq 'backdrop-filter: none !important' /tmp/sahabat-card-clean.css || (echo "::error::Dashboard card cleanup blur override is missing." && exit 1)
           grep -Fq '#notificationBellButton' /tmp/sahabat-card-clean.css || (echo "::error::Owner action-icon cleanup is missing." && exit 1)
-          echo "Verified live dashboard version 1.1.49, clean card CSS, security headers and centralized theme."
+          echo "Verified live dashboard version 1.1.50 with saved assessment deletion, clean card CSS, security headers and centralized theme."
           for photo in 1 2 3; do
             photo_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output "/tmp/sahabat-toba-photo-$photo.jpg" --write-out '%{http_code}|%{content_type}' "$APP_URL/danau-toba/photo-$photo.jpg?v=1.2.9")"
             photo_status="${photo_response%%|*}"
@@ -507,6 +508,8 @@ jobs:
           api_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-respondents.json --write-out '%{http_code}' "$APP_URL/api/respondents")"
           test "$api_status" = "401" || (echo "::error::Sahabat respondent API should require authentication (HTTP 401), got $api_status." && cat /tmp/sahabat-respondents.json && exit 1)
           node -e 'const fs=require("fs");const d=JSON.parse(fs.readFileSync("/tmp/sahabat-respondents.json","utf8"));if(!d.error)process.exit(1);'
+          delete_assessment_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-assessment-delete.json --write-out '%{http_code}' -X DELETE -H "Origin: $APP_URL" -H 'X-CSRF-Token: unauthenticated-test' "$APP_URL/api/assessments/item?id=00000000-0000-4000-8000-000000000000")"
+          test "$delete_assessment_status" = "401" || (echo "::error::Assessment deletion API must require an authenticated session (HTTP 401), got $delete_assessment_status." && exit 1)
           bootstrap_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-bootstrap.json --write-out '%{http_code}' -X POST -H "Origin: $APP_URL" -H "Content-Type: application/json" --data '{}' "$APP_URL/api/setup-owner")"
           test "$bootstrap_status" = "403" || (echo "::error::Sahabat bootstrap endpoint must reject requests without a token (HTTP 403), got $bootstrap_status." && cat /tmp/sahabat-bootstrap.json && exit 1)
           surat_response="$(curl --connect-timeout 5 --max-time 20 --location --max-redirs 5 --silent --show-error --output /tmp/sahabat-surat-lainnya.html --write-out '%{http_code}|%{url_effective}' "$APP_URL/surat-lainnya.html")"
