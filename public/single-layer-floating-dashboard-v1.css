@@ -143,8 +143,7 @@ body.authenticated #dashboard :focus-visible{outline:3px solid #bae6fd!important
  body.authenticated #dashboard .owner-avatar{width:54px;height:54px;flex-basis:54px}
  body.authenticated #dashboard #appNavigation{gap:9px}
  body.authenticated #dashboard #appNavigation>button,
- body.authenticated #dashboard #appNavigation .app-nav-group-title,
- body.authenticated #dashboard #appNavigation .app-nav-subitem{min-height:54px;padding:12px 8px!important;font-size:.92rem}
+ body.authenticated #dashboard #appNavigation>button{min-height:54px;padding:12px 8px!important;font-size:.82rem}
  body.authenticated #dashboard .overview-card{padding:13px}
  body.authenticated #dashboard .dashhead{align-items:flex-start}
  body.authenticated #dashboard .dashhead .dashbtn{width:auto}
