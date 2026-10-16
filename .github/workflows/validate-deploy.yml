@@ -417,7 +417,7 @@ jobs:
           page_status="000"
           for attempt in $(seq 1 12); do
             if page_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --dump-header /tmp/sahabat-headers.txt --output /tmp/sahabat-dashboard.html --write-out '%{http_code}' "$APP_URL/?v=$GITHUB_SHA" -H 'Cache-Control: no-cache')"; then :; else page_status="000"; fi
-            if [ "$page_status" = "200" ] && grep -Fq 'href="/app-layout.css?v=2.0.1"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/transparent-theme.css?v=2.0.0"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/dashboard-card-clean-v1.css?v=1.1.48"' /tmp/sahabat-dashboard.html && grep -Fq 'name="application-version" content="1.1.48"' /tmp/sahabat-dashboard.html; then
+            if [ "$page_status" = "200" ] && grep -Fq 'href="/app-layout.css?v=2.0.1"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/transparent-theme.css?v=2.0.0"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/dashboard-card-clean-v1.css?v=1.1.49"' /tmp/sahabat-dashboard.html && grep -Fq 'name="application-version" content="1.1.49"' /tmp/sahabat-dashboard.html; then
               echo "Production page and centralized glass theme references are current (attempt $attempt)."
               break
             fi
@@ -441,14 +441,14 @@ jobs:
           grep -Fq -- '--sahabat-glass-blur:16px' /tmp/sahabat-theme.css || (echo "::error::Shared glass theme blur token is missing." && exit 1)
           grep -Fq -- '--sahabat-glass-bg:rgba(15,23,42,.70)' /tmp/sahabat-theme.css || (echo "::error::Shared glass surface token is missing." && exit 1)
           grep -Fq 'color:#fff!important' /tmp/sahabat-theme.css || (echo "::error::Shared glass theme white typography rule is missing." && exit 1)
-          card_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-card-clean.css --write-out '%{http_code}|%{content_type}' "$APP_URL/dashboard-card-clean-v1.css?v=1.1.48&verify=$GITHUB_SHA")"
+          card_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-card-clean.css --write-out '%{http_code}|%{content_type}' "$APP_URL/dashboard-card-clean-v1.css?v=1.1.49&verify=$GITHUB_SHA")"
           card_css_status="${card_css_response%%|*}"
           card_css_type="${card_css_response#*|}"
           test "$card_css_status" = "200" || (echo "::error::Dashboard card cleanup CSS returned HTTP $card_css_status." && exit 1)
           case "$card_css_type" in text/css*) ;; *) echo "::error::Dashboard card cleanup CSS has unexpected content type: $card_css_type." && exit 1 ;; esac
           grep -Fq 'backdrop-filter: none !important' /tmp/sahabat-card-clean.css || (echo "::error::Dashboard card cleanup blur override is missing." && exit 1)
           grep -Fq '#notificationBellButton' /tmp/sahabat-card-clean.css || (echo "::error::Owner action-icon cleanup is missing." && exit 1)
-          echo "Verified live dashboard version 1.1.48, clean card CSS, security headers and centralized theme."
+          echo "Verified live dashboard version 1.1.49, clean card CSS, security headers and centralized theme."
           for photo in 1 2 3; do
             photo_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output "/tmp/sahabat-toba-photo-$photo.jpg" --write-out '%{http_code}|%{content_type}' "$APP_URL/danau-toba/photo-$photo.jpg?v=1.2.9")"
             photo_status="${photo_response%%|*}"
