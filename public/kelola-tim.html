@@ -26,7 +26,7 @@
 <body>
 <header><div><strong>Sahabat ODHIV Sumatera Utara</strong><span class="muted">Pengelolaan identitas petugas pendataan</span></div><a href="/" rel="noopener">Kembali ke dashboard ↗</a></header>
 <main>
-<section class="card"><h1>Kelola Tim Petugas</h1><p class="muted">Daftarkan petugas dan buat tautan khusus. Petugas masuk dengan tautan tersebut dan nama yang sesuai pendaftaran; setelah itu wajib melengkapi foto profil.</p><div id="authMessage" class="message show">Memeriksa sesi admin…</div></section>
+<section class="card"><h1>Kelola Tim Petugas</h1><p class="muted">Daftarkan anggota, tetapkan kata sandi awal, lalu kirim tautan pendaftaran melalui WhatsApp. Tautan hanya untuk melengkapi profil; login berikutnya menggunakan nomor HP/WA dan kata sandi.</p><div id="authMessage" class="message show">Memeriksa sesi admin…</div></section>
 <div id="adminArea" hidden>
 <section class="card">
 <h2>Daftarkan petugas baru</h2>
@@ -35,6 +35,7 @@
 <div class="field"><label for="name">Nama Tim Petugas *</label><input id="name" name="name" maxlength="120" required autocomplete="name"></div>
 <div class="field"><label for="position">Posisi Jabatan Kerja *</label><select id="position" name="position" required><option value="">Pilih posisi</option><option value="PENDAMPING LAPANGAN">PENDAMPING LAPANGAN</option><option value="PENJANGKAU LAPANGAN">PENJANGKAU LAPANGAN</option></select></div>
 <div class="field"><label for="phone">No. HP/WA Tim Petugas *</label><input id="phone" name="phone" type="tel" inputmode="tel" maxlength="30" required></div>
+<div class="field"><label for="password">Kata Sandi Awal (minimal 8 karakter) *</label><input id="password" name="password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required></div>
 </div>
 <div class="form-actions"><button id="createButton" type="submit">Daftarkan Petugas & Buat Link</button></div>
 </form>
@@ -51,7 +52,7 @@
 <div class="table-wrap"><table style="min-width:780px"><thead><tr><th>Waktu & responden</th><th>Domisili</th><th>Bantuan</th><th>Petugas</th><th>Foto</th></tr></thead><tbody id="submissionRows"><tr><td colspan="5" class="empty">Memuat pendataan…</td></tr></tbody></table></div>
 <div id="submissionMessage" class="message" role="status" aria-live="polite"></div>
 </section>
-<div class="notice">Catatan keamanan: tautan petugas berfungsi seperti kunci akses tanpa login. Jangan bagikan tautan antarpetugas atau ke publik. Jika tautan tersebar, nonaktifkan petugas terkait dan daftarkan kembali untuk membuat tautan baru.</div>
+<div class="notice">Catatan keamanan: tautan hanya digunakan untuk pendaftaran awal. Login berikutnya memakai nomor HP/WA dan kata sandi yang ditetapkan owner. Jangan bagikan tautan atau kata sandi kepada orang lain.</div>
 </div>
 </main>
 <script>
@@ -112,10 +113,10 @@
   const form=event.currentTarget;if(!form.reportValidity())return;
   const button=document.getElementById('createButton');button.disabled=true;button.textContent='Mendaftarkan…';
   try{
-   const body={name:document.getElementById('name').value.trim(),position:document.getElementById('position').value,phone:document.getElementById('phone').value.trim()};
+   const body={name:document.getElementById('name').value.trim(),position:document.getElementById('position').value,phone:document.getElementById('phone').value.trim(),password:document.getElementById('password').value};
    const data=await jsonFetch('/api/team-petugas',{method:'POST',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify(body)});
    createdLink.textContent=data.link;document.getElementById('copyLink').onclick=async()=>{try{await navigator.clipboard.writeText(data.link);message(createMessage,'Tautan berhasil disalin.','ok');}catch{message(createMessage,'Salin tautan dengan menekan lama teks tautan di atas.','error');}};
-   document.getElementById('whatsappLink').href='https://wa.me/?text='+encodeURIComponent('Halo '+body.name+', berikut tautan khusus untuk pendataan lapangan Sahabat ODHIV Sumatera Utara:\n'+data.link+'\nJangan bagikan tautan ini kepada orang lain.');
+   document.getElementById('whatsappLink').href='https://wa.me/?text='+encodeURIComponent('Halo '+body.name+', berikut tautan pendaftaran profil tim kerja Sahabat ODHIV Sumatera Utara:\n'+data.link+'\nSetelah melengkapi foto profil, login kembali menggunakan nomor HP/WA dan kata sandi yang telah diberikan owner. Jangan bagikan tautan atau kata sandi ini kepada orang lain.');
    linkBox.className='link-box show';message(createMessage,'Petugas berhasil didaftarkan. Simpan dan bagikan tautan khususnya.','ok');form.reset();await loadTeams();
   }catch(error){message(createMessage,error instanceof Error?error.message:'Gagal mendaftarkan petugas.','error');}
   finally{button.disabled=false;button.textContent='Daftarkan & Buat Tautan';}
