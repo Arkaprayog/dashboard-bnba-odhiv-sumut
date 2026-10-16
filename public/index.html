@@ -168,6 +168,11 @@
       <button type="button" data-view="questionnaire">▧ Kuesioner</button>
       <button type="button" data-view="formats">▤ Dokumen</button>
       <button type="button" data-view="respondentQuiz">▧ Kuisioner Responden</button>
+      <div class="app-nav-group" id="assessmentNavGroup" hidden>
+        <div class="app-nav-group-title">▧ From Asesmen Terintergrasi</div>
+        <button type="button" class="app-nav-subitem" data-view="assessment">Lembar Asesmen Terintegrasi</button>
+        <button type="button" class="app-nav-subitem" data-view="assessmentSaved">Data Asesmen Tersimpan</button>
+      </div>
     </nav>
     <section class="app-view" id="homeView" aria-label="Beranda Statistik">
       <div class="dashhead"><div><h2>Beranda Statistik</h2><p>Ringkasan data responden dari kuesioner</p></div><button class="dashbtn" id="refreshOverview" type="button">Perbarui statistik</button></div>
@@ -271,6 +276,12 @@
         <section id="assessmentPrintPhotos" class="assessment-print-photos" aria-label="Lampiran foto asesmen"></section>
       </div>
       <p class="dashmsg assessment-no-print" id="assessmentMessage" role="status" aria-live="polite">Simpan ke database hanya tersedia setelah login dengan peran owner/admin. Data asesmen bersifat rahasia.</p>
+    </section>
+    <section class="app-view" id="assessmentSavedView" hidden aria-label="Data Asesmen Tersimpan">
+      <div class="dashhead"><div><h2>Data Asesmen Tersimpan</h2><p>Daftar asesmen yang tersimpan secara privat. Pilih data untuk membukanya kembali di Lembar Asesmen Terintegrasi.</p></div><button class="dashbtn" type="button" id="refreshSavedAssessments">Perbarui daftar</button></div>
+      <p class="dashmsg" id="assessmentSavedMessage" role="status" aria-live="polite">Daftar asesmen akan dimuat setelah login.</p>
+      <select id="assessmentSavedList" aria-label="Pilih asesmen tersimpan" hidden><option value="">Pilih asesmen tersimpan</option></select>
+      <div id="assessmentSavedCards" class="assessment-saved-list" aria-live="polite"><p>Belum ada daftar asesmen dimuat.</p></div>
     </section>
     <section class="app-view" id="respondentQuizView" hidden aria-label="Kuisioner Responden">
       <div class="dashhead"><div><h2>Kuisioner Responden</h2><p>Bagikan tautan resmi pada domain Sahabat ODHIV Sumut kepada responden atau pindai kode QR.</p></div></div>
@@ -402,7 +413,7 @@ let overviewRows=[];
 let overviewHeaders=[];
 let newsItems=[];
 function setAppView(view){
- const views={home:document.getElementById('homeView'),database:document.getElementById('databaseView'),questionnaire:document.getElementById('questionnaireView'),assessment:document.getElementById('assessmentView'),formats:document.getElementById('formatsView'),news:document.getElementById('newsView'),respondentQuiz:document.getElementById('respondentQuizView')};
+ const views={home:document.getElementById('homeView'),database:document.getElementById('databaseView'),questionnaire:document.getElementById('questionnaireView'),assessment:document.getElementById('assessmentView'),assessmentSaved:document.getElementById('assessmentSavedView'),formats:document.getElementById('formatsView'),news:document.getElementById('newsView'),respondentQuiz:document.getElementById('respondentQuizView')};
  Object.entries(views).forEach(([key,node])=>{if(node)node.hidden=key!==view;});
  document.querySelectorAll('#appNavigation [data-view]').forEach(button=>{if(button.dataset.view===view)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
  if(view==='news'&&!newsItems.length)loadNews();
