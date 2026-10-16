@@ -1,4 +1,5 @@
 name: Validate and deploy Cloudflare Worker
+# [deploy-production] Release gate for the public dual-questionnaire flow.
 
 on:
   pull_request:
