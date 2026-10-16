@@ -33,6 +33,11 @@ assert.ok(dashboard.includes("KUISIONER OWNER") && dashboard.includes("KUISIONER
 assert.ok(dashboard.includes('id="ownerQuestionnaireForm"') && workerSource.includes('url.pathname === "/api/owner-questionnaire"'), "the existing owner questionnaire form and API must remain.");
 assert.ok(workerSource.includes('url.pathname === "/api/questionnaires/stage1"') && workerSource.includes("'Kuisioner Owner'!A1:O2000"), "stage 1 data API must read the shared owner/team response sheet.");
 assert.ok(workerSource.includes("Tautan pendaftaran ini sudah digunakan") && workerSource.includes("profile_completed=1,token_hash=?"), "team onboarding link must become unusable after successful profile registration.");
+assert.ok(workerSource.includes("team_login_attempts") && workerSource.includes("attemptNow - 900") && workerSource.includes("Terlalu banyak percobaan login"), "team login attempts must be rate-limited.");
+assert.ok(workerSource.includes('url.pathname === "/api/team-petugas/password"') && workerSource.includes("team_petugas_password_reset"), "owner/admin must be able to reset passwords for existing team members.");
+assert.ok(teamManager.includes('id="teamPasswordDialog"') && teamManager.includes("/api/team-petugas/password"), "team manager must provide a protected password reset dialog.");
+assert.ok(dashboard.includes("Kelola Tim Petugas / Atur Kata Sandi") && dashboard.includes("dashboardTeamForm"), "owner can add team members from questionnaire menu and open legacy account management.");
+
 assert.ok(teamWorkspace.includes('name="namaAnggota"') && teamWorkspace.includes('name="jabatan"') && teamWorkspace.includes('name="nomorHpWa"') && teamWorkspace.includes("Silakan login ke akun Anda"), "team registration collects the profile fields and prompts login after save.");
 const staffRoster = readFileSync("public/daftar-petugas.html", "utf8");
 const worker = readFileSync("src/index.ts", "utf8");
