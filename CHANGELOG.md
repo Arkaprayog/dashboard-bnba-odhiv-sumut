@@ -1,3 +1,9 @@
+## 1.1.54 — 2026-10-16
+- Ubah menu RANCANGAN ANGGARAN BELANJA: pilihan RAB kini muncul sebagai dua kartu di area Beranda, mengikuti pola kartu pada menu Dokumen.
+- Hilangkan submenu yang sebelumnya muncul di dalam navigasi.
+- Pilihan Beranda otomatis ditutup saat menu utama lain dipilih; memilih kartu RAB membuka halaman pilihannya.
+- Perbarui versi web/PWA dan cache stylesheet.
+
 ## 1.1.53 — 2026-10-16
 - Tambahkan menu RANCANGAN ANGGARAN BELANJA pada dashboard.
 - RAB NUTRISI dan RAB KEWIRAUSAHAAN hanya tampil setelah menu induk diklik.
