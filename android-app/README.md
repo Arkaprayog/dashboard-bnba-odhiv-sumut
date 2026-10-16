@@ -8,7 +8,7 @@ https://sahabatodhivsumut.web.id/
 - Android package version: **1.2.28** (`versionCode 31`).
 - Debug package: `1.2.28-debug`; expected artifact: `Sahabat-ODHIV-Sumut-APK-debug-v1.2.28`.
 - Signed release package: `1.2.28`; expected artifact: `Sahabat-ODHIV-Sumut-APK-release-v1.2.28`.
-- The online dashboard currently uses web version **1.1.56**. The APK loads the canonical HTTPS dashboard; online menu and backend changes become available when the website is deployed, while the native Android shell, permission behavior, camera/gallery handling, and offline fallback require a new APK build.
+- The online dashboard currently uses web version **1.1.57**. The APK loads the canonical HTTPS dashboard; online menu and backend changes become available when the website is deployed, while the native Android shell, permission behavior, camera/gallery handling, and offline fallback require a new APK build.
 - Android and web use separate version sequences because they are independently packaged. Successful GitHub Actions artifacts are not the same as a published entry on the GitHub Releases page.
 
 ## What this build does
