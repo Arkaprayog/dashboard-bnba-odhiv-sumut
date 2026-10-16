@@ -1102,19 +1102,34 @@ export default {
 
         if (url.pathname === "/api/team-login" && request.method === "POST") {
           if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
-          let body: { token?: unknown; name?: unknown };
+          let body: { token?: unknown; name?: unknown; phone?: unknown; password?: unknown };
           try { body = await request.json() as typeof body; } catch { return reply({ error: "Format login tidak valid." }, 400); }
           const token = typeof body.token === "string" ? body.token.trim() : "";
-          const name = typeof body.name === "string" ? body.name.trim().replace(/\\s+/g, " ") : "";
-          if (token.length < 40 || token.length > 100 || name.length < 2 || name.length > 120) {
-            return reply({ error: "Tautan atau nama petugas tidak valid." }, 400);
-          }
+          const name = typeof body.name === "string" ? body.name.trim().replace(/\s+/g, " ") : "";
+          const phone = typeof body.phone === "string" ? body.phone.trim() : "";
+          const password = typeof body.password === "string" ? body.password : "";
           await ensureTeamSchema(env);
-          const petugas = await env.DB.prepare("SELECT id,display_name,position,phone,profile_completed FROM team_petugas_v2 WHERE token_hash=? AND active=1")
-            .bind(await hashTeamToken(token)).first<{ id: string; display_name: string; position: string; phone: string; profile_completed: number }>();
-          const normalizeName = (value: string) => value.normalize("NFKC").trim().replace(/\\s+/g, " ").toLocaleLowerCase("id-ID");
-          if (!petugas || normalizeName(name) !== normalizeName(petugas.display_name)) {
-            return reply({ error: "Nama tidak cocok dengan petugas yang terdaftar pada tautan ini." }, 401);
+          type TeamLoginRow = { id: string; display_name: string; position: string; phone: string; profile_completed: number; password_hash: string; password_salt: string };
+          let petugas: TeamLoginRow | null = null;
+          if (token.length >= 40 && token.length <= 100 && name.length >= 2 && name.length <= 120) {
+            petugas = await env.DB.prepare("SELECT id,display_name,position,phone,profile_completed,password_hash,password_salt FROM team_petugas_v2 WHERE token_hash=? AND active=1")
+              .bind(await hashTeamToken(token)).first<TeamLoginRow>();
+            const normalizeName = (value: string) => value.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("id-ID");
+            if (!petugas || normalizeName(name) !== normalizeName(petugas.display_name)) {
+              return reply({ error: "Nama tidak cocok dengan petugas yang terdaftar pada tautan ini." }, 401);
+            }
+          } else {
+            if (!/^\+?[0-9 ()-]{8,30}$/.test(phone) || password.length < 8 || password.length > 128) {
+              return reply({ error: "Masukkan nomor HP/WA dan kata sandi yang diberikan owner." }, 400);
+            }
+            const candidates = await env.DB.prepare("SELECT id,display_name,position,phone,profile_completed,password_hash,password_salt FROM team_petugas_v2 WHERE active=1 ORDER BY created_at DESC LIMIT 500").all<TeamLoginRow>();
+            for (const candidate of candidates.results || []) {
+              if (candidate.phone.replace(/\D/g, "") !== phone.replace(/\D/g, "") || !candidate.password_hash || !candidate.password_salt) continue;
+              const actual = await passwordHash(password, unhex(candidate.password_salt));
+              const expected = unhex(candidate.password_hash);
+              if (actual.length === expected.length && actual.every((value, index) => value === expected[index])) { petugas = candidate; break; }
+            }
+            if (!petugas) return reply({ error: "Nomor HP/WA atau kata sandi tidak cocok." }, 401);
           }
           const rawSession = b64(crypto.getRandomValues(new Uint8Array(32)));
           const idHash = await hashTeamToken(rawSession);
