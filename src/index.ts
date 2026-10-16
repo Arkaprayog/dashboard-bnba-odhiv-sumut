@@ -320,7 +320,9 @@ async function ensureTeamSchema(env: Env) {
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       created_by TEXT,
       profile_photo_id TEXT NOT NULL DEFAULT '',
-      profile_completed INTEGER NOT NULL DEFAULT 0 CHECK (profile_completed IN (0,1))
+      profile_completed INTEGER NOT NULL DEFAULT 0 CHECK (profile_completed IN (0,1)),
+      password_hash TEXT NOT NULL DEFAULT '',
+      password_salt TEXT NOT NULL DEFAULT ''
     )`),
     env.DB.prepare(`INSERT OR IGNORE INTO team_petugas_v2(id,display_name,position,phone,token_hash,active,created_at,created_by)
       SELECT id,display_name,CASE WHEN position='PENDAMPING SEBAYA' THEN 'PENDAMPING LAPANGAN' ELSE position END,phone,token_hash,active,created_at,created_by FROM team_petugas`),
@@ -342,6 +344,8 @@ async function ensureTeamSchema(env: Env) {
     env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_team_petugas_v2_active ON team_petugas_v2(active,created_at)"),
     env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_team_sessions_petugas ON team_sessions(petugas_id,expires_at)"),
   ]);
+  try { await env.DB.prepare("ALTER TABLE team_petugas_v2 ADD COLUMN password_hash TEXT NOT NULL DEFAULT ''").run(); } catch { /* Already migrated. */ }
+  try { await env.DB.prepare("ALTER TABLE team_petugas_v2 ADD COLUMN password_salt TEXT NOT NULL DEFAULT ''").run(); } catch { /* Already migrated. */ }
 }
 
 async function hashTeamToken(token: string): Promise<string> {
