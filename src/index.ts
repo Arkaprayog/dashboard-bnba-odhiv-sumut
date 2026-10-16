@@ -1120,11 +1120,6 @@ export default {
               return reply({ error: "Nama tidak cocok dengan petugas yang terdaftar pada tautan ini." }, 401);
             }
             if (petugas.profile_completed) return reply({ error: "Tautan pendaftaran ini sudah digunakan. Login menggunakan nomor HP/WA dan kata sandi dari owner." }, 401);
-            // An invitation link is single-use: rotate its stored hash as soon as it creates the first session.
-            const rotatedInvite = b64(crypto.getRandomValues(new Uint8Array(32)));
-            const consumed = await env.DB.prepare("UPDATE team_petugas_v2 SET token_hash=? WHERE id=? AND token_hash=? AND active=1 AND profile_completed=0")
-              .bind(await hashTeamToken(rotatedInvite), petugas.id, inviteHash).run();
-            if (consumed.meta.changes !== 1) return reply({ error: "Tautan pendaftaran sudah digunakan atau tidak aktif. Hubungi owner." }, 409);
           } else {
             if (!/^\+?[0-9 ()-]{8,30}$/.test(phone) || password.length < 8 || password.length > 128) {
               return reply({ error: "Masukkan nomor HP/WA dan kata sandi yang diberikan owner." }, 400);
@@ -1189,8 +1184,9 @@ export default {
             await env.TEAM_PROFILE_PHOTOS.put(objectKey, await file.arrayBuffer());
             objectWritten = true;
             stage = "d1_commit";
-            const saved = await env.DB.prepare("UPDATE team_petugas_v2 SET display_name=?,position=?,phone=?,profile_photo_id=?,profile_completed=1 WHERE id=? AND active=1 AND profile_completed=0")
-              .bind(name, position, phone, newReference, petugas.id).run();
+            const rotatedInvite = b64(crypto.getRandomValues(new Uint8Array(32)));
+            const saved = await env.DB.prepare("UPDATE team_petugas_v2 SET display_name=?,position=?,phone=?,profile_photo_id=?,profile_completed=1,token_hash=? WHERE id=? AND active=1 AND profile_completed=0")
+              .bind(name, position, phone, newReference, await hashTeamToken(rotatedInvite), petugas.id).run();
             if (saved.meta.changes !== 1) throw new Error("Petugas tidak aktif atau profil tidak dapat diperbarui.");
             databaseCommitted = true;
 
