@@ -54,6 +54,18 @@
 </section>
 <div class="notice">Catatan keamanan: tautan hanya digunakan untuk pendaftaran awal. Login berikutnya memakai nomor HP/WA dan kata sandi yang ditetapkan owner. Jangan bagikan tautan atau kata sandi kepada orang lain.</div>
 </div>
+<dialog id="teamPasswordDialog" style="border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:22px;max-width:min(94vw,460px);width:100%;color:#fff;background:rgba(9,35,57,.96);backdrop-filter:blur(16px)">
+  <form id="teamPasswordForm" novalidate>
+    <h2 style="margin-top:0">Atur Kata Sandi Anggota</h2>
+    <p class="muted">Anggota: <strong id="passwordTargetName"></strong></p>
+    <input id="passwordTargetId" type="hidden">
+    <div class="field"><label for="teamNewPassword">Kata sandi baru (minimal 8 karakter)</label><input id="teamNewPassword" type="password" minlength="8" maxlength="128" autocomplete="new-password" required></div>
+    <div class="field"><label for="teamNewPasswordConfirm">Ulangi kata sandi baru</label><input id="teamNewPasswordConfirm" type="password" minlength="8" maxlength="128" autocomplete="new-password" required></div>
+    <div id="teamPasswordMessage" class="message" role="status" aria-live="polite"></div>
+    <div class="form-actions"><button id="saveTeamPassword" type="submit">Simpan Kata Sandi</button><button id="cancelTeamPassword" class="secondary" type="button">Batal</button></div>
+  </form>
+</dialog>
+</div>
 </main>
 <script>
 (()=> {
@@ -67,6 +79,17 @@
  const message=(el,text,kind)=>{el.textContent=text;el.hidden=false;el.className='message show '+(kind||'');};
  async function jsonFetch(url,options={}){const response=await fetch(url,{credentials:'same-origin',cache:'no-store',...options});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||'Permintaan gagal.');return data;}
  function addCell(row,text,strong=false){const cell=document.createElement('td');if(strong){const b=document.createElement('strong');b.textContent=text;cell.append(b);}else cell.textContent=text;row.append(cell);return cell;}
+ document.getElementById('cancelTeamPassword').addEventListener('click',()=>document.getElementById('teamPasswordDialog').close());
+ document.getElementById('teamPasswordForm').addEventListener('submit',async event=>{
+  event.preventDefault();const messageEl=document.getElementById('teamPasswordMessage');messageEl.textContent='';
+  const password=document.getElementById('teamNewPassword').value,confirmPassword=document.getElementById('teamNewPasswordConfirm').value,id=document.getElementById('passwordTargetId').value;
+  if(password.length<8||password.length>128){message(messageEl,'Kata sandi minimal 8 karakter.','error');return;}
+  if(password!==confirmPassword){message(messageEl,'Kedua kata sandi belum sama.','error');return;}
+  const button=document.getElementById('saveTeamPassword');button.disabled=true;button.textContent='Menyimpan…';
+  try{await jsonFetch('/api/team-petugas/password',{method:'POST',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify({id,password})});document.getElementById('teamPasswordDialog').close();message(document.getElementById('listMessage'),'Kata sandi anggota diperbarui. Semua sesi lama sudah dikeluarkan.','ok');await loadTeams();}
+  catch(error){message(messageEl,error instanceof Error?error.message:'Kata sandi gagal diperbarui.','error');}
+  finally{button.disabled=false;button.textContent='Simpan Kata Sandi';}
+ });
 
  async function loadSubmissions(){
   const data=await jsonFetch('/api/team-submissions');
@@ -102,7 +125,11 @@
    addCell(row,item.phone);
    const statusCell=document.createElement('td');const badge=document.createElement('span');badge.className='status'+(Number(item.active)?'':' off');badge.textContent=Number(item.active)?'Aktif':'Nonaktif';statusCell.append(badge);row.append(statusCell);
    const actionCell=document.createElement('td');
-   if(Number(item.active)){const button=document.createElement('button');button.type='button';button.className='danger';button.textContent='Nonaktifkan';button.addEventListener('click',async()=>{if(!confirm('Nonaktifkan tautan '+item.display_name+'? Petugas tidak dapat mengirim pendataan menggunakan tautan tersebut.'))return;button.disabled=true;try{await jsonFetch('/api/team-petugas/revoke',{method:'POST',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify({id:item.id})});message(document.getElementById('listMessage'),'Tautan petugas berhasil dinonaktifkan.','ok');await loadTeams();}catch(error){message(document.getElementById('listMessage'),error.message||'Gagal menonaktifkan petugas.','error');button.disabled=false;}});actionCell.append(button);}else{const note=document.createElement('span');note.className='muted';note.textContent='Tidak ada tindakan';actionCell.append(note);}
+   if(Number(item.active)){
+    const passwordButton=document.createElement('button');passwordButton.type='button';passwordButton.className='secondary';passwordButton.textContent='Atur Kata Sandi';
+    passwordButton.addEventListener('click',()=>{document.getElementById('passwordTargetName').textContent=item.display_name;document.getElementById('passwordTargetId').value=item.id;document.getElementById('teamNewPassword').value='';document.getElementById('teamNewPasswordConfirm').value='';document.getElementById('teamPasswordMessage').textContent='';document.getElementById('teamPasswordDialog').showModal();});
+    const button=document.createElement('button');button.type='button';button.className='danger';button.textContent='Nonaktifkan';button.addEventListener('click',async()=>{if(!confirm('Nonaktifkan tautan '+item.display_name+'? Petugas tidak dapat login atau mengirim pendataan lagi.'))return;button.disabled=true;try{await jsonFetch('/api/team-petugas/revoke',{method:'POST',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify({id:item.id})});message(document.getElementById('listMessage'),'Anggota berhasil dinonaktifkan.','ok');await loadTeams();}catch(error){message(document.getElementById('listMessage'),error.message||'Gagal menonaktifkan anggota.','error');button.disabled=false;}});actionCell.append(passwordButton,button);
+   }else{const note=document.createElement('span');note.className='muted';note.textContent='Tidak ada tindakan';actionCell.append(note);}
    row.append(actionCell);teamRows.append(row);
   }
  }
