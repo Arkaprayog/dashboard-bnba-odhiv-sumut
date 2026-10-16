@@ -536,7 +536,7 @@ async function loadStage1Data(){
   const response=await fetch('/api/questionnaires/stage1',{credentials:'same-origin',cache:'no-store'});
   const payload=await response.json().catch(()=>({}));
   if(!response.ok||!payload.items)throw new Error(payload.error||'Data tahap 1 belum dapat dimuat.');
-  if(!payload.items.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=12;td.textContent='Belum ada jawaban kuisioner owner atau tim kerja.';tr.append(td);tbody.append(tr);}
+  if(!payload.items.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=12;td.textContent=payload.message||'Belum ada jawaban kuisioner owner atau tim kerja.';tr.append(td);tbody.append(tr);}
   for(const item of payload.items){
    const tr=document.createElement('tr');
    const textCell=value=>{const td=document.createElement('td');td.textContent=value||'—';tr.append(td);return td;};
