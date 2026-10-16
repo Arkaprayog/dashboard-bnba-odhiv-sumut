@@ -1,4 +1,4 @@
-/* Final owner profile header correction (v1.1.60).
+/* Final owner profile header correction (v1.1.61).
    Keep the name vertically aligned with the notification/settings/logout controls.
    Remove all glass surfaces and blur from the profile header only. */
 html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard {
@@ -7,9 +7,9 @@ html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard {
   grid-template-rows: auto auto auto auto auto !important;
   grid-template-areas:
     "profile name actions"
-    "profile nip nip"
-    "profile institution institution"
-    "profile details details"
+    "profile nip ."
+    "profile institution ."
+    "profile details ."
     "clock clock clock" !important;
   align-items: center !important;
   gap: 6px clamp(6px, 1.5vw, 18px) !important;
@@ -134,14 +134,14 @@ html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard #ownerNa
 html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard #ownerNipSummary,
 html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard #ownerInstitutionSummary,
 html body:has(#dashboard:not([hidden])) #dashboard #ownerCard#ownerCard .owner-details {
-  grid-column: 2 / 4 !important;
+  grid-column: 2 / 3 !important;
   min-width: 0 !important;
   max-width: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
   color: rgba(255, 255, 255, .96) !important;
   -webkit-text-fill-color: rgba(255, 255, 255, .96) !important;
-  text-align: center !important;
+  text-align: left !important;
   overflow-wrap: anywhere !important;
   word-break: normal !important;
   background: transparent !important;
