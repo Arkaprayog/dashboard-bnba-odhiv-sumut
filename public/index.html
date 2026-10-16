@@ -1348,6 +1348,9 @@ function assessmentDataUrl(blob){return new Promise((resolve,reject)=>{const rea
 async function loadSelectedAssessmentRespondent(){
  const index=respondentSelect?.value;
  if(index===''||index==null){respondentStatus.textContent='Pilih responden terlebih dahulu.';return;}
+ const loadButton=document.getElementById('assessmentLoadRespondent');if(loadButton)loadButton.disabled=true;
+ respondentStatus.textContent='Memuat identitas dan mencoba mengambil empat foto secara privat…';
+ try {
  const item=assessmentRespondentItems[Number(index)];if(!item){respondentStatus.textContent='Responden tidak ditemukan. Muat ulang daftar.';return;}
  const headers=Object.keys(item);
  const nameHeader=assessmentHeader(headers,[/^namalengkap$/]);
@@ -1378,6 +1381,7 @@ async function loadSelectedAssessmentRespondent(){
  }
  respondentStatus.textContent='Identitas dimuat untuk '+(name||'responden terpilih')+'. Foto berhasil dimuat: '+loaded+'/4.'+(missing.length?' Belum tersedia: '+missing.join(', ')+'.':'');
  assessmentMessage.textContent=missing.length?'Identitas dimuat, tetapi sebagian foto tidak dapat diakses. Periksa izin/tautan Drive sebelum membuat PDF.':'Identitas dan empat foto responden berhasil dimuat. Periksa data sebelum membuat PDF.';
+ } finally {const loadButton=document.getElementById('assessmentLoadRespondent');if(loadButton)loadButton.disabled=false;}
 }
 async function buildAssessmentPdf(){
  if(!window.PDFLib)throw new Error('Pustaka PDF belum termuat. Periksa koneksi internet lalu muat ulang halaman.');
@@ -1392,7 +1396,7 @@ async function buildAssessmentPdf(){
  const font=await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
  const identityName=String(document.querySelector('#assessmentFields [name="q16"]')?.value||'').trim();
  const identityNik=String(document.querySelector('#assessmentFields [name="q23"]')?.value||'').trim();
- const cleanPdfText=value=>String(value).normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^\\x20-\\x7E]/g,' ').replace(/\\s+/g,' ').trim();
+ const cleanPdfText=value=>String(value).normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^\x20-\x7E]/g,' ').replace(/\s+/g,' ').trim();
  const identityPage=pages[0];
  if(identityName){
   let printableName=cleanPdfText(identityName);
