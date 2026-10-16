@@ -1,3 +1,9 @@
+## 1.1.42 — 2026-10-16
+- Perbaiki pemilih foto asesmen dengan selector CSS yang lebih spesifik agar tidak ditimpa aturan grid responsif lama.
+- Paksa empat pilihan FOTO DIRI, FOTO KTP, FOTO KK, dan FOTO RUMAH TAMPAK DEPAN berada dalam satu baris horizontal; pada ponsel baris dapat digeser ke samping.
+- Perbarui cache-busting stylesheet agar perangkat memuat CSS baru.
+- Selaraskan versi web/PWA ke 1.1.42 dan Android ke 1.2.22 (versionCode 25).
+
 ## 1.1.41 — 2026-10-16
 - Susun empat pemilih foto asesmen secara horizontal: empat kolom pada layar lebar dan dua kolom pada ponsel.
 - Pindahkan tombol CETAK dan SIMPAN ke bawah lembar pengisian asesmen, di luar area cetak.
