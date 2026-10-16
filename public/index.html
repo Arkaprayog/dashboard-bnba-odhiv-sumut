@@ -548,8 +548,8 @@ async function loadInitialIntakes(){
    const cell=value=>{const td=document.createElement('td');td.textContent=value||'—';tr.append(td);return td;};
    const timeCell=cell(formatIntakeTime(item.created_at));timeCell.dataset.label='Waktu masuk';
    const nameCell=cell(item.preferred_name);nameCell.dataset.label='Nama';
-   const phoneCell=cell(item.phone?('+'+String(item.phone).replace(/^\\+/,'')):'—');phoneCell.dataset.label='WhatsApp';
-   const phoneLabel=document.createElement('span');phoneLabel.className='initial-intake-phone-number';phoneLabel.textContent=item.phone?('+'+String(item.phone).replace(/^\\+/,'')):'—';
+   const phoneCell=cell(item.phone?('+'+String(item.phone).replace(/^\+/,'')):'—');phoneCell.dataset.label='WhatsApp';
+   const phoneLabel=document.createElement('span');phoneLabel.className='initial-intake-phone-number';phoneLabel.textContent=item.phone?('+'+String(item.phone).replace(/^\+/,'')):'—';
    const followupUrl=new URL(googleFollowupFormUrl);
    followupUrl.searchParams.set('usp','pp_url');
    followupUrl.searchParams.set('entry.1060152272',item.preferred_name||'');
