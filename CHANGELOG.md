@@ -1,3 +1,10 @@
+## 1.1.58 — 2026-10-16
+- Owner menetapkan kata sandi awal saat mendaftarkan anggota tim kerja; kata sandi disimpan menggunakan PBKDF2-SHA256 dengan salt acak.
+- Tautan WhatsApp digunakan untuk pendaftaran awal; login berikutnya memakai nomor HP/WA dan kata sandi dari owner.
+- Mempertahankan sesi tim terpisah dari sesi owner/admin; database PPKS dan asesmen tetap dibatasi untuk owner/admin.
+- Menyediakan pilihan jabatan Pendamping Sebaya dan Penjangkau Lapangan pada form pendaftaran tim.
+- Memperbarui versi web/PWA ke 1.1.58.
+
 ## 1.1.57 — 2026-10-16
 - Mengecilkan kartu profil owner, avatar, tombol edit, ikon lonceng/pengaturan/keluar, serta ukuran ikon SVG.
 - Memastikan foto, identitas owner, dan ikon berada dalam satu baris; jam live berada pada baris ringkas di bawahnya.
