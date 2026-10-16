@@ -236,8 +236,8 @@
       <p class="dashmsg" id="stage1DataMessage" role="status" aria-live="polite">Data dimuat setelah halaman dibuka.</p>
       <div class="table-wrap" style="overflow:auto;max-width:100%">
         <table class="stage1-data-table" style="width:100%;min-width:1050px;border-collapse:collapse">
-          <thead><tr><th>Timestamp</th><th>NAMA LENGKAP</th><th>NIK</th><th>USIA</th><th>JENIS KELAMIN</th><th>FOTO DIRI</th><th>FOTO KTP</th><th>ALAMAT DOMISILI SAAT INI</th><th>KOTA DOMISILI SAAT INI</th><th>JENIS BANTUAN YANG DIINGINKAN</th><th>No HP/WA</th></tr></thead>
-          <tbody id="stage1DataRows"><tr><td colspan="11">Belum ada data dimuat.</td></tr></tbody>
+          <thead><tr><th>Timestamp</th><th>NAMA LENGKAP</th><th>NIK</th><th>USIA</th><th>JENIS KELAMIN</th><th>FOTO DIRI</th><th>FOTO KTP</th><th>ALAMAT DOMISILI SAAT INI</th><th>KOTA DOMISILI SAAT INI</th><th>JENIS BANTUAN YANG DIINGINKAN</th><th>No HP/WA</th><th>Aksi</th></tr></thead>
+          <tbody id="stage1DataRows"><tr><td colspan="12">Belum ada data dimuat.</td></tr></tbody>
         </table>
       </div>
     </section>
@@ -535,7 +535,7 @@ async function loadStage1Data(){
   const response=await fetch('/api/questionnaires/stage1',{credentials:'same-origin',cache:'no-store'});
   const payload=await response.json().catch(()=>({}));
   if(!response.ok||!payload.items)throw new Error(payload.error||'Data tahap 1 belum dapat dimuat.');
-  if(!payload.items.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=11;td.textContent='Belum ada jawaban kuisioner owner atau tim kerja.';tr.append(td);tbody.append(tr);}
+  if(!payload.items.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=12;td.textContent='Belum ada jawaban kuisioner owner atau tim kerja.';tr.append(td);tbody.append(tr);}
   for(const item of payload.items){
    const tr=document.createElement('tr');
    const textCell=value=>{const td=document.createElement('td');td.textContent=value||'—';tr.append(td);return td;};
@@ -546,10 +546,27 @@ async function loadStage1Data(){
    const phoneCell=textCell(item.phone);
    const digits=normalizedWaNumber(item.phone);
    if(digits){phoneCell.replaceChildren();const a=document.createElement('a');a.href='https://wa.me/'+digits;a.target='_blank';a.rel='noopener noreferrer';a.textContent=item.phone;a.setAttribute('aria-label','Hubungi '+item.name+' melalui WhatsApp');phoneCell.append(a);}
+   const actionCell=document.createElement('td');
+   const followupUrl=new URL('https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform');
+   followupUrl.searchParams.set('usp','pp_url');
+   followupUrl.searchParams.set('entry.1060152272',item.name||'');
+   followupUrl.searchParams.set('entry.953124160',item.assistance||'');
+   const messageText='Halo, '+(item.name||'')+'. Silakan lengkapi kuesioner lanjutan melalui tautan berikut. Jawaban yang sudah tersedia akan terisi otomatis; mohon periksa kembali sebelum mengirim. '+followupUrl.toString();
+   const followupButton=document.createElement('button');
+   followupButton.type='button';followupButton.className='dashbtn';followupButton.textContent='Kirim Kuesioner Lanjutan';
+   followupButton.setAttribute('aria-label','Siapkan pesan kuesioner lanjutan untuk '+(item.name||'responden'));
+   followupButton.addEventListener('click',async()=>{
+    if(digits){window.open('https://wa.me/'+digits+'?text='+encodeURIComponent(messageText),'_blank','noopener,noreferrer');}
+    else{
+     try{await navigator.clipboard.writeText(messageText);message.textContent='Nomor WhatsApp tidak tersedia. Pesan beserta tautan berhasil disalin untuk '+(item.name||'responden')+'.';}
+     catch{message.textContent='Nomor WhatsApp tidak tersedia. Salin tautan ini secara manual: '+followupUrl.toString();}
+    }
+   });
+   actionCell.append(followupButton);tr.append(actionCell);
    tbody.append(tr);
   }
-  message.textContent='Data berhasil dimuat: '+payload.items.length+' responden. Sumber gabungan: Kuisioner Owner dan Kuisioner Tim Kerja.';
- }catch(error){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=11;td.textContent=error instanceof Error?error.message:'Data gagal dimuat.';tr.append(td);tbody.append(tr);message.textContent='Data belum berhasil dimuat.';}
+  message.textContent='Data berhasil dimuat: '+payload.items.length+' responden. Tombol kuesioner lanjutan menyiapkan pesan WhatsApp dengan dua jawaban yang sudah dipetakan; pesan tetap perlu dikirim oleh owner.';
+ }catch(error){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=12;td.textContent=error instanceof Error?error.message:'Data gagal dimuat.';tr.append(td);tbody.append(tr);message.textContent='Data belum berhasil dimuat.';}
 }
 document.getElementById('refreshStage1Data').addEventListener('click',loadStage1Data);
 
