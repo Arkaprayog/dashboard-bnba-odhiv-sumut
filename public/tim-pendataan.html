@@ -31,7 +31,7 @@
 <p class="muted" id="loginHint">Untuk pendaftaran awal, buka tautan WhatsApp dari owner. Untuk login kembali, masukkan nomor HP/WA dan kata sandi.</p>
 <form id="loginForm" class="login-panel" novalidate>
 <div class="field" id="loginPhoneField"><label for="loginPhone">No. HP/WA *</label><input id="loginPhone" name="phone" autocomplete="tel" maxlength="30" required placeholder="Nomor HP/WA terdaftar"></div>
-<div class="field" id="loginPasswordField"><label for="loginPassword">Kata Sandi *</label><input id="loginPassword" name="password" type="password" autocomplete="current-password" minlength="8" maxlength="128" required placeholder="Kata sandi dari owner"></div>
+<div class="field" id="loginPasswordField"><label for="loginPassword">Kata Sandi *</label><input id="loginPassword" name="password" type="password" autocomplete="current-password" minlength="6" maxlength="128" required placeholder="Kata sandi dari owner"></div>
 <div class="field" id="loginNameField" hidden><label for="loginName">Nama Anggota *</label><input id="loginName" name="name" autocomplete="name" maxlength="120" placeholder="Nama sesuai tautan pendaftaran"></div>
 <div class="actions"><button id="loginButton" class="btn" type="submit">Masuk ke Pendataan</button></div>
 <div id="loginMessage" class="message" role="status" aria-live="polite"></div>
@@ -177,7 +177,7 @@
   event.preventDefault();clearMessage(loginMessage);
   const name=document.getElementById('loginName').value.trim(),phone=document.getElementById('loginPhone').value.trim(),password=document.getElementById('loginPassword').value;
   if(linkToken&&!name){showMessage(loginMessage,'Masukkan nama sesuai pendaftaran owner.','error');return;}
-  if(!linkToken&&(!phone||password.length<8)){showMessage(loginMessage,'Masukkan nomor HP/WA dan kata sandi yang diberikan owner.','error');return;}
+  if(!linkToken&&(!phone||password.length<6)){showMessage(loginMessage,'Masukkan nomor HP/WA dan kata sandi yang diberikan owner.','error');return;}
   loginButton.disabled=true;loginButton.textContent='Memeriksa akun…';
   try{
    const credentials=linkToken?{token:linkToken,name}:{phone,password};
