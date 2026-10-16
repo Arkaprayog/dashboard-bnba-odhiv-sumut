@@ -63,7 +63,7 @@
 <link rel="stylesheet" href="/login-glass-v5.css?v=1.0.0">
 <link rel="stylesheet" href="/dashboard-layout-v2.css?v=1.0.0">
 <link rel="stylesheet" href="/dashboard-auth-view-fix.css?v=1.0.0">
-<link rel="stylesheet" href="/dashboard-glass-v3.css?v=3.1.0">
+<link rel="stylesheet" href="/dashboard-glass-v3.css?v=3.1.1">
 <link rel="stylesheet" href="/dashboard-clear-glass.css?v=1.0.0">
 <link rel="stylesheet" href="/dashboard-layout-v3.css?v=3.0.0">
 <link rel="stylesheet" href="/dashboard-layout-v4.css?v=4.0.0">
@@ -234,8 +234,9 @@
     <section class="app-view" id="stage1DataView" hidden aria-label="Data Kuisioner Tahap 1">
       <div class="dashhead"><div><h2>DATA KUISIONER THP 1</h2><p>Gabungan data yang dikirim melalui Kuisioner Owner dan Kuisioner Tim Kerja.</p></div><div class="owner-form-actions"><button type="button" class="dashbtn" id="refreshStage1Data">Muat Ulang Data</button><button type="button" class="dashbtn" data-questionnaire-back>Menu Kuisioner</button></div></div>
       <p class="dashmsg" id="stage1DataMessage" role="status" aria-live="polite">Data dimuat setelah halaman dibuka.</p>
-      <div class="table-wrap" style="overflow:auto;max-width:100%">
-        <table class="stage1-data-table" style="width:100%;min-width:1050px;border-collapse:collapse">
+      <p class="scroll-hint" id="stage1TableScrollHint">Geser tabel ke kiri atau kanan untuk melihat semua kolom.</p>
+      <div class="table-wrap stage1-table-scroll" style="overflow:auto;max-width:100%">
+        <table class="stage1-data-table">
           <thead><tr><th>Timestamp</th><th>NAMA LENGKAP</th><th>NIK</th><th>USIA</th><th>JENIS KELAMIN</th><th>FOTO DIRI</th><th>FOTO KTP</th><th>ALAMAT DOMISILI SAAT INI</th><th>KOTA DOMISILI SAAT INI</th><th>JENIS BANTUAN YANG DIINGINKAN</th><th>No HP/WA</th><th>Aksi</th></tr></thead>
           <tbody id="stage1DataRows"><tr><td colspan="12">Belum ada data dimuat.</td></tr></tbody>
         </table>
