@@ -35,7 +35,7 @@
 <div class="field"><label for="name">Nama Tim Petugas *</label><input id="name" name="name" maxlength="120" required autocomplete="name"></div>
 <div class="field"><label for="position">Posisi Jabatan Kerja *</label><select id="position" name="position" required><option value="">Pilih posisi</option><option value="PENDAMPING LAPANGAN">Pendamping Sebaya</option><option value="PENJANGKAU LAPANGAN">PENJANGKAU LAPANGAN</option></select></div>
 <div class="field"><label for="phone">No. HP/WA Tim Petugas *</label><input id="phone" name="phone" type="tel" inputmode="tel" maxlength="30" required></div>
-<div class="field"><label for="password">Kata Sandi Awal (minimal 8 karakter) *</label><input id="password" name="password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required></div>
+<div class="field"><label for="password">Kata Sandi Awal (minimal 6 karakter) *</label><input id="password" name="password" type="password" minlength="6" maxlength="128" autocomplete="new-password" required></div>
 </div>
 <div class="form-actions"><button id="createButton" type="submit">Daftarkan Petugas & Buat Link</button></div>
 </form>
@@ -59,8 +59,8 @@
     <h2 style="margin-top:0">Atur Kata Sandi Anggota</h2>
     <p class="muted">Anggota: <strong id="passwordTargetName"></strong></p>
     <input id="passwordTargetId" type="hidden">
-    <div class="field"><label for="teamNewPassword">Kata sandi baru (minimal 8 karakter)</label><input id="teamNewPassword" type="password" minlength="8" maxlength="128" autocomplete="new-password" required></div>
-    <div class="field"><label for="teamNewPasswordConfirm">Ulangi kata sandi baru</label><input id="teamNewPasswordConfirm" type="password" minlength="8" maxlength="128" autocomplete="new-password" required></div>
+    <div class="field"><label for="teamNewPassword">Kata sandi baru (minimal 6 karakter)</label><input id="teamNewPassword" type="password" minlength="6" maxlength="128" autocomplete="new-password" required></div>
+    <div class="field"><label for="teamNewPasswordConfirm">Ulangi kata sandi baru</label><input id="teamNewPasswordConfirm" type="password" minlength="6" maxlength="128" autocomplete="new-password" required></div>
     <div id="teamPasswordMessage" class="message" role="status" aria-live="polite"></div>
     <div class="form-actions"><button id="saveTeamPassword" type="submit">Simpan Kata Sandi</button><button id="cancelTeamPassword" class="secondary" type="button">Batal</button></div>
   </form>
@@ -82,7 +82,7 @@
  document.getElementById('teamPasswordForm').addEventListener('submit',async event=>{
   event.preventDefault();const messageEl=document.getElementById('teamPasswordMessage');messageEl.textContent='';
   const password=document.getElementById('teamNewPassword').value,confirmPassword=document.getElementById('teamNewPasswordConfirm').value,id=document.getElementById('passwordTargetId').value;
-  if(password.length<8||password.length>128){message(messageEl,'Kata sandi minimal 8 karakter.','error');return;}
+  if(password.length<6||password.length>128){message(messageEl,'Kata sandi minimal 6 karakter.','error');return;}
   if(password!==confirmPassword){message(messageEl,'Kedua kata sandi belum sama.','error');return;}
   const button=document.getElementById('saveTeamPassword');button.disabled=true;button.textContent='Menyimpan…';
   try{await jsonFetch('/api/team-petugas/password',{method:'POST',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify({id,password})});document.getElementById('teamPasswordDialog').close();message(document.getElementById('listMessage'),'Kata sandi anggota diperbarui. Semua sesi lama sudah dikeluarkan.','ok');await loadTeams();}
