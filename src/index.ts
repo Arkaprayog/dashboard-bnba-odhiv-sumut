@@ -1667,6 +1667,7 @@ export default {
           }
           try {
             const accessToken = await googleAccessToken(env);
+            // Open-ended columns avoid requesting rows beyond the tab grid limit.
             const range = encodeURIComponent("'Kuisioner Owner'!A:O");
             const response = await fetch("https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID) + "/values/" + range + "?valueRenderOption=FORMATTED_VALUE", {
               headers: { authorization: "Bearer " + accessToken },
