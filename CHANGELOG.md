@@ -1,3 +1,9 @@
+## 1.1.55 — 2026-10-16
+- Ringkas kartu profil owner dengan grid responsif agar foto/profil tetap di kiri dan identitas berada di sisi kanan.
+- Pindahkan ikon notifikasi, pengaturan, dan keluar ke sudut kanan atas kartu, rata kanan dan sejajar dengan baris nama.
+- Perkecil ikon serta jarak kartu pada desktop dan ponsel.
+- Perbarui versi web/PWA dan cache stylesheet.
+
 ## 1.1.54 — 2026-10-16
 - Ubah menu RANCANGAN ANGGARAN BELANJA: pilihan RAB kini muncul sebagai dua kartu di area Beranda, mengikuti pola kartu pada menu Dokumen.
 - Hilangkan submenu yang sebelumnya muncul di dalam navigasi.
