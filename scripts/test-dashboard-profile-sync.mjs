@@ -156,7 +156,7 @@ for (const path of themedPages) {
   assert.ok(html.includes('/transparent-theme.css?v=2.0.0'), path + " must load the current shared glass theme.");
   assert.doesNotMatch(html, /<style\b/i, path + " must not retain inline CSS blocks.");
   const slug = path === "public/index.html" ? "app" : path.split("/").pop().replace(/\.html$/, "");
-  const layoutHref = path === "public/index.html" ? '/app-layout.css?v=2.0.2' : '/' + slug + '-layout.css?v=2.0.0';
+  const layoutHref = path === "public/index.html" ? '/app-layout.css?v=2.0.3' : '/' + slug + '-layout.css?v=2.0.0';
   assert.ok(html.includes(layoutHref), path + " must load its extracted layout stylesheet.");
 }
 const hillBackground = readFileSync("public/dashboard-background.webp");
