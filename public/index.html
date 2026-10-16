@@ -252,8 +252,6 @@
           <div class="assessment-action-row">
             <button class="dashbtn" type="button" id="assessmentSave">SIMPAN ASESMEN</button>
             <button class="dashbtn" type="button" id="assessmentReset">KOSONGKAN FORM</button>
-            <select id="assessmentSavedList" aria-label="Pilih asesmen tersimpan"><option value="">Pilih asesmen tersimpan</option></select>
-            <button class="dashbtn" type="button" id="assessmentLoad">Muat Asesmen</button>
           </div>
           <div class="assessment-action-row">
             <button class="dashbtn" type="button" id="assessmentPrint">Print</button>
@@ -1331,17 +1329,46 @@ function applyAssessmentAnswers(answers){
   renderAssessmentPhoto(id,label,saved.dataUrl,fileName);
  });
 }
-async function refreshSavedAssessments(){
- const response=await fetch('/api/assessments',{credentials:'same-origin',cache:'no-store'});
- const payload=await response.json().catch(()=>({}));
- if(!response.ok)throw new Error(payload.error||'Gagal memuat daftar asesmen.');
- savedList.replaceChildren(new Option('Pilih asesmen tersimpan',''));
- (payload.items||[]).forEach(item=>{
-  const respondentName=String(item.respondent_name||'').trim();
-  const label=respondentName?('From Asesmen Terintegrasi — '+respondentName):('From Asesmen Terintegrasi — '+item.id.slice(0,8));
-  savedList.add(new Option(label+' · '+item.updated_at,item.id));
- });
-}
+ async function refreshSavedAssessments(){
+  const response=await fetch('/api/assessments',{credentials:'same-origin',cache:'no-store'});
+  const payload=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(payload.error||'Gagal memuat daftar asesmen.');
+  savedList.replaceChildren(new Option('Pilih asesmen tersimpan',''));
+  const cards=document.getElementById('assessmentSavedCards');
+  const status=document.getElementById('assessmentSavedMessage');
+  cards.replaceChildren();
+  const items=Array.isArray(payload.items)?payload.items:[];
+  if(!items.length){cards.append(el('p','', 'Belum ada data asesmen tersimpan.'));status.textContent='Tidak ada data asesmen tersimpan.';return;}
+  items.forEach(item=>{
+   const id=String(item.id||'');
+   const respondentName=String(item.respondent_name||'').trim();
+   const label=respondentName?('Asesmen — '+respondentName):('Asesmen — '+id.slice(0,8));
+   const updated=String(item.updated_at||'');
+   savedList.add(new Option(label+' · '+updated,id));
+   const card=el('article','assessment-saved-card');
+   const detail=el('div','assessment-saved-card-detail');
+   detail.append(el('h3','',label),el('p','', 'Terakhir diperbarui: '+(updated||'Tidak tersedia')),el('p','assessment-saved-id','ID: '+id));
+   const actions=el('div','assessment-saved-card-actions');
+   const load=el('button','dashbtn','Buka asesmen');load.type='button';load.addEventListener('click',()=>loadSavedAssessment(id));
+   actions.append(load);card.append(detail,actions);cards.append(card);
+  });
+  status.textContent='Jumlah asesmen tersimpan: '+items.length+'. Data hanya dapat diakses setelah login.';
+ }
+ async function loadSavedAssessment(id){
+  if(!id){assessmentMessage.textContent='Pilih data asesmen terlebih dahulu.';return;}
+  try{
+   const response=await fetch('/api/assessments/item?id='+encodeURIComponent(id),{credentials:'same-origin',cache:'no-store'});
+   const payload=await response.json().catch(()=>({}));
+   if(!response.ok||!payload.item)throw new Error(payload.error||'Gagal memuat asesmen.');
+   currentAssessmentId=payload.item.id;applyAssessmentAnswers(payload.item.answers||{});
+   assessmentMessage.textContent='Asesmen tersimpan berhasil dimuat.';
+   setAppView('assessment');
+  }catch(error){
+   document.getElementById('assessmentSavedMessage').textContent=error instanceof Error?error.message:'Gagal memuat asesmen.';
+  }
+ }
+ document.getElementById('refreshSavedAssessments').addEventListener('click',()=>refreshSavedAssessments().catch(error=>{document.getElementById('assessmentSavedMessage').textContent=assessmentErrorText(error);}));
+ document.getElementById('assessmentLoad')?.addEventListener('click',()=>loadSavedAssessment(savedList.value));
 function assessmentErrorText(error){
  const raw=error instanceof Error?error.message:'Gagal menyimpan asesmen.';
  if(/failed to fetch|networkerror|load failed/i.test(raw))return 'Koneksi ke server gagal. Periksa internet dan pastikan Anda login sebagai owner/admin, lalu coba kembali.';
@@ -1365,16 +1392,6 @@ saveAssessmentButton.addEventListener('click',async()=>{
   }
  }catch(error){assessmentMessage.textContent=assessmentErrorText(error);}
  finally{saveAssessmentButton.disabled=false;}
-});
-document.getElementById('assessmentLoad').addEventListener('click',async()=>{
- const id=savedList.value;if(!id){assessmentMessage.textContent='Pilih asesmen yang akan dimuat.';return}
- try{
-   const response=await fetch('/api/assessments/item?id='+encodeURIComponent(id),{credentials:'same-origin',cache:'no-store'});
-   const payload=await response.json().catch(()=>({}));
-   if(!response.ok||!payload.item)throw new Error(payload.error||'Gagal memuat asesmen.');
-   currentAssessmentId=payload.item.id;applyAssessmentAnswers(payload.item.answers||{});
-   assessmentMessage.textContent='Asesmen tersimpan berhasil dimuat.';
- }catch(error){assessmentMessage.textContent=error instanceof Error?error.message:'Gagal memuat asesmen.'}
 });
 document.getElementById('assessmentPrint').addEventListener('click',()=>{
  const respondentName=String(document.querySelector('#assessmentFields [name="q16"]')?.value||'').trim();
