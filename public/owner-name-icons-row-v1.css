@@ -1,0 +1,162 @@
+/* Owner profile header alignment — name and actions share the same row. */
+body:has(#dashboard:not([hidden])) #dashboard .owner-card {
+  display: grid !important;
+  grid-template-columns: clamp(38px, 7vw, 64px) minmax(0, 1fr) auto !important;
+  grid-template-areas:
+    "profile name actions"
+    "profile nip nip"
+    "profile institution institution"
+    "profile details details"
+    "clock clock clock" !important;
+  grid-template-rows: auto auto auto auto auto !important;
+  align-items: center !important;
+  gap: 4px 8px !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-profile-side {
+  grid-area: profile !important;
+  grid-row: 1 / span 4 !important;
+  align-self: center !important;
+  min-width: 0 !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary {
+  display: contents !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary h3 {
+  grid-area: name !important;
+  align-self: center !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: clamp(.72rem, 1.35vw, 1.05rem) !important;
+  line-height: 1.2 !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary #ownerNipSummary {
+  grid-area: nip !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  line-height: 1.3 !important;
+  overflow-wrap: anywhere !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary #ownerInstitutionSummary {
+  grid-area: institution !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  line-height: 1.3 !important;
+  overflow-wrap: anywhere !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-summary .owner-details {
+  grid-area: details !important;
+  min-width: 0 !important;
+  margin: 2px 0 0 !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions {
+  grid-area: actions !important;
+  align-self: center !important;
+  justify-self: end !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  width: auto !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions .top-actions {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 3px !important;
+  width: auto !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions :is(#notificationBellButton, #settingsButton, #logoutButton) {
+  flex: 0 0 28px !important;
+  width: 28px !important;
+  min-width: 28px !important;
+  max-width: 28px !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  max-height: 28px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions :is(#notificationBellButton, #settingsButton, #logoutButton) svg {
+  display: block !important;
+  width: 15px !important;
+  height: 15px !important;
+}
+body:has(#dashboard:not([hidden])) #dashboard .owner-live-clock {
+  grid-area: clock !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 2px 0 0 !important;
+  padding: 0 !important;
+  text-align: right !important;
+}
+@media (max-width: 640px) {
+  body:has(#dashboard:not([hidden])) #dashboard .owner-card {
+    grid-template-columns: 38px minmax(0, 1fr) auto !important;
+    gap: 4px 6px !important;
+    padding: 8px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .owner-avatar {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    max-width: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .owner-summary h3 {
+    font-size: clamp(.68rem, 3.15vw, .85rem) !important;
+    line-height: 1.15 !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions .top-actions {
+    gap: 2px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions :is(#notificationBellButton, #settingsButton, #logoutButton) {
+    flex-basis: 24px !important;
+    width: 24px !important;
+    min-width: 24px !important;
+    max-width: 24px !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    max-height: 24px !important;
+    border-radius: 6px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions :is(#notificationBellButton, #settingsButton, #logoutButton) svg {
+    width: 13px !important;
+    height: 13px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .owner-summary #ownerNipSummary,
+  body:has(#dashboard:not([hidden])) #dashboard .owner-summary #ownerInstitutionSummary {
+    font-size: clamp(.58rem, 2.5vw, .68rem) !important;
+  }
+}
+@media (max-width: 350px) {
+  body:has(#dashboard:not([hidden])) #dashboard .owner-card {
+    grid-template-columns: 32px minmax(0, 1fr) auto !important;
+    gap: 3px 4px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .owner-avatar {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    max-width: 30px !important;
+    min-height: 30px !important;
+    max-height: 30px !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .owner-header-actions :is(#notificationBellButton, #settingsButton, #logoutButton) {
+    flex-basis: 22px !important;
+    width: 22px !important;
+    min-width: 22px !important;
+    max-width: 22px !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    max-height: 22px !important;
+  }
+}
