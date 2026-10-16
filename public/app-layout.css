@@ -271,3 +271,5 @@ body:has(#dashboard:not([hidden])) #dashboard .owner-summary a,body:has(#dashboa
 .rab-home-choices .rab-choice-card p{flex:1;line-height:1.55}
 .rab-home-choices .rab-choice-card .dashbtn{margin-top:12px;max-width:100%}
 @media(max-width:650px){.rab-home-choices{padding:12px;border-radius:18px}.rab-home-choices .rab-choice-grid{grid-template-columns:minmax(0,1fr);gap:12px}.rab-home-choices .rab-choice-card{padding:16px}}
+
+/* Cache generation 2.0.6: owner compact layout is finalized in single-layer-floating-dashboard-v1.css. */

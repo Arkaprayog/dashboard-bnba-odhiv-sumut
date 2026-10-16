@@ -1,3 +1,9 @@
+## 1.1.57 — 2026-10-16
+- Mengecilkan kartu profil owner, avatar, tombol edit, ikon lonceng/pengaturan/keluar, serta ukuran ikon SVG.
+- Memastikan foto, identitas owner, dan ikon berada dalam satu baris; jam live berada pada baris ringkas di bawahnya.
+- Menambahkan aturan final berprioritas tinggi setelah seluruh CSS lama untuk mencegah layout lama menimpa perubahan.
+- Memperbarui cache stylesheet ke app-layout 2.0.6 dan single-layer 1.1.57.
+
 ## 1.1.56 — 2026-10-16
 - Memperbaiki akar masalah tata letak owner: aturan lama di app-layout.css dengan selector :has() dan !important mengalahkan aturan CSS sebelumnya dan memaksa ikon aksi ke baris lain.
 - Tambahkan aturan final berspesifisitas setara/lebih tinggi pada stylesheet yang dimuat setelah app-layout.css.
