@@ -194,6 +194,7 @@ jobs:
         run: |
           node - <<'NODE'
           const fs = require('fs');
+          const vm = require('vm');
           const intro = fs.readFileSync('public/kuisioner-responden.html', 'utf8');
           const introCss = fs.readFileSync('public/kuisioner-pilihan.css', 'utf8');
           const dashboard = fs.readFileSync('public/index.html', 'utf8');
