@@ -1,3 +1,9 @@
+## 1.1.43 — 2026-10-16
+- Redesign dashboard dengan konsep single-layer glassmorphism: latar pemandangan tetap dominan dan kontainer dekoratif bertumpuk dihilangkan.
+- Ubah menu utama menjadi grid Floating Action Buttons berbingkai biru langit, responsif, dan mudah diakses.
+- Pertahankan ID, event handler, menu, API, dan alur data yang sudah ada; perubahan terutama pada stylesheet presentasi.
+- Selaraskan versi web/PWA ke 1.1.43 dan Android ke 1.2.23 (versionCode 26).
+
 ## 1.1.41 — 2026-10-16
 - Susun empat pemilih foto asesmen secara horizontal: empat kolom pada layar lebar dan dua kolom pada ponsel.
 - Pindahkan tombol CETAK dan SIMPAN ke bawah lembar pengisian asesmen, di luar area cetak.
