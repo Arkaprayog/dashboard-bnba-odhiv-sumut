@@ -1667,11 +1667,18 @@ export default {
           }
           try {
             const accessToken = await googleAccessToken(env);
-            const range = encodeURIComponent("'Kuisioner Owner'!A1:O2000");
+            const range = encodeURIComponent("'Kuisioner Owner'!A:O");
             const response = await fetch("https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID) + "/values/" + range + "?valueRenderOption=FORMATTED_VALUE", {
               headers: { authorization: "Bearer " + accessToken },
             });
-            if (!response.ok) return reply({ error: "Data kuesioner tahap 1 gagal dibaca (HTTP " + response.status + ")." }, 502);
+            if (!response.ok) {
+              let googleDetail = "";
+              try {
+                const errorPayload = await response.json() as { error?: { message?: string } };
+                googleDetail = String(errorPayload.error?.message || "").replace(/\\s+/g, " ").slice(0, 180);
+              } catch { /* Respons Google bukan JSON. */ }
+              return reply({ error: "Data kuesioner tahap 1 gagal dibaca (HTTP " + response.status + ")." + (googleDetail ? " Detail: " + googleDetail : "") }, 502);
+            }
             const payload = await response.json() as { values?: string[][] };
             const rows = payload.values || [];
             if (!rows.length) return reply({ items: [], csrfToken: admin.csrf_token });
