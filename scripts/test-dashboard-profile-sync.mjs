@@ -224,7 +224,7 @@ assert.ok(clinicBarcodePage.includes('kuisioner-awal.html') && clinicBarcodePage
 assert.ok(initialIntakeCss.includes('.intake-consent') && initialIntakeCss.includes('@media(max-width:480px)') && clinicBarcodeCss.includes('@media print') && intakeManagerCss.includes('.initial-intake-scroll'), "intake, printable QR, and owner status table must be mobile-friendly and printable.");
 
 for (const [fileName, source] of [["public/kuisioner-awal.html", initialIntakePage], ["public/barcode-layanan.html", clinicBarcodePage]]) {
-  const blocks = [...source.matchAll(/<script>([\\s\\S]*?)<\\/script>/gi)];
+  const blocks = [...source.matchAll(/<script>([\s\S]*?)<\/script>/gi)];
   assert.equal(blocks.length, 1, fileName + " must contain exactly one inline script.");
   new vm.Script(blocks[0][1], { filename: fileName + ":inline-script" });
 }
