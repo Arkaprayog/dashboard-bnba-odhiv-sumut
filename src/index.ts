@@ -320,7 +320,9 @@ async function ensureTeamSchema(env: Env) {
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       created_by TEXT,
       profile_photo_id TEXT NOT NULL DEFAULT '',
-      profile_completed INTEGER NOT NULL DEFAULT 0 CHECK (profile_completed IN (0,1))
+      profile_completed INTEGER NOT NULL DEFAULT 0 CHECK (profile_completed IN (0,1)),
+      password_hash TEXT NOT NULL DEFAULT '',
+      password_salt TEXT NOT NULL DEFAULT ''
     )`),
     env.DB.prepare(`INSERT OR IGNORE INTO team_petugas_v2(id,display_name,position,phone,token_hash,active,created_at,created_by)
       SELECT id,display_name,CASE WHEN position='PENDAMPING SEBAYA' THEN 'PENDAMPING LAPANGAN' ELSE position END,phone,token_hash,active,created_at,created_by FROM team_petugas`),
@@ -337,11 +339,19 @@ async function ensureTeamSchema(env: Env) {
       ip_hash TEXT NOT NULL,
       created_at INTEGER NOT NULL
     )`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS team_login_attempts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ip_hash TEXT NOT NULL,
+      created_at INTEGER NOT NULL
+    )`),
     env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_team_submission_ip_time ON team_submission_attempts(ip_hash,created_at)"),
+    env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_team_login_attempt_ip_time ON team_login_attempts(ip_hash,created_at)"),
     env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_team_petugas_active ON team_petugas(active,created_at)"),
     env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_team_petugas_v2_active ON team_petugas_v2(active,created_at)"),
     env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_team_sessions_petugas ON team_sessions(petugas_id,expires_at)"),
   ]);
+  try { await env.DB.prepare("ALTER TABLE team_petugas_v2 ADD COLUMN password_hash TEXT NOT NULL DEFAULT ''").run(); } catch { /* Already migrated. */ }
+  try { await env.DB.prepare("ALTER TABLE team_petugas_v2 ADD COLUMN password_salt TEXT NOT NULL DEFAULT ''").run(); } catch { /* Already migrated. */ }
 }
 
 async function hashTeamToken(token: string): Promise<string> {
@@ -964,24 +974,55 @@ export default {
           if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengelola tim petugas." }, 403);
           const csrf = request.headers.get("X-CSRF-Token");
           if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
-          let body: { name?: unknown; position?: unknown; phone?: unknown };
+          let body: { name?: unknown; position?: unknown; phone?: unknown; password?: unknown };
           try { body = await request.json() as typeof body; } catch { return reply({ error: "Format data petugas tidak valid." }, 400); }
           const name = typeof body.name === "string" ? body.name.trim().replace(/\s+/g, " ") : "";
           const position = typeof body.position === "string" ? body.position.trim().toUpperCase() : "";
           const phone = typeof body.phone === "string" ? body.phone.trim() : "";
+          const password = typeof body.password === "string" ? body.password : "";
           if (name.length < 2 || name.length > 120 ||
               !["PENDAMPING LAPANGAN", "PENJANGKAU LAPANGAN"].includes(position) ||
-              !/^\+?[0-9 ()-]{8,30}$/.test(phone)) {
-            return reply({ error: "Nama, posisi jabatan, atau nomor HP/WA belum valid." }, 400);
+              !/^\+?[0-9 ()-]{8,30}$/.test(phone) || password.length < 8 || password.length > 128) {
+            return reply({ error: "Nama, jabatan, nomor HP/WA, atau kata sandi belum valid. Kata sandi minimal 8 karakter." }, 400);
           }
           await ensureTeamSchema(env);
           const token = b64(crypto.getRandomValues(new Uint8Array(32)));
           const id = crypto.randomUUID();
-          await env.DB.prepare("INSERT INTO team_petugas_v2(id,display_name,position,phone,token_hash,active,created_by) VALUES(?,?,?,?,?,1,?)")
-            .bind(id, name, position, phone, await hashTeamToken(token), admin.id).run();
+          const passwordSalt = crypto.getRandomValues(new Uint8Array(16));
+          const passwordDigest = await passwordHash(password, passwordSalt);
+          await env.DB.prepare("INSERT INTO team_petugas_v2(id,display_name,position,phone,token_hash,active,created_by,password_hash,password_salt) VALUES(?,?,?,?,?,1,?,?,?)")
+            .bind(id, name, position, phone, await hashTeamToken(token), admin.id, [...passwordDigest].map((value) => value.toString(16).padStart(2, "0")).join(""), [...passwordSalt].map((value) => value.toString(16).padStart(2, "0")).join("")).run();
           await audit(env, admin.id, "team_petugas_create");
           const origin = normalizeOrigin(env.APP_ORIGIN || new URL(request.url).origin);
           return reply({ ok: true, item: { id, display_name: name, position, phone, active: 1 }, link: origin + "/tim-pendataan.html?token=" + encodeURIComponent(token) }, 201);
+        }
+
+        if (url.pathname === "/api/team-petugas/password" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login ke dashboard admin." }, 401);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengelola kata sandi tim." }, 403);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          let body: { id?: unknown; password?: unknown };
+          try { body = await request.json() as typeof body; } catch { return reply({ error: "Format permintaan tidak valid." }, 400); }
+          const id = typeof body.id === "string" ? body.id.trim() : "";
+          const password = typeof body.password === "string" ? body.password : "";
+          if (!/^[0-9a-f-]{36}$/i.test(id) || password.length < 8 || password.length > 128) {
+            return reply({ error: "ID anggota tidak valid atau kata sandi kurang dari 8 karakter." }, 400);
+          }
+          await ensureTeamSchema(env);
+          const salt = crypto.getRandomValues(new Uint8Array(16));
+          const digest = await passwordHash(password, salt);
+          const passwordHex = [...digest].map(value => value.toString(16).padStart(2, "0")).join("");
+          const saltHex = [...salt].map(value => value.toString(16).padStart(2, "0")).join("");
+          const saved = await env.DB.prepare("UPDATE team_petugas_v2 SET password_hash=?,password_salt=? WHERE id=? AND active=1")
+            .bind(passwordHex, saltHex, id).run();
+          if (saved.meta.changes !== 1) return reply({ error: "Anggota tidak ditemukan atau sudah nonaktif." }, 404);
+          await env.DB.prepare("UPDATE team_sessions SET revoked_at=? WHERE petugas_id=? AND revoked_at IS NULL")
+            .bind(Math.floor(Date.now() / 1000), id).run();
+          await audit(env, admin.id, "team_petugas_password_reset");
+          return reply({ ok: true, message: "Kata sandi anggota diperbarui. Semua sesi anggota lama telah dikeluarkan." });
         }
 
         if (url.pathname === "/api/team-petugas/revoke" && request.method === "POST") {
@@ -1095,19 +1136,44 @@ export default {
 
         if (url.pathname === "/api/team-login" && request.method === "POST") {
           if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
-          let body: { token?: unknown; name?: unknown };
+          let body: { token?: unknown; name?: unknown; phone?: unknown; password?: unknown };
           try { body = await request.json() as typeof body; } catch { return reply({ error: "Format login tidak valid." }, 400); }
           const token = typeof body.token === "string" ? body.token.trim() : "";
-          const name = typeof body.name === "string" ? body.name.trim().replace(/\\s+/g, " ") : "";
-          if (token.length < 40 || token.length > 100 || name.length < 2 || name.length > 120) {
-            return reply({ error: "Tautan atau nama petugas tidak valid." }, 400);
-          }
+          const name = typeof body.name === "string" ? body.name.trim().replace(/\s+/g, " ") : "";
+          const phone = typeof body.phone === "string" ? body.phone.trim() : "";
+          const password = typeof body.password === "string" ? body.password : "";
           await ensureTeamSchema(env);
-          const petugas = await env.DB.prepare("SELECT id,display_name,position,phone,profile_completed FROM team_petugas_v2 WHERE token_hash=? AND active=1")
-            .bind(await hashTeamToken(token)).first<{ id: string; display_name: string; position: string; phone: string; profile_completed: number }>();
-          const normalizeName = (value: string) => value.normalize("NFKC").trim().replace(/\\s+/g, " ").toLocaleLowerCase("id-ID");
-          if (!petugas || normalizeName(name) !== normalizeName(petugas.display_name)) {
-            return reply({ error: "Nama tidak cocok dengan petugas yang terdaftar pada tautan ini." }, 401);
+          const attemptNow = Math.floor(Date.now() / 1000);
+          const clientIp = request.headers.get("CF-Connecting-IP") || "unknown";
+          const ipHash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(clientIp)));
+          await env.DB.prepare("DELETE FROM team_login_attempts WHERE created_at<?").bind(attemptNow - 86400).run();
+          const recentAttempts = await env.DB.prepare("SELECT COUNT(*) AS n FROM team_login_attempts WHERE ip_hash=? AND created_at>?")
+            .bind(ipHash, attemptNow - 900).first<{ n: number }>();
+          if ((recentAttempts?.n || 0) >= 20) return reply({ error: "Terlalu banyak percobaan login. Coba lagi dalam 15 menit." }, 429, { "retry-after": "900" });
+          await env.DB.prepare("INSERT INTO team_login_attempts(ip_hash,created_at) VALUES(?,?)").bind(ipHash, attemptNow).run();
+          type TeamLoginRow = { id: string; display_name: string; position: string; phone: string; profile_completed: number; password_hash: string; password_salt: string };
+          let petugas: TeamLoginRow | null = null;
+          if (token.length >= 40 && token.length <= 100 && name.length >= 2 && name.length <= 120) {
+            const inviteHash = await hashTeamToken(token);
+            petugas = await env.DB.prepare("SELECT id,display_name,position,phone,profile_completed,password_hash,password_salt FROM team_petugas_v2 WHERE token_hash=? AND active=1")
+              .bind(inviteHash).first<TeamLoginRow>();
+            const normalizeName = (value: string) => value.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("id-ID");
+            if (!petugas || normalizeName(name) !== normalizeName(petugas.display_name)) {
+              return reply({ error: "Nama tidak cocok dengan petugas yang terdaftar pada tautan ini." }, 401);
+            }
+            if (petugas.profile_completed) return reply({ error: "Tautan pendaftaran ini sudah digunakan. Login menggunakan nomor HP/WA dan kata sandi dari owner." }, 401);
+          } else {
+            if (!/^\+?[0-9 ()-]{8,30}$/.test(phone) || password.length < 8 || password.length > 128) {
+              return reply({ error: "Masukkan nomor HP/WA dan kata sandi yang diberikan owner." }, 400);
+            }
+            const candidates = await env.DB.prepare("SELECT id,display_name,position,phone,profile_completed,password_hash,password_salt FROM team_petugas_v2 WHERE active=1 ORDER BY created_at DESC LIMIT 500").all<TeamLoginRow>();
+            for (const candidate of candidates.results || []) {
+              if (candidate.phone.replace(/\D/g, "") !== phone.replace(/\D/g, "") || !candidate.password_hash || !candidate.password_salt) continue;
+              const actual = await passwordHash(password, unhex(candidate.password_salt));
+              const expected = unhex(candidate.password_hash);
+              if (actual.length === expected.length && actual.every((value, index) => value === expected[index])) { petugas = candidate; break; }
+            }
+            if (!petugas) return reply({ error: "Nomor HP/WA atau kata sandi tidak cocok." }, 401);
           }
           const rawSession = b64(crypto.getRandomValues(new Uint8Array(32)));
           const idHash = await hashTeamToken(rawSession);
@@ -1136,10 +1202,17 @@ export default {
           if (!petugas) return reply({ error: "Sesi petugas berakhir. Buka kembali tautan dari admin." }, 401);
           const csrf = request.headers.get("X-CSRF-Token");
           if (!csrf || csrf !== petugas.csrf_token) return reply({ error: "Token keamanan tidak valid. Muat ulang halaman." }, 403);
+          if (petugas.profile_completed) return reply({ error: "Profil sudah terdaftar. Silakan login kembali untuk menggunakan akun tim kerja." }, 409);
           const contentLength = Number(request.headers.get("content-length") || "0");
           if (contentLength > 11 * 1024 * 1024) return reply({ error: "Ukuran foto profil melebihi batas 10 MB." }, 413);
           let form: FormData;
           try { form = await request.formData(); } catch { return reply({ error: "Formulir profil tidak valid." }, 400); }
+          const name = String(form.get("namaAnggota") || petugas.display_name).trim().replace(/\s+/g, " ");
+          const position = String(form.get("jabatan") || petugas.position).trim().toUpperCase();
+          const phone = String(form.get("nomorHpWa") || petugas.phone).trim();
+          if (name.length < 2 || name.length > 120 || !["PENDAMPING LAPANGAN", "PENJANGKAU LAPANGAN"].includes(position) || !/^\+?[0-9 ()-]{8,30}$/.test(phone)) {
+            return reply({ error: "Nama anggota, jabatan, atau nomor HP/WA belum valid." }, 400);
+          }
           const file = form.get("fotoProfil");
           if (!(file instanceof File) || !["image/jpeg", "image/png", "image/webp"].includes(file.type) || !file.size || file.size > 10 * 1024 * 1024) {
             return reply({ error: "Foto profil wajib berupa JPG, PNG, atau WebP dan maksimal 10 MB." }, 400);
@@ -1154,17 +1227,22 @@ export default {
             await env.TEAM_PROFILE_PHOTOS.put(objectKey, await file.arrayBuffer());
             objectWritten = true;
             stage = "d1_commit";
-            const saved = await env.DB.prepare("UPDATE team_petugas_v2 SET profile_photo_id=?,profile_completed=1 WHERE id=? AND active=1")
-              .bind(newReference, petugas.id).run();
+            const rotatedInvite = b64(crypto.getRandomValues(new Uint8Array(32)));
+            const saved = await env.DB.prepare("UPDATE team_petugas_v2 SET display_name=?,position=?,phone=?,profile_photo_id=?,profile_completed=1,token_hash=? WHERE id=? AND active=1 AND profile_completed=0")
+              .bind(name, position, phone, newReference, await hashTeamToken(rotatedInvite), petugas.id).run();
             if (saved.meta.changes !== 1) throw new Error("Petugas tidak aktif atau profil tidak dapat diperbarui.");
             databaseCommitted = true;
+            try {
+              await env.DB.prepare("UPDATE team_sessions SET revoked_at=? WHERE petugas_id=? AND revoked_at IS NULL")
+                .bind(Math.floor(Date.now() / 1000), petugas.id).run();
+            } catch { console.warn("team_onboarding_session_revoke_failed"); }
 
             // Clean up the previous private KV object only after the new reference is committed.
             const previous = parsePrivateTeamPhotoReference(petugas.profile_photo_id);
             if (previous) {
               try { await env.TEAM_PROFILE_PHOTOS.delete(previous.key); } catch { /* Best-effort cleanup; the new profile is already saved. */ }
             }
-            return reply({ ok: true, message: "Profil berhasil dilengkapi." });
+            return reply({ ok: true, message: "Profil berhasil dilengkapi. Silakan login menggunakan nomor HP/WA dan kata sandi dari owner." }, 200, { "set-cookie": "team_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0" });
           } catch (error) {
             if (objectWritten && !databaseCommitted) {
               try { await env.TEAM_PROFILE_PHOTOS.delete(objectKey); } catch { /* Best-effort cleanup of an unreferenced upload. */ }
@@ -1463,6 +1541,59 @@ export default {
             }
             const incidentId = logIncident("owner_questionnaire_submit_failed", error, { path: url.pathname, stage: requestStage });
             return reply({ error: (error instanceof Error ? error.message : "Kuesioner gagal disimpan.") + " (ID insiden: " + incidentId + ")" }, 503);
+          }
+        }
+
+        if (url.pathname === "/api/questionnaires/stage1" && request.method === "GET") {
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login ke dashboard owner." }, 401);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan melihat data kuesioner." }, 403);
+          if (!env.GOOGLE_SHEET_ID || !env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !env.GOOGLE_PRIVATE_KEY) {
+            return reply({ error: "Integrasi Google Sheets belum dikonfigurasi." }, 503);
+          }
+          try {
+            const accessToken = await googleAccessToken(env);
+            const range = encodeURIComponent("'Kuisioner Owner'!A1:O2000");
+            const response = await fetch("https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(env.GOOGLE_SHEET_ID) + "/values/" + range + "?valueRenderOption=FORMATTED_VALUE", {
+              headers: { authorization: "Bearer " + accessToken },
+            });
+            if (!response.ok) return reply({ error: "Data kuesioner tahap 1 gagal dibaca (HTTP " + response.status + ")." }, 502);
+            const payload = await response.json() as { values?: string[][] };
+            const rows = payload.values || [];
+            if (!rows.length) return reply({ items: [], csrfToken: admin.csrf_token });
+            const headers = rows[0].map(value => String(value || "").trim());
+            const get = (row: string[], label: string, fallback: number) => {
+              const index = headers.findIndex(value => value.toLocaleLowerCase("id-ID") === label.toLocaleLowerCase("id-ID"));
+              return String(row[index >= 0 ? index : fallback] || "").trim();
+            };
+            const fileId = (value: string) => {
+              const raw = String(value || "").trim();
+              if (/^[A-Za-z0-9_-]{10,200}$/.test(raw)) return raw;
+              const match = raw.match(/(?:\/file\/d\/|\/document\/d\/|[?&]id=)([A-Za-z0-9_-]{10,200})/i);
+              return match?.[1] || "";
+            };
+            const items = rows.slice(1).map((row, index) => {
+              const name = get(row, "NAMA LENGKAP", 1);
+              if (!name) return null;
+              return {
+                row: index + 2,
+                timestamp: get(row, "Timestamp", 0),
+                name,
+                nik: get(row, "NIK", 2),
+                age: get(row, "USIA", 3),
+                gender: get(row, "JENIS KELAMIN", 4),
+                selfPhotoId: fileId(get(row, "FOTO DIRI", 9)),
+                ktpPhotoId: fileId(get(row, "FOTO KTP", 10)),
+                address: get(row, "ALAMAT DOMISILI SAAT INI", 5),
+                city: get(row, "KOTA DOMISILI SAAT INI", 6),
+                assistance: get(row, "JENIS BANTUAN", 11),
+                phone: get(row, "NO HP/WA", 8),
+              };
+            }).filter((item): item is NonNullable<typeof item> => item !== null).reverse();
+            return reply({ items, csrfToken: admin.csrf_token });
+          } catch (error) {
+            const incidentId = logIncident("stage1_questionnaire_load_failed", error, { path: url.pathname });
+            return reply({ error: "Data kuesioner tahap 1 gagal dimuat. ID insiden: " + incidentId }, 503);
           }
         }
 

@@ -22,6 +22,24 @@ const dashboardCss = readFileSync("public/app-layout.css", "utf8");
 const assessmentPrintCss = readFileSync("public/assessment-print-10-pages-v1.css", "utf8");
 const assessmentGlassCss = readFileSync("public/assessment-glass-layout-v1.css", "utf8");
 const teamManager = readFileSync("public/kelola-tim.html", "utf8");
+assert.ok(teamManager.includes('id="password"') && teamManager.includes("password:document.getElementById"), "owner must set the initial team password at registration.");
+assert.ok(teamManager.includes("Pendamping Sebaya") && teamManager.includes("PENJANGKAU LAPANGAN"), "team registration must expose the two requested job choices.");
+const teamWorkspace = readFileSync("public/tim-pendataan.html", "utf8");
+assert.ok(teamWorkspace.includes("loginPhone") && teamWorkspace.includes("loginPassword") && teamWorkspace.includes("credentials=linkToken?{token:linkToken,name}:{phone,password}"), "team workspace must support invite onboarding and recurring phone/password login.");
+const workerSource = readFileSync("src/index.ts", "utf8");
+assert.ok(workerSource.includes("passwordHash(password, passwordSalt)") && workerSource.includes("password_hash,password_salt"), "team passwords must be salted and hashed server-side.");
+assert.ok(dashboard.includes('id="questionnaireHubView"') && dashboard.includes('id="teamQuestionnaireView"') && dashboard.includes('id="stage1DataView"'), "questionnaire menu must contain owner, team work, and combined stage 1 views.");
+assert.ok(dashboard.includes("KUISIONER OWNER") && dashboard.includes("KUISIONER TIM KERJA") && dashboard.includes("DATA KUISIONER THP 1"), "all three questionnaire menu choices must be present.");
+assert.ok(dashboard.includes('id="ownerQuestionnaireForm"') && workerSource.includes('url.pathname === "/api/owner-questionnaire"'), "the existing owner questionnaire form and API must remain.");
+assert.ok(workerSource.includes('url.pathname === "/api/questionnaires/stage1"') && workerSource.includes("'Kuisioner Owner'!A1:O2000"), "stage 1 data API must read the shared owner/team response sheet.");
+assert.ok(workerSource.includes("Tautan pendaftaran ini sudah digunakan") && workerSource.includes("profile_completed=1,token_hash=?"), "team onboarding link must become unusable after successful profile registration.");
+assert.ok(workerSource.includes("UPDATE team_sessions SET revoked_at=? WHERE petugas_id=? AND revoked_at IS NULL") && workerSource.includes("team_session=; Path=/"), "successful onboarding must revoke sessions and clear the onboarding cookie.");
+assert.ok(workerSource.includes("team_login_attempts") && workerSource.includes("attemptNow - 900") && workerSource.includes("Terlalu banyak percobaan login"), "team login attempts must be rate-limited.");
+assert.ok(workerSource.includes('url.pathname === "/api/team-petugas/password"') && workerSource.includes("team_petugas_password_reset"), "owner/admin must be able to reset passwords for existing team members.");
+assert.ok(teamManager.includes('id="teamPasswordDialog"') && teamManager.includes("/api/team-petugas/password"), "team manager must provide a protected password reset dialog.");
+assert.ok(dashboard.includes("Kelola Tim Petugas / Atur Kata Sandi") && dashboard.includes("dashboardTeamForm"), "owner can add team members from questionnaire menu and open legacy account management.");
+
+assert.ok(teamWorkspace.includes('name="namaAnggota"') && teamWorkspace.includes('name="jabatan"') && teamWorkspace.includes('name="nomorHpWa"') && teamWorkspace.includes("Silakan login ke akun Anda"), "team registration collects the profile fields and prompts login after save.");
 const staffRoster = readFileSync("public/daftar-petugas.html", "utf8");
 const worker = readFileSync("src/index.ts", "utf8");
 const pkg = JSON.parse(readFileSync("package.json", "utf8"));
@@ -46,7 +64,7 @@ assert.deepEqual(mainMenu, [
   ["database", "DATABASE PPKS"],
   ["assessmentSaved", "DATA ASESMEN PPKS"],
   ["assessment", "FROM ASESMEN TERINTEGRASI"],
-  ["questionnaire", "KUISIONER"],
+  ["questionnaireHub", "KUISIONER"],
   ["respondentQuiz", "KUISIONER RESPONDEN"],
   ["formats", "DOKUMEN"],
 ], "main menu items, labels, capitalization, and order must match the requested sequence");
@@ -78,7 +96,7 @@ assert.match(dashboard, /id="logoutButton"/);
 assert.match(dashboard, /aria-label="Keluar"/);
 assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='owner' AND active=1/);
 assert.match(worker, /owner_profile_update/);
-assert.equal(pkg.version, "1.1.57");
+assert.equal(pkg.version, "1.1.58");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
 assert.ok(dashboard.includes('href="/assessment-print-10-pages-v1.css?v=1.1.46"'), "assessment must load the dedicated ten-page print stylesheet.");
 assert.ok(dashboard.includes('pageIndexForQuestion') && dashboard.includes('assessment-print-page'), "assessment fields must be partitioned into six print pages.");
