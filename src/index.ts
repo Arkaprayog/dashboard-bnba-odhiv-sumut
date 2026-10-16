@@ -1518,19 +1518,38 @@ export default {
       }
     }
 
-    if (url.pathname === "/api/assessments/item" && request.method === "GET") {
+    if (url.pathname === "/api/assessments/item" && (request.method === "GET" || request.method === "DELETE")) {
+      if (request.method === "DELETE" && !isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
       const admin = await sessionAdmin(request, env);
       if (!admin) return reply({ error: "Silakan login." }, 401);
       if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengakses data asesmen." }, 403);
+      if (request.method === "DELETE") {
+        const csrf = request.headers.get("X-CSRF-Token");
+        if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+      }
       const id = url.searchParams.get("id") || "";
       if (!/^[0-9a-f-]{36}$/i.test(id)) return reply({ error: "ID asesmen tidak valid." }, 400);
       try {
-        const row = await env.DB.prepare("SELECT id,answers_json,created_at,updated_at FROM integrated_assessments WHERE id=?").bind(id).first<{id:string;answers_json:string;created_at:string;updated_at:string}>();
+        if (request.method === "DELETE") {
+          const existing = await env.DB.prepare("SELECT id FROM integrated_assessments WHERE id=?")
+            .bind(id).first<{ id: string }>();
+          if (!existing) return reply({ error: "Data asesmen tidak ditemukan." }, 404);
+          await env.DB.prepare("DELETE FROM integrated_assessments WHERE id=?").bind(id).run();
+          try {
+            await env.DB.prepare("INSERT INTO audit_log(admin_id,action,target_type,target_id) VALUES(?,?,?,?)")
+              .bind(admin.id, "assessment_deleted", "integrated_assessment", id).run();
+          } catch {
+            console.warn("assessment_delete_audit_failed", { stage: "audit" });
+          }
+          return reply({ ok: true, id });
+        }
+        const row = await env.DB.prepare("SELECT id,answers_json,created_at,updated_at FROM integrated_assessments WHERE id=?")
+          .bind(id).first<{ id: string; answers_json: string; created_at: string; updated_at: string }>();
         if (!row) return reply({ error: "Data asesmen tidak ditemukan." }, 404);
         return reply({ item: { id: row.id, answers: JSON.parse(row.answers_json), created_at: row.created_at, updated_at: row.updated_at } });
       } catch (error) {
-        const incidentId = logIncident("assessment_load_error", error, { path: url.pathname });
-        return reply({ error: "Data asesmen gagal dimuat. ID insiden: " + incidentId }, 500);
+        const incidentId = logIncident(request.method === "DELETE" ? "assessment_delete_error" : "assessment_load_error", error, { path: url.pathname });
+        return reply({ error: (request.method === "DELETE" ? "Data asesmen gagal dihapus." : "Data asesmen gagal dimuat.") + " ID insiden: " + incidentId }, 500);
       }
     }
 
