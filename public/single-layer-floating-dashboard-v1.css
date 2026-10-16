@@ -1,4 +1,4 @@
-/* SODARAMU Single-Layer Floating Dashboard v1.1.46
+/* SODARAMU Single-Layer Floating Dashboard v1.1.53
    Structural override: no stacked glass cards; transparent canvas + one glass layer on actionable controls. */
 :root{
   --fab-glass:rgba(9,35,57,.48);
