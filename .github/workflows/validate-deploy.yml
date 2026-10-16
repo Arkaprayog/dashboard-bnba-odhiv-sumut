@@ -530,6 +530,8 @@ jobs:
           test "$stage1_status" = "401" || (echo "::error::Combined questionnaire data API must require owner/admin authentication (HTTP 401), got $stage1_status." && exit 1)
           team_profile_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-team-profile.json --write-out '%{http_code}' "$APP_URL/api/team-me")"
           test "$team_profile_status" = "401" || (echo "::error::Team profile API must require a team session (HTTP 401), got $team_profile_status." && exit 1)
+          team_password_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-team-password.json --write-out '%{http_code}' -X POST -H "Origin: $APP_URL" -H 'Content-Type: application/json' -H 'X-CSRF-Token: unauthenticated-test' --data '{}' "$APP_URL/api/team-petugas/password")"
+          test "$team_password_status" = "401" || (echo "::error::Team password reset API must require an authenticated owner/admin session (HTTP 401), got $team_password_status." && exit 1)
 
           delete_assessment_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-assessment-delete.json --write-out '%{http_code}' -X DELETE -H "Origin: $APP_URL" -H 'X-CSRF-Token: unauthenticated-test' "$APP_URL/api/assessments/item?id=00000000-0000-4000-8000-000000000000")"
           test "$delete_assessment_status" = "401" || (echo "::error::Assessment deletion API must require an authenticated session (HTTP 401), got $delete_assessment_status." && exit 1)
