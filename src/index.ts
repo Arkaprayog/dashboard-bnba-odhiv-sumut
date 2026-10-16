@@ -968,21 +968,24 @@ export default {
           if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mengelola tim petugas." }, 403);
           const csrf = request.headers.get("X-CSRF-Token");
           if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
-          let body: { name?: unknown; position?: unknown; phone?: unknown };
+          let body: { name?: unknown; position?: unknown; phone?: unknown; password?: unknown };
           try { body = await request.json() as typeof body; } catch { return reply({ error: "Format data petugas tidak valid." }, 400); }
           const name = typeof body.name === "string" ? body.name.trim().replace(/\s+/g, " ") : "";
           const position = typeof body.position === "string" ? body.position.trim().toUpperCase() : "";
           const phone = typeof body.phone === "string" ? body.phone.trim() : "";
+          const password = typeof body.password === "string" ? body.password : "";
           if (name.length < 2 || name.length > 120 ||
-              !["PENDAMPING LAPANGAN", "PENJANGKAU LAPANGAN"].includes(position) ||
-              !/^\+?[0-9 ()-]{8,30}$/.test(phone)) {
-            return reply({ error: "Nama, posisi jabatan, atau nomor HP/WA belum valid." }, 400);
+              !["PENDAMPING SEBAYA", "PENJANGKAU LAPANGAN"].includes(position) ||
+              !/^\+?[0-9 ()-]{8,30}$/.test(phone) || password.length < 8 || password.length > 128) {
+            return reply({ error: "Nama, jabatan, nomor HP/WA, atau kata sandi belum valid. Kata sandi minimal 8 karakter." }, 400);
           }
           await ensureTeamSchema(env);
           const token = b64(crypto.getRandomValues(new Uint8Array(32)));
           const id = crypto.randomUUID();
-          await env.DB.prepare("INSERT INTO team_petugas_v2(id,display_name,position,phone,token_hash,active,created_by) VALUES(?,?,?,?,?,1,?)")
-            .bind(id, name, position, phone, await hashTeamToken(token), admin.id).run();
+          const passwordSalt = crypto.getRandomValues(new Uint8Array(16));
+          const passwordDigest = await passwordHash(password, passwordSalt);
+          await env.DB.prepare("INSERT INTO team_petugas_v2(id,display_name,position,phone,token_hash,active,created_by,password_hash,password_salt) VALUES(?,?,?,?,?,1,?,?,?)")
+            .bind(id, name, position, phone, await hashTeamToken(token), admin.id, hex(passwordDigest), hex(passwordSalt)).run();
           await audit(env, admin.id, "team_petugas_create");
           const origin = normalizeOrigin(env.APP_ORIGIN || new URL(request.url).origin);
           return reply({ ok: true, item: { id, display_name: name, position, phone, active: 1 }, link: origin + "/tim-pendataan.html?token=" + encodeURIComponent(token) }, 201);
