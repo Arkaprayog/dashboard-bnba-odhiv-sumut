@@ -329,8 +329,52 @@ html body.authenticated #dashboard [hidden] { display: none !important; }
     display:grid!important; grid-template-columns:minmax(0,1fr)!important;
     gap:12px!important; width:100%!important;
   }
-  html body.authenticated #dashboard :is(img,canvas,svg,table) { max-width:100%; }
-  html body.authenticated #dashboard table { width:100%!important; table-layout:fixed!important; }
+  html body.authenticated #dashboard :is(img,canvas,svg) { max-width:100%; }
+  html body.authenticated #dashboard table:not(.stage1-data-table) { max-width:100%; width:100%!important; table-layout:fixed!important; }
+  html body.authenticated #dashboard .stage1-table-scroll {
+    display:block!important; width:100%!important; min-width:0!important; max-width:100%!important;
+    overflow-x:auto!important; overflow-y:hidden!important; -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior-x:contain!important;
+  }
+  html body.authenticated #dashboard .stage1-data-table {
+    display:table!important; width:max-content!important; min-width:1400px!important; max-width:none!important;
+    table-layout:auto!important; border-collapse:collapse!important;
+  }
+  html body.authenticated #dashboard .stage1-data-table th,
+  html body.authenticated #dashboard .stage1-data-table td {
+    width:auto!important; min-width:115px!important; max-width:250px!important;
+    padding:10px 12px!important; text-align:left!important; vertical-align:top!important;
+    white-space:normal!important; overflow-wrap:break-word!important; word-break:normal!important;
+    line-height:1.4!important;
+  }
+  html body.authenticated #dashboard .stage1-data-table th { font-weight:800!important; }
+  html body.authenticated #dashboard .stage1-data-table th:nth-child(1),
+  html body.authenticated #dashboard .stage1-data-table td:nth-child(1) { min-width:155px!important; }
+  html body.authenticated #dashboard .stage1-data-table th:nth-child(2),
+  html body.authenticated #dashboard .stage1-data-table td:nth-child(2) { min-width:190px!important; }
+  html body.authenticated #dashboard .stage1-data-table th:nth-child(3),
+  html body.authenticated #dashboard .stage1-data-table td:nth-child(3) { min-width:140px!important; }
+  html body.authenticated #dashboard .stage1-data-table th:nth-child(4),
+  html body.authenticated #dashboard .stage1-data-table td:nth-child(4) { min-width:80px!important; }
+  html body.authenticated #dashboard .stage1-data-table th:nth-child(5),
+  html body.authenticated #dashboard .stage1-data-table td:nth-child(5) { min-width:135px!important; }
+  html body.authenticated #dashboard .stage1-data-table th:nth-child(6),
+  html body.authenticated #dashboard .stage1-data-table td:nth-child(6),
+  html body.authenticated #dashboard .stage1-data-table th:nth-child(7),
+  html body.authenticated #dashboard .stage1-data-table td:nth-child(7) { min-width:150px!important; }
+  html body.authenticated #dashboard .stage1-data-table th:nth-child(8),
+  html body.authenticated #dashboard .stage1-data-table td:nth-child(8) { min-width:230px!important; }
+  html body.authenticated #dashboard .stage1-data-table th:nth-child(9),
+  html body.authenticated #dashboard .stage1-data-table td:nth-child(9) { min-width:160px!important; }
+  html body.authenticated #dashboard .stage1-data-table th:nth-child(10),
+  html body.authenticated #dashboard .stage1-data-table td:nth-child(10) { min-width:230px!important; }
+  html body.authenticated #dashboard .stage1-data-table th:nth-child(11),
+  html body.authenticated #dashboard .stage1-data-table td:nth-child(11) { min-width:155px!important; }
+  html body.authenticated #dashboard .stage1-data-table th:nth-child(12),
+  html body.authenticated #dashboard .stage1-data-table td:nth-child(12) { min-width:210px!important; }
+  html body.authenticated #dashboard .stage1-data-table .dashbtn {
+    min-width:180px!important; white-space:normal!important; overflow-wrap:normal!important; word-break:normal!important;
+  }
 }
 @media screen and (max-width:600px) {
   html body.authenticated { padding:8px!important; }
