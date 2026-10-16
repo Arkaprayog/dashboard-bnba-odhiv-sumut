@@ -542,6 +542,34 @@ jobs:
           test "$public_form_probe_status" = "400" || (echo "::error::Public questionnaire endpoint must reject a honeypot probe before saving data (HTTP 400 expected, got $public_form_probe_status)." && cat /tmp/sahabat-public-form-probe.json && exit 1)
           grep -Fq 'Formulir tidak valid.' /tmp/sahabat-public-form-probe.json || (echo "::error::Public questionnaire honeypot did not return the expected safe rejection." && exit 1)
           echo "Verified public questionnaire endpoint is configured and rejects the honeypot probe before any sheet/photo write."
+          clinic_qr_status="$(curl --connect-timeout 5 --max-time 20 --location --max-redirs 5 --silent --show-error --output /tmp/sahabat-clinic-qr.html --write-out '%{http_code}' "$APP_URL/barcode-layanan.html")"
+          test "$clinic_qr_status" = "200" || (echo "::error::Clinic QR page returned HTTP $clinic_qr_status." && exit 1)
+          grep -Fq 'Pindai barcode' /tmp/sahabat-clinic-qr.html && grep -Fq 'create-qr-code' /tmp/sahabat-clinic-qr.html && grep -Fq 'kuisioner-awal.html' /tmp/sahabat-clinic-qr.html || (echo "::error::Clinic QR page is missing its QR destination or public initial form." && exit 1)
+          initial_form_status="$(curl --connect-timeout 5 --max-time 20 --location --max-redirs 5 --silent --show-error --output /tmp/sahabat-initial-intake.html --write-out '%{http_code}' "$APP_URL/kuisioner-awal.html")"
+          test "$initial_form_status" = "200" || (echo "::error::Public initial intake page returned HTTP $initial_form_status." && exit 1)
+          grep -Fq '/api/public-initial-intake' /tmp/sahabat-initial-intake.html && grep -Fq 'name="preferredName"' /tmp/sahabat-initial-intake.html && grep -Fq 'name="phone"' /tmp/sahabat-initial-intake.html && grep -Fq 'name="consent"' /tmp/sahabat-initial-intake.html || (echo "::error::Public initial intake is missing its minimal fields, consent, or submission route." && exit 1)
+          ! grep -Eq 'name="(nik|fotoDiri|fotoKtp|alamatDomisili|jenisKelamin)"' /tmp/sahabat-initial-intake.html || (echo "::error::Public initial intake must not collect NIK, photos, home address, or health-related details." && exit 1)
+          initial_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-initial-intake.css --write-out '%{http_code}|%{content_type}' "$APP_URL/kuisioner-awal-layout.css?v=1.0.0&verify=$GITHUB_SHA")"
+          initial_css_status="${initial_css_response%%|*}"
+          initial_css_type="${initial_css_response#*|}"
+          test "$initial_css_status" = "200" || (echo "::error::Public initial intake CSS returned HTTP $initial_css_status." && exit 1)
+          case "$initial_css_type" in text/css*) ;; *) echo "::error::Public initial intake CSS has unexpected content type: $initial_css_type." && exit 1 ;; esac
+          grep -Fq '.intake-consent' /tmp/sahabat-initial-intake.css || (echo "::error::Public initial intake consent styles are missing or stale." && exit 1)
+          clinic_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-clinic-qr.css --write-out '%{http_code}|%{content_type}' "$APP_URL/barcode-layanan-layout.css?v=1.0.0&verify=$GITHUB_SHA")"
+          clinic_css_status="${clinic_css_response%%|*}"
+          clinic_css_type="${clinic_css_response#*|}"
+          test "$clinic_css_status" = "200" || (echo "::error::Clinic QR print CSS returned HTTP $clinic_css_status." && exit 1)
+          case "$clinic_css_type" in text/css*) ;; *) echo "::error::Clinic QR print CSS has unexpected content type: $clinic_css_type." && exit 1 ;; esac
+          grep -Fq '@media print' /tmp/sahabat-clinic-qr.css || (echo "::error::Clinic QR print styles are missing." && exit 1)
+          intake_manager_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-intake-manager.css --write-out '%{http_code}' "$APP_URL/initial-intake-manager.css?v=1.0.0&verify=$GITHUB_SHA")"
+          test "$intake_manager_status" = "200" || (echo "::error::Owner follow-up list CSS returned HTTP $intake_manager_status." && exit 1)
+          grep -Fq '.initial-intake-scroll' /tmp/sahabat-intake-manager.css || (echo "::error::Owner follow-up list CSS is missing or stale." && exit 1)
+          initial_honeypot_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-initial-intake-probe.json --write-out '%{http_code}' -X POST -H "Origin: $APP_URL" -F 'website=automated-smoke-test' "$APP_URL/api/public-initial-intake")"
+          test "$initial_honeypot_status" = "200" || (echo "::error::Public initial-intake honeypot probe should return a safe no-write response (HTTP 200 expected, got $initial_honeypot_status)." && cat /tmp/sahabat-initial-intake-probe.json && exit 1)
+          grep -Fq 'Terima kasih' /tmp/sahabat-initial-intake-probe.json || (echo "::error::Public initial-intake honeypot probe did not return its safe response." && exit 1)
+          owner_initial_intakes_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-owner-initial-intakes.json --write-out '%{http_code}' "$APP_URL/api/owner/initial-intakes")"
+          test "$owner_initial_intakes_status" = "401" || (echo "::error::Owner follow-up list must require authentication (HTTP 401 expected, got $owner_initial_intakes_status)." && exit 1)
+          echo "Verified live clinic QR, minimal public intake, print styles, silent honeypot, and authenticated owner follow-up API."
           ! grep -q 'Menyiapkan Kuesioner\|>3<\|>2<\|>1<' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire should not show a heading or numeric countdown." && exit 1)
           logo_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-kemensos.svg --write-out '%{http_code}' "$APP_URL/kemensos.svg")"
           test "$logo_status" = "200" || (echo "::error::Local transparent Kemensos logo returned HTTP $logo_status." && exit 1)
