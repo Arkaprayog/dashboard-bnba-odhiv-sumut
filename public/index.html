@@ -173,7 +173,7 @@
       <button type="button" data-view="database">DATABASE PPKS</button>
       <button type="button" data-view="assessmentSaved" hidden>DATA ASESMEN PPKS</button>
       <button type="button" data-view="assessment" hidden>FROM ASESMEN TERINTEGRASI</button>
-      <button type="button" data-view="questionnaire">KUISIONER</button>
+      <button type="button" data-view="questionnaireHub">KUISIONER</button>
       <button type="button" data-view="respondentQuiz">KUISIONER RESPONDEN</button>
       <button type="button" data-view="formats">DOKUMEN</button>
       <button type="button" id="rabNavToggle" class="rab-nav-trigger" aria-expanded="false" aria-controls="rabHomeChoices">RANCANGAN ANGGARAN BELANJA</button>
@@ -198,6 +198,43 @@
         <section class="overview-panel"><h3>Jenis kelamin</h3><p>Laki-laki navy · Perempuan pink. Kategori mengikuti data formulir.</p><div id="genderChart" class="chart-legend"><p>Memuat statistik gender…</p></div></section>
         <section class="overview-panel"><h3>Distribusi usia</h3><p>Kelompok usia dibentuk dari nilai usia yang benar-benar tersedia.</p><div id="ageChart" class="chart-legend"><p>Memuat statistik usia…</p></div></section>
         <section class="overview-panel"><h3>Catatan data</h3><p id="overviewDataNote">Statistik hanya ditampilkan secara agregat untuk menjaga kerahasiaan responden.</p><p id="overviewUpdated">Belum ada data statistik yang dimuat.</p></section>
+      </div>
+    </section>
+    <section class="app-view" id="questionnaireHubView" hidden aria-label="Menu Kuisioner">
+      <div class="dashhead"><div><h2>KUISIONER</h2><p>Pilih jenis kuesioner atau buka data gabungan Tahap 1.</p></div></div>
+      <div class="overview-grid questionnaire-choice-grid">
+        <article class="overview-card"><small>Formulir owner</small><strong style="display:block;font-size:1.08rem;margin:8px 0">KUISIONER OWNER</strong><p>Gunakan formulir owner yang sudah ada. Isian dan proses simpan tetap seperti sebelumnya.</p><button type="button" class="dashbtn" data-questionnaire-action="owner">Buka Kuisioner Owner</button></article>
+        <article class="overview-card"><small>Manajemen anggota</small><strong style="display:block;font-size:1.08rem;margin:8px 0">KUISIONER TIM KERJA</strong><p>Tambahkan anggota, tetapkan kata sandi awal, dan kirim link pendaftaran lewat WhatsApp.</p><button type="button" class="dashbtn" data-questionnaire-action="team">Tambahkan Tim Kerja</button></article>
+        <article class="overview-card"><small>Data gabungan</small><strong style="display:block;font-size:1.08rem;margin:8px 0">DATA KUISIONER THP 1</strong><p>Lihat jawaban Kuisioner Owner dan Tim Kerja dalam satu tabel dengan tautan foto dan WhatsApp.</p><button type="button" class="dashbtn" data-questionnaire-action="stage1">Buka Data Tahap 1</button></article>
+      </div>
+    </section>
+    <section class="app-view" id="teamQuestionnaireView" hidden aria-label="Tambahkan Tim Kerja">
+      <div class="dashhead"><div><h2>Tambahkan Tim Kerja</h2><p>Daftarkan anggota, kemudian kirim tautan pendaftaran awal melalui WhatsApp.</p></div><button type="button" class="dashbtn" data-questionnaire-back>Menu Kuisioner</button></div>
+      <form id="dashboardTeamForm" class="dashpanel" autocomplete="off">
+        <div class="owner-form-grid">
+          <div class="dashfield"><label for="dashboardTeamName">Nama Anggota *</label><input id="dashboardTeamName" name="name" maxlength="120" autocomplete="name" required></div>
+          <div class="dashfield"><label for="dashboardTeamPosition">Jabatan *</label><select id="dashboardTeamPosition" name="position" class="workflow-control" required><option value="">Pilih jabatan</option><option value="PENDAMPING LAPANGAN">Pendamping Sebaya</option><option value="PENJANGKAU LAPANGAN">Penjangkau Lapangan</option></select></div>
+          <div class="dashfield"><label for="dashboardTeamPhone">No. HP/WA Anggota *</label><input id="dashboardTeamPhone" name="phone" type="tel" inputmode="tel" maxlength="30" autocomplete="tel" required></div>
+          <div class="dashfield"><label for="dashboardTeamPassword">Kata Sandi Awal * (minimal 8 karakter)</label><input id="dashboardTeamPassword" name="password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required></div>
+        </div>
+        <div class="owner-form-actions"><button class="dashbtn" id="dashboardTeamCreate" type="submit">Simpan & Buat Link WhatsApp</button></div>
+        <p class="dashmsg" id="dashboardTeamMessage" role="status" aria-live="polite"></p>
+        <section id="dashboardTeamInviteBox" class="dashpanel" hidden>
+          <h3>Tautan pendaftaran anggota</h3>
+          <p class="scroll-hint">Kirim tautan ini kepada anggota yang terdaftar. Kata sandi awal diberikan oleh owner dan tidak disertakan di tautan.</p>
+          <p id="dashboardTeamInviteUrl" style="overflow-wrap:anywhere"></p>
+          <div class="owner-form-actions"><button type="button" class="dashbtn" id="dashboardTeamCopyLink">Salin Tautan</button><a class="dashbtn" id="dashboardTeamSendWa" target="_blank" rel="noopener noreferrer">Kirim lewat WhatsApp</a></div>
+        </section>
+      </form>
+    </section>
+    <section class="app-view" id="stage1DataView" hidden aria-label="Data Kuisioner Tahap 1">
+      <div class="dashhead"><div><h2>DATA KUISIONER THP 1</h2><p>Gabungan data yang dikirim melalui Kuisioner Owner dan Kuisioner Tim Kerja.</p></div><div class="owner-form-actions"><button type="button" class="dashbtn" id="refreshStage1Data">Muat Ulang Data</button><button type="button" class="dashbtn" data-questionnaire-back>Menu Kuisioner</button></div></div>
+      <p class="dashmsg" id="stage1DataMessage" role="status" aria-live="polite">Data dimuat setelah halaman dibuka.</p>
+      <div class="table-wrap" style="overflow:auto;max-width:100%">
+        <table class="stage1-data-table" style="width:100%;min-width:1050px;border-collapse:collapse">
+          <thead><tr><th>Timestamp</th><th>NAMA LENGKAP</th><th>NIK</th><th>USIA</th><th>JENIS KELAMIN</th><th>FOTO DIRI</th><th>FOTO KTP</th><th>ALAMAT DOMISILI SAAT INI</th><th>KOTA DOMISILI SAAT INI</th><th>JENIS BANTUAN YANG DIINGINKAN</th><th>No HP/WA</th></tr></thead>
+          <tbody id="stage1DataRows"><tr><td colspan="11">Belum ada data dimuat.</td></tr></tbody>
+        </table>
       </div>
     </section>
     <section class="app-view" id="questionnaireView" hidden aria-label="Kuesioner Owner">
@@ -446,12 +483,72 @@ let overviewRows=[];
 let overviewHeaders=[];
 let newsItems=[];
 function setAppView(view){
- const views={home:document.getElementById('homeView'),database:document.getElementById('databaseView'),questionnaire:document.getElementById('questionnaireView'),assessment:document.getElementById('assessmentView'),assessmentSaved:document.getElementById('assessmentSavedView'),formats:document.getElementById('formatsView'),news:document.getElementById('newsView'),respondentQuiz:document.getElementById('respondentQuizView'),rabNutrition:document.getElementById('rabNutritionView'),rabEntrepreneurship:document.getElementById('rabEntrepreneurshipView')};
+ const views={home:document.getElementById('homeView'),database:document.getElementById('databaseView'),questionnaireHub:document.getElementById('questionnaireHubView'),questionnaire:document.getElementById('questionnaireView'),teamQuestionnaire:document.getElementById('teamQuestionnaireView'),stage1Data:document.getElementById('stage1DataView'),assessment:document.getElementById('assessmentView'),assessmentSaved:document.getElementById('assessmentSavedView'),formats:document.getElementById('formatsView'),news:document.getElementById('newsView'),respondentQuiz:document.getElementById('respondentQuizView'),rabNutrition:document.getElementById('rabNutritionView'),rabEntrepreneurship:document.getElementById('rabEntrepreneurshipView')};
  Object.entries(views).forEach(([key,node])=>{if(node)node.hidden=key!==view;});
- document.querySelectorAll('#appNavigation [data-view]').forEach(button=>{if(button.dataset.view===view)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
+ const activeNavView=['questionnaire','teamQuestionnaire','stage1Data'].includes(view)?'questionnaireHub':view;document.querySelectorAll('#appNavigation [data-view]').forEach(button=>{if(button.dataset.view===activeNavView)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
  if(view==='news'&&!newsItems.length)loadNews();
 }
 document.getElementById('appNavigation').addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button&&!button.hidden)setAppView(button.dataset.view);});
+
+document.querySelectorAll('[data-questionnaire-action]').forEach(button=>button.addEventListener('click',()=>{
+ const action=button.dataset.questionnaireAction;
+ if(action==='owner'){setAppView('questionnaire');return;}
+ if(action==='team'){setAppView('teamQuestionnaire');return;}
+ if(action==='stage1'){setAppView('stage1Data');loadStage1Data();}
+}));
+document.querySelectorAll('[data-questionnaire-back]').forEach(button=>button.addEventListener('click',()=>setAppView('questionnaireHub')));
+function normalizedWaNumber(value){let number=String(value||'').replace(/\D/g,'');if(number.startsWith('0'))number='62'+number.slice(1);else if(number.startsWith('8'))number='62'+number;return number;}
+const teamEntryForm=document.getElementById('dashboardTeamForm');
+const teamEntryMessage=document.getElementById('dashboardTeamMessage');
+const teamInviteBox=document.getElementById('dashboardTeamInviteBox');
+const teamInviteUrl=document.getElementById('dashboardTeamInviteUrl');
+const teamSendWa=document.getElementById('dashboardTeamSendWa');
+teamEntryForm.addEventListener('submit',async event=>{
+ event.preventDefault();teamEntryMessage.textContent='';teamInviteBox.hidden=true;
+ if(!teamEntryForm.reportValidity())return;
+ if(!csrfToken){teamEntryMessage.textContent='Sesi keamanan tidak tersedia. Keluar lalu login kembali.';return;}
+ const button=document.getElementById('dashboardTeamCreate');button.disabled=true;button.textContent='Menyimpan anggota…';
+ try{
+  const body={name:document.getElementById('dashboardTeamName').value.trim(),position:document.getElementById('dashboardTeamPosition').value,phone:document.getElementById('dashboardTeamPhone').value.trim(),password:document.getElementById('dashboardTeamPassword').value};
+  const response=await fetch('/api/team-petugas',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify(body)});
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok||!data.ok)throw new Error(data.error||'Anggota gagal disimpan.');
+  teamInviteUrl.textContent=data.link;
+  document.getElementById('dashboardTeamCopyLink').onclick=async()=>{try{await navigator.clipboard.writeText(data.link);teamEntryMessage.textContent='Tautan pendaftaran berhasil disalin.';}catch{teamEntryMessage.textContent='Tekan lama tautan untuk menyalinnya.';}};
+  const phone=normalizedWaNumber(body.phone);
+  const message='Halo '+body.name+', ini tautan pendaftaran profil Tim Kerja Sahabat ODHIV Sumatera Utara: '+data.link+'. Setelah mendaftar, login dengan nomor HP/WA dan kata sandi awal yang diberikan owner. Jangan bagikan tautan ini.';
+  teamSendWa.href='https://wa.me/'+phone+'?text='+encodeURIComponent(message);
+  teamInviteBox.hidden=false;teamInviteBox.scrollIntoView({behavior:'smooth',block:'nearest'});
+  teamEntryMessage.textContent='Anggota tersimpan. Tautan pendaftaran siap dikirim lewat WhatsApp.';
+  teamEntryForm.reset();
+ }catch(error){teamEntryMessage.textContent=error instanceof Error?error.message:'Gagal mendaftarkan anggota.';}
+ finally{button.disabled=false;button.textContent='Simpan & Buat Link WhatsApp';}
+});
+async function loadStage1Data(){
+ const message=document.getElementById('stage1DataMessage'),tbody=document.getElementById('stage1DataRows');
+ message.textContent='Memuat data tahap 1…';tbody.replaceChildren();
+ try{
+  const response=await fetch('/api/questionnaires/stage1',{credentials:'same-origin',cache:'no-store'});
+  const payload=await response.json().catch(()=>({}));
+  if(!response.ok||!payload.items)throw new Error(payload.error||'Data tahap 1 belum dapat dimuat.');
+  if(!payload.items.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=11;td.textContent='Belum ada jawaban kuisioner owner atau tim kerja.';tr.append(td);tbody.append(tr);}
+  for(const item of payload.items){
+   const tr=document.createElement('tr');
+   const textCell=value=>{const td=document.createElement('td');td.textContent=value||'—';tr.append(td);return td;};
+   textCell(item.timestamp);textCell(item.name);textCell(item.nik);textCell(item.age);textCell(item.gender);
+   const photoCell=(id,label)=>{const td=document.createElement('td');if(id){const a=document.createElement('a');a.href='/api/respondent-photo?id='+encodeURIComponent(id);a.textContent=label;a.target='_blank';a.rel='noopener noreferrer';td.append(a);}else td.textContent='—';tr.append(td);};
+   photoCell(item.selfPhotoId,'Lihat Foto Diri');photoCell(item.ktpPhotoId,'Lihat Foto KTP');
+   textCell(item.address);textCell(item.city);textCell(item.assistance);
+   const phoneCell=textCell(item.phone);
+   const digits=normalizedWaNumber(item.phone);
+   if(digits){phoneCell.replaceChildren();const a=document.createElement('a');a.href='https://wa.me/'+digits;a.target='_blank';a.rel='noopener noreferrer';a.textContent=item.phone;a.setAttribute('aria-label','Hubungi '+item.name+' melalui WhatsApp');phoneCell.append(a);}
+   tbody.append(tr);
+  }
+  message.textContent='Data berhasil dimuat: '+payload.items.length+' responden. Sumber gabungan: Kuisioner Owner dan Kuisioner Tim Kerja.';
+ }catch(error){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=11;td.textContent=error instanceof Error?error.message:'Data gagal dimuat.';tr.append(td);tbody.append(tr);message.textContent='Data belum berhasil dimuat.';}
+}
+document.getElementById('refreshStage1Data').addEventListener('click',loadStage1Data);
+
 const rabNavToggle=document.getElementById('rabNavToggle'),rabHomeChoices=document.getElementById('rabHomeChoices');
 function closeRabHomeChoices(){rabHomeChoices.hidden=true;rabNavToggle.setAttribute('aria-expanded','false');}
 rabNavToggle.addEventListener('click',()=>{const shouldOpen=rabHomeChoices.hidden;setAppView('home');rabHomeChoices.hidden=!shouldOpen;rabNavToggle.setAttribute('aria-expanded',String(shouldOpen));});
@@ -706,7 +803,7 @@ document.getElementById('markNotificationsRead')?.addEventListener('click',async
 function showDashboard(admin,csrf){
  csrfToken=csrf||'';
  currentDashboardRole=String(admin?.role||'').toLowerCase();
- const ownerQuestionnaireButton=document.querySelector('#appNavigation [data-view="questionnaire"]');
+ const ownerQuestionnaireButton=document.querySelector('#appNavigation [data-view="questionnaireHub"]');
  if(ownerQuestionnaireButton)ownerQuestionnaireButton.hidden=currentDashboardRole!=='owner';
  document.querySelectorAll('#appNavigation [data-view="assessment"],#appNavigation [data-view="assessmentSaved"]').forEach(button=>{button.hidden=!['owner','admin'].includes(currentDashboardRole);});
  document.body.classList.add('authenticated');
