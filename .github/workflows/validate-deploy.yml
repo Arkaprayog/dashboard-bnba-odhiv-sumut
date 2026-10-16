@@ -182,7 +182,7 @@ jobs:
             ['team profile upload uses private Cloudflare KV storage', worker.includes('TEAM_PROFILE_PHOTOS.put(objectKey') && worker.includes('kv:v1:') && worker.includes('readPrivateTeamPhoto(env, petugas.profile_photo_id)') && !worker.includes('googleDriveMultipartUpload(accessToken, metadata, file)')],
             ['private profile photo KV namespace is bound to Worker environments', config.includes('binding = "TEAM_PROFILE_PHOTOS"') && config.includes('id = "4ee60e8a308e49dab069993b096a137b"')],
             ['admin page requires existing admin session and supports owner password reset', manager.includes("jsonFetch('/api/me')") && manager.includes("['owner','admin']") && manager.includes('teamPasswordDialog') && manager.includes('/api/team-petugas/password')],
-            ['dashboard removes Tim Petugas menu and direct links', !dashboard.includes('openTeamManagement') && !dashboard.includes('tim-petugas.html') && !dashboard.includes('Tim Petugas')],
+            ['dashboard has no legacy Tim Petugas navigation item and links existing member password tools', !dashboard.includes('openTeamManagement') && !dashboard.includes('tim-petugas.html') && dashboard.includes('Kelola Tim Petugas / Atur Kata Sandi')],
             ['staff roster page and protected profile endpoint exist', fs.existsSync('public/daftar-petugas.html') && worker.includes('/api/team-petugas-photo') && worker.includes('has_profile_photo')]
           ];
           for (const [label, ok] of checks) {
