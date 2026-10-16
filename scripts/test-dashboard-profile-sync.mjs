@@ -51,10 +51,11 @@ assert.deepEqual(mainMenu, [
   ["formats", "DOKUMEN"],
 ], "main menu items, labels, capitalization, and order must match the requested sequence");
 assert.ok(!dashboard.includes("assessmentNavGroup") && !dashboard.includes("assessmentNavToggle") && !dashboard.includes("assessmentSubmenu"), "the old assessment parent submenu must be removed");
-assert.ok(dashboard.includes('id="rabNavGroup"') && dashboard.includes('id="rabNavToggle"') && dashboard.includes('id="rabSubmenu" hidden'), "RAB parent menu must start collapsed.");
-assert.ok(dashboard.includes("RANCANGAN ANGGARAN BELANJA") && dashboard.includes("RAB NUTRISI") && dashboard.includes("RAB KEWIRAUSAHAAN"), "RAB menu and both submenu labels must exist.");
-assert.ok(dashboard.includes("closeRabSubmenu()") && dashboard.includes("event.key==='Escape'") && dashboard.includes("rabSubmenu.hidden=true"), "RAB submenu closes on navigation, outside click and Escape.");
-assert.ok(dashboard.includes("rabNutritionView") && dashboard.includes("rabEntrepreneurshipView"), "both RAB submenu options open their own views.");
+assert.ok(dashboard.includes('id="rabNavToggle"') && dashboard.includes('id="rabHomeChoices" hidden'), "RAB choices must be a collapsed panel inside the home view.");
+assert.ok(!dashboard.includes('id="rabSubmenu"') && !dashboard.includes('class="rab-nav-group'), "RAB choices must not appear as a nested navigation submenu.");
+assert.ok(dashboard.includes("RANCANGAN ANGGARAN BELANJA") && dashboard.includes("RAB NUTRISI") && dashboard.includes("RAB KEWIRAUSAHAAN"), "RAB home panel and both choice cards must exist.");
+assert.ok(dashboard.includes("closeRabHomeChoices()") && dashboard.includes("setAppView('home')") && dashboard.includes("data-rab-view"), "RAB choice cards appear in home and close when a different navigation item is selected.");
+assert.ok(dashboardCss.includes(".rab-home-choices .rab-choice-grid") && dashboardCss.includes("grid-template-columns:minmax(0,1fr)"), "RAB cards use responsive document-style card layout.");
 assert.ok(dashboard.includes("button.hidden=!['owner','admin'].includes(currentDashboardRole)"), "assessment main buttons remain restricted to owner/admin");
 assert.ok(dashboard.includes("assessment-delete-btn") && dashboard.includes("'Hapus asesmen'") && dashboard.includes("window.confirm('Hapus '"), "saved assessment cards offer a confirmation-protected delete action");
 assert.ok(dashboard.includes("method:'DELETE'") && dashboard.includes("'X-CSRF-Token':csrfToken"), "assessment delete request uses CSRF protection");
@@ -70,14 +71,14 @@ assert.match(floatingMenuCss, /border:1\.5px solid #7dd3fc/, "main menu buttons 
 assert.ok(dashboard.includes("function assessmentDataUrlToBytes(dataUrl)"), "PDF builder must decode image data URLs without fetch() so CSP connect-src does not block them.");
 assert.ok(!dashboard.includes("fetch(saved.dataUrl)"), "PDF builder must not fetch data: URLs.");
 assert.ok(dashboard.includes("assessmentDataUrlToBytes(saved.dataUrl)"), "PDF builder must embed photo bytes directly from the local data URL.");
-assert.ok(dashboard.includes('href="/single-layer-floating-dashboard-v1.css?v=1.1.53"'), "single-layer dashboard stylesheet must be linked.");
+assert.ok(dashboard.includes('href="/single-layer-floating-dashboard-v1.css?v=1.1.54"'), "single-layer dashboard stylesheet must be linked.");
 assert.ok(!dashboard.includes('">\\n  <link rel="stylesheet" href="/single-layer-floating-dashboard-v1.css'), "stylesheet tags must use a real newline, not a literal backslash-n.");
 assert.match(dashboard, /id="settingsButton"/);
 assert.match(dashboard, /id="logoutButton"/);
 assert.match(dashboard, /aria-label="Keluar"/);
 assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='owner' AND active=1/);
 assert.match(worker, /owner_profile_update/);
-assert.equal(pkg.version, "1.1.53");
+assert.equal(pkg.version, "1.1.54");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
 assert.ok(dashboard.includes('href="/assessment-print-10-pages-v1.css?v=1.1.46"'), "assessment must load the dedicated ten-page print stylesheet.");
 assert.ok(dashboard.includes('pageIndexForQuestion') && dashboard.includes('assessment-print-page'), "assessment fields must be partitioned into six print pages.");
@@ -99,7 +100,7 @@ assert.ok(assessmentGlassCss.includes("backdrop-filter:blur(18px)"), "photo card
 assert.ok(assessmentPrintCss.includes('size:A4 portrait') && assessmentPrintCss.includes('page-break-before:always') && assessmentPrintCss.includes('assessment-print-photo-page'), "print stylesheet must force A4 page breaks for the four appendices.");
 assert.ok(dashboard.includes('Data Base Kemensos RI DRSKPNO'), "login copyright must use the requested institution text.");
 
-assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.3"') && dashboard.includes('href="/transparent-theme.css?v=2.0.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
+assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.4"') && dashboard.includes('href="/transparent-theme.css?v=2.0.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
 assert.ok(transparentCss.includes("--sahabat-glass-blur:16px") && transparentCss.includes("--sahabat-glass-bg:rgba(15,23,42,.70)") && transparentCss.includes("color:#fff!important"), "shared theme must use glassmorphism, blur 16px, and white typography.");
 assert.match(gradle, /versionCode 31/);
 assert.ok(gradle.includes("versionName '1.2.28'"));
