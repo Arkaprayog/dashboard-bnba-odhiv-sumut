@@ -1,3 +1,8 @@
+## 1.1.47 — 2026-10-16
+- Ratakan grup ikon notifikasi, pengaturan, dan keluar ke sisi kanan kartu profil menggunakan margin-left:auto tanpa mengganti ID/event handler.
+- Tambahkan jam lokal real-time “Live DD/MM/YYYY HH:mm:ss” di kanan bawah kartu, warna olive green; diperbarui setiap detik dan disegarkan saat tab kembali aktif.
+- Selaraskan versi web/PWA ke 1.1.47 dan Android ke 1.2.26 (versionCode 29).
+
 ## 1.1.46 — 2026-10-16
 - Ratakan menu DATA ASESMEN PPKS dan FROM ASESMEN TERINTEGRASI sebagai tombol menu utama, lalu hapus menu induk “From Asesmen Terintegrasi”.
 - Ganti label menjadi DATABASE PPKS, DATA ASESMEN PPKS, FROM ASESMEN TERINTEGRASI, dan KUISIONER; urutan tujuh menu serta seluruh huruf kapital mengikuti permintaan.
