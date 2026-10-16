@@ -538,6 +538,10 @@ jobs:
           internal_form_css_type="${internal_form_css_response#*|}"
           test "$internal_form_css_code" = "200" || (echo "::error::Integrated public questionnaire CSS returned HTTP $internal_form_css_code." && exit 1)
           case "$internal_form_css_type" in text/css*) ;; *) echo "::error::Integrated public questionnaire CSS has unexpected content type: $internal_form_css_type." && exit 1 ;; esac
+          public_form_probe_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-public-form-probe.json --write-out '%{http_code}' -X POST -H "Origin: $APP_URL" -H 'Content-Type: application/x-www-form-urlencoded' --data 'website=automated-smoke-test' "$APP_URL/api/public-questionnaire")"
+          test "$public_form_probe_status" = "400" || (echo "::error::Public questionnaire endpoint must reject a honeypot probe before saving data (HTTP 400 expected, got $public_form_probe_status)." && cat /tmp/sahabat-public-form-probe.json && exit 1)
+          grep -Fq 'Formulir tidak valid.' /tmp/sahabat-public-form-probe.json || (echo "::error::Public questionnaire honeypot did not return the expected safe rejection." && exit 1)
+          echo "Verified public questionnaire endpoint is configured and rejects the honeypot probe before any sheet/photo write."
           ! grep -q 'Menyiapkan Kuesioner\|>3<\|>2<\|>1<' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire should not show a heading or numeric countdown." && exit 1)
           logo_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-kemensos.svg --write-out '%{http_code}' "$APP_URL/kemensos.svg")"
           test "$logo_status" = "200" || (echo "::error::Local transparent Kemensos logo returned HTTP $logo_status." && exit 1)
