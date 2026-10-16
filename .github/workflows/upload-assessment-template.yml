@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: upload-assessment-template
@@ -92,3 +93,17 @@ jobs:
 
           git commit -m "Add original integrated assessment PDF template"
           git push origin HEAD:main
+
+      - name: Trigger validation and deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --show-error --silent --request POST \
+            --url "https://api.github.com/repos/Arkaprayog/sahabatodhiv-sumut/actions/workflows/validate-deploy.yml/dispatches" \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer $GH_TOKEN" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            --data '{"ref":"main"}'
+          echo "Requested validation/deployment for main."
