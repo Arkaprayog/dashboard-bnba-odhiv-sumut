@@ -1,4 +1,4 @@
-/* Sahabat ODHIV Sumut — centralized glassmorphism theme v2.0.0
+/* Sahabat ODHIV Sumut — centralized glassmorphism theme v2.1.0 — scenic hill background
    Visual rules live here only. Structural layout is in app-layout.css. */
 :root{
   color-scheme:dark;
@@ -14,7 +14,7 @@ html,body{min-height:100%;color:var(--sahabat-text)!important;background-color:t
 body{
   color:#fff!important;
   background-color:#14202b!important;
-  background-image:url("/danau-toba/photo-1.jpg?v=2.0.0");
+  background-image:url("/dashboard-background.webp?v=1.0.0");
   background-position:center center;
   background-size:cover;
   background-repeat:no-repeat;
@@ -280,4 +280,14 @@ html body .corner{display:none!important}
 @media(max-width:420px){
  html body main:has(> .login-card){padding:16px!important}
  html body main > .login-card{padding:24px 20px!important}
+}
+
+/* Dedicated portrait composition for mobile layouts. */
+@media (max-width: 720px) {
+  body {
+    background-image: url("/dashboard-background-portrait.webp?v=1.0.0");
+    background-position: center center;
+    background-size: cover;
+    background-attachment: scroll;
+  }
 }
