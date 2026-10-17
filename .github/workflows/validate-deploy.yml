@@ -197,7 +197,7 @@ jobs:
           const fs = require('fs');
           const vm = require('vm');
           const intro = fs.readFileSync('public/kuisioner-responden.html', 'utf8');
-          const introCss = fs.readFileSync('public/kuisioner-pilihan.css', 'utf8');
+          const introCss = fs.readFileSync('public/kuisioner-responden.css', 'utf8');
           const dashboard = fs.readFileSync('public/index.html', 'utf8');
           const offline = fs.readFileSync('android-app/app/src/main/assets/offline.html', 'utf8');
           const internalForm = fs.readFileSync('public/kuesioner-mandiri.html', 'utf8');
@@ -207,9 +207,9 @@ jobs:
           console.log('PASS inline JavaScript syntax: public/kuesioner-mandiri.html');
           const activity = fs.readFileSync('android-app/app/src/main/java/id/sahabatodhiv/sumut/MainActivity.java', 'utf8');
           const checks = [
-            ['respondent chooser embeds official Google Form without automatic redirect', intro.includes('src="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform?embedded=true"') && intro.includes('href="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform"') && introCss.includes('.choice-grid') && !intro.includes('href="/kuesioner-mandiri.html"') && !intro.includes('window.location.replace(destination)')],
+            ['respondent menu uses the native multi-step form, mobile CSS, and an external original-Form fallback', intro.includes('id="respondentForm"') && intro.includes('data-step="0"') && intro.includes('data-step="1"') && intro.includes('data-step="2"') && intro.includes('/api/public-questionnaire') && intro.includes('href="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform"') && introCss.includes('.field-grid') && introCss.includes('@media(max-width:620px)') && !intro.includes('<iframe')],
             ['questionnaire chooser never forces a timed redirect', !intro.includes('window.setTimeout(finish') && !intro.includes('window.location.replace(destination)')],
-            ['respondent chooser uses Google Forms only and preserves four local agency logos', intro.includes('Google Forms') && intro.includes('Kuisioner Responden') && intro.includes('embedded=true') && !intro.includes('href="/kuesioner-mandiri.html"') && intro.includes('/logos/kemensos.png') && intro.includes('/logos/sumut.png') && intro.includes('/logos/ribbon.png') && intro.includes('/logos/kemenkes.png')],
+            ['native respondent questionnaire preserves four local agency logos and original-Form fallback', intro.includes('Google Forms') && intro.includes('Kuisioner Responden') && !intro.includes('embedded=true') && intro.includes('/logos/kemensos.png') && intro.includes('/logos/sumut.png') && intro.includes('/logos/ribbon.png') && intro.includes('/logos/kemenkes.png')],
             ['public integrated questionnaire uses no-login API, consent, and anti-spam field', internalForm.includes('/api/public-questionnaire') && internalForm.includes('name="consent"') && internalForm.includes('name="website"') && internalForm.includes('Foto KTP') && !internalForm.includes('team-login')],
             ['dashboard login opens without animated intro', !dashboard.includes('startCollaborationIntro') && !dashboard.includes('collab-intro')],
             ['native app has no animated splash or artificial delay', !activity.includes('AnimatedSplashView') && !activity.includes('3000L') && activity.includes('setContentView(webView);')],
@@ -245,7 +245,7 @@ jobs:
             ['legacy inline CSS is removed and shared glass theme is centralized', !/<style\b/i.test(html) && /href="\/app-layout\.css\?v=2\.0\.\d+"/.test(html) && html.includes('href="/transparent-theme.css?v=2.0.0"') && theme.includes('--sahabat-glass-blur:16px') && theme.includes('rgba(15,23,42,.70)') && theme.includes('color:#fff!important') && !layout.includes('#063a7d') && !layout.includes('rgba(13,110,253')],
             ['Form Asesmen Terintegrasi retains the supplied Kemensos PNG and local ATENSI logo', html.includes('src="/logos/kemensos.png"') && html.includes('src="/atensi.svg"') && html.includes('id="assessmentPaper"')],
             ['questionnaire uses the shared glass theme without legacy inline CSS', !/<style\b/i.test(questionnaire) && questionnaire.includes('href="/kuesioner-layout.css?v=2.0.0"') && questionnaire.includes('href="/transparent-theme.css?v=2.0.0"')],
-            ['respondent chooser uses external responsive styling without inline CSS', !/<style\b/i.test(waiting) && waiting.includes('href="/kuisioner-pilihan.css?v=1.0.1"') && waiting.includes('href="/transparent-theme.css?v=2.0.0"')],
+            ['respondent chooser uses external responsive styling without inline CSS', !/<style\b/i.test(waiting) && waiting.includes('href="/kuisioner-responden.css?v=1.0.0"') && waiting.includes('href="/transparent-theme.css?v=2.0.0"')],
             ['public, package, and release versions are synchronized', typeof packageJson.version === 'string' && packageJson.version.length > 0 && html.includes('Versi ' + packageJson.version) && changelog.startsWith('## ' + packageJson.version)],
             ['deployment health and smoke tests use the canonical HTTPS domain', workflow.includes('HEALTH_URL: https://sahabatodhivsumut.web.id/api/health') && workflow.includes('APP_URL: https://sahabatodhivsumut.web.id')],
             ['assessment uses the supplied Kemensos and ATENSI logos', html.includes('src="/logos/kemensos.png"') && html.includes('src="/atensi.svg"') && letter.includes('src="/logos/kemensos.png"')],
@@ -521,14 +521,14 @@ jobs:
           print(f'Verified original logo asset {sys.argv[2]}: {len(data)} bytes.')
           PY
           done
-          grep -Fq 'src="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform?embedded=true"' /tmp/sahabat-questionnaire.html && grep -Fq 'href="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform"' /tmp/sahabat-questionnaire.html && grep -q 'class="choice-grid"' /tmp/sahabat-questionnaire.html && ! grep -Fq 'href="/kuesioner-mandiri.html"' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire chooser must embed only Google Forms and not display the legacy internal-form link." && exit 1)
+          grep -Fq 'id="respondentForm"' /tmp/sahabat-questionnaire.html && grep -Fq 'data-step="0"' /tmp/sahabat-questionnaire.html && grep -Fq 'data-step="1"' /tmp/sahabat-questionnaire.html && grep -Fq 'data-step="2"' /tmp/sahabat-questionnaire.html && grep -Fq 'href="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform"' /tmp/sahabat-questionnaire.html && ! grep -Fq '<iframe' /tmp/sahabat-questionnaire.html || (echo "::error::Respondent menu must render the native multi-step questionnaire and retain the external original-Form link." && exit 1)
           ! grep -q 'window.location.replace(destination)' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire chooser must not force a timed redirect." && exit 1)
-          chooser_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-chooser.css --write-out '%{http_code}|%{content_type}' "$APP_URL/kuisioner-pilihan.css?v=1.0.1&verify=$GITHUB_SHA")"
+          chooser_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-chooser.css --write-out '%{http_code}|%{content_type}' "$APP_URL/kuisioner-responden.css?v=1.0.0&verify=$GITHUB_SHA")"
           chooser_css_status="${chooser_css_response%%|*}"
           chooser_css_type="${chooser_css_response#*|}"
           test "$chooser_css_status" = "200" || (echo "::error::Questionnaire chooser CSS returned HTTP $chooser_css_status." && exit 1)
           case "$chooser_css_type" in text/css*) ;; *) echo "::error::Questionnaire chooser CSS has unexpected content type: $chooser_css_type." && exit 1 ;; esac
-          grep -Fq '.choice-grid' /tmp/sahabat-chooser.css || (echo "::error::Questionnaire chooser CSS is stale." && exit 1)
+          grep -Fq '.field-grid' /tmp/sahabat-chooser.css && grep -Fq '.photo-grid' /tmp/sahabat-chooser.css || (echo "::error::Native respondent questionnaire CSS is missing or stale." && exit 1)
           internal_form_status="$(curl --connect-timeout 5 --max-time 20 --location --max-redirs 5 --silent --show-error --output /tmp/sahabat-questionnaire-mandiri.html --write-out '%{http_code}' "$APP_URL/kuesioner-mandiri.html")"
           test "$internal_form_status" = "200" || (echo "::error::Integrated public questionnaire page returned HTTP $internal_form_status." && exit 1)
           grep -Fq '/api/public-questionnaire' /tmp/sahabat-questionnaire-mandiri.html || (echo "::error::Integrated public questionnaire is missing its submission endpoint." && exit 1)
