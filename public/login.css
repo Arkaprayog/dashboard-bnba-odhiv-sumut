@@ -1,0 +1,123 @@
+/* SODARAMU isolated Login stylesheet v1.0.3.
+   Intentionally loaded after every legacy stylesheet; only affects the isolated Login page. */
+html body:has(#loginCard) main > section#loginCard {
+  background:rgba(0,0,0,.25)!important;
+  background-color:rgba(0,0,0,.25)!important;
+  background-image:none!important;
+  -webkit-backdrop-filter:blur(10px)!important;
+  backdrop-filter:blur(10px)!important;
+  border:1px solid rgba(255,255,255,.3)!important;
+  box-shadow:0 8px 32px rgba(0,0,0,.3)!important;
+}
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form::before,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form::after,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > p.login-message,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > p.login-message::before,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > p.login-message::after {
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  filter:none!important;
+  text-shadow:none!important;
+}
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field::before,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field::after,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password[type="password"],
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > button#togglePassword,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > button#togglePassword::before,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > button#togglePassword::after,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > svg.lock {
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  filter:none!important;
+}
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field {
+  border:1.5px solid rgba(255,255,255,.6)!important;
+  border-radius:12px!important;
+}
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field:focus-within {
+  background:transparent!important;
+  background-color:transparent!important;
+  border-color:#fff!important;
+  box-shadow:none!important;
+}
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password {
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+}
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > button#togglePassword {
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+}
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > svg.lock {
+  color:#fff!important;
+  fill:transparent!important;
+}
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > button.submit.login-submit[type="submit"] {
+  background:#fff!important;
+  background-color:#fff!important;
+  background-image:none!important;
+  color:#1a1a1a!important;
+  -webkit-text-fill-color:#1a1a1a!important;
+  border:0!important;
+  border-radius:12px!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > button.submit.login-submit[type="submit"]:hover {
+  background:#f0f0f0!important;
+  background-color:#f0f0f0!important;
+  color:#1a1a1a!important;
+  -webkit-text-fill-color:#1a1a1a!important;
+}
+html body:has(#loginCard) main > section#loginCard > .login-security,
+html body:has(#loginCard) main > section#loginCard > .login-security::before,
+html body:has(#loginCard) main > section#loginCard > .login-security::after,
+html body:has(#loginCard) main > section#loginCard > hr.login-divider,
+html body:has(#loginCard) main > section#loginCard > footer.login-footer,
+html body:has(#loginCard) main > section#loginCard > footer.login-footer * {
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+}
+
+
+/* Keep the password field genuinely transparent while typing, including browser autofill.
+   Some Android WebViews/Chromium builds paint an opaque grey-blue autofill surface unless
+   the autofill pseudo-state is explicitly reset. */
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password:hover,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password:focus,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password:active,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password:-webkit-autofill,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password:-webkit-autofill:hover,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password:-webkit-autofill:focus,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password:-webkit-autofill:active {
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  -webkit-box-shadow:0 0 0 1000px transparent inset!important;
+  box-shadow:0 0 0 1000px transparent inset!important;
+  -webkit-text-fill-color:#fff!important;
+  caret-color:#fff!important;
+  transition:background-color 999999s ease-out 0s;
+}
