@@ -281,3 +281,13 @@ html body .corner{display:none!important}
  html body main:has(> .login-card){padding:16px!important}
  html body main > .login-card{padding:24px 20px!important}
 }
+
+/* Dedicated portrait composition for mobile layouts. */
+@media (max-width: 720px) {
+  body {
+    background-image: url("/dashboard-background-portrait.webp?v=1.0.0");
+    background-position: center center;
+    background-size: cover;
+    background-attachment: scroll;
+  }
+}
