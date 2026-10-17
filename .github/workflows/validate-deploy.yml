@@ -201,6 +201,10 @@ jobs:
           const dashboard = fs.readFileSync('public/index.html', 'utf8');
           const offline = fs.readFileSync('android-app/app/src/main/assets/offline.html', 'utf8');
           const internalForm = fs.readFileSync('public/kuesioner-mandiri.html', 'utf8');
+          const nativeRespondentScripts = [...intro.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].filter(match => !/\bsrc\s*=/.test(match[1]));
+          if (nativeRespondentScripts.length !== 1) throw new Error('Expected exactly one inline script in the native respondent questionnaire.');
+          new vm.Script(nativeRespondentScripts[0][2], { filename: 'public/kuisioner-responden.html:inline-script' });
+          console.log('PASS inline JavaScript syntax: public/kuisioner-responden.html');
           const internalScripts = [...internalForm.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].filter(match => !/\bsrc\s*=/.test(match[1]));
           if (internalScripts.length !== 1) throw new Error('Expected exactly one inline script in the public integrated questionnaire.');
           new vm.Script(internalScripts[0][2], { filename: 'public/kuesioner-mandiri.html:inline-script' });
