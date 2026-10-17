@@ -120,13 +120,13 @@ assert.ok(assessmentGlassCss.includes("width:min(100%,190px)!important"), "photo
 assert.ok(assessmentGlassCss.includes("grid-auto-rows:max-content!important") && assessmentGlassCss.includes("align-items:start!important"), "photo card grid must stop stretching cards vertically.");
 assert.ok(assessmentGlassCss.includes("max-height:190px!important"), "photo card height must remain bounded.");
 
-assert.ok(assessmentGlassCss.includes("backdrop-filter:blur(18px)"), "photo cards must use translucent glass blur.");
+assert.ok(themeCss.includes("backdrop-filter:none!important") && themeCss.includes("background:#2B3520!important") && themeCss.includes("background:#70B8E8!important"), "legacy assessment/card blur must be neutralized by the solid moss and sky-blue app theme.");
 
 assert.ok(assessmentPrintCss.includes('size:A4 portrait') && assessmentPrintCss.includes('page-break-before:always') && assessmentPrintCss.includes('assessment-print-photo-page'), "print stylesheet must force A4 page breaks for the four appendices.");
 assert.ok(dashboard.includes('Data Base Kemensos RI DRSKPNO'), "login copyright must use the requested institution text.");
 
 assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.7"') && dashboard.includes('href="/transparent-theme.css?v=2.1.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
-assert.ok(dashboard.includes('href="/app-theme.css?v=1.0.1"') && !themeCss.includes("backdrop-filter:blur(") && themeCss.includes("background:#2B3520!important") && themeCss.includes("background:#70B8E8!important"), "shared theme must use solid moss and sky-blue surfaces without blur.");
+assert.ok(dashboard.includes('href="/app-theme.css?v=1.0.1"') && themeCss.includes("backdrop-filter:none!important") && themeCss.includes("background:#2B3520!important") && themeCss.includes("background:#70B8E8!important"), "shared theme must apply solid moss and sky-blue surfaces and disable blur.");
 assert.match(gradle, /versionCode 32/);
 assert.ok(gradle.includes("versionName '1.2.29'"));
 assert.match(changelog, /^## 1\.1\.18/m);
@@ -184,10 +184,10 @@ const themedPages = [
 ];
 for (const path of themedPages) {
   const html = readFileSync(path, "utf8");
-  assert.ok(html.includes('/transparent-theme.css?v=2.1.0'), path + " must load the current shared glass theme.");
+  assert.ok(html.includes('/transparent-theme.css?v=2.1.0'), path + " must load the current shared app theme.");
   assert.doesNotMatch(html, /<style\b/i, path + " must not retain inline CSS blocks.");
   const slug = path === "public/index.html" ? "app" : path.split("/").pop().replace(/\.html$/, "");
-  const layoutHref = path === "public/index.html" ? '/app-layout.css?v=2.0.6' : path === "public/kuisioner-responden.html" ? '/kuisioner-pilihan.css?v=1.0.1' : '/' + slug + '-layout.css?v=2.0.0';
+  const layoutHref = path === "public/index.html" ? '/app-layout.css?v=2.0.7' : path === "public/kuisioner-responden.html" ? '/kuisioner-pilihan.css?v=1.0.1' : '/' + slug + '-layout.css?v=2.0.0';
   assert.ok(html.includes(layoutHref), path + " must load its extracted layout stylesheet.");
 }
 const hillBackground = readFileSync("public/dashboard-background.webp");
@@ -195,9 +195,9 @@ assert.equal(hillBackground.toString("ascii", 0, 4), "RIFF", "dashboard photo mu
 assert.equal(hillBackground.toString("ascii", 8, 12), "WEBP", "dashboard photo must be a valid WebP asset");
 assert.ok(statSync("public/dashboard-background.webp").size > 4000, "dashboard background must not be an empty placeholder");
 assert.ok(dashboard.includes("Versi " + pkg.version), "web version must match package version");
-assert.ok(offlinePage.includes('id="sahabat-offline-glass-v1-1-30"') || offlinePage.includes("background-color:rgba(15,23,42,.75)!important"), "native offline screen theme must remain defined");
+assert.ok(offlinePage.includes('id="sahabat-offline-solid-v1-1-60"') || offlinePage.includes("background-color:#2B3520!important"), "native offline screen must use the solid moss theme.");
 assert.ok(offlinePage.includes('<meta name="color-scheme" content="dark">'), "native offline screen must force dark UI controls");
-assert.ok(offlinePage.includes("background-color:rgba(15,23,42,.75)!important") || offlinePage.includes("background:transparent"), "native offline surfaces must retain explicit surface styling.");
+assert.ok(offlinePage.includes("background-color:#2B3520!important") && offlinePage.includes("#70B8E8"), "native offline surfaces must use solid moss cards with sky-blue borders.");
 assert.ok(offlinePage.includes("body,body *{color:#fff!important"), "native offline screen text must be white");
 assert.ok(!offlinePage.includes("backdrop-filter:blur(") && offlinePage.includes("background-color:#2B3520!important"), "native offline surfaces must be solid moss without blur.");
 const respondentChooser = readFileSync("public/kuisioner-responden.html", "utf8");
@@ -241,8 +241,8 @@ for (const [fileName, source] of [["public/kuisioner-awal.html", initialIntakePa
 assert.ok(!integratedRespondentForm.includes("team-login") && integratedRespondentForm.includes('capture="environment"') && integratedRespondentForm.includes('name="fotoDiri"'), "public form must not require staff login and must retain direct photo capture.");
 assert.ok(workerSource.includes('url.pathname === "/api/public-questionnaire"') && workerSource.includes("async function handlePublicQuestionnaire"), "Worker must expose the dedicated public submission route.");
 assert.ok(workerSource.includes("public_questionnaire_attempts") && workerSource.includes("sheets_duplicate_check") && workerSource.includes("RESPONDEN MANDIRI"), "public submission must include throttling, duplicate checking, and explicit respondent attribution.");
-assert.ok(dashboard.includes('href="/transparent-theme.css?v=2.1.0"'), "dashboard uses the replacement transparent theme.");
-assert.ok(transparentCss.includes("--sahabat-glass-bg:rgba(15,23,42,.70)") && transparentCss.includes("backdrop-filter:blur(var(--sahabat-glass-blur))"), "shared UI surfaces must use the centralized glass treatment.");
+assert.ok(dashboard.includes('href="/transparent-theme.css?v=2.1.0"') && dashboard.includes('href="/app-theme.css?v=1.0.1"'), "dashboard must load the shared base theme and the final solid theme override.");
+assert.ok(themeCss.includes("body:not(:has(#loginCard)) *,body:has(#dashboard:not([hidden])) #dashboard *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}") && themeCss.includes("background:#2B3520!important"), "the app theme must neutralize shared legacy glass styles outside the isolated Login screen.");
 assert.ok(dashboard.includes("owner-header-actions"), "owner header actions must remain available.");
 assert.ok(dashboard.includes('id="settingsButton"') && dashboard.includes('id="logoutButton"'), "settings and logout controls must remain available.");
 assert.ok(transparentCss.includes('background-image:url("/dashboard-background.webp?v=1.0.0")') && transparentCss.includes('dashboard-background-portrait.webp?v=1.0.0') && transparentCss.includes('@media (max-width: 720px)') && dashboard.includes("/danau-toba/photo-1.jpg?v=1.2.9"), "landscape and portrait dashboard backgrounds plus slideshow must remain configured.");
@@ -251,7 +251,7 @@ for (const path of themedPages) {
   assert.ok(html.includes("/transparent-theme.css?v=2.1.0"), path + " must load the shared replacement theme.");
 }
 
-console.log("PASS global glass theme, hill background, owner profile sync, CI version gate, Android artifacts, and release documentation are synchronized");
+console.log("PASS solid app theme, Login isolation, owner profile sync, CI version gate, Android artifacts, and release documentation are synchronized");
 
 assert.ok(workerSource.includes("password.length < 6") && workerSource.includes("kata sandi kurang dari 6 karakter") && !workerSource.includes("password.length < 8"), "team registration, login and password reset must use a six-character minimum.");
 assert.ok(teamManager.includes('minlength="6"') && teamManager.includes("password.length<6") && teamManager.includes("minimal 6 karakter"), "team owner registration and reset UI must enforce six characters.");
