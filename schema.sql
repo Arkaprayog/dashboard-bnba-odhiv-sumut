@@ -118,3 +118,21 @@ CREATE TABLE IF NOT EXISTS notification_state (
   state_value TEXT NOT NULL,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS fcm_devices (
+  token_hash TEXT PRIMARY KEY,
+  token TEXT NOT NULL,
+  admin_id TEXT REFERENCES admins(id) ON DELETE CASCADE,
+  platform TEXT NOT NULL DEFAULT 'android',
+  device_label TEXT NOT NULL DEFAULT 'Android',
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_fcm_devices_admin ON fcm_devices(admin_id);
+
+CREATE TABLE IF NOT EXISTS notification_events (
+  event_hash TEXT PRIMARY KEY,
+  source TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_notification_events_source_created ON notification_events(source, created_at);
