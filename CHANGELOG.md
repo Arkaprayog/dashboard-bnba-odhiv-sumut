@@ -1,3 +1,8 @@
+## 1.1.65 — 2026-10-17
+- Menghapus latar abu-abu yang dapat muncul pada kolom kata sandi ketika mengetik atau autofill di Android WebView/Chromium.
+- Menjaga kolom password transparan, teks dan caret tetap putih, serta menyegarkan cache stylesheet Login ke 1.0.2.
+- Menambahkan pemeriksaan regresi otomatis untuk gaya autofill. Ini rilis aset web/PWA; kode native Android tidak berubah.
+
 ## 1.1.64 — 2026-10-17
 - Menambahkan skeleton loading bernuansa moss green untuk thumbnail foto pada tabel/database dan kartu foto asesmen.
 - Menambahkan `loading="lazy"` / `decoding="async"` pada gambar foto yang ditampilkan, termasuk foto responden privat di tabel.
