@@ -144,7 +144,7 @@ assert.ok(changelog.startsWith("## " + pkg.version), "changelog must begin with 
 assert.ok(readFileSync(".github/workflows/validate-deploy.yml", "utf8").includes("typeof packageJson.version === 'string'"), "CI must compare release version dynamically");
 assert.ok(releaseWorkflow.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.28"), "release APK artifact must use the current Android version");
 assert.ok(debugWorkflow.includes("Sahabat-ODHIV-Sumut-APK-debug-v1.2.28"), "debug APK artifact must use the current Android version");
-assert.ok(androidReadme.includes("Android package version: **1.2.28** (`versionCode 31`)"), "Android README must match Gradle version");
+assert.ok(androidReadme.includes("Android package version: **1.2.29** (`versionCode 32`)"), "Android README must match Gradle version");
 assert.ok(androidReadme.includes("web version **" + pkg.version + "**"), "Android README must state current web version");
 assert.ok(rootReadme.includes("release version `1.2.28` (version code `31`)"), "root README must match Android release version");
 assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.28"), "root README artifact link name must match release workflow");

@@ -5,7 +5,7 @@ https://sahabatodhivsumut.web.id/
 
 ## Version alignment — 16 October 2026
 
-- Android package version: **1.2.28** (`versionCode 31`).
+- Android package version: **1.2.29** (`versionCode 32`).
 - Debug package: `1.2.28-debug`; expected artifact: `Sahabat-ODHIV-Sumut-APK-debug-v1.2.28`.
 - Signed release package: `1.2.28`; expected artifact: `Sahabat-ODHIV-Sumut-APK-release-v1.2.28`.
 - The online dashboard currently uses web version **1.1.59**. The APK loads the canonical HTTPS dashboard; online menu and backend changes become available when the website is deployed, while the native Android shell, permission behavior, camera/gallery handling, and offline fallback require a new APK build.
