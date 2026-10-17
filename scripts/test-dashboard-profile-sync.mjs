@@ -4,6 +4,7 @@ import vm from "node:vm";
 
 const dashboard = readFileSync("public/index.html", "utf8");
 const transparentCss = readFileSync("public/transparent-theme.css", "utf8");
+const themeCss = readFileSync("public/app-theme.css", "utf8");
 const headerActionCss = readFileSync("public/action-buttons-horizontal-v1.css", "utf8");
 assert.match(dashboard, /class="owner-header-actions action-bar-container"/);
 assert.match(dashboard, /class="top-actions action-buttons-group"/);
@@ -102,7 +103,7 @@ assert.match(dashboard, /id="logoutButton"/);
 assert.match(dashboard, /aria-label="Keluar"/);
 assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='owner' AND active=1/);
 assert.match(worker, /owner_profile_update/);
-assert.equal(pkg.version, "1.1.59");
+assert.equal(pkg.version, "1.1.60");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
 assert.ok(dashboard.includes('href="/assessment-print-10-pages-v1.css?v=1.1.46"'), "assessment must load the dedicated ten-page print stylesheet.");
 assert.ok(dashboard.includes('pageIndexForQuestion') && dashboard.includes('assessment-print-page'), "assessment fields must be partitioned into six print pages.");
@@ -124,10 +125,10 @@ assert.ok(assessmentGlassCss.includes("backdrop-filter:blur(18px)"), "photo card
 assert.ok(assessmentPrintCss.includes('size:A4 portrait') && assessmentPrintCss.includes('page-break-before:always') && assessmentPrintCss.includes('assessment-print-photo-page'), "print stylesheet must force A4 page breaks for the four appendices.");
 assert.ok(dashboard.includes('Data Base Kemensos RI DRSKPNO'), "login copyright must use the requested institution text.");
 
-assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.6"') && dashboard.includes('href="/transparent-theme.css?v=2.1.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
-assert.ok(transparentCss.includes("--sahabat-glass-blur:16px") && transparentCss.includes("--sahabat-glass-bg:rgba(15,23,42,.70)") && transparentCss.includes("color:#fff!important"), "shared theme must use glassmorphism, blur 16px, and white typography.");
-assert.match(gradle, /versionCode 31/);
-assert.ok(gradle.includes("versionName '1.2.28'"));
+assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.7"') && dashboard.includes('href="/transparent-theme.css?v=2.1.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
+assert.ok(dashboard.includes('href="/app-theme.css?v=1.0.1"') && !themeCss.includes("backdrop-filter:blur(") && themeCss.includes("background:#2B3520!important") && themeCss.includes("background:#70B8E8!important"), "shared theme must use solid moss and sky-blue surfaces without blur.");
+assert.match(gradle, /versionCode 32/);
+assert.ok(gradle.includes("versionName '1.2.29'"));
 assert.match(changelog, /^## 1\.1\.18/m);
 assert.ok(dashboard.includes("Versi " + pkg.version), "dashboard display version must match package.json");
 assert.match(dashboard, /href="\/surat-tugas\.html">Buka &amp; Edit Surat Tugas/);
@@ -198,7 +199,7 @@ assert.ok(offlinePage.includes('id="sahabat-offline-glass-v1-1-30"') || offlineP
 assert.ok(offlinePage.includes('<meta name="color-scheme" content="dark">'), "native offline screen must force dark UI controls");
 assert.ok(offlinePage.includes("background-color:rgba(15,23,42,.75)!important") || offlinePage.includes("background:transparent"), "native offline surfaces must retain explicit surface styling.");
 assert.ok(offlinePage.includes("body,body *{color:#fff!important"), "native offline screen text must be white");
-assert.ok(offlinePage.includes("backdrop-filter:blur(16px)!important") || offlinePage.includes("background:transparent"), "native offline surfaces must use their configured surface style.");
+assert.ok(!offlinePage.includes("backdrop-filter:blur(") && offlinePage.includes("background-color:#2B3520!important"), "native offline surfaces must be solid moss without blur.");
 const respondentChooser = readFileSync("public/kuisioner-responden.html", "utf8");
 const integratedRespondentForm = readFileSync("public/kuesioner-mandiri.html", "utf8");
 const chooserCss = readFileSync("public/kuisioner-pilihan.css", "utf8");
