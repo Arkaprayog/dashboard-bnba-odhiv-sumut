@@ -150,7 +150,7 @@ assert.ok(dashboard.includes('Data Base Kemensos RI DRSKPNO'), "login copyright 
 
 assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.7"') && dashboard.includes('href="/transparent-theme.css?v=2.1.0"') && !dashboard.includes("style.css?v="), "dashboard must load only the centralized stylesheets.");
 assert.ok(dashboard.includes('href="/login.css?v=1.0.3"'), "the isolated Login stylesheet must be linked.");
-assert.ok(dashboard.includes('href="/dashboard.css?v=1.1.67"'), "the dashboard-only solid clean stylesheet must load last.");
+assert.ok(dashboard.includes('href="/dashboard.css?v=1.1.67-clean"'), "the dashboard-only solid clean stylesheet must load last.");
 const isolatedLoginCss = readFileSync("public/login.css", "utf8");
 const solidDashboardCss = readFileSync("public/dashboard.css", "utf8");
 assert.ok(isolatedLoginCss.includes('#loginCard') && isolatedLoginCss.includes('input#password:-webkit-autofill'), "isolated Login CSS must keep password autofill transparent.");
