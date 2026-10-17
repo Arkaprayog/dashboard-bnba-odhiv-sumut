@@ -108,7 +108,7 @@ assert.equal(manifest.version, pkg.version, "PWA manifest version must match the
 assert.ok(dashboard.includes('href="/assessment-print-10-pages-v1.css?v=1.1.46"'), "assessment must load the dedicated ten-page print stylesheet.");
 assert.ok(dashboard.includes('pageIndexForQuestion') && dashboard.includes('assessment-print-page'), "assessment fields must be partitioned into six print pages.");
 assert.ok(dashboard.includes('HALAMAN 7 — LAMPIRAN FOTO DIRI (CLOSE-UP PPKS)') && dashboard.includes('HALAMAN 8 — LAMPIRAN FOTO KTP') && dashboard.includes('HALAMAN 9 — LAMPIRAN FOTO KARTU KELUARGA (KK)') && dashboard.includes('HALAMAN 10 — LAMPIRAN FOTO RUMAH TAMPAK DEPAN'), "all four photo appendices must be generated in the required order.");
-assert.ok(dashboard.includes('href="/assessment-glass-layout-v1.css?v=1.1.52"'), "latest glass layout stylesheet must be loaded after legacy styles.");
+assert.ok(dashboard.includes('href="/assessment-glass-layout-v1.css?v=1.1.53"'), "latest glass layout stylesheet must be loaded after legacy styles.");
 assert.ok(dashboard.includes('id="assessmentClearForm"') && dashboard.includes("Kosongkan Lembar Asesmen"), "assessment view must provide a full-width clear-sheet action.");
 assert.ok(dashboard.includes('data-photo-preview="assessmentPhotoSelf"') && dashboard.includes('data-photo-preview="assessmentPhotoKtp"') && dashboard.includes('data-photo-preview="assessmentPhotoKk"') && dashboard.includes('data-photo-preview="assessmentPhotoHome"'), "four PPKS photo cards must have distinct auto-populated preview slots.");
 assert.doesNotMatch(dashboard, /<input\s+type="file"[^>]*id="assessmentPhoto(?:Self|Ktp|Kk|Home)"/, "manual file inputs for assessment photos must be removed.");
