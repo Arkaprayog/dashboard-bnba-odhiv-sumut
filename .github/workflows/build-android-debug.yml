@@ -24,8 +24,26 @@ jobs:
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: |
-          test -n "$GOOGLE_SERVICES_JSON" || (echo "::error::Add GOOGLE_SERVICES_JSON in repository Actions secrets." && exit 1)
-          printf '%s' "$GOOGLE_SERVICES_JSON" > android-app/app/google-services.json
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            printf '%s' "$GOOGLE_SERVICES_JSON" > "$RUNNER_TEMP/google-services-secret.json"
+            if python3 - "$RUNNER_TEMP/google-services-secret.json" <<'PY'
+          import json, sys
+          from pathlib import Path
+          data = json.loads(Path(sys.argv[1]).read_text())
+          assert data.get('project_info', {}).get('project_id') == 'sahabatodhiv-sumut'
+          clients = data.get('client', [])
+          assert any(c.get('client_info', {}).get('android_client_info', {}).get('package_name') == 'id.sahabatodhiv.sumut' for c in clients)
+          PY
+            then
+              cp "$RUNNER_TEMP/google-services-secret.json" android-app/app/google-services.json
+              echo "Using validated Firebase config from Actions secret."
+            else
+              echo "::warning::GOOGLE_SERVICES_JSON is not valid for this Firebase app; falling back to the checked-in client configuration."
+            fi
+          else
+            echo "::notice::GOOGLE_SERVICES_JSON secret is not available; using the checked-in Firebase client configuration."
+          fi
+          test -s android-app/app/google-services.json || (echo "::error::Firebase client config is missing." && exit 1)
           python3 - <<'PY'
           import json
           from pathlib import Path
@@ -33,7 +51,7 @@ jobs:
           assert data.get('project_info', {}).get('project_id') == 'sahabatodhiv-sumut', 'Firebase Project ID mismatch.'
           packages = [c.get('client_info', {}).get('android_client_info', {}).get('package_name') for c in data.get('client', [])]
           assert 'id.sahabatodhiv.sumut' in packages, 'The Firebase JSON does not include id.sahabatodhiv.sumut.'
-          print('Firebase Android configuration validated (secret contents not printed).')
+          print('Firebase Android configuration validated without displaying its contents.')
           PY
 
       - name: Set up Java 17
@@ -79,7 +97,7 @@ jobs:
       - name: Upload installable debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: Sahabat-ODHIV-Sumut-APK-debug-v1.2.33
+          name: Sahabat-ODHIV-Sumut-APK-debug-v1.2.34
           path: android-app/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
