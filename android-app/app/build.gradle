@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -31,7 +32,11 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix '.debug'
+            // CI can build a Firebase-enabled debug APK with the registered production app ID.
+            // Normal local debug builds retain the separate .debug application ID.
+            if (!project.hasProperty('fcmDebugUseProductionPackage')) {
+                applicationIdSuffix '.debug'
+            }
             versionNameSuffix '-debug'
         }
         release {
@@ -49,6 +54,8 @@ android {
 }
 
 dependencies {
+    implementation platform('com.google.firebase:firebase-bom:34.19.0')
+    implementation 'com.google.firebase:firebase-messaging'
     implementation 'androidx.core:core:1.15.0'
     implementation('androidx.biometric:biometric:1.1.0') {
         // Newer kotlin-stdlib already contains these classes; excluding legacy split
