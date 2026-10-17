@@ -201,16 +201,16 @@ assert.ok(offlinePage.includes("body,body *{color:#fff!important"), "native offl
 assert.ok(offlinePage.includes("backdrop-filter:blur(16px)!important") || offlinePage.includes("background:transparent"), "native offline surfaces must use their configured surface style.");
 const respondentChooser = readFileSync("public/kuisioner-responden.html", "utf8");
 const integratedRespondentForm = readFileSync("public/kuesioner-mandiri.html", "utf8");
-const chooserCss = readFileSync("public/kuisioner-pilihan.css", "utf8");
+const chooserCss = readFileSync("public/kuisioner-responden.css", "utf8");
 const initialIntakePage = readFileSync("public/kuisioner-awal.html", "utf8");
 const initialIntakeCss = readFileSync("public/kuisioner-awal-layout.css", "utf8");
 const clinicBarcodePage = readFileSync("public/barcode-layanan.html", "utf8");
 const clinicBarcodeCss = readFileSync("public/barcode-layanan-layout.css", "utf8");
 const intakeManagerCss = readFileSync("public/initial-intake-manager.css", "utf8");
-assert.ok(respondentChooser.includes('/kuisioner-pilihan.css?v=1.0.1'), "respondent chooser must load its responsive chooser stylesheet.");
-assert.ok(respondentChooser.includes('src="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform?embedded=true"'), "respondent chooser must embed the official Google Form directly.");
+assert.ok(respondentChooser.includes('/kuisioner-responden.css?v=1.0.0'), "respondent questionnaire must load its native stylesheet.");
+assert.ok(respondentChooser.includes('id="respondentForm"') && respondentChooser.includes('data-step="0"') && respondentChooser.includes('data-step="1"') && respondentChooser.includes('data-step="2"') && respondentChooser.includes('/api/public-questionnaire') && !respondentChooser.includes("<iframe"), "respondent menu must show the native multi-step questionnaire rather than an embedded Google Form.");
 assert.ok(respondentChooser.includes("https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform"), "respondent chooser must preserve the existing Google Forms backup.");
-assert.ok(chooserCss.includes(".choice-grid") && chooserCss.includes("@media(max-width:650px)"), "respondent chooser must be responsive.");
+assert.ok(chooserCss.includes(".field-grid") && chooserCss.includes("@media(max-width:620px)") && chooserCss.includes(".photo-grid"), "native respondent questionnaire must have responsive form and photo layouts.");
 assert.ok(!respondentChooser.includes("window.location.replace(destination)") && !respondentChooser.includes("window.setTimeout(finish"), "respondent chooser must never force an automatic redirect.");
 assert.ok(integratedRespondentForm.includes('/api/public-questionnaire') && integratedRespondentForm.includes('name="consent"') && integratedRespondentForm.includes('name="website"'), "integrated public form must use the public submission API, explicit consent, and a honeypot.");
 
