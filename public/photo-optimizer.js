@@ -1,4 +1,4 @@
-/* SODARAMU photo optimizer v1.0.0
+/* SODARAMU photo optimizer v1.0.1
    Compresses selected image files before existing change/submit handlers run.
    Non-image files and the current upload API/form field names are left untouched. */
 (() => {
