@@ -384,6 +384,19 @@ jobs:
               raise SystemExit("Owner background asset is not a valid WebP image.")
           print(f"Owner background asset verified: {len(data)} bytes.")
           PY
+      - name: Assemble portrait dashboard background image
+        run: |
+          set -euo pipefail
+          test -d .build-assets/portrait-background
+          cat .build-assets/portrait-background/part-*.b64 | tr -d '\r\n' | base64 --decode > public/dashboard-background-portrait.webp
+          python3 - <<'PY'
+          from pathlib import Path
+          asset = Path('public/dashboard-background-portrait.webp')
+          data = asset.read_bytes()
+          if len(data) < 20000 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+              raise SystemExit('Portrait dashboard background is missing or is not a valid WebP image.')
+          print(f'Portrait dashboard background verified for deployment: {len(data)} bytes.')
+          PY
       - name: Install dependencies
         run: npm install
       - name: Bundle PDF generator within the same-origin assets
