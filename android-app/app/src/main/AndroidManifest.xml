@@ -15,6 +15,7 @@
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
+        android:name=".SahabatApplication"
         android:allowBackup="false"
         android:usesCleartextTraffic="false"
         android:icon="@drawable/ic_sahabat_icon"
@@ -23,6 +24,19 @@
         android:theme="@style/AppTheme"
         android:supportsRtl="true"
         android:resizeableActivity="true">
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_sahabat_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="sahabat_odhiv_notifications_v2" />
+        <service
+            android:name=".PushMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
