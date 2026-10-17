@@ -99,3 +99,25 @@ html body:has(#loginCard) main > section#loginCard > footer.login-footer * {
   background-image:none!important;
   box-shadow:none!important;
 }
+
+
+/* Keep the password field genuinely transparent while typing, including browser autofill.
+   Some Android WebViews/Chromium builds paint an opaque grey-blue autofill surface unless
+   the autofill pseudo-state is explicitly reset. */
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password:hover,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password:focus,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password:active,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password:-webkit-autofill,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password:-webkit-autofill:hover,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password:-webkit-autofill:focus,
+html body:has(#loginCard) main > section#loginCard > form#gateForm.login-form > div.field.login-password-field > input#password:-webkit-autofill:active {
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  -webkit-box-shadow:0 0 0 1000px transparent inset!important;
+  box-shadow:0 0 0 1000px transparent inset!important;
+  -webkit-text-fill-color:#fff!important;
+  caret-color:#fff!important;
+  transition:background-color 999999s ease-out 0s;
+}
