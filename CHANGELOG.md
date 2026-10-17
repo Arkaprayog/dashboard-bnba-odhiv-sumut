@@ -1,3 +1,8 @@
+## 1.1.63 — 2026-10-17
+- Menambahkan stylesheet Login final yang dimuat setelah seluruh stylesheet legacy, supaya latar blok form dan kotak ikon mata benar-benar transparan.
+- Mempertahankan kartu Login sebagai kaca gelap halus dan tombol Masuk putih; tidak mengubah markup maupun handler autentikasi.
+- Menyelaraskan versi web/PWA ke 1.1.63 serta Android Debug/Release ke 1.2.32 (versionCode 35), dan menambahkan pemeriksaan CSS Login pada smoke test produksi.
+
 ## 1.1.62 — 2026-10-17
 - Memastikan perubahan CSS Login menggunakan referensi cache terbaru agar input kata sandi dan ikon transparan diterapkan setelah pembaruan.
 - Membersihkan CSS halaman Login: kartu memakai lapisan kaca gelap yang tidak keruh; kolom sandi dan ikon gembok/toggle menjadi transparan tanpa blok abu-abu.
