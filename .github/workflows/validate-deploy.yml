@@ -245,7 +245,7 @@ jobs:
             ['legacy inline CSS is removed and shared glass theme is centralized', !/<style\b/i.test(html) && /href="\/app-layout\.css\?v=2\.0\.\d+"/.test(html) && html.includes('href="/transparent-theme.css?v=2.0.0"') && theme.includes('--sahabat-glass-blur:16px') && theme.includes('rgba(15,23,42,.70)') && theme.includes('color:#fff!important') && !layout.includes('#063a7d') && !layout.includes('rgba(13,110,253')],
             ['Form Asesmen Terintegrasi retains the supplied Kemensos PNG and local ATENSI logo', html.includes('src="/logos/kemensos.png"') && html.includes('src="/atensi.svg"') && html.includes('id="assessmentPaper"')],
             ['questionnaire uses the shared glass theme without legacy inline CSS', !/<style\b/i.test(questionnaire) && questionnaire.includes('href="/kuesioner-layout.css?v=2.0.0"') && questionnaire.includes('href="/transparent-theme.css?v=2.0.0"')],
-            ['respondent chooser uses external responsive styling without inline CSS', !/<style\b/i.test(waiting) && waiting.includes('href="/kuisioner-pilihan.css?v=1.0.0"') && waiting.includes('href="/transparent-theme.css?v=2.0.0"')],
+            ['respondent chooser uses external responsive styling without inline CSS', !/<style\b/i.test(waiting) && waiting.includes('href="/kuisioner-pilihan.css?v=1.0.1"') && waiting.includes('href="/transparent-theme.css?v=2.0.0"')],
             ['public, package, and release versions are synchronized', typeof packageJson.version === 'string' && packageJson.version.length > 0 && html.includes('Versi ' + packageJson.version) && changelog.startsWith('## ' + packageJson.version)],
             ['deployment health and smoke tests use the canonical HTTPS domain', workflow.includes('HEALTH_URL: https://sahabatodhivsumut.web.id/api/health') && workflow.includes('APP_URL: https://sahabatodhivsumut.web.id')],
             ['assessment uses the supplied Kemensos and ATENSI logos', html.includes('src="/logos/kemensos.png"') && html.includes('src="/atensi.svg"') && letter.includes('src="/logos/kemensos.png"')],
@@ -523,7 +523,7 @@ jobs:
           done
           grep -q 'href="/kuesioner-mandiri.html"' /tmp/sahabat-questionnaire.html && grep -q 'https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform' /tmp/sahabat-questionnaire.html && grep -q 'class="choice-grid"' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire chooser does not present both questionnaire routes." && exit 1)
           ! grep -q 'window.location.replace(destination)' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire chooser must not force a timed redirect." && exit 1)
-          chooser_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-chooser.css --write-out '%{http_code}|%{content_type}' "$APP_URL/kuisioner-pilihan.css?v=1.0.0&verify=$GITHUB_SHA")"
+          chooser_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-chooser.css --write-out '%{http_code}|%{content_type}' "$APP_URL/kuisioner-pilihan.css?v=1.0.1&verify=$GITHUB_SHA")"
           chooser_css_status="${chooser_css_response%%|*}"
           chooser_css_type="${chooser_css_response#*|}"
           test "$chooser_css_status" = "200" || (echo "::error::Questionnaire chooser CSS returned HTTP $chooser_css_status." && exit 1)
