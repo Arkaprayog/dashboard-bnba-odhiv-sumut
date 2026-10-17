@@ -60,7 +60,7 @@ Open Actions → **Build Sahabat ODHIV Sumut Android APK** → Run workflow. Dow
 
 ## Current limitation
 
-Background push notifications use the existing browser Web Push implementation. The APK currently implements local Android notifications and biometric unlock. Remote push delivery from the Workers to the native APK remains pending Firebase Cloud Messaging (FCM) setup: register package `id.sahabatodhiv.sumut`, provide the Firebase Android configuration, enable the FCM API, and configure a service account with permission to send messages. Do not commit service-account private keys to the repository. After configuration, build and test notification delivery with the app closed.
+Browser background push uses the existing Web Push implementation and remains separate from native FCM. The Android project now has the client-side Firebase config, FCM SDK, token callback, and native message receiver. Remote delivery still requires a trusted server-side FCM HTTP v1 sender, secure token registration, and Google Forms/internal questionnaire event triggers; test delivery with the app closed before declaring it production-ready. The `google-services.json` file is client configuration and must not be confused with a service-account private key. Never commit a service-account private key or other server credential.
 
 ## Android device permissions
 
