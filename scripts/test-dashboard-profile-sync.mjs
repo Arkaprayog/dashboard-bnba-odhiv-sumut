@@ -201,6 +201,9 @@ assert.ok(offlinePage.includes("body,body *{color:#fff!important"), "native offl
 assert.ok(offlinePage.includes("backdrop-filter:blur(16px)!important") || offlinePage.includes("background:transparent"), "native offline surfaces must use their configured surface style.");
 const respondentChooser = readFileSync("public/kuisioner-responden.html", "utf8");
 const integratedRespondentForm = readFileSync("public/kuesioner-mandiri.html", "utf8");
+const nativeRespondentScripts = [...respondentChooser.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)].filter(match => !/\\bsrc\\s*=/.test(match[1]));
+assert.equal(nativeRespondentScripts.length, 1, "native respondent questionnaire must contain exactly one inline application script.");
+new vm.Script(nativeRespondentScripts[0][2], { filename: "public/kuisioner-responden.html:inline-script" });
 const chooserCss = readFileSync("public/kuisioner-responden.css", "utf8");
 const initialIntakePage = readFileSync("public/kuisioner-awal.html", "utf8");
 const initialIntakeCss = readFileSync("public/kuisioner-awal-layout.css", "utf8");
