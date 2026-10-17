@@ -180,7 +180,7 @@
     if(validateCurrentStep())showStep(currentStep+1);
   });
   back.addEventListener("click",()=>showStep(currentStep-1));
-  form.addEventListener("reset",()=>setTimeout(()=>{clearPreviews();showStep(0);message.textContent="";},0));
+  form.addEventListener("reset",()=>setTimeout(()=>{clearPreviews();if(!preserveStatusAfterReset){showStep(0);message.textContent="";message.className="status-message";}},0));
   form.addEventListener("submit",async event=>{
     event.preventDefault();
     message.textContent="";message.className="status-message";
