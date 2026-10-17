@@ -125,6 +125,8 @@ jobs:
         run: node scripts/test-news-url-policy.mjs
       - name: Validate Google Drive backup safety contract
         run: node scripts/test-drive-backup-contract.mjs
+      - name: Verify isolated app theme and login preservation
+        run: node scripts/test-app-theme-isolation.mjs
       - name: Typecheck
         run: npm run typecheck
       - name: Test dashboard profile sync and release version alignment
@@ -453,7 +455,7 @@ jobs:
           page_status="000"
           for attempt in $(seq 1 12); do
             if page_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --dump-header /tmp/sahabat-headers.txt --output /tmp/sahabat-dashboard.html --write-out '%{http_code}' "$APP_URL/?v=$GITHUB_SHA" -H 'Cache-Control: no-cache')"; then :; else page_status="000"; fi
-            if [ "$page_status" = "200" ] && grep -Fq 'href="/app-layout.css?v=2.0.6"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/transparent-theme.css?v=2.1.0"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/dashboard-card-clean-v1.css?v=1.1.49"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/assessment-glass-layout-v1.css?v=1.1.52"' /tmp/sahabat-dashboard.html && grep -Fq 'name="application-version" content="1.1.59"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/single-layer-floating-dashboard-v1.css?v=1.1.57"' /tmp/sahabat-dashboard.html && grep -Fq 'RANCANGAN ANGGARAN BELANJA' /tmp/sahabat-dashboard.html && grep -Fq 'RAB NUTRISI' /tmp/sahabat-dashboard.html && grep -Fq 'RAB KEWIRAUSAHAAN' /tmp/sahabat-dashboard.html && grep -Fq 'id="rabHomeChoices" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'id="questionnaireHubView" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'id="teamQuestionnaireView" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'id="stage1DataView" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'KUISIONER OWNER' /tmp/sahabat-dashboard.html && grep -Fq 'KUISIONER TIM KERJA' /tmp/sahabat-dashboard.html && grep -Fq 'DATA KUISIONER THP 1' /tmp/sahabat-dashboard.html && grep -Fq 'Kosongkan Lembar Asesmen' /tmp/sahabat-dashboard.html && grep -Fq 'data-photo-preview="assessmentPhotoHome"' /tmp/sahabat-dashboard.html; then
+            if [ "$page_status" = "200" ] && grep -Fq 'href="/app-layout.css?v=2.0.6"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/app-theme.css?v=1.0.0"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/transparent-theme.css?v=2.1.0"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/dashboard-card-clean-v1.css?v=1.1.49"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/assessment-glass-layout-v1.css?v=1.1.52"' /tmp/sahabat-dashboard.html && grep -Fq 'name="application-version" content="1.1.59"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/single-layer-floating-dashboard-v1.css?v=1.1.57"' /tmp/sahabat-dashboard.html && grep -Fq 'RANCANGAN ANGGARAN BELANJA' /tmp/sahabat-dashboard.html && grep -Fq 'RAB NUTRISI' /tmp/sahabat-dashboard.html && grep -Fq 'RAB KEWIRAUSAHAAN' /tmp/sahabat-dashboard.html && grep -Fq 'id="rabHomeChoices" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'id="questionnaireHubView" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'id="teamQuestionnaireView" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'id="stage1DataView" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'KUISIONER OWNER' /tmp/sahabat-dashboard.html && grep -Fq 'KUISIONER TIM KERJA' /tmp/sahabat-dashboard.html && grep -Fq 'DATA KUISIONER THP 1' /tmp/sahabat-dashboard.html && grep -Fq 'Kosongkan Lembar Asesmen' /tmp/sahabat-dashboard.html && grep -Fq 'data-photo-preview="assessmentPhotoHome"' /tmp/sahabat-dashboard.html; then
               echo "Production page and centralized glass theme references are current (attempt $attempt)."
               break
             fi
@@ -485,6 +487,15 @@ jobs:
           grep -Fq -- '--sahabat-glass-blur:16px' /tmp/sahabat-theme.css || (echo "::error::Shared glass theme blur token is missing." && exit 1)
           grep -Fq -- '--sahabat-glass-bg:rgba(15,23,42,.70)' /tmp/sahabat-theme.css || (echo "::error::Shared glass surface token is missing." && exit 1)
           grep -Fq 'color:#fff!important' /tmp/sahabat-theme.css || (echo "::error::Shared glass theme white typography rule is missing." && exit 1)
+          app_theme_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-app-theme.css --write-out '%{http_code}|%{content_type}' "$APP_URL/app-theme.css?v=1.0.0&verify=$GITHUB_SHA")"
+          app_theme_status="${app_theme_response%%|*}"
+          app_theme_type="${app_theme_response#*|}"
+          test "$app_theme_status" = "200" || (echo "::error::New isolated app theme returned HTTP $app_theme_status." && exit 1)
+          case "$app_theme_type" in text/css*) ;; *) echo "::error::New app theme has unexpected content type: $app_theme_type." && exit 1 ;; esac
+          grep -Fq -- '--app-bg-moss: #2B3520' /tmp/sahabat-app-theme.css || (echo "::error::Moss-green app theme token is missing." && exit 1)
+          grep -Fq -- '--app-sky-blue: #70B8E8' /tmp/sahabat-app-theme.css || (echo "::error::Sky-blue app theme token is missing." && exit 1)
+          grep -Fq 'body:has(#dashboard:not([hidden])) #dashboard' /tmp/sahabat-app-theme.css || (echo "::error::Dashboard isolation scope is missing." && exit 1)
+          echo "Verified isolated moss-green / sky-blue app theme CSS."
           card_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-card-clean.css --write-out '%{http_code}|%{content_type}' "$APP_URL/dashboard-card-clean-v1.css?v=1.1.49&verify=$GITHUB_SHA")"
           card_css_status="${card_css_response%%|*}"
           card_css_type="${card_css_response#*|}"

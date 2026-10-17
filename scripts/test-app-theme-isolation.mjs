@@ -1,0 +1,18 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+const dir=path.resolve("public");
+const css=fs.readFileSync(path.join(dir,"app-theme.css"),"utf8");
+const index=fs.readFileSync(path.join(dir,"index.html"),"utf8");
+assert.match(css,/--app-bg-moss:\s*#2B3520/i);
+assert.match(css,/--app-sky-blue:\s*#70B8E8/i);
+assert.match(css,/body:has\(#dashboard:not\(\[hidden\]\)\)\s*#dashboard/);
+assert.match(css,/body:not\(:has\(#loginCard\)\)/);
+assert.doesNotMatch(css,/(^|[,{]\s*)(?:html\s+)?#loginCard\b|(^|[,{]\s*)\.login-(?:card|form|submit|brand)\b/m);
+assert.match(index,/id="loginCard"/);
+assert.match(index,/id="gateForm"/);
+for (const file of ["login-glass-v3.css?v=1.1.0","login-glass-v4.css?v=1.0.0","login-glass-v5.css?v=1.0.0"]) assert.ok(index.includes(`href="/${file}"`),`Missing original login stylesheet ${file}`);
+assert.match(index,/href="\/app-theme\.css\?v=1\.0\.0"/);
+const htmlFiles=fs.readdirSync(dir).filter(name=>name.endsWith(".html"));
+for (const file of htmlFiles) assert.ok(fs.readFileSync(path.join(dir,file),"utf8").includes('href="/app-theme.css?v=1.0.0"'),`${file} must load the app theme`);
+console.log(`PASS isolated app theme, login CSS preservation and ${htmlFiles.length} public HTML pages linked.`);

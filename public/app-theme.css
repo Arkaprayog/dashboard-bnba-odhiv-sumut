@@ -1,0 +1,199 @@
+/*
+ * SODARAMU app-only theme v1.0.0
+ * Login is isolated: this file never styles #loginCard or login form classes.
+ * On index.html it activates only when #dashboard is visible.
+ */
+:root {
+  --app-bg-moss: #2B3520;
+  --app-bg-moss-dark: #1E2517;
+  --app-sky-blue: #70B8E8;
+  --app-sky-blue-bright: #87CEFA;
+  --app-sky-glow: rgba(112, 184, 232, .32);
+  --app-glass-bg: rgba(43, 53, 32, .84);
+  --app-glass-card: rgba(35, 44, 26, .78);
+  --app-text: #FFFFFF;
+  --app-text-muted: #B0C4DE;
+  --app-border: rgba(112, 184, 232, .74);
+  --app-radius-lg: 20px;
+  --app-radius-sm: 12px;
+  --app-shadow: 0 12px 32px rgba(0, 0, 0, .22), 0 0 18px rgba(112, 184, 232, .12);
+  --app-glass-blur: 16px;
+}
+@media screen {
+  body:not(:has(#loginCard)) {
+    color-scheme: dark;
+    color: var(--app-text);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+    background-color: var(--app-bg-moss) !important;
+    background-image: linear-gradient(135deg, #2B3520 0%, #1E2517 100%) !important;
+    background-attachment: fixed;
+    accent-color: var(--app-sky-blue);
+  }
+  body:has(#dashboard:not([hidden])) {
+    color-scheme: dark;
+    color: var(--app-text);
+    background-color: var(--app-bg-moss) !important;
+    background-image: linear-gradient(135deg, #2B3520 0%, #1E2517 100%) !important;
+    background-attachment: fixed;
+    accent-color: var(--app-sky-blue);
+  }
+  body:not(:has(#loginCard))::before, body:not(:has(#loginCard))::after,
+  body:has(#dashboard:not([hidden]))::before, body:has(#dashboard:not([hidden]))::after {
+    background-image: none !important;
+  }
+  body:has(#dashboard:not([hidden])) > .corner { display: none !important; }
+  body:not(:has(#loginCard)) :is(h1,h2,h3,h4,.card-title,.form-head h2,.brand strong),
+  body:has(#dashboard:not([hidden])) #dashboard :is(h1,h2,h3,h4,.card-title) {
+    color: var(--app-sky-blue-bright);
+    text-wrap: pretty;
+  }
+  body:not(:has(#loginCard)) :is(.muted,.intro,.fallback,.choice-note,.note,.privacy-note p,.hero p,.form-card p,.brand span),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.muted,.dashhead p,.overview-card small,.item-info p,.scroll-hint) {
+    color: var(--app-text-muted) !important;
+  }
+  body:not(:has(#loginCard)) :is(.wrap>header,.wrap>main>section,.wrap>main>aside,.wrap>main>form,
+    .hero,.notice,.privacy-note,.form-card,.choice-card,.choice-panel,.card,.panel,.glass-card,
+    .dashboard-card,.menu-card,.sidebar,.navbar,.modal-content,.menu-item,.dashboard-container,
+    .dashpanel,.overview-card,.overview-panel,.settings-panel,.notification-panel,.form-panel,
+    .section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.drawer,
+    .quick-card,.quick-link,.stat-card,.status-card,.notice-card,.upload-card,.document-card,
+    .assessment-card,.workspace-card,.profile-card,.profile-panel,.staff,.respondent-stat,
+    .respondent-quiz-panel,.respondent-quiz-note,.field,.photo-box,.option,.brand-header,.topbar,.toolbar,.shell),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.owner-card,.owner-summary,.owner-profile-side,
+    .app-view,.dashpanel,.overview-card,.overview-panel,.settings-panel,.notification-panel,
+    .rab-home-choices,.form-card,.table-wrap,.table-container,.initial-intake-manager,
+    .questionnaire-choice-grid article,.profile-card,.section-card,.panel-card,.info-card,.data-card,
+    .stat-card,.status-card,.notice-card,.upload-card,.document-card,.assessment-card,.workspace-card,.quick-card,.staff) {
+    background-color: var(--app-glass-card) !important;
+    background-image: none !important;
+    border: 1px solid var(--app-border) !important;
+    border-radius: var(--app-radius-lg) !important;
+    box-shadow: var(--app-shadow) !important;
+    -webkit-backdrop-filter: blur(var(--app-glass-blur));
+    backdrop-filter: blur(var(--app-glass-blur));
+    color: var(--app-text);
+  }
+  body:not(:has(#loginCard)) :is(.wrap>header,.brand-header,.topbar,.toolbar),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.owner-card,.dashboard-landscape-brand) {
+    border-color: var(--app-sky-blue) !important;
+    box-shadow: 0 8px 26px rgba(0,0,0,.20),0 0 20px var(--app-sky-glow) !important;
+  }
+  /* Remove scenic backgrounds from app surfaces; keep real images/photos intact. */
+  body:not(:has(#loginCard)) :is(.wrap,main,header:not(.letterhead),nav,aside,section:not(.paper),article:not(.paper),
+    form:not(.login-form),fieldset,dialog,.card,.panel,.hero,.notice,.form-card,.overview-card,.overview-panel,.dashpanel,.owner-card),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.app-view,.owner-card,.overview-card,.overview-panel,.dashpanel,.settings-panel,.notification-panel,.rab-home-choices) {
+    background-image: none !important;
+  }
+  body:not(:has(#loginCard)) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),select,textarea,[contenteditable="true"]),
+  body:has(#dashboard:not([hidden])) #dashboard :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),select,textarea,[contenteditable="true"]) {
+    color: var(--app-text) !important;
+    background-color: rgba(19,29,18,.76) !important;
+    border: 1px solid rgba(112,184,232,.72) !important;
+    border-radius: var(--app-radius-sm) !important;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.16);
+    font: inherit;
+    max-width: 100%;
+  }
+  body:not(:has(#loginCard)) :is(input,textarea,select)::placeholder,
+  body:has(#dashboard:not([hidden])) #dashboard :is(input,textarea,select)::placeholder {
+    color: var(--app-text-muted) !important; opacity: 1 !important;
+  }
+  body:not(:has(#loginCard)) :is(input,select,textarea,button,a):focus-visible,
+  body:has(#dashboard:not([hidden])) #dashboard :is(input,select,textarea,button,a):focus-visible {
+    outline: 3px solid var(--app-sky-blue-bright) !important; outline-offset: 3px !important;
+  }
+  body:not(:has(#loginCard)) :is(input[type="checkbox"],input[type="radio"]),
+  body:has(#dashboard:not([hidden])) #dashboard :is(input[type="checkbox"],input[type="radio"]) { accent-color: var(--app-sky-blue); }
+  body:not(:has(#loginCard)) :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"],.choice-link),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"]) {
+    color: #10212A !important;
+    background: linear-gradient(135deg,#87CEFA,#70B8E8) !important;
+    border: 1px solid var(--app-sky-blue-bright) !important;
+    border-radius: 999px !important;
+    box-shadow: 0 5px 16px var(--app-sky-glow) !important;
+    font-weight: 700; text-decoration: none;
+    transition: transform .18s ease,box-shadow .18s ease,filter .18s ease;
+  }
+  body:not(:has(#loginCard)) :is(button,input[type="button"],input[type="reset"]),
+  body:has(#dashboard:not([hidden])) #dashboard :is(button,input[type="button"],input[type="reset"]) {
+    border-color: rgba(112,184,232,.78); border-radius: var(--app-radius-sm);
+    transition: transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+  }
+  body:not(:has(#loginCard)) :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"],.choice-link):hover,
+  body:has(#dashboard:not([hidden])) #dashboard :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"]):hover {
+    filter: brightness(1.06); transform: translateY(-1px);
+    box-shadow: 0 7px 21px rgba(112,184,232,.42) !important;
+  }
+  body:not(:has(#loginCard)) :is(.secondary,.btn-secondary,.secondary-link,button[type="reset"]),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.secondary,.btn-secondary,button[type="reset"]) {
+    color: var(--app-sky-blue-bright) !important; background: rgba(112,184,232,.08) !important;
+    border: 1px solid var(--app-border) !important; box-shadow: none !important;
+  }
+  body:not(:has(#loginCard)) :is(.danger,.btn-danger,.delete-button,[data-danger="true"]),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.danger,.btn-danger,.delete-button,[data-danger="true"]) {
+    color: #fff !important; background: rgba(153,35,44,.92) !important; border-color: rgba(255,135,145,.8) !important;
+  }
+  body:not(:has(#loginCard)) a:not(.dashbtn):not(.btn):not(.submit):not(.capture):not(.choice-link),
+  body:has(#dashboard:not([hidden])) #dashboard a:not(.dashbtn):not(.btn):not(.submit):not(.capture) {
+    color: var(--app-sky-blue-bright); text-underline-offset: 3px;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .app-nav {
+    display: flex; flex-wrap: wrap; gap: 8px; padding: 10px;
+    background: rgba(30,37,23,.88) !important; border: 1px solid var(--app-sky-blue) !important;
+    border-radius: 18px !important; box-shadow: var(--app-shadow);
+    -webkit-backdrop-filter: blur(var(--app-glass-blur)); backdrop-filter: blur(var(--app-glass-blur));
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .app-nav button {
+    color: var(--app-sky-blue-bright) !important; background: rgba(112,184,232,.08) !important;
+    border: 1px solid rgba(112,184,232,.56) !important; border-radius: 999px !important;
+    min-height: 42px; padding: 10px 16px; font-size: .83rem; font-weight: 700;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard .app-nav button[aria-current="page"],
+  body:has(#dashboard:not([hidden])) #dashboard .app-nav button.active,
+  body:has(#dashboard:not([hidden])) #dashboard .app-nav button[aria-pressed="true"] {
+    color: #10212A !important; background: var(--app-sky-blue) !important;
+    border-color: var(--app-sky-blue-bright) !important; box-shadow: 0 0 16px var(--app-sky-glow) !important;
+  }
+  body:has(#dashboard:not([hidden])) #dashboard :is(.glass-icon-btn,.bell-button,.settings-button,#logoutButton,.owner-edit) {
+    color: var(--app-sky-blue-bright) !important; background: rgba(112,184,232,.12) !important;
+    border: 1px solid var(--app-border) !important; box-shadow: 0 0 12px rgba(112,184,232,.12) !important;
+  }
+  body:not(:has(#loginCard)) :is(.table-wrap,.table-container),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.table-wrap,.table-container) {
+    max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain;
+    border: 1px solid var(--app-border) !important; border-radius: var(--app-radius-lg) !important;
+  }
+  body:not(:has(#loginCard)) table, body:has(#dashboard:not([hidden])) #dashboard table {
+    color: var(--app-text); border-color: rgba(112,184,232,.4); border-collapse: separate; border-spacing: 0;
+  }
+  body:not(:has(#loginCard)) :is(th,thead th), body:has(#dashboard:not([hidden])) #dashboard :is(th,thead th) {
+    color: var(--app-sky-blue-bright) !important; background: rgba(112,184,232,.12) !important; border-color: rgba(112,184,232,.42) !important;
+  }
+  body:not(:has(#loginCard)) :is(td,th), body:has(#dashboard:not([hidden])) #dashboard :is(td,th) { border-color: rgba(112,184,232,.25); }
+  body:not(:has(#loginCard)) tbody tr:hover, body:has(#dashboard:not([hidden])) #dashboard tbody tr:hover { background: rgba(112,184,232,.08) !important; }
+  body:not(:has(#loginCard)) :is(.list-item,.option,.settings-row,.notification-item,.menu-item,.quick-link),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.list-item,.settings-row,.notification-item,.menu-item,.quick-link) {
+    background-color: rgba(255,255,255,.035) !important; background-image: none !important;
+    border: 1px solid rgba(112,184,232,.38) !important; border-radius: var(--app-radius-sm) !important;
+  }
+  body:not(:has(#loginCard)) :is(.list-item,.option,.settings-row,.notification-item,.menu-item,.quick-link):hover,
+  body:has(#dashboard:not([hidden])) #dashboard :is(.list-item,.settings-row,.notification-item,.menu-item,.quick-link):hover {
+    border-color: var(--app-sky-blue) !important; box-shadow: 0 0 14px var(--app-sky-glow);
+  }
+  body:not(:has(#loginCard)) :is(.message,.dashmsg,.status,.photo-state,.settings-status),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.message,.dashmsg,.status,.photo-state,.settings-status) { color: var(--app-text-muted); }
+  @media (max-width: 720px) {
+    body:not(:has(#loginCard)) :is(.wrap,.container,.page-container) { width: 100%; max-width: 100%; }
+    body:not(:has(#loginCard)) :is(.wrap>header,.wrap>main>section,.wrap>main>aside,.wrap>main>form) { border-radius: 16px !important; }
+    body:has(#dashboard:not([hidden])) #dashboard .app-nav { align-items: stretch; }
+    body:has(#dashboard:not([hidden])) #dashboard .app-nav button { flex: 1 1 auto; max-width: 100%; white-space: normal; }
+    body:has(#dashboard:not([hidden])) #dashboard .owner-card { width: 100% !important; max-width: 100% !important; }
+    body:not(:has(#loginCard)) :is(.table-wrap,.table-container) { -webkit-overflow-scrolling: touch; }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body:not(:has(#loginCard)) *, body:has(#dashboard:not([hidden])) #dashboard * {
+    scroll-behavior: auto !important; transition-duration: .01ms !important;
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+  }
+}
