@@ -18,7 +18,7 @@ assert.match(index,/href="\/app-theme\.css\?v=1\.0\.2"/);
 assert.ok(index.includes('href="/login-glass-v5.css?v=1.0.1"'), "login CSS cache reference must be current.");
 assert.ok(index.includes('href="/login.css?v=1.0.3"'), "final Login override stylesheet must be linked.");
 assert.ok(index.indexOf('href="/login.css?v=1.0.3"') > index.indexOf('href="/app-theme.css?v=1.0.2"'), "isolated Login stylesheet must load after the legacy stack.");
-assert.ok(index.includes('href="/dashboard.css?v=1.1.67"') && index.lastIndexOf('href="/dashboard.css?v=1.1.67"') > index.indexOf('href="/login.css?v=1.0.3"'), "dashboard-only layer must load last and remain separate from Login styles.");
+assert.ok(index.includes('href="/dashboard.css?v=1.1.67-clean"') && index.lastIndexOf('href="/dashboard.css?v=1.1.67-clean"') > index.indexOf('href="/login.css?v=1.0.3"'), "dashboard-only layer must load last and remain separate from Login styles.");
 const dashboardCss = fs.readFileSync(path.join(dir,"dashboard.css"),"utf8");
 assert.ok(dashboardCss.includes("#1E2517") && dashboardCss.includes("#2B3520") && dashboardCss.includes("#70B8E8"), "dashboard clean layer must use the solid Moss/Sky palette.");
 assert.ok(dashboardCss.includes("background-image: none !important") && dashboardCss.includes("backdrop-filter: none !important"), "dashboard clean layer must remove scenic backgrounds and blur.");
