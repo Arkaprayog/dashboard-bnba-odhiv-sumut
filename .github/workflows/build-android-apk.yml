@@ -20,6 +20,22 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: Configure Firebase Android
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          test -n "$GOOGLE_SERVICES_JSON" || (echo "::error::Add GOOGLE_SERVICES_JSON in repository Actions secrets." && exit 1)
+          printf '%s' "$GOOGLE_SERVICES_JSON" > android-app/app/google-services.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          data = json.loads(Path('android-app/app/google-services.json').read_text())
+          assert data.get('project_info', {}).get('project_id') == 'sahabatodhiv-sumut', 'Firebase Project ID mismatch.'
+          packages = [c.get('client_info', {}).get('android_client_info', {}).get('package_name') for c in data.get('client', [])]
+          assert 'id.sahabatodhiv.sumut' in packages, 'The Firebase JSON does not include id.sahabatodhiv.sumut.'
+          print('Firebase Android configuration validated (secret contents not printed).')
+          PY
+
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
