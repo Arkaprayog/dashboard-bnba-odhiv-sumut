@@ -1,11 +1,217 @@
-<!doctype html><html lang="id"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="dark"><meta name="referrer" content="no-referrer"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#075b9a">
-<title>Kuesioner Responden | Sahabat ODHIV Sumut</title><link rel="stylesheet" href="/transparent-theme.css?v=2.0.0"><link rel="stylesheet" href="/kuisioner-pilihan.css?v=1.0.1"></head>
-<body><main class="page-shell"><header class="brand-row"><div class="brand-logos" aria-label="Logo instansi terkait">
-<img src="/logos/kemensos.png" alt="Logo Kementerian Sosial" width="68" height="68"><img src="/logos/kemenkes.png" alt="Logo Kementerian Kesehatan" width="68" height="68"><img src="/logos/sumut.png" alt="Lambang Pemerintah Provinsi Sumatera Utara" width="68" height="68"><img src="/logos/ribbon.png" alt="Pita dukungan ODHIV" width="42" height="68">
-</div><p class="eyebrow">Layanan responden</p><h1>Sahabat ODHIV Sumut</h1><p class="lead">Gunakan formulir resmi berikut untuk mengisi data calon penerima manfaat.</p></header>
-<section class="choice-grid" aria-label="Formulir Google Forms">
-<article class="choice-card"><div class="choice-number" aria-hidden="true">FORMULIR RESMI</div><h2>Kuisioner Responden</h2><p>Silakan isi Google Form resmi di bawah ini. Pertanyaan dan pengaturan mengikuti formulir Google Forms yang dikelola.</p>
-<div class="google-form-frame"><iframe title="Google Form Responden Sahabat ODHIV Sumut" src="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform?embedded=true" width="100%" height="1500" frameborder="0" marginheight="0" marginwidth="0" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">Memuat formulir…</iframe></div>
-<a class="choice-link secondary-link" href="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform" target="_blank" rel="noopener noreferrer">Buka Google Forms di tab baru <span aria-hidden="true">↗</span></a><p class="choice-note">Jika formulir tidak muncul di halaman ini, gunakan tautan untuk membukanya langsung di Google Forms.</p></article></section>
-<aside class="privacy-note"><strong>Jaga kerahasiaan data.</strong><p>Isi formulir secara pribadi. Jangan membagikan foto KTP, NIK, atau informasi pribadi kepada pihak yang tidak berwenang.</p></aside><footer>Sahabat ODHIV Sumatera Utara · Halaman publik untuk responden</footer></main></body></html>
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#075b9a">
+<title>Kuisioner Responden | Sahabat ODHIV Sumut</title>
+<link rel="stylesheet" href="/transparent-theme.css?v=2.0.0">
+<link rel="stylesheet" href="/kuisioner-responden.css?v=1.0.0">
+</head>
+<body>
+<main class="questionnaire-shell">
+  <header class="brand-header">
+    <div class="brand-logos" aria-label="Logo instansi terkait">
+      <img src="/logos/kemensos.png" alt="Logo Kementerian Sosial" width="58" height="58">
+      <img src="/logos/kemenkes.png" alt="Logo Kementerian Kesehatan" width="58" height="58">
+      <img src="/logos/sumut.png" alt="Lambang Pemerintah Provinsi Sumatera Utara" width="58" height="58">
+      <img src="/logos/ribbon.png" alt="Pita dukungan ODHIV" width="38" height="58">
+    </div>
+    <p class="eyebrow">LAYANAN RESPONDEN</p>
+    <h1>Sahabat ODHIV Sumut</h1>
+    <p class="intro-copy">Formulir responden dengan alur bertahap agar lebih mudah diisi melalui ponsel. Data bertanda * wajib diisi.</p>
+  </header>
+
+  <aside class="privacy-card">
+    <span class="privacy-icon" aria-hidden="true">✓</span>
+    <div><strong>Privasi dan kerahasiaan</strong><p>Data identitas dan foto digunakan untuk pendataan serta verifikasi bantuan oleh pengelola berwenang. Isi formulir secara pribadi dan pastikan perangkatmu aman.</p></div>
+  </aside>
+
+  <form id="respondentForm" class="form-card" enctype="multipart/form-data" novalidate>
+    <div class="progress-top">
+      <div><span class="progress-kicker">FORMULIR RESPONDEN</span><h2 id="stepTitle">Identitas responden</h2></div>
+      <span id="stepCounter" class="step-counter">Langkah 1 dari 3</span>
+    </div>
+    <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
+    <ol class="step-list" aria-label="Tahapan pengisian">
+      <li class="active" data-step-indicator="0"><span>1</span><small>Identitas</small></li>
+      <li data-step-indicator="1"><span>2</span><small>Foto</small></li>
+      <li data-step-indicator="2"><span>3</span><small>Konfirmasi</small></li>
+    </ol>
+
+    <section class="step-panel" data-step="0" aria-labelledby="identityTitle">
+      <h3 id="identityTitle">Data diri</h3>
+      <p class="section-copy">Masukkan data sesuai dokumen dan kondisi saat ini.</p>
+      <div class="field-grid">
+        <div class="field full"><label for="namaLengkap">Nama lengkap <b>*</b></label><input id="namaLengkap" name="namaLengkap" autocomplete="name" maxlength="160" required></div>
+        <div class="field"><label for="nik">NIK (16 digit) <b>*</b></label><input id="nik" name="nik" inputmode="numeric" autocomplete="off" minlength="16" maxlength="16" pattern="[0-9]{16}" required><small>Masukkan tepat 16 angka.</small></div>
+        <div class="field"><label for="usia">Usia <b>*</b></label><input id="usia" name="usia" type="number" min="0" max="120" step="1" inputmode="numeric" required></div>
+        <div class="field"><label for="jenisKelamin">Jenis kelamin <b>*</b></label><select id="jenisKelamin" name="jenisKelamin" required><option value="">Pilih salah satu</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></div>
+        <div class="field"><label for="pekerjaan">Pekerjaan <b>*</b></label><input id="pekerjaan" name="pekerjaan" maxlength="160" autocomplete="organization-title" required></div>
+        <div class="field full"><label for="alamatDomisili">Alamat domisili saat ini <b>*</b></label><textarea id="alamatDomisili" name="alamatDomisili" rows="3" maxlength="400" autocomplete="street-address" required></textarea></div>
+        <div class="field"><label for="kotaDomisili">Kabupaten/kota domisili <b>*</b></label><input id="kotaDomisili" name="kotaDomisili" maxlength="120" autocomplete="address-level2" required></div>
+        <div class="field"><label for="noHpWa">Nomor HP/WhatsApp <b>*</b></label><input id="noHpWa" name="noHpWa" type="tel" inputmode="tel" autocomplete="tel" maxlength="30" pattern="\+?[0-9 ()-]{8,30}" required></div>
+      </div>
+    </section>
+
+    <section class="step-panel" data-step="1" aria-labelledby="photoTitle" hidden>
+      <h3 id="photoTitle">Foto pendukung</h3>
+      <p class="section-copy">Ambil foto yang jelas. Foto hanya dikirim setelah kamu menekan tombol kirim formulir.</p>
+      <div class="photo-grid">
+        <div class="photo-card">
+          <span class="photo-number">FOTO 01</span><label for="fotoDiri">Foto diri <b>*</b></label>
+          <p>Pastikan wajah terlihat jelas dan pencahayaan cukup.</p>
+          <label class="capture-button" for="fotoDiri">＋ Ambil / pilih foto diri<input id="fotoDiri" name="fotoDiri" type="file" accept="image/jpeg,image/png,image/webp" capture="user" required></label>
+          <img id="fotoDiriPreview" class="photo-preview" alt="Pratinjau foto diri" hidden>
+          <div id="fotoDiriState" class="file-state">Belum ada foto dipilih.</div>
+        </div>
+        <div class="photo-card">
+          <span class="photo-number">FOTO 02</span><label for="fotoKtp">Foto KTP <b>*</b></label>
+          <p>Pastikan data pada KTP terlihat terbaca dan tidak terpotong.</p>
+          <label class="capture-button" for="fotoKtp">＋ Ambil / pilih foto KTP<input id="fotoKtp" name="fotoKtp" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" required></label>
+          <img id="fotoKtpPreview" class="photo-preview" alt="Pratinjau foto KTP" hidden>
+          <div id="fotoKtpState" class="file-state">Belum ada foto dipilih.</div>
+        </div>
+      </div>
+      <p class="file-hint">Format yang didukung: JPG, PNG, atau WebP. Maksimal 8 MB per foto.</p>
+    </section>
+
+    <section class="step-panel" data-step="2" aria-labelledby="confirmTitle" hidden>
+      <h3 id="confirmTitle">Jenis bantuan dan persetujuan</h3>
+      <p class="section-copy">Pilih satu jenis bantuan, lalu baca persetujuan sebelum mengirim.</p>
+      <fieldset class="aid-fieldset"><legend>Jenis bantuan yang diinginkan <b>*</b></legend>
+        <label class="aid-option"><input type="radio" name="jenisBantuan" value="BANTUAN NUTRISI" required><span><strong>Bantuan nutrisi</strong><small>Dukungan bantuan nutrisi.</small></span></label>
+        <label class="aid-option"><input type="radio" name="jenisBantuan" value="BANTUAN KEWIRAUSAHAAN" required><span><strong>Bantuan kewirausahaan</strong><small>Dukungan bantuan kewirausahaan.</small></span></label>
+      </fieldset>
+      <div class="review-note"><strong>Sebelum mengirim</strong><p>Periksa kembali data, nomor HP/WhatsApp, dan kedua foto. Data tidak dapat diubah melalui formulir ini setelah terkirim; hubungi petugas berwenang jika perlu koreksi.</p></div>
+      <label class="consent-box"><input id="consent" name="consent" type="checkbox" required><span>Saya menyetujui pemrosesan data untuk pendataan dan verifikasi bantuan oleh pengelola Sahabat ODHIV Sumut. Saya memahami bahwa data identitas dan foto bersifat rahasia dan hanya boleh diakses pihak berwenang. <b>*</b></span></label>
+      <div class="honeypot" aria-hidden="true"><label for="website">Biarkan kosong</label><input id="website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+    </section>
+
+    <div class="form-actions">
+      <button id="backButton" class="button secondary" type="button" hidden>← Kembali</button>
+      <button id="nextButton" class="button primary" type="button">Lanjutkan →</button>
+      <button id="submitButton" class="button primary" type="submit" hidden>Kirim formulir</button>
+    </div>
+    <p id="submitMessage" class="status-message" role="status" aria-live="polite"></p>
+  </form>
+
+  <p class="form-alternative">Butuh memakai formulir asli? <a href="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform" target="_blank" rel="noopener noreferrer">Buka Google Forms di tab baru ↗</a></p>
+  <footer>Sahabat ODHIV Sumatera Utara · Halaman pengisian publik</footer>
+</main>
+<script>
+(()=> {
+  const form=document.getElementById("respondentForm");
+  const panels=[...form.querySelectorAll("[data-step]")];
+  const indicators=[...form.querySelectorAll("[data-step-indicator]")];
+  const title=document.getElementById("stepTitle");
+  const counter=document.getElementById("stepCounter");
+  const bar=document.getElementById("progressBar");
+  const back=document.getElementById("backButton");
+  const next=document.getElementById("nextButton");
+  const submit=document.getElementById("submitButton");
+  const message=document.getElementById("submitMessage");
+  const photoIds=["fotoDiri","fotoKtp"];
+  const titleNames=["Identitas responden","Foto pendukung","Konfirmasi"];
+  let currentStep=0;
+  const objectUrls=new Map();
+
+  function showStep(index){
+    currentStep=Math.max(0,Math.min(index,panels.length-1));
+    panels.forEach((panel,i)=>{panel.hidden=i!==currentStep;});
+    indicators.forEach((item,i)=>{item.classList.toggle("active",i===currentStep);item.classList.toggle("complete",i<currentStep);});
+    title.textContent=titleNames[currentStep];
+    counter.textContent="Langkah "+(currentStep+1)+" dari "+panels.length;
+    bar.style.width=((currentStep+1)/panels.length*100)+"%";
+    back.hidden=currentStep===0;
+    next.hidden=currentStep===panels.length-1;
+    submit.hidden=currentStep!==panels.length-1;
+    message.textContent="";
+    message.className="status-message";
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+  function validateCurrentStep(){
+    const controls=[...panels[currentStep].querySelectorAll("input,select,textarea")].filter(el=>el.willValidate);
+    for(const el of controls){
+      if(!el.checkValidity()){
+        el.reportValidity();
+        el.focus({preventScroll:false});
+        return false;
+      }
+    }
+    return true;
+  }
+  function clearPreviews(){
+    for(const url of objectUrls.values())URL.revokeObjectURL(url);
+    objectUrls.clear();
+    for(const id of photoIds){
+      const img=document.getElementById(id+"Preview");
+      img.removeAttribute("src");img.hidden=true;
+      document.getElementById(id+"State").textContent="Belum ada foto dipilih.";
+    }
+  }
+  for(const id of photoIds){
+    const input=document.getElementById(id);
+    input.addEventListener("change",()=>{
+      const file=input.files&&input.files[0];
+      const img=document.getElementById(id+"Preview");
+      const state=document.getElementById(id+"State");
+      const previous=objectUrls.get(id);
+      if(previous)URL.revokeObjectURL(previous);
+      objectUrls.delete(id);img.removeAttribute("src");img.hidden=true;
+      if(!file){state.textContent="Belum ada foto dipilih.";return;}
+      if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size<=0||file.size>8*1024*1024){
+        input.value="";state.textContent="Format harus JPG, PNG, atau WebP; maksimal 8 MB.";
+        return;
+      }
+      const url=URL.createObjectURL(file);
+      objectUrls.set(id,url);img.src=url;img.hidden=false;
+      state.textContent=file.name+" · "+Math.max(1,Math.round(file.size/1024))+" KB";
+    });
+  }
+  document.getElementById("nik").addEventListener("input",event=>{
+    event.target.value=event.target.value.replace(/\D/g,"").slice(0,16);
+  });
+  next.addEventListener("click",()=>{
+    if(validateCurrentStep())showStep(currentStep+1);
+  });
+  back.addEventListener("click",()=>showStep(currentStep-1));
+  form.addEventListener("reset",()=>setTimeout(()=>{clearPreviews();showStep(0);message.textContent="";},0));
+  form.addEventListener("submit",async event=>{
+    event.preventDefault();
+    message.textContent="";message.className="status-message";
+    if(!validateCurrentStep())return;
+    const files=photoIds.map(id=>document.getElementById(id).files?.[0]);
+    if(files.some(file=>!file||!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size<=0||file.size>8*1024*1024)){
+      message.textContent="Pilih kedua foto dalam format JPG, PNG, atau WebP; maksimal 8 MB per foto.";
+      message.className="status-message error";return;
+    }
+    if(!form.elements.namedItem("consent").checked){
+      message.textContent="Persetujuan wajib dicentang sebelum formulir dikirim.";
+      message.className="status-message error";return;
+    }
+    submit.disabled=true;back.disabled=true;next.disabled=true;
+    submit.textContent="Menyimpan…";
+    message.textContent="Memvalidasi formulir dan menyimpan data…";
+    try{
+      const response=await fetch("/api/public-questionnaire",{method:"POST",credentials:"same-origin",cache:"no-store",body:new FormData(form)});
+      const result=await response.json().catch(()=>({}));
+      if(!response.ok||!result.ok)throw new Error(result.error||"Kuesioner belum berhasil disimpan.");
+      form.reset();clearPreviews();showStep(0);
+      message.textContent=result.message||"Kuesioner berhasil dikirim. Terima kasih.";
+      message.className="status-message success";
+    }catch(error){
+      message.textContent=error instanceof Error?error.message:"Kuesioner gagal dikirim. Periksa koneksi atau hubungi petugas.";
+      message.className="status-message error";
+    }finally{
+      submit.disabled=false;back.disabled=false;next.disabled=false;submit.textContent="Kirim formulir";
+    }
+  });
+  showStep(0);
+})();
+</script>
+</body>
+</html>
