@@ -12,7 +12,7 @@ assert.doesNotMatch(css,/(^|[,{]\s*)(?:html\s+)?#loginCard\b|(^|[,{]\s*)\.login-
 assert.match(index,/id="loginCard"/);
 assert.match(index,/id="gateForm"/);
 for (const file of ["login-glass-v3.css?v=1.1.0","login-glass-v4.css?v=1.0.0","login-glass-v5.css?v=1.0.0"]) assert.ok(index.includes(`href="/${file}"`),`Missing original login stylesheet ${file}`);
-assert.match(index,/href="\/app-theme\.css\?v=1\.0\.1"/);
+assert.match(index,/href="\/app-theme\.css\?v=1\.0\.2"/);
 const htmlFiles=fs.readdirSync(dir).filter(name=>name.endsWith(".html"));
-for (const file of htmlFiles) assert.ok(fs.readFileSync(path.join(dir,file),"utf8").includes('href="/app-theme.css?v=1.0.1"'),`${file} must load the app theme`);
+for (const file of htmlFiles) assert.ok(fs.readFileSync(path.join(dir,file),"utf8").includes('href="/app-theme.css?v=1.0.2"'),`${file} must load the app theme`);
 console.log(`PASS isolated app theme, login CSS preservation and ${htmlFiles.length} public HTML pages linked.`);
