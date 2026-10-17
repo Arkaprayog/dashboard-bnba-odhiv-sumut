@@ -39,7 +39,7 @@
 
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E2517">
-<meta name="application-version" content="1.1.66">
+<meta name="application-version" content="1.1.67">
 
 
 
@@ -87,10 +87,11 @@
 <link rel="stylesheet" href="/initial-intake-manager.css?v=1.0.5">
 <link rel="stylesheet" href="/assessment-transparent-v1.css?v=1.0.1">
   <link rel="stylesheet" href="/app-theme.css?v=1.0.2">
-  <link rel="stylesheet" href="/login-final-surface-v1.css?v=1.0.2">
+  <link rel="stylesheet" href="/login.css?v=1.0.3">
   <!-- Photo assets v1.0.1: lazy skeleton thumbnails and Canvas upload compression (max 800px, target <=300 KiB). -->
   <link rel="stylesheet" href="/database-photo-loading-v1.css?v=1.0.1">
   <script src="/photo-optimizer.js?v=1.0.1" defer></script>
+  <link rel="stylesheet" href="/dashboard.css?v=1.1.67">
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
@@ -124,7 +125,7 @@
     <hr class="login-divider">
     <footer class="login-footer">
       <p>Halaman Akses Awal · Data Responden Tetap Dilindungi</p>
-      <p class="login-version">Versi 1.1.66</p>
+      <p class="login-version">Versi 1.1.67</p>
       <p class="login-copyright">© 2026 Data Base Kemensos RI DRSKPNO · Hak cipta dilindungi</p>
     </footer>
   </section>
@@ -135,7 +136,7 @@
         <img class="owner-avatar" id="ownerAvatar" alt="Foto owner" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' rx='40' fill='%23e8f2ff'/%3E%3Ccircle cx='40' cy='29' r='14' fill='%237d9bb8'/%3E%3Cpath d='M13 75c2-18 13-27 27-27s25 9 27 27' fill='%237d9bb8'/%3E%3C/svg%3E">
         <button class="owner-edit" id="editOwnerProfile" type="button">Edit profil</button>
       </div>
-      <div class="owner-summary"><h3 id="ownerName">Profil Owner</h3><p id="ownerNipSummary">NIP belum diisi</p><p id="ownerInstitutionSummary">Direktorat Rehabilitasi Sosial Korban Penyalahgunaan Narkoba &amp; ODHIV</p><p id="ownerContact" hidden></p><details class="owner-details"><summary>Lihat detail profil</summary><p id="ownerNipDetail">NIP: —</p><p id="ownerAddressSummary">Alamat: —</p><p id="ownerPhoneSummary">Nomor HP: —</p><p id="ownerEmailSummary">Email: —</p></details></div>
+      <div class="owner-summary"><p id="greeting-text" class="greeting-text">Selamat Malam,</p><h3 id="ownerName">Profil Owner</h3><p id="ownerNipSummary">NIP belum diisi</p><p id="ownerInstitutionSummary">Direktorat Rehabilitasi Sosial Korban Penyalahgunaan Narkoba &amp; ODHIV</p><p id="ownerContact" hidden></p><details class="owner-details"><summary>Lihat detail profil</summary><p id="ownerNipDetail">NIP: —</p><p id="ownerAddressSummary">Alamat: —</p><p id="ownerPhoneSummary">Nomor HP: —</p><p id="ownerEmailSummary">Email: —</p></details></div>
       <div class="owner-header-actions action-bar-container">
         <div class="top-actions action-buttons-group">
           <button class="bell-button glass-icon-btn" id="notificationBellButton" type="button" aria-label="Buka notifikasi" aria-expanded="false" title="Notifikasi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="bell-count" id="notificationBellCount" hidden>0</span></button>
@@ -446,7 +447,7 @@
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.66</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.67</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi<br>© 2026 Data Base Kemensos RI DRSKPNO · Hak cipta dilindungi</p>
 </main>
@@ -469,6 +470,17 @@ const ownerProfileForm=document.getElementById('ownerProfileForm');
 const ownerProfileMessage=document.getElementById('ownerProfileMessage');
 
 function safeText(value){return String(value??'').trim();}
+function updateGreeting(){
+ const hours=new Date().getHours();
+ let greeting='Selamat Malam';
+ if(hours>=5&&hours<11)greeting='Selamat Pagi';
+ else if(hours>=11&&hours<15)greeting='Selamat Siang';
+ else if(hours>=15&&hours<18)greeting='Selamat Sore';
+ const greetingElement=document.getElementById('greeting-text');
+ if(greetingElement)greetingElement.textContent=greeting+',';
+}
+updateGreeting();
+window.setInterval(updateGreeting,60_000);
 function renderOwnerProfile(profile){
  const name=safeText(profile.employee_name)||'Profil Owner belum lengkap';
  document.getElementById('ownerName').textContent=name;
