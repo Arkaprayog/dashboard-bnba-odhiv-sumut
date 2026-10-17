@@ -3,9 +3,12 @@ package id.sahabatodhiv.sumut;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
+import android.app.PendingIntent;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioAttributes;
+import android.provider.Settings;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
@@ -29,6 +32,14 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+
 import androidx.fragment.app.FragmentActivity;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
@@ -46,10 +57,11 @@ public final class MainActivity extends FragmentActivity {
     private static final String DASHBOARD_URL = "https://sahabatodhivsumut.web.id/";
     private static final String DASHBOARD_HOST = "sahabatodhivsumut.web.id";
     private static final String PREFS = "sahabat_odhiv_preferences";
-    private static final String CHANNEL_ID = "sahabat_odhiv_notifications";
+    private static final String CHANNEL_ID = "sahabat_odhiv_notifications_v2";
     private static final int REQUEST_IMAGE_CHOOSER = 4107;
     private static final int REQUEST_CAMERA_TEST = 4108;
     private static final int REQUEST_GALLERY_TEST = 4109;
+    private static final int REQUEST_POST_NOTIFICATIONS = 702;
 
     private WebView webView;
     private boolean showingOfflineShell = false;
@@ -115,6 +127,16 @@ public final class MainActivity extends FragmentActivity {
             }
 
             @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                Uri page = Uri.parse(url);
+                if ("https".equalsIgnoreCase(page.getScheme()) && DASHBOARD_HOST.equalsIgnoreCase(page.getHost())) {
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> registerFcmTokenWithDashboard(), 1200);
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> registerFcmTokenWithDashboard(), 4500);
+                }
+            }
+
+            @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 if (request.isForMainFrame() && !showingOfflineShell && !hasInternet()) showOfflineShell();
             }
@@ -122,6 +144,8 @@ public final class MainActivity extends FragmentActivity {
 
         // Open directly: no illustration splash or artificial startup delay.
         setContentView(webView);
+        requestNotificationPermissionOnce();
+        initializeFirebaseMessagingToken();
         if (getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean("biometric_enabled", false)) {
             startupPending = true;
             authenticateBiometric(false);
@@ -298,7 +322,7 @@ public final class MainActivity extends FragmentActivity {
         if (item.getItemId() == 7) { launchGalleryTest(); return true; }
         if (item.getItemId() == 3) {
             new AlertDialog.Builder(this).setTitle("Status notifikasi push native")
-                .setMessage("Notifikasi lokal perangkat tersedia. Pengiriman push otomatis belum aktif karena Firebase Cloud Messaging dan kredensial server belum dikonfigurasi.")
+                .setMessage("FCM belum aktif pada APK ini. Firebase Android variables belum dikonfigurasi pada proses build. Setelah konfigurasi ditambahkan, bangun ulang APK.")
                 .setPositiveButton("Mengerti", (dialog, which) -> {}).show();
             return true;
         }
@@ -407,14 +431,24 @@ public final class MainActivity extends FragmentActivity {
             } else {
                 Toast.makeText(this, "Izin notifikasi ditolak; notifikasi uji tidak dapat ditampilkan.", Toast.LENGTH_LONG).show();
             }
+        } else if (requestCode == REQUEST_POST_NOTIFICATIONS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                initializeFirebaseMessagingToken();
+            } else {
+                Toast.makeText(this, "Notifikasi dinonaktifkan. Aktifkan melalui Pengaturan Android agar push dapat ditampilkan.", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Notifikasi Sahabat ODHIV", NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription("Pemberitahuan aplikasi Sahabat ODHIV Sumut");
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Notifikasi Sahabat ODHIV", NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("Pemberitahuan responden baru dari Google Forms dan Kuisioner Tahap 1");
             channel.enableVibration(true);
+            channel.setVibrationPattern(new long[]{0, 250, 120, 250, 120, 350});
+            channel.setSound(Settings.System.DEFAULT_NOTIFICATION_URI,
+                new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build());
             NotificationManager manager = getSystemService(NotificationManager.class);
             if (manager != null) manager.createNotificationChannel(channel);
         }
@@ -429,10 +463,12 @@ public final class MainActivity extends FragmentActivity {
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (manager == null) return;
         NotificationCompat.Builder notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(R.drawable.ic_stat_sahabat_notification)
             .setContentTitle("Sahabat ODHIV Sumut")
             .setContentText("Notifikasi perangkat berhasil diuji.")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setNumber(1)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setAutoCancel(true);
         manager.notify(701, notification.build());
     }
