@@ -1494,7 +1494,7 @@ function renderAssessmentPhoto(id,label,dataUrl,fileName){
    const settleThumb=()=>{if(!thumb.isConnected)return;slot.classList.remove("loading");slot.setAttribute("aria-busy","false");};
    thumb.addEventListener("load",()=>{if(typeof thumb.decode==="function")thumb.decode().catch(()=>{}).finally(settleThumb);else settleThumb();},{once:true});
    thumb.addEventListener("error",()=>{settleThumb();const placeholder=document.createElement("span");placeholder.className="assessment-photo-placeholder";placeholder.textContent="Foto gagal ditampilkan";slot.prepend(placeholder);},{once:true});
-   thumb.src=dataUrl;slot.append(thumb);const caption=document.createElement("small");caption.className="assessment-photo-caption";caption.textContent="Foto siap digunakan";slot.append(caption);
+   slot.append(thumb);thumb.src=dataUrl;const caption=document.createElement("small");caption.className="assessment-photo-caption";caption.textContent="Foto siap digunakan";slot.append(caption);
   }
  }
  if(!dataUrl){
