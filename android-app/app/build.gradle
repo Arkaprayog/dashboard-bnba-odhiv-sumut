@@ -2,16 +2,25 @@ plugins {
     id 'com.android.application'
 }
 
+def quoteBuildConfig = { String value -> '"' + value + '"' }
+def firebaseEnv = { String name -> (System.getenv(name) ?: '').trim() }
+
 android {
     namespace 'id.sahabatodhiv.sumut'
     compileSdk 35
+
+    buildFeatures { buildConfig true }
 
     defaultConfig {
         applicationId 'id.sahabatodhiv.sumut'
         minSdk 26
         targetSdk 35
-        versionCode 36
-        versionName '1.2.33'
+        versionCode 37
+        versionName '1.3.0'
+        buildConfigField 'String', 'FCM_API_KEY', quoteBuildConfig('')
+        buildConfigField 'String', 'FCM_APP_ID', quoteBuildConfig('')
+        buildConfigField 'String', 'FCM_PROJECT_ID', quoteBuildConfig('')
+        buildConfigField 'String', 'FCM_SENDER_ID', quoteBuildConfig('')
     }
 
     signingConfigs {
@@ -33,9 +42,17 @@ android {
         debug {
             applicationIdSuffix '.debug'
             versionNameSuffix '-debug'
+            buildConfigField 'String', 'FCM_API_KEY', quoteBuildConfig(firebaseEnv('FIREBASE_ANDROID_DEBUG_API_KEY'))
+            buildConfigField 'String', 'FCM_APP_ID', quoteBuildConfig(firebaseEnv('FIREBASE_ANDROID_DEBUG_APP_ID'))
+            buildConfigField 'String', 'FCM_PROJECT_ID', quoteBuildConfig(firebaseEnv('FIREBASE_ANDROID_DEBUG_PROJECT_ID'))
+            buildConfigField 'String', 'FCM_SENDER_ID', quoteBuildConfig(firebaseEnv('FIREBASE_ANDROID_DEBUG_SENDER_ID'))
         }
         release {
             minifyEnabled false
+            buildConfigField 'String', 'FCM_API_KEY', quoteBuildConfig(firebaseEnv('FIREBASE_ANDROID_API_KEY'))
+            buildConfigField 'String', 'FCM_APP_ID', quoteBuildConfig(firebaseEnv('FIREBASE_ANDROID_APP_ID'))
+            buildConfigField 'String', 'FCM_PROJECT_ID', quoteBuildConfig(firebaseEnv('FIREBASE_ANDROID_PROJECT_ID'))
+            buildConfigField 'String', 'FCM_SENDER_ID', quoteBuildConfig(firebaseEnv('FIREBASE_ANDROID_SENDER_ID'))
             if (System.getenv('ANDROID_KEYSTORE_PATH')) {
                 signingConfig signingConfigs.release
             }
@@ -49,6 +66,8 @@ android {
 }
 
 dependencies {
+    implementation platform('com.google.firebase:firebase-bom:34.19.0')
+    implementation 'com.google.firebase:firebase-messaging'
     implementation 'androidx.core:core:1.15.0'
     implementation('androidx.biometric:biometric:1.1.0') {
         // Newer kotlin-stdlib already contains these classes; excluding legacy split
