@@ -1,3 +1,8 @@
+## 1.1.66 — 2026-10-17
+- Memperbaiki workflow build Android agar konfigurasi Firebase tervalidasi dan build tidak langsung berhenti hanya karena secret `GOOGLE_SERVICES_JSON` tidak tersedia; konfigurasi klien dari proyek Android menjadi fallback.
+- Menambahkan Firebase Cloud Messaging SDK dan service penerima native untuk token serta pesan notifikasi; pengiriman otomatis dari Google Forms/kuesioner tetap memerlukan endpoint pengirim server dan pemicu event yang terverifikasi.
+- Menyelaraskan versi web/PWA ke 1.1.66 serta APK Android debug/native ke 1.2.34 (versionCode 37); halaman login tetap mempertahankan struktur, tampilan, dan alur autentikasi.
+
 ## 1.1.65 — 2026-10-17
 - Menghapus latar abu-abu yang dapat muncul pada kolom kata sandi ketika mengetik atau autofill di Android WebView/Chromium.
 - Menjaga kolom password transparan, teks dan caret tetap putih, serta menyegarkan cache stylesheet Login ke 1.0.2.
