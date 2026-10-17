@@ -501,7 +501,7 @@ jobs:
           test "$login_final_status" = "200" || (echo "::error::Final Login surface CSS returned HTTP $login_final_status." && exit 1)
           case "$login_final_type" in text/css*) ;; *) echo "::error::Final Login surface CSS has unexpected content type: $login_final_type." && exit 1 ;; esac
           grep -Fq 'form#gateForm.login-form' /tmp/sahabat-login-final.css && grep -Fq 'background:transparent!important' /tmp/sahabat-login-final.css && grep -Fq 'button#togglePassword' /tmp/sahabat-login-final.css && grep -Fq 'background:#fff!important' /tmp/sahabat-login-final.css || (echo "::error::Final Login CSS must clear the password/form overlay while preserving the white Masuk button." && exit 1)
-          dashboard_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-dashboard-clean.css --write-out '%{http_code}|%{content_type}' $APP_URL/dashboard.css?v=1.1.67-clean&verify=$GITHUB_SHA)"
+          dashboard_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-dashboard-clean.css --write-out '%{http_code}|%{content_type}' "$APP_URL/dashboard.css?v=1.1.67-clean&verify=$GITHUB_SHA")"
           dashboard_css_status="${dashboard_css_response%%|*}"
           dashboard_css_type="${dashboard_css_response#*|}"
           test "$dashboard_css_status" = "200" || (echo "::error::Dashboard solid-clean CSS returned HTTP $dashboard_css_status." && exit 1)
