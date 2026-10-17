@@ -106,7 +106,7 @@ assert.match(dashboard, /id="logoutButton"/);
 assert.match(dashboard, /aria-label="Keluar"/);
 assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='owner' AND active=1/);
 assert.match(worker, /owner_profile_update/);
-assert.equal(pkg.version, "1.1.64");
+assert.equal(pkg.version, "1.1.65");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
 assert.ok(dashboard.includes('href="/assessment-print-10-pages-v1.css?v=1.1.46"'), "assessment must load the dedicated ten-page print stylesheet.");
 assert.ok(dashboard.includes('pageIndexForQuestion') && dashboard.includes('assessment-print-page'), "assessment fields must be partitioned into six print pages.");
