@@ -1,4 +1,5 @@
 ## 1.1.62 — 2026-10-17
+- Memastikan perubahan CSS Login menggunakan referensi cache terbaru agar input kata sandi dan ikon transparan diterapkan setelah pembaruan.
 - Membersihkan CSS halaman Login: kartu memakai lapisan kaca gelap yang tidak keruh; kolom sandi dan ikon gembok/toggle menjadi transparan tanpa blok abu-abu.
 - Menjaga tombol Masuk putih dengan teks gelap dan mempertahankan struktur HTML, handler autentikasi, serta urutan elemen.
 - Memperbarui cache stylesheet Login ke 1.0.1 dan menyinkronkan versi web/PWA 1.1.62 serta Android Debug/Release 1.2.31 (versionCode 34).
