@@ -11,6 +11,11 @@ https://sahabatodhivsumut.web.id/
 - The online dashboard currently uses web version **1.1.67**. The APK loads the canonical HTTPS dashboard; online menu and backend changes become available when the website is deployed, while the native Android shell, permission behavior, camera/gallery handling, and offline fallback require a new APK build.
 - Android and web use separate version sequences because they are independently packaged. Successful GitHub Actions artifacts are not the same as a published entry on the GitHub Releases page.
 
+## Minor release 1.2.35 (versionCode 38)
+
+- Dashboard web UI target: **1.1.67**. The dashboard uses a dedicated solid-clean stylesheet and a separately isolated Login stylesheet; the native APK loads the current dashboard from the canonical HTTPS URL.
+- This commit also retriggers the debug/release CI build so the `1.2.35` APK artifacts are generated from the current `main` source. The current Login HTML, styling, scenic background, and authentication flow remain unchanged.
+
 ## What this build does
 
 - Opens the existing dashboard over HTTPS; it does not copy Google Sheets data into the APK.
