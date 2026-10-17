@@ -1,3 +1,10 @@
+## 1.1.64 — 2026-10-17
+- Menambahkan skeleton loading bernuansa moss green untuk thumbnail foto pada tabel/database dan kartu foto asesmen.
+- Menambahkan `loading="lazy"` / `decoding="async"` pada gambar foto yang ditampilkan, termasuk foto responden privat di tabel.
+- Menambahkan kompresi upload berbasis Canvas: sisi terpanjang maksimal 800 px, kualitas awal 70%, keluaran WebP/JPEG, ukuran sasaran di bawah 300 KB; kompresi berjalan sebelum handler upload lama agar endpoint dan nama field tidak berubah.
+- Memuat foto asesmen dalam dua permintaan paralel per kelompok untuk mengurangi waktu tunggu tanpa memuat seluruh foto sekaligus.
+- Menyelaraskan versi web/PWA ke 1.1.64 dan Android Debug/Release ke 1.2.33 (versionCode 36), serta menambah pemeriksaan regresi dan smoke test aset optimasi foto.
+
 ## 1.1.63 — 2026-10-17
 - Menambahkan stylesheet Login final yang dimuat setelah seluruh stylesheet legacy, supaya latar blok form dan kotak ikon mata benar-benar transparan.
 - Mempertahankan kartu Login sebagai kaca gelap halus dan tombol Masuk putih; tidak mengubah markup maupun handler autentikasi.

@@ -39,7 +39,7 @@
 
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E2517">
-<meta name="application-version" content="1.1.63">
+<meta name="application-version" content="1.1.64">
 
 
 
@@ -88,6 +88,8 @@
 <link rel="stylesheet" href="/assessment-transparent-v1.css?v=1.0.1">
   <link rel="stylesheet" href="/app-theme.css?v=1.0.2">
   <link rel="stylesheet" href="/login-final-surface-v1.css?v=1.0.1">
+  <link rel="stylesheet" href="/database-photo-loading-v1.css?v=1.0.0">
+  <script src="/photo-optimizer.js?v=1.0.0" defer></script>
 </head>
 <body>
 <div class="corner top" aria-hidden="true"></div><div class="corner bottom" aria-hidden="true"></div>
@@ -121,7 +123,7 @@
     <hr class="login-divider">
     <footer class="login-footer">
       <p>Halaman Akses Awal · Data Responden Tetap Dilindungi</p>
-      <p class="login-version">Versi 1.1.63</p>
+      <p class="login-version">Versi 1.1.64</p>
       <p class="login-copyright">© 2026 Data Base Kemensos RI DRSKPNO · Hak cipta dilindungi</p>
     </footer>
   </section>
@@ -443,7 +445,7 @@
     <div class="dashpanel"><h3>Data responden</h3><div id="respondentSummary">Memeriksa akses data…</div><p class="scroll-hint" id="tableScrollHint" hidden>Geser tabel ke kiri atau kanan untuk melihat kolom lainnya. Kolom pertama tetap terlihat sebagai penanda.</p><div class="datawrap" id="respondentData" tabindex="0" role="region" aria-label="Tabel data responden; dapat digulir ke samping"></div></div>
     </div>
   </section>
-  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.63</small></p>
+  <p class="foot"><svg class="shield" width="22" height="24" viewBox="0 0 24 26" aria-hidden="true"><path d="M12 2 21 5v7c0 6-4 10-9 12-5-2-9-6-9-12V5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m8 13 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>Data aman · Sistem terintegrasi<br>Kementerian Sosial RI<br><small class="app-version">Versi 1.1.64</small></p>
   <div class="rule"></div>
   <p class="setup">Halaman akses awal · Data responden tetap dilindungi<br>© 2026 Data Base Kemensos RI DRSKPNO · Hak cipta dilindungi</p>
 </main>
@@ -1213,13 +1215,17 @@ async function loadRespondents(){
           const fileIds=resolveDriveIds(textValue);
           if(fileIds.length){
             const gallery=document.createElement('div');
-            gallery.style.display='flex';gallery.style.flexWrap='wrap';gallery.style.gap='6px';gallery.style.alignItems='flex-start';
+            gallery.className='respondent-photo-gallery';
             for(const fileId of fileIds){
               const imageSource='/api/respondent-photo?id='+encodeURIComponent(fileId);
-              const img=document.createElement('img');img.className='respondent-photo';img.loading='lazy';img.decoding='async';img.alt=columnLabel+' responden';img.title='Foto dari unggahan responden ini';
-              img.src=imageSource;
+              const frame=document.createElement('div');frame.className='img-container-wrapper loading';frame.setAttribute('aria-busy','true');
+              const img=document.createElement('img');img.className='respondent-photo db-photo';img.loading='lazy';img.decoding='async';img.width=80;img.height=80;img.alt=columnLabel+' responden';img.title='Foto dari unggahan responden ini';
+              img.addEventListener('load',()=>{
+                const settle=()=>{if(!img.isConnected)return;frame.classList.remove('loading');frame.setAttribute('aria-busy','false');};
+                if(typeof img.decode==='function')img.decode().catch(()=>{}).finally(settle);else settle();
+              },{once:true});
               img.onerror=async()=>{
-                const missing=document.createElement('span');missing.className='photo-unavailable';missing.textContent='Memeriksa akses foto…';img.replaceWith(missing);
+                const missing=document.createElement('span');missing.className='photo-unavailable';missing.textContent='Memeriksa akses foto…';frame.classList.remove('loading');frame.setAttribute('aria-busy','false');frame.replaceWith(missing);
                 try{
                   const check=await fetch(imageSource,{credentials:'same-origin',cache:'no-store'});let detail='';
                   try{const payload=await check.json();detail=String(payload.error||'');}catch{}
@@ -1227,7 +1233,7 @@ async function loadRespondents(){
                 }catch{missing.textContent='Foto gagal dimuat. Periksa koneksi lalu muat ulang.';}
                 addUploadControl();
               };
-              gallery.appendChild(img);
+              frame.appendChild(img);gallery.appendChild(frame);img.src=imageSource;
             }
             td.appendChild(gallery);
           }else{
@@ -1481,14 +1487,21 @@ function renderAssessmentPhoto(id,label,dataUrl,fileName){
  const slot=document.querySelector('[data-photo-preview="'+id+'"]');
  if(slot){
   slot.replaceChildren();
-  if(!dataUrl){const placeholder=document.createElement("span");placeholder.className="assessment-photo-placeholder";placeholder.textContent="Foto otomatis dari database PPKS";slot.append(placeholder);}
-  else{const thumb=document.createElement("img");thumb.src=dataUrl;thumb.alt=label;thumb.loading="lazy";thumb.decoding="async";slot.append(thumb);const caption=document.createElement("small");caption.className="assessment-photo-caption";caption.textContent="Foto siap digunakan";slot.append(caption);}
+  if(!dataUrl){slot.classList.remove("loading");slot.setAttribute("aria-busy","false");const placeholder=document.createElement("span");placeholder.className="assessment-photo-placeholder";placeholder.textContent="Foto otomatis dari database PPKS";slot.append(placeholder);}
+  else{
+   slot.classList.add("loading");slot.setAttribute("aria-busy","true");
+   const thumb=document.createElement("img");thumb.alt=label;thumb.loading="lazy";thumb.decoding="async";
+   const settleThumb=()=>{if(!thumb.isConnected)return;slot.classList.remove("loading");slot.setAttribute("aria-busy","false");};
+   thumb.addEventListener("load",()=>{if(typeof thumb.decode==="function")thumb.decode().catch(()=>{}).finally(settleThumb);else settleThumb();},{once:true});
+   thumb.addEventListener("error",()=>{settleThumb();const placeholder=document.createElement("span");placeholder.className="assessment-photo-placeholder";placeholder.textContent="Foto gagal ditampilkan";slot.prepend(placeholder);},{once:true});
+   slot.append(thumb);thumb.src=dataUrl;const caption=document.createElement("small");caption.className="assessment-photo-caption";caption.textContent="Foto siap digunakan";slot.append(caption);
+  }
  }
  if(!dataUrl){
   if(page){const heading=page.querySelector("h2")||Object.assign(document.createElement("h2"),{textContent:photoPageLabels[id]||label});const caption=page.querySelector("p")||Object.assign(document.createElement("p"),{textContent:label});const placeholder=document.createElement("div");placeholder.className="assessment-photo-placeholder";placeholder.textContent="Foto belum dilampirkan";page.replaceChildren(heading,placeholder,caption);}
   return;
  }
- const heading=document.createElement("h2");heading.textContent=photoPageLabels[id]||label;const image=document.createElement("img");image.src=dataUrl;image.alt=label;const caption=document.createElement("p");caption.textContent=fileName||"Lampiran Form Asesmen Terintegrasi";if(page)page.replaceChildren(heading,image,caption);assessmentPhotos[id]={label,dataUrl,fileName:fileName||label};
+ const heading=document.createElement("h2");heading.textContent=photoPageLabels[id]||label;const image=document.createElement("img");image.loading="eager";image.decoding="async";image.src=dataUrl;image.alt=label;const caption=document.createElement("p");caption.textContent=fileName||"Lampiran Form Asesmen Terintegrasi";if(page)page.replaceChildren(heading,image,caption);assessmentPhotos[id]={label,dataUrl,fileName:fileName||label};
 }
 function compressAssessmentPhoto(file){
  return new Promise((resolve,reject)=>{
@@ -1592,9 +1605,13 @@ async function loadSelectedAssessmentRespondent(){
   ['assessmentPhotoHome',[ /^fotorumahtampakdepan$/, /^fotodepanrumah$/ ],'FOTO RUMAH TAMPAK DEPAN']
  ];
  let loaded=0,missing=[];
- for(const [inputId,patterns,label] of specs){
+ for(const [inputId] of specs){
+  const slot=document.querySelector('[data-photo-preview="'+inputId+'"]');
+  if(slot){slot.classList.add('loading');slot.setAttribute('aria-busy','true');}
+ }
+ const loadOnePhoto=async([inputId,patterns,label])=>{
   const header=assessmentHeader(headers,patterns);const id=assessmentDriveId(header?item[header]:'');
-  if(!id){renderAssessmentPhoto(inputId,label,'','');missing.push(label);continue;}
+  if(!id){renderAssessmentPhoto(inputId,label,'','');missing.push(label);return;}
   try{
    const response=await fetch('/api/respondent-photo?id='+encodeURIComponent(id),{credentials:'same-origin',cache:'no-store'});
    if(!response.ok)throw new Error('HTTP '+response.status);
@@ -1602,6 +1619,10 @@ async function loadSelectedAssessmentRespondent(){
    const compressed=await compressAssessmentPhoto(new File([blob],label+'.jpg',{type:blob.type}));
    renderAssessmentPhoto(inputId,label,compressed,label+' — '+name);loaded++;
   }catch(error){renderAssessmentPhoto(inputId,label,'','');missing.push(label);}
+ };
+ /* Two parallel downloads at a time reduce serial waiting without spiking mobile memory. */
+ for(let start=0;start<specs.length;start+=2){
+  await Promise.all(specs.slice(start,start+2).map(loadOnePhoto));
  }
  respondentStatus.textContent='Identitas dimuat untuk '+(name||'responden terpilih')+'. Foto berhasil dimuat: '+loaded+'/4.'+(missing.length?' Belum tersedia/diakses: '+missing.join(', ')+'.':'');
  assessmentMessage.textContent=missing.length?'Identitas berhasil dimuat, tetapi sebagian foto tidak tersedia atau tidak dapat diakses dari database. Periksa sumber foto dan izin Drive.':'Identitas dan empat foto responden berhasil dimuat otomatis. Periksa data sebelum membuat PDF.';
