@@ -1,3 +1,9 @@
+## 1.1.62 — 2026-10-17
+- Membersihkan CSS halaman Login: kartu memakai lapisan kaca gelap yang tidak keruh; kolom sandi dan ikon gembok/toggle menjadi transparan tanpa blok abu-abu.
+- Menjaga tombol Masuk putih dengan teks gelap dan mempertahankan struktur HTML, handler autentikasi, serta urutan elemen.
+- Memperbarui cache stylesheet Login ke 1.0.1 dan menyinkronkan versi web/PWA 1.1.62 serta Android Debug/Release 1.2.31 (versionCode 34).
+- Menambahkan regresi tes untuk permukaan Login dan memastikan selector tema dashboard tetap terisolasi dari Login.
+
 ## 1.1.61 — 2026-10-17
 - Menetapkan tema solid moss green (#1E2517 / #2B3520) dengan aksen border sky blue (#70B8E8) pada seluruh layar aplikasi selain halaman Login.
 - Menetralkan backdrop blur, transparansi permukaan, gradient dekoratif, dan glow berlebihan pada card, tabel, header, badge, form, serta tombol tanpa mengubah styling halaman Login.
