@@ -42,6 +42,14 @@ html body:has(#dashboard:not([hidden])) #dashboard * {
   filter: none !important;
   text-shadow: none !important;
 }
+html body:has(#dashboard:not([hidden])) #dashboard *,
+html body:has(#dashboard:not([hidden])) #dashboard *::before,
+html body:has(#dashboard:not([hidden])) #dashboard *::after {
+  background-image: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
 html body:has(#dashboard:not([hidden])) #dashboard {
   background: transparent !important;
   background-color: transparent !important;
