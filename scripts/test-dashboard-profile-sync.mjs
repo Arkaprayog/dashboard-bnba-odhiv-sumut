@@ -208,7 +208,7 @@ const clinicBarcodePage = readFileSync("public/barcode-layanan.html", "utf8");
 const clinicBarcodeCss = readFileSync("public/barcode-layanan-layout.css", "utf8");
 const intakeManagerCss = readFileSync("public/initial-intake-manager.css", "utf8");
 assert.ok(respondentChooser.includes('/kuisioner-pilihan.css?v=1.0.0'), "respondent chooser must load its responsive chooser stylesheet.");
-assert.ok(respondentChooser.includes('href="/kuesioner-mandiri.html"'), "respondent chooser must link to the public integrated form.");
+assert.ok(respondentChooser.includes('src="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform?embedded=true"'), "respondent chooser must embed the official Google Form directly.");
 assert.ok(respondentChooser.includes("https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform"), "respondent chooser must preserve the existing Google Forms backup.");
 assert.ok(chooserCss.includes(".choice-grid") && chooserCss.includes("@media(max-width:650px)"), "respondent chooser must be responsive.");
 assert.ok(!respondentChooser.includes("window.location.replace(destination)") && !respondentChooser.includes("window.setTimeout(finish"), "respondent chooser must never force an automatic redirect.");
