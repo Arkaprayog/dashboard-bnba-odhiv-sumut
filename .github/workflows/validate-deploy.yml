@@ -94,6 +94,19 @@ jobs:
               raise SystemExit("Owner background asset is not a valid WebP image.")
           print(f"Owner background asset verified: {len(data)} bytes.")
           PY
+      - name: Assemble portrait dashboard background image
+        run: |
+          set -euo pipefail
+          test -d .build-assets/portrait-background
+          cat .build-assets/portrait-background/part-*.b64 | tr -d '\r\n' | base64 --decode > public/dashboard-background-portrait.webp
+          python3 - <<'PY'
+          from pathlib import Path
+          asset = Path('public/dashboard-background-portrait.webp')
+          data = asset.read_bytes()
+          if len(data) < 20000 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+              raise SystemExit('Portrait dashboard background is missing or is not a valid WebP image.')
+          print(f'Portrait dashboard background verified: {len(data)} bytes.')
+          PY
       - name: Install dependencies
         run: npm install
       - name: Bundle PDF generator within the same-origin assets
@@ -242,10 +255,10 @@ jobs:
           const layout = fs.readFileSync('public/app-layout.css', 'utf8');
           const qrCenterCss = fs.readFileSync('public/respondent-qr-center-v1.css', 'utf8');
           const checks = [
-            ['legacy inline CSS is removed and shared glass theme is centralized', !/<style\b/i.test(html) && /href="\/app-layout\.css\?v=2\.0\.\d+"/.test(html) && html.includes('href="/transparent-theme.css?v=2.0.0"') && theme.includes('--sahabat-glass-blur:16px') && theme.includes('rgba(15,23,42,.70)') && theme.includes('color:#fff!important') && !layout.includes('#063a7d') && !layout.includes('rgba(13,110,253')],
+            ['legacy inline CSS is removed and shared glass theme is centralized', !/<style\b/i.test(html) && /href="\/app-layout\.css\?v=2\.0\.\d+"/.test(html) && html.includes('href="/transparent-theme.css?v=2.1.0"') && theme.includes('--sahabat-glass-blur:16px') && theme.includes('rgba(15,23,42,.70)') && theme.includes('color:#fff!important') && !layout.includes('#063a7d') && !layout.includes('rgba(13,110,253')],
             ['Form Asesmen Terintegrasi retains the supplied Kemensos PNG and local ATENSI logo', html.includes('src="/logos/kemensos.png"') && html.includes('src="/atensi.svg"') && html.includes('id="assessmentPaper"')],
-            ['questionnaire uses the shared glass theme without legacy inline CSS', !/<style\b/i.test(questionnaire) && questionnaire.includes('href="/kuesioner-layout.css?v=2.0.0"') && questionnaire.includes('href="/transparent-theme.css?v=2.0.0"')],
-            ['respondent chooser uses external responsive styling without inline CSS', !/<style\b/i.test(waiting) && waiting.includes('href="/kuisioner-pilihan.css?v=1.0.1"') && waiting.includes('href="/transparent-theme.css?v=2.0.0"')],
+            ['questionnaire uses the shared glass theme without legacy inline CSS', !/<style\b/i.test(questionnaire) && questionnaire.includes('href="/kuesioner-layout.css?v=2.0.0"') && questionnaire.includes('href="/transparent-theme.css?v=2.1.0"')],
+            ['respondent chooser uses external responsive styling without inline CSS', !/<style\b/i.test(waiting) && waiting.includes('href="/kuisioner-pilihan.css?v=1.0.1"') && waiting.includes('href="/transparent-theme.css?v=2.1.0"')],
             ['public, package, and release versions are synchronized', typeof packageJson.version === 'string' && packageJson.version.length > 0 && html.includes('Versi ' + packageJson.version) && changelog.startsWith('## ' + packageJson.version)],
             ['deployment health and smoke tests use the canonical HTTPS domain', workflow.includes('HEALTH_URL: https://sahabatodhivsumut.web.id/api/health') && workflow.includes('APP_URL: https://sahabatodhivsumut.web.id')],
             ['assessment uses the supplied Kemensos and ATENSI logos', html.includes('src="/logos/kemensos.png"') && html.includes('src="/atensi.svg"') && letter.includes('src="/logos/kemensos.png"')],
@@ -427,7 +440,7 @@ jobs:
           page_status="000"
           for attempt in $(seq 1 12); do
             if page_status="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --dump-header /tmp/sahabat-headers.txt --output /tmp/sahabat-dashboard.html --write-out '%{http_code}' "$APP_URL/?v=$GITHUB_SHA" -H 'Cache-Control: no-cache')"; then :; else page_status="000"; fi
-            if [ "$page_status" = "200" ] && grep -Fq 'href="/app-layout.css?v=2.0.6"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/transparent-theme.css?v=2.0.0"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/dashboard-card-clean-v1.css?v=1.1.49"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/assessment-glass-layout-v1.css?v=1.1.52"' /tmp/sahabat-dashboard.html && grep -Fq 'name="application-version" content="1.1.59"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/single-layer-floating-dashboard-v1.css?v=1.1.57"' /tmp/sahabat-dashboard.html && grep -Fq 'RANCANGAN ANGGARAN BELANJA' /tmp/sahabat-dashboard.html && grep -Fq 'RAB NUTRISI' /tmp/sahabat-dashboard.html && grep -Fq 'RAB KEWIRAUSAHAAN' /tmp/sahabat-dashboard.html && grep -Fq 'id="rabHomeChoices" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'id="questionnaireHubView" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'id="teamQuestionnaireView" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'id="stage1DataView" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'KUISIONER OWNER' /tmp/sahabat-dashboard.html && grep -Fq 'KUISIONER TIM KERJA' /tmp/sahabat-dashboard.html && grep -Fq 'DATA KUISIONER THP 1' /tmp/sahabat-dashboard.html && grep -Fq 'Kosongkan Lembar Asesmen' /tmp/sahabat-dashboard.html && grep -Fq 'data-photo-preview="assessmentPhotoHome"' /tmp/sahabat-dashboard.html; then
+            if [ "$page_status" = "200" ] && grep -Fq 'href="/app-layout.css?v=2.0.6"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/transparent-theme.css?v=2.1.0"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/dashboard-card-clean-v1.css?v=1.1.49"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/assessment-glass-layout-v1.css?v=1.1.52"' /tmp/sahabat-dashboard.html && grep -Fq 'name="application-version" content="1.1.59"' /tmp/sahabat-dashboard.html && grep -Fq 'href="/single-layer-floating-dashboard-v1.css?v=1.1.57"' /tmp/sahabat-dashboard.html && grep -Fq 'RANCANGAN ANGGARAN BELANJA' /tmp/sahabat-dashboard.html && grep -Fq 'RAB NUTRISI' /tmp/sahabat-dashboard.html && grep -Fq 'RAB KEWIRAUSAHAAN' /tmp/sahabat-dashboard.html && grep -Fq 'id="rabHomeChoices" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'id="questionnaireHubView" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'id="teamQuestionnaireView" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'id="stage1DataView" hidden' /tmp/sahabat-dashboard.html && grep -Fq 'KUISIONER OWNER' /tmp/sahabat-dashboard.html && grep -Fq 'KUISIONER TIM KERJA' /tmp/sahabat-dashboard.html && grep -Fq 'DATA KUISIONER THP 1' /tmp/sahabat-dashboard.html && grep -Fq 'Kosongkan Lembar Asesmen' /tmp/sahabat-dashboard.html && grep -Fq 'data-photo-preview="assessmentPhotoHome"' /tmp/sahabat-dashboard.html; then
               echo "Production page and centralized glass theme references are current (attempt $attempt)."
               break
             fi
@@ -451,7 +464,7 @@ jobs:
           grep -q 'ownerProfileForm' /tmp/sahabat-dashboard.html || (echo "::error::Owner profile UI is missing." && exit 1)
           grep -Fq 'Hapus asesmen' /tmp/sahabat-dashboard.html || (echo "::error::Saved assessment delete action is missing from dashboard HTML." && exit 1)
           ! grep -Eiq 'href="(style|login)\.css\?v=' /tmp/sahabat-dashboard.html || (echo "::error::Legacy stylesheet references returned to the dashboard." && exit 1)
-          theme_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-theme.css --write-out '%{http_code}|%{content_type}' "$APP_URL/transparent-theme.css?v=2.0.0&verify=$GITHUB_SHA")"
+          theme_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-theme.css --write-out '%{http_code}|%{content_type}' "$APP_URL/transparent-theme.css?v=2.1.0&verify=$GITHUB_SHA")"
           theme_status="${theme_response%%|*}"
           theme_type="${theme_response#*|}"
           test "$theme_status" = "200" || (echo "::error::Shared glass theme returned HTTP $theme_status." && exit 1)
@@ -500,8 +513,21 @@ jobs:
               raise SystemExit('Deployed owner background is not a valid WebP image.')
           print(f'Deployed owner background verified: {len(data)} bytes.')
           PY
-          grep -Fq 'background-image:url("/danau-toba/photo-1.jpg?v=2.0.0")' /tmp/sahabat-theme.css || (echo "::error::Shared glass theme background image is missing or stale." && exit 1)
-          echo "Verified the active Danau Toba background is declared in the centralized theme."
+          grep -Fq 'background-image:url("/dashboard-background.webp?v=1.0.0")' /tmp/sahabat-theme.css || (echo "::error::Shared glass theme landscape background image is missing or stale." && exit 1)
+          grep -Fq 'dashboard-background-portrait.webp?v=1.0.0' /tmp/sahabat-theme.css || (echo "::error::Shared glass theme portrait background is missing or stale." && exit 1)
+          portrait_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-portrait-background.webp --write-out '%{http_code}|%{content_type}' "$APP_URL/dashboard-background-portrait.webp?v=1.0.0")"
+          portrait_status="${portrait_response%%|*}"
+          portrait_type="${portrait_response#*|}"
+          test "$portrait_status" = "200" || (echo "::error::Portrait background returned HTTP $portrait_status." && exit 1)
+          case "$portrait_type" in image/webp*) ;; *) echo "::error::Portrait background has unexpected content type: $portrait_type." && exit 1 ;; esac
+          python3 - <<'PY'
+          from pathlib import Path
+          data = Path('/tmp/sahabat-portrait-background.webp').read_bytes()
+          if len(data) < 20000 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+              raise SystemExit('Deployed portrait background is not a valid WebP image.')
+          print(f'Deployed portrait background verified: {len(data)} bytes.')
+          PY
+          echo "Verified responsive landscape and portrait backgrounds in the centralized theme."
           quiz_status="$(curl --connect-timeout 5 --max-time 20 --location --max-redirs 5 --silent --show-error --output /tmp/sahabat-questionnaire.html --write-out '%{http_code}' "$APP_URL/kuisioner-responden.html")"
           test "$quiz_status" = "200" || (echo "::error::Questionnaire intro page returned HTTP $quiz_status." && exit 1)
           grep -q '1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire intro is missing the canonical Google Form URL." && exit 1)
