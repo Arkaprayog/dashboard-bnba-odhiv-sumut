@@ -109,6 +109,10 @@ assert.match(worker, /owner_profile_update/);
 assert.equal(pkg.version, "1.1.67");
 const firebaseConfig = JSON.parse(readFileSync("android-app/app/google-services.json", "utf8"));
 const firebaseService = readFileSync("android-app/app/src/main/java/id/sahabatodhiv/sumut/SahabatFirebaseMessagingService.java", "utf8");
+const androidActivity = readFileSync("android-app/app/src/main/java/id/sahabatodhiv/sumut/MainActivity.java", "utf8");
+const webPushWorker = readFileSync("public/sw.js", "utf8");
+assert.ok(androidActivity.includes("NotificationManager.IMPORTANCE_HIGH") && androidActivity.includes("channel.setVibrationPattern") && androidActivity.includes("channel.setSound") && androidActivity.includes("channel.setShowBadge") && androidActivity.includes("Notification.VISIBILITY_PRIVATE"), "native notification channel must prepare heads-up/lockscreen visibility, badge, sound, and vibration.");
+assert.ok(webPushWorker.includes("vibrate:[250,120,250,120,350]") && webPushWorker.includes("renotify:true") && webPushWorker.includes("requireInteraction:true"), "web push notification options must retain vibration and persistent notification behavior.");
 const androidManifest = readFileSync("android-app/app/src/main/AndroidManifest.xml", "utf8");
 assert.equal(firebaseConfig.project_info.project_id, "sahabatodhiv-sumut", "Android Firebase config must match the intended Firebase project.");
 assert.ok(firebaseConfig.client.some((item) => item.client_info.android_client_info.package_name === "id.sahabatodhiv.sumut"), "Firebase config must include the registered native Android package.");
@@ -144,7 +148,7 @@ assert.ok(themeCss.includes("backdrop-filter:none!important") && themeCss.includ
 assert.ok(assessmentPrintCss.includes('size:A4 portrait') && assessmentPrintCss.includes('page-break-before:always') && assessmentPrintCss.includes('assessment-print-photo-page'), "print stylesheet must force A4 page breaks for the four appendices.");
 assert.ok(dashboard.includes('Data Base Kemensos RI DRSKPNO'), "login copyright must use the requested institution text.");
 
-assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.7"') && dashboard.includes('href="/transparent-theme.css?v=2.1.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
+assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.7"') && dashboard.includes('href="/transparent-theme.css?v=2.1.0"') && !dashboard.includes("style.css?v="), "dashboard must load only the centralized stylesheets.");
 assert.ok(dashboard.includes('href="/login.css?v=1.0.3"'), "the isolated Login stylesheet must be linked.");
 assert.ok(dashboard.includes('href="/dashboard.css?v=1.1.67"'), "the dashboard-only solid clean stylesheet must load last.");
 const isolatedLoginCss = readFileSync("public/login.css", "utf8");
