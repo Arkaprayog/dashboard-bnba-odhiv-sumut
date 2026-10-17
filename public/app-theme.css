@@ -8,16 +8,16 @@
   --app-bg-moss-dark: #1E2517;
   --app-sky-blue: #70B8E8;
   --app-sky-blue-bright: #87CEFA;
-  --app-sky-glow: rgba(112, 184, 232, .32);
-  --app-glass-bg: rgba(43, 53, 32, .84);
-  --app-glass-card: rgba(35, 44, 26, .78);
+  --app-sky-glow: transparent;
+  --app-glass-bg: #2B3520;
+  --app-glass-card: #2B3520;
   --app-text: #FFFFFF;
   --app-text-muted: #B0C4DE;
-  --app-border: rgba(112, 184, 232, .74);
+  --app-border: #70B8E8;
   --app-radius-lg: 20px;
   --app-radius-sm: 12px;
-  --app-shadow: 0 12px 32px rgba(0, 0, 0, .22), 0 0 18px rgba(112, 184, 232, .12);
-  --app-glass-blur: 16px;
+  --app-shadow: none;
+  --app-glass-blur: 0px;
 }
 @media screen {
   body:not(:has(#loginCard)) {
@@ -25,7 +25,7 @@
     color: var(--app-text);
     font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
     background-color: var(--app-bg-moss) !important;
-    background-image: linear-gradient(135deg, #2B3520 0%, #1E2517 100%) !important;
+    background-image: none !important;
     background-attachment: fixed;
     accent-color: var(--app-sky-blue);
   }
@@ -33,7 +33,7 @@
     color-scheme: dark;
     color: var(--app-text);
     background-color: var(--app-bg-moss) !important;
-    background-image: linear-gradient(135deg, #2B3520 0%, #1E2517 100%) !important;
+    background-image: none !important;
     background-attachment: fixed;
     accent-color: var(--app-sky-blue);
   }
@@ -69,8 +69,6 @@
     border: 1px solid var(--app-border) !important;
     border-radius: var(--app-radius-lg) !important;
     box-shadow: var(--app-shadow) !important;
-    -webkit-backdrop-filter: blur(var(--app-glass-blur));
-    backdrop-filter: blur(var(--app-glass-blur));
     color: var(--app-text);
   }
   body:not(:has(#loginCard)) :is(.wrap>header,.brand-header,.topbar,.toolbar),
@@ -87,7 +85,7 @@
   body:not(:has(#loginCard)) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),select,textarea,[contenteditable="true"]),
   body:has(#dashboard:not([hidden])) #dashboard :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),select,textarea,[contenteditable="true"]) {
     color: var(--app-text) !important;
-    background-color: rgba(19,29,18,.76) !important;
+    background-color: #1E2517 !important;
     border: 1px solid rgba(112,184,232,.72) !important;
     border-radius: var(--app-radius-sm) !important;
     box-shadow: inset 0 1px 2px rgba(0,0,0,.16);
@@ -107,10 +105,10 @@
   body:not(:has(#loginCard)) :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"],.choice-link),
   body:has(#dashboard:not([hidden])) #dashboard :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"]) {
     color: #10212A !important;
-    background: linear-gradient(135deg,#87CEFA,#70B8E8) !important;
+    background: #70B8E8 !important;
     border: 1px solid var(--app-sky-blue-bright) !important;
     border-radius: 999px !important;
-    box-shadow: 0 5px 16px var(--app-sky-glow) !important;
+    box-shadow: none !important;
     font-weight: 700; text-decoration: none;
     transition: transform .18s ease,box-shadow .18s ease,filter .18s ease;
   }
@@ -122,11 +120,11 @@
   body:not(:has(#loginCard)) :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"],.choice-link):hover,
   body:has(#dashboard:not([hidden])) #dashboard :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"]):hover {
     filter: brightness(1.06); transform: translateY(-1px);
-    box-shadow: 0 7px 21px rgba(112,184,232,.42) !important;
+    box-shadow: none !important;
   }
   body:not(:has(#loginCard)) :is(.secondary,.btn-secondary,.secondary-link,button[type="reset"]),
   body:has(#dashboard:not([hidden])) #dashboard :is(.secondary,.btn-secondary,button[type="reset"]) {
-    color: var(--app-sky-blue-bright) !important; background: rgba(112,184,232,.08) !important;
+    color: var(--app-sky-blue-bright) !important; background: #344228 !important;
     border: 1px solid var(--app-border) !important; box-shadow: none !important;
   }
   body:not(:has(#loginCard)) :is(.danger,.btn-danger,.delete-button,[data-danger="true"]),
@@ -139,12 +137,11 @@
   }
   body:has(#dashboard:not([hidden])) #dashboard .app-nav {
     display: flex; flex-wrap: wrap; gap: 8px; padding: 10px;
-    background: rgba(30,37,23,.88) !important; border: 1px solid var(--app-sky-blue) !important;
+    background: #2B3520 !important; border: 1px solid var(--app-sky-blue) !important;
     border-radius: 18px !important; box-shadow: var(--app-shadow);
-    -webkit-backdrop-filter: blur(var(--app-glass-blur)); backdrop-filter: blur(var(--app-glass-blur));
-  }
+    }
   body:has(#dashboard:not([hidden])) #dashboard .app-nav button {
-    color: var(--app-sky-blue-bright) !important; background: rgba(112,184,232,.08) !important;
+    color: var(--app-sky-blue-bright) !important; background: #344228 !important;
     border: 1px solid rgba(112,184,232,.56) !important; border-radius: 999px !important;
     min-height: 42px; padding: 10px 16px; font-size: .83rem; font-weight: 700;
   }
@@ -152,11 +149,11 @@
   body:has(#dashboard:not([hidden])) #dashboard .app-nav button.active,
   body:has(#dashboard:not([hidden])) #dashboard .app-nav button[aria-pressed="true"] {
     color: #10212A !important; background: var(--app-sky-blue) !important;
-    border-color: var(--app-sky-blue-bright) !important; box-shadow: 0 0 16px var(--app-sky-glow) !important;
+    border-color: var(--app-sky-blue-bright) !important; box-shadow: none !important;
   }
   body:has(#dashboard:not([hidden])) #dashboard :is(.glass-icon-btn,.bell-button,.settings-button,#logoutButton,.owner-edit) {
-    color: var(--app-sky-blue-bright) !important; background: rgba(112,184,232,.12) !important;
-    border: 1px solid var(--app-border) !important; box-shadow: 0 0 12px rgba(112,184,232,.12) !important;
+    color: var(--app-sky-blue-bright) !important; background: #344228 !important;
+    border: 1px solid var(--app-border) !important; box-shadow: none !important;
   }
   body:not(:has(#loginCard)) :is(.table-wrap,.table-container),
   body:has(#dashboard:not([hidden])) #dashboard :is(.table-wrap,.table-container) {
@@ -167,13 +164,13 @@
     color: var(--app-text); border-color: rgba(112,184,232,.4); border-collapse: separate; border-spacing: 0;
   }
   body:not(:has(#loginCard)) :is(th,thead th), body:has(#dashboard:not([hidden])) #dashboard :is(th,thead th) {
-    color: var(--app-sky-blue-bright) !important; background: rgba(112,184,232,.12) !important; border-color: rgba(112,184,232,.42) !important;
+    color: var(--app-sky-blue-bright) !important; background: #344228 !important; border-color: rgba(112,184,232,.42) !important;
   }
   body:not(:has(#loginCard)) :is(td,th), body:has(#dashboard:not([hidden])) #dashboard :is(td,th) { border-color: rgba(112,184,232,.25); }
-  body:not(:has(#loginCard)) tbody tr:hover, body:has(#dashboard:not([hidden])) #dashboard tbody tr:hover { background: rgba(112,184,232,.08) !important; }
+  body:not(:has(#loginCard)) tbody tr:hover, body:has(#dashboard:not([hidden])) #dashboard tbody tr:hover { background: #344228 !important; }
   body:not(:has(#loginCard)) :is(.list-item,.option,.settings-row,.notification-item,.menu-item,.quick-link),
   body:has(#dashboard:not([hidden])) #dashboard :is(.list-item,.settings-row,.notification-item,.menu-item,.quick-link) {
-    background-color: rgba(255,255,255,.035) !important; background-image: none !important;
+    background-color: #344228 !important; background-image: none !important;
     border: 1px solid rgba(112,184,232,.38) !important; border-radius: var(--app-radius-sm) !important;
   }
   body:not(:has(#loginCard)) :is(.list-item,.option,.settings-row,.notification-item,.menu-item,.quick-link):hover,
@@ -197,3 +194,14 @@
     animation-duration: .01ms !important; animation-iteration-count: 1 !important;
   }
 }
+
+/* SODARAMU solid-clean theme v1.1.60. Login page (#loginCard) is intentionally excluded. */
+:root{--bg-moss-dark:#1E2517;--card-moss-solid:#2B3520;--card-moss-lighter:#344228;--sky-blue-accent:#70B8E8;--sky-blue-btn:#70B8E8;--text-white:#FFFFFF;--text-muted:#B0C4DE}
+body:not(:has(#loginCard)),body:has(#dashboard:not([hidden])) #dashboard{background:#1E2517!important;background-color:#1E2517!important;background-image:none!important;color:#fff!important}
+body:not(:has(#loginCard)) *,body:has(#dashboard:not([hidden])) #dashboard *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+body:not(:has(#loginCard)) :is(.wrap>header,.wrap>main>section,.wrap>main>aside,.wrap>main>form,.hero,.notice,.privacy-note,.form-card,.choice-card,.choice-panel,.card,.panel,.glass-card,.dashboard-card,.menu-card,.sidebar,.navbar,.modal-content,.menu-item,.dashboard-container,.dashpanel,.overview-card,.overview-panel,.settings-panel,.notification-panel,.form-panel,.section-card,.panel-card,.info-card,.data-card,.table-wrap,.table-container,.modal,.drawer,.quick-card,.quick-link,.stat-card,.status-card,.notice-card,.upload-card,.document-card,.assessment-card,.workspace-card,.profile-card,.profile-panel,.staff,.respondent-stat,.respondent-quiz-panel,.respondent-quiz-note,.field,.photo-box,.option,.brand-header,.topbar,.toolbar,.shell),body:has(#dashboard:not([hidden])) #dashboard :is(.owner-card,.owner-summary,.owner-profile-side,.app-view,.dashpanel,.overview-card,.overview-panel,.settings-panel,.notification-panel,.rab-home-choices,.form-card,.table-wrap,.table-container,.initial-intake-manager,.questionnaire-choice-grid article,.profile-card,.section-card,.panel-card,.info-card,.data-card,.stat-card,.status-card,.notice-card,.upload-card,.document-card,.assessment-card,.workspace-card,.quick-card,.staff,.rab-choice-card,.app-nav,.rab-submenu,.dashboard-landscape-brand){background:#2B3520!important;background-color:#2B3520!important;background-image:none!important;border-color:#70B8E8!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;color:#fff!important}
+body:not(:has(#loginCard)) :is(.list-item,.option,.settings-row,.notification-item,.menu-item,.quick-link),body:has(#dashboard:not([hidden])) #dashboard :is(.list-item,.settings-row,.notification-item,.menu-item,.quick-link,.rab-choice-card){background:#344228!important;background-color:#344228!important;background-image:none!important;border-color:#70B8E8!important;box-shadow:none!important}
+body:not(:has(#loginCard)) :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"],.choice-link),body:has(#dashboard:not([hidden])) #dashboard :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"]){color:#0E1A24!important;background:#70B8E8!important;background-image:none!important;border:1px solid #70B8E8!important;box-shadow:none!important}
+body:not(:has(#loginCard)) :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"]):hover,body:has(#dashboard:not([hidden])) #dashboard :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"]):hover{background:#5AA3D6!important;box-shadow:none!important;filter:none!important;transform:none!important}
+body:has(#dashboard:not([hidden])) #dashboard .app-nav button,body:has(#dashboard:not([hidden])) #dashboard .app-nav button[aria-current="page"],body:has(#dashboard:not([hidden])) #dashboard .app-nav button.active,body:has(#dashboard:not([hidden])) #dashboard .app-nav button[aria-pressed="true"]{box-shadow:none!important}
+body:not(:has(#loginCard)) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),select,textarea,[contenteditable="true"]),body:has(#dashboard:not([hidden])) #dashboard :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),select,textarea,[contenteditable="true"]){background:#1E2517!important;box-shadow:none!important}

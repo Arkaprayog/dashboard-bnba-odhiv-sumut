@@ -1,3 +1,9 @@
+## 1.1.60 — 2026-10-17
+- Menghapus efek blur dan glassmorphism pada tema utama dashboard; kartu memakai moss green solid dan border sky blue.
+- Mengurangi glow berlebihan dan menggunakan tombol CTA sky blue solid.
+- Memperbarui versi web/PWA ke 1.1.60 dan Android ke 1.2.29 (versionCode 32), termasuk varian debug.
+- Halaman Login tetap dikecualikan dari selector tema baru.
+
 ## 1.1.59 — 2026-10-16
 - Sejajarkan nama profil owner dengan ikon lonceng, pengaturan, dan keluar; rapikan tata letak NIP, instansi, dan jam agar responsif.
 - Mengubah batas minimum kata sandi tim kerja menjadi 6 karakter pada pendaftaran owner, login anggota, dan pengaturan ulang kata sandi.
