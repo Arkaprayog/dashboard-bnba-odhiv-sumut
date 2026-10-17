@@ -1,5 +1,5 @@
 /*
- * SODARAMU app-only theme v1.0.0
+ * SODARAMU app-only theme v1.0.2
  * Login is isolated: this file never styles #loginCard or login form classes.
  * On index.html it activates only when #dashboard is visible.
  */
@@ -205,3 +205,175 @@ body:not(:has(#loginCard)) :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,inpu
 body:not(:has(#loginCard)) :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"]):hover,body:has(#dashboard:not([hidden])) #dashboard :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"]):hover{background:#5AA3D6!important;box-shadow:none!important;filter:none!important;transform:none!important}
 body:has(#dashboard:not([hidden])) #dashboard .app-nav button,body:has(#dashboard:not([hidden])) #dashboard .app-nav button[aria-current="page"],body:has(#dashboard:not([hidden])) #dashboard .app-nav button.active,body:has(#dashboard:not([hidden])) #dashboard .app-nav button[aria-pressed="true"]{box-shadow:none!important}
 body:not(:has(#loginCard)) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),select,textarea,[contenteditable="true"]),body:has(#dashboard:not([hidden])) #dashboard :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),select,textarea,[contenteditable="true"]){background:#1E2517!important;box-shadow:none!important}
+
+
+/* SODARAMU solid-clean UI v1.0.2 — final layer for non-login screens. */
+@media screen {
+  body:not(:has(#loginCard)),
+  body:has(#dashboard:not([hidden])) {
+    --bg-moss-dark:#1E2517;
+    --card-moss-solid:#2B3520;
+    --card-moss-lighter:#344228;
+    --sky-blue-accent:#70B8E8;
+    --sky-blue-btn:#70B8E8;
+    --text-white:#FFFFFF;
+    --text-muted:#B0C4DE;
+    --radius-lg:16px;
+    --radius-sm:8px;
+    color-scheme:dark;
+    color:var(--text-white);
+    background:#1E2517!important;
+    background-color:#1E2517!important;
+    background-image:none!important;
+    background-attachment:initial!important;
+  }
+
+  /* Clear inherited blur and glow from the legacy theme stack. Login is explicitly excluded. */
+  body:not(:has(#loginCard)) *,
+  body:not(:has(#loginCard)) *::before,
+  body:not(:has(#loginCard)) *::after,
+  body:has(#dashboard:not([hidden])) #dashboard,
+  body:has(#dashboard:not([hidden])) #dashboard *,
+  body:has(#dashboard:not([hidden])) #dashboard *::before,
+  body:has(#dashboard:not([hidden])) #dashboard *::after {
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    box-shadow:none!important;
+    text-shadow:none!important;
+    filter:none!important;
+  }
+
+  body:not(:has(#loginCard)) :is(
+    header,nav,aside,article,fieldset,details,
+    .wrap>main>section,.wrap>main>aside,.wrap>main>form,
+    .hero,.notice,.privacy-note,.form-card,.choice-card,.choice-panel,
+    .card,.glass-card,.dashboard-card,.menu-card,.sidebar,.navbar,.modal-content,
+    .menu-item,.dashboard-container,.dashpanel,.overview-card,.overview-panel,
+    .settings-panel,.notification-panel,.form-panel,.section-card,.panel-card,
+    .info-card,.data-card,.modal,.drawer,.quick-card,.quick-link,.stat-card,
+    .status-card,.notice-card,.upload-card,.document-card,.assessment-card,
+    .workspace-card,.profile-card,.profile-panel,.staff,.respondent-stat,
+    .respondent-quiz-panel,.respondent-quiz-note,.photo-box,.brand-header,
+    .topbar,.toolbar,.shell,[class*="glass"],[class*="card"],[class*="panel"],
+    [class*="container"]
+  ),
+  body:has(#dashboard:not([hidden])) #dashboard :is(
+    header,nav,aside,article,fieldset,details,.app-view,.dashpanel,
+    .owner-card,.owner-summary,.owner-profile-side,.owner-header-actions,
+    .overview-card,.overview-panel,.settings-panel,.notification-panel,
+    .rab-home-choices,.form-card,.questionnaire-choice-grid article,
+    .profile-card,.section-card,.panel-card,.info-card,.data-card,.stat-card,
+    .status-card,.notice-card,.upload-card,.document-card,.assessment-card,
+    .workspace-card,.quick-card,.staff,.rab-choice-card,.app-nav,.rab-submenu,
+    [class*="glass"],[class*="card"],[class*="panel"],[class*="container"]
+  ) {
+    background:#2B3520!important;
+    background-color:#2B3520!important;
+    background-image:none!important;
+    border-color:#70B8E8!important;
+    color:#FFFFFF!important;
+  }
+
+  body:not(:has(#loginCard)) :is(.table-wrap,.table-container,.data-table-container,.table-responsive),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.table-wrap,.table-container,.data-table-container,.table-responsive) {
+    background:#344228!important;
+    background-color:#344228!important;
+    background-image:none!important;
+    border:1px solid rgba(112,184,232,.55)!important;
+    border-radius:8px;
+    color:#FFFFFF!important;
+  }
+
+  body:not(:has(#loginCard)) :is(table,thead,tbody,tr,th,td),
+  body:has(#dashboard:not([hidden])) #dashboard :is(table,thead,tbody,tr,th,td) {
+    border-color:rgba(112,184,232,.35)!important;
+    color:#FFFFFF!important;
+  }
+  body:not(:has(#loginCard)) :is(th,thead),
+  body:has(#dashboard:not([hidden])) #dashboard :is(th,thead) {
+    background:#344228!important;
+    background-color:#344228!important;
+    background-image:none!important;
+  }
+  body:not(:has(#loginCard)) :is(td,tbody tr),
+  body:has(#dashboard:not([hidden])) #dashboard :is(td,tbody tr) {
+    background:#2B3520!important;
+    background-color:#2B3520!important;
+    background-image:none!important;
+  }
+
+  body:not(:has(#loginCard)) :is(.list-item,.option,.settings-row,.notification-item,.menu-item,.quick-link,.badge,[class*="badge"],[class*="status"]),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.list-item,.option,.settings-row,.notification-item,.menu-item,.quick-link,.badge,[class*="badge"],[class*="status"]) {
+    background:#344228!important;
+    background-color:#344228!important;
+    background-image:none!important;
+    border-color:rgba(112,184,232,.6)!important;
+  }
+
+  body:not(:has(#loginCard)) :is(h1,h2,h3,h4),
+  body:has(#dashboard:not([hidden])) #dashboard :is(h1,h2,h3,h4) {
+    color:#FFFFFF!important;
+    text-shadow:none!important;
+  }
+  body:not(:has(#loginCard)) :is(.muted,.intro,.fallback,.choice-note,.note,.privacy-note p,.hero p,.form-card p,.brand span),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.muted,.dashhead p,.overview-card small,.item-info p,.scroll-hint) {
+    color:#B0C4DE!important;
+  }
+
+  body:not(:has(#loginCard)) :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"],.choice-link),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"]) {
+    color:#0E1A24!important;
+    background:#70B8E8!important;
+    background-color:#70B8E8!important;
+    background-image:none!important;
+    border:1px solid #70B8E8!important;
+    box-shadow:none!important;
+    text-shadow:none!important;
+    filter:none!important;
+    transform:none!important;
+    transition:background-color .15s ease!important;
+  }
+  body:not(:has(#loginCard)) :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"],.choice-link):hover,
+  body:has(#dashboard:not([hidden])) #dashboard :is(.dashbtn,.btn,.submit,.capture,.btn-sky-blue,input[type="submit"]):hover {
+    color:#0E1A24!important;
+    background:#5AA3D6!important;
+    background-color:#5AA3D6!important;
+    box-shadow:none!important;
+    filter:none!important;
+    transform:none!important;
+  }
+
+  /* Secondary tabs stay dark; the selected tab uses solid sky blue. */
+  body:not(:has(#loginCard)) :is(.btn-tab-dark,.app-nav button,[role="tab"]),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.btn-tab-dark,.app-nav button,[role="tab"]) {
+    background:#242E1B!important;
+    background-color:#242E1B!important;
+    background-image:none!important;
+    color:#FFFFFF!important;
+    border:1px solid rgba(112,184,232,.65)!important;
+    box-shadow:none!important;
+    text-shadow:none!important;
+  }
+  body:not(:has(#loginCard)) :is(.btn-tab-dark.active,.app-nav button.active,.app-nav button[aria-current="page"],.app-nav button[aria-pressed="true"],[role="tab"][aria-selected="true"]),
+  body:has(#dashboard:not([hidden])) #dashboard :is(.btn-tab-dark.active,.app-nav button.active,.app-nav button[aria-current="page"],.app-nav button[aria-pressed="true"],[role="tab"][aria-selected="true"]) {
+    background:#70B8E8!important;
+    background-color:#70B8E8!important;
+    color:#0E1A24!important;
+    border-color:#70B8E8!important;
+  }
+
+  body:not(:has(#loginCard)) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),select,textarea,[contenteditable="true"]),
+  body:has(#dashboard:not([hidden])) #dashboard :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),select,textarea,[contenteditable="true"]) {
+    background:#1E2517!important;
+    background-color:#1E2517!important;
+    background-image:none!important;
+    color:#FFFFFF!important;
+    border-color:rgba(112,184,232,.65)!important;
+    box-shadow:none!important;
+  }
+  body:not(:has(#loginCard)) :is(a,button,input,select,textarea,[tabindex]):focus-visible,
+  body:has(#dashboard:not([hidden])) #dashboard :is(a,button,input,select,textarea,[tabindex]):focus-visible {
+    outline:2px solid #70B8E8!important;
+    outline-offset:3px;
+  }
+}

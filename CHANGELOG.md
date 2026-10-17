@@ -1,3 +1,10 @@
+## 1.1.61 — 2026-10-17
+- Menetapkan tema solid moss green (#1E2517 / #2B3520) dengan aksen border sky blue (#70B8E8) pada seluruh layar aplikasi selain halaman Login.
+- Menetralkan backdrop blur, transparansi permukaan, gradient dekoratif, dan glow berlebihan pada card, tabel, header, badge, form, serta tombol tanpa mengubah styling halaman Login.
+- Menambahkan override tema solid versi 1.0.2 dan menyegarkan referensi cache CSS untuk halaman web/PWA terkait.
+- Memperbaiki halaman offline native agar HTML valid dan mengikuti tema moss green solid serta tombol sky blue.
+- Menyelaraskan versi web/PWA ke 1.1.61 serta Android/debug/release ke 1.2.30 (versionCode 33); build debug dan release dijalankan melalui GitHub Actions.
+
 ## 1.1.60 — 2026-10-17
 - Menghapus efek blur dan glassmorphism pada tema utama dashboard; kartu memakai moss green solid dan border sky blue.
 - Mengurangi glow berlebihan dan menggunakan tombol CTA sky blue solid.

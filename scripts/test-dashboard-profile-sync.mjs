@@ -103,7 +103,7 @@ assert.match(dashboard, /id="logoutButton"/);
 assert.match(dashboard, /aria-label="Keluar"/);
 assert.match(worker, /UPDATE admins SET display_name=\? WHERE id=\? AND role='owner' AND active=1/);
 assert.match(worker, /owner_profile_update/);
-assert.equal(pkg.version, "1.1.60");
+assert.equal(pkg.version, "1.1.61");
 assert.equal(manifest.version, pkg.version, "PWA manifest version must match the web package version.");
 assert.ok(dashboard.includes('href="/assessment-print-10-pages-v1.css?v=1.1.46"'), "assessment must load the dedicated ten-page print stylesheet.");
 assert.ok(dashboard.includes('pageIndexForQuestion') && dashboard.includes('assessment-print-page'), "assessment fields must be partitioned into six print pages.");
@@ -120,15 +120,15 @@ assert.ok(assessmentGlassCss.includes("width:min(100%,190px)!important"), "photo
 assert.ok(assessmentGlassCss.includes("grid-auto-rows:max-content!important") && assessmentGlassCss.includes("align-items:start!important"), "photo card grid must stop stretching cards vertically.");
 assert.ok(assessmentGlassCss.includes("max-height:190px!important"), "photo card height must remain bounded.");
 
-assert.ok(themeCss.includes("backdrop-filter:none!important") && themeCss.includes("background:#2B3520!important") && themeCss.includes("background:#70B8E8!important"), "legacy assessment/card blur must be neutralized by the solid moss and sky-blue app theme.");
+assert.ok(themeCss.includes("backdrop-filter:none!important") && themeCss.includes("-webkit-backdrop-filter:none!important") && themeCss.includes("SODARAMU solid-clean UI v1.0.2") && themeCss.includes("background:#2B3520!important") && themeCss.includes("background:#70B8E8!important"), "solid theme must neutralize legacy blur and glow without changing Login styling.");
 
 assert.ok(assessmentPrintCss.includes('size:A4 portrait') && assessmentPrintCss.includes('page-break-before:always') && assessmentPrintCss.includes('assessment-print-photo-page'), "print stylesheet must force A4 page breaks for the four appendices.");
 assert.ok(dashboard.includes('Data Base Kemensos RI DRSKPNO'), "login copyright must use the requested institution text.");
 
 assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.7"') && dashboard.includes('href="/transparent-theme.css?v=2.1.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
-assert.ok(dashboard.includes('href="/app-theme.css?v=1.0.1"') && themeCss.includes("backdrop-filter:none!important") && themeCss.includes("background:#2B3520!important") && themeCss.includes("background:#70B8E8!important"), "shared theme must apply solid moss and sky-blue surfaces and disable blur.");
-assert.match(gradle, /versionCode 32/);
-assert.ok(gradle.includes("versionName '1.2.29'"));
+assert.ok(dashboard.includes('href="/app-theme.css?v=1.0.2"') && themeCss.includes("backdrop-filter:none!important") && themeCss.includes("background:#2B3520!important") && themeCss.includes("background:#70B8E8!important"), "shared theme must apply solid moss and sky-blue surfaces and disable blur.");
+assert.match(gradle, /versionCode 33/);
+assert.ok(gradle.includes("versionName '1.2.30'"));
 assert.match(changelog, /^## 1\.1\.18/m);
 assert.ok(dashboard.includes("Versi " + pkg.version), "dashboard display version must match package.json");
 assert.match(dashboard, /href="\/surat-tugas\.html">Buka &amp; Edit Surat Tugas/);
@@ -142,12 +142,12 @@ assert.match(suratTugasCss, /@page\{size:A4 portrait;margin:0\}/);
 assert.match(suratTugas, /window\.print\(\)/);
 assert.ok(changelog.startsWith("## " + pkg.version), "changelog must begin with the current web package version");
 assert.ok(readFileSync(".github/workflows/validate-deploy.yml", "utf8").includes("typeof packageJson.version === 'string'"), "CI must compare release version dynamically");
-assert.ok(releaseWorkflow.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.28"), "release APK artifact must use the current Android version");
-assert.ok(debugWorkflow.includes("Sahabat-ODHIV-Sumut-APK-debug-v1.2.28"), "debug APK artifact must use the current Android version");
-assert.ok(androidReadme.includes("Android package version: **1.2.29** (`versionCode 32`)"), "Android README must match Gradle version");
+assert.ok(releaseWorkflow.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.30"), "release APK artifact must use the current Android version");
+assert.ok(debugWorkflow.includes("Sahabat-ODHIV-Sumut-APK-debug-v1.2.30"), "debug APK artifact must use the current Android version");
+assert.ok(androidReadme.includes("Android package version: **1.2.30** (`versionCode 33`)"), "Android README must match Gradle version");
 assert.ok(androidReadme.includes("web version **" + pkg.version + "**"), "Android README must state current web version");
-assert.ok(rootReadme.includes("release version `1.2.28` (version code `31`)"), "root README must match Android release version");
-assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.28"), "root README artifact link name must match release workflow");
+assert.ok(rootReadme.includes("release version `1.2.30` (version code `31`)"), "root README must match Android release version");
+assert.ok(rootReadme.includes("Sahabat-ODHIV-Sumut-APK-release-v1.2.30"), "root README artifact link name must match release workflow");
 assert.ok(dashboard.includes('href="/transparent-theme.css?v=2.1.0"'), "dashboard must load the shared transparent stylesheet.");
 assert.match(dashboard, /id="notificationBellButton"/);
 
@@ -195,7 +195,7 @@ assert.equal(hillBackground.toString("ascii", 0, 4), "RIFF", "dashboard photo mu
 assert.equal(hillBackground.toString("ascii", 8, 12), "WEBP", "dashboard photo must be a valid WebP asset");
 assert.ok(statSync("public/dashboard-background.webp").size > 4000, "dashboard background must not be an empty placeholder");
 assert.ok(dashboard.includes("Versi " + pkg.version), "web version must match package version");
-assert.ok(offlinePage.includes('id="sahabat-offline-solid-v1-1-60"') && /<\/body>\s*<\/html>\s*$/.test(offlinePage), "native offline screen must use a complete, well-formed solid moss document.");
+assert.ok(offlinePage.includes('id="sahabat-offline-solid-v1-2-30"') && /<\/body>\s*<\/html>\s*$/.test(offlinePage), "native offline screen must use a complete, well-formed solid moss document.");
 assert.ok(offlinePage.includes('<meta name="color-scheme" content="dark">'), "native offline screen must force dark UI controls");
 assert.ok(offlinePage.includes("background-color:#2B3520!important") && offlinePage.includes("#70B8E8") && offlinePage.includes("https://sahabatodhivsumut.web.id/"), "native offline surfaces must be solid and the recovery action must use the canonical domain.");
 assert.ok(offlinePage.includes("body,body *{color:#fff!important"), "native offline screen text must be white");
@@ -241,7 +241,7 @@ for (const [fileName, source] of [["public/kuisioner-awal.html", initialIntakePa
 assert.ok(!integratedRespondentForm.includes("team-login") && integratedRespondentForm.includes('capture="environment"') && integratedRespondentForm.includes('name="fotoDiri"'), "public form must not require staff login and must retain direct photo capture.");
 assert.ok(workerSource.includes('url.pathname === "/api/public-questionnaire"') && workerSource.includes("async function handlePublicQuestionnaire"), "Worker must expose the dedicated public submission route.");
 assert.ok(workerSource.includes("public_questionnaire_attempts") && workerSource.includes("sheets_duplicate_check") && workerSource.includes("RESPONDEN MANDIRI"), "public submission must include throttling, duplicate checking, and explicit respondent attribution.");
-assert.ok(dashboard.includes('href="/transparent-theme.css?v=2.1.0"') && dashboard.includes('href="/app-theme.css?v=1.0.1"'), "dashboard must load the shared base theme and the final solid theme override.");
+assert.ok(dashboard.includes('href="/transparent-theme.css?v=2.1.0"') && dashboard.includes('href="/app-theme.css?v=1.0.2"'), "dashboard must load the shared base theme and the final solid theme override.");
 assert.ok(themeCss.includes("body:not(:has(#loginCard)) *,body:has(#dashboard:not([hidden])) #dashboard *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}") && themeCss.includes("background:#2B3520!important"), "the app theme must neutralize shared legacy glass styles outside the isolated Login screen.");
 assert.ok(dashboard.includes("owner-header-actions"), "owner header actions must remain available.");
 assert.ok(dashboard.includes('id="settingsButton"') && dashboard.includes('id="logoutButton"'), "settings and logout controls must remain available.");
