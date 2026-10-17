@@ -521,7 +521,7 @@ jobs:
           print(f'Verified original logo asset {sys.argv[2]}: {len(data)} bytes.')
           PY
           done
-          grep -q 'href="/kuesioner-mandiri.html"' /tmp/sahabat-questionnaire.html && grep -q 'https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform' /tmp/sahabat-questionnaire.html && grep -q 'class="choice-grid"' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire chooser does not present both questionnaire routes." && exit 1)
+          grep -Fq 'src="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform?embedded=true"' /tmp/sahabat-questionnaire.html && grep -Fq 'href="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform"' /tmp/sahabat-questionnaire.html && grep -q 'class="choice-grid"' /tmp/sahabat-questionnaire.html && ! grep -Fq 'href="/kuesioner-mandiri.html"' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire chooser must embed only Google Forms and not display the legacy internal-form link." && exit 1)
           ! grep -q 'window.location.replace(destination)' /tmp/sahabat-questionnaire.html || (echo "::error::Questionnaire chooser must not force a timed redirect." && exit 1)
           chooser_css_response="$(curl --connect-timeout 5 --max-time 20 --silent --show-error --output /tmp/sahabat-chooser.css --write-out '%{http_code}|%{content_type}' "$APP_URL/kuisioner-pilihan.css?v=1.0.1&verify=$GITHUB_SHA")"
           chooser_css_status="${chooser_css_response%%|*}"
