@@ -186,7 +186,7 @@ for (const path of themedPages) {
   assert.ok(html.includes('/transparent-theme.css?v=2.0.0'), path + " must load the current shared glass theme.");
   assert.doesNotMatch(html, /<style\b/i, path + " must not retain inline CSS blocks.");
   const slug = path === "public/index.html" ? "app" : path.split("/").pop().replace(/\.html$/, "");
-  const layoutHref = path === "public/index.html" ? '/app-layout.css?v=2.0.6' : path === "public/kuisioner-responden.html" ? '/kuisioner-pilihan.css?v=1.0.0' : '/' + slug + '-layout.css?v=2.0.0';
+  const layoutHref = path === "public/index.html" ? '/app-layout.css?v=2.0.6' : path === "public/kuisioner-responden.html" ? '/kuisioner-pilihan.css?v=1.0.1' : '/' + slug + '-layout.css?v=2.0.0';
   assert.ok(html.includes(layoutHref), path + " must load its extracted layout stylesheet.");
 }
 const hillBackground = readFileSync("public/dashboard-background.webp");
@@ -207,7 +207,7 @@ const initialIntakeCss = readFileSync("public/kuisioner-awal-layout.css", "utf8"
 const clinicBarcodePage = readFileSync("public/barcode-layanan.html", "utf8");
 const clinicBarcodeCss = readFileSync("public/barcode-layanan-layout.css", "utf8");
 const intakeManagerCss = readFileSync("public/initial-intake-manager.css", "utf8");
-assert.ok(respondentChooser.includes('/kuisioner-pilihan.css?v=1.0.0'), "respondent chooser must load its responsive chooser stylesheet.");
+assert.ok(respondentChooser.includes('/kuisioner-pilihan.css?v=1.0.1'), "respondent chooser must load its responsive chooser stylesheet.");
 assert.ok(respondentChooser.includes('src="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform?embedded=true"'), "respondent chooser must embed the official Google Form directly.");
 assert.ok(respondentChooser.includes("https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform"), "respondent chooser must preserve the existing Google Forms backup.");
 assert.ok(chooserCss.includes(".choice-grid") && chooserCss.includes("@media(max-width:650px)"), "respondent chooser must be responsive.");
