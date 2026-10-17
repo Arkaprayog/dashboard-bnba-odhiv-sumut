@@ -126,7 +126,7 @@ assert.ok(assessmentPrintCss.includes('size:A4 portrait') && assessmentPrintCss.
 assert.ok(dashboard.includes('Data Base Kemensos RI DRSKPNO'), "login copyright must use the requested institution text.");
 
 assert.ok(dashboard.includes('href="/app-layout.css?v=2.0.7"') && dashboard.includes('href="/transparent-theme.css?v=2.1.0"') && !dashboard.includes("style.css?v=") && !dashboard.includes("login.css?v="), "dashboard must load only the centralized stylesheets.");
-assert.ok(dashboard.includes('href="/login-final-surface-v1.css?v=1.0.0"'), "the final Login surface override must be linked after the app and legacy themes.");
+assert.ok(dashboard.includes('href="/login-final-surface-v1.css?v=1.0.1"'), "the final Login surface override must be linked after the app and legacy themes.");
 assert.ok(dashboard.includes('href="/app-theme.css?v=1.0.2"') && themeCss.includes("backdrop-filter:none!important") && themeCss.includes("background:#2B3520!important") && themeCss.includes("background:#70B8E8!important"), "shared theme must apply solid moss and sky-blue surfaces and disable blur.");
 assert.match(gradle, /versionCode 35/);
 assert.ok(gradle.includes("versionName '1.2.32'"));
