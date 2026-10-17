@@ -195,9 +195,9 @@ assert.equal(hillBackground.toString("ascii", 0, 4), "RIFF", "dashboard photo mu
 assert.equal(hillBackground.toString("ascii", 8, 12), "WEBP", "dashboard photo must be a valid WebP asset");
 assert.ok(statSync("public/dashboard-background.webp").size > 4000, "dashboard background must not be an empty placeholder");
 assert.ok(dashboard.includes("Versi " + pkg.version), "web version must match package version");
-assert.ok(offlinePage.includes('id="sahabat-offline-solid-v1-1-60"') || offlinePage.includes("background-color:#2B3520!important"), "native offline screen must use the solid moss theme.");
+assert.ok(offlinePage.includes('id="sahabat-offline-solid-v1-1-60"') && /<\/body>\s*<\/html>\s*$/.test(offlinePage), "native offline screen must use a complete, well-formed solid moss document.");
 assert.ok(offlinePage.includes('<meta name="color-scheme" content="dark">'), "native offline screen must force dark UI controls");
-assert.ok(offlinePage.includes("background-color:#2B3520!important") && offlinePage.includes("#70B8E8"), "native offline surfaces must use solid moss cards with sky-blue borders.");
+assert.ok(offlinePage.includes("background-color:#2B3520!important") && offlinePage.includes("#70B8E8") && offlinePage.includes("https://sahabatodhivsumut.web.id/"), "native offline surfaces must be solid and the recovery action must use the canonical domain.");
 assert.ok(offlinePage.includes("body,body *{color:#fff!important"), "native offline screen text must be white");
 assert.ok(!offlinePage.includes("backdrop-filter:blur(") && offlinePage.includes("background-color:#2B3520!important"), "native offline surfaces must be solid moss without blur.");
 const respondentChooser = readFileSync("public/kuisioner-responden.html", "utf8");
