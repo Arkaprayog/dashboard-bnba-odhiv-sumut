@@ -186,7 +186,7 @@ for (const path of themedPages) {
   assert.ok(html.includes('/transparent-theme.css?v=2.0.0'), path + " must load the current shared glass theme.");
   assert.doesNotMatch(html, /<style\b/i, path + " must not retain inline CSS blocks.");
   const slug = path === "public/index.html" ? "app" : path.split("/").pop().replace(/\.html$/, "");
-  const layoutHref = path === "public/index.html" ? '/app-layout.css?v=2.0.6' : path === "public/kuisioner-responden.html" ? '/kuisioner-pilihan.css?v=1.0.1' : '/' + slug + '-layout.css?v=2.0.0';
+  const layoutHref = path === "public/index.html" ? '/app-layout.css?v=2.0.6' : path === "public/kuisioner-responden.html" ? '/kuisioner-responden.css?v=1.0.0' : '/' + slug + '-layout.css?v=2.0.0';
   assert.ok(html.includes(layoutHref), path + " must load its extracted layout stylesheet.");
 }
 const hillBackground = readFileSync("public/dashboard-background.webp");
@@ -201,16 +201,19 @@ assert.ok(offlinePage.includes("body,body *{color:#fff!important"), "native offl
 assert.ok(offlinePage.includes("backdrop-filter:blur(16px)!important") || offlinePage.includes("background:transparent"), "native offline surfaces must use their configured surface style.");
 const respondentChooser = readFileSync("public/kuisioner-responden.html", "utf8");
 const integratedRespondentForm = readFileSync("public/kuesioner-mandiri.html", "utf8");
-const chooserCss = readFileSync("public/kuisioner-pilihan.css", "utf8");
+const nativeRespondentScripts = [...respondentChooser.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].filter(match => !/\bsrc\s*=/.test(match[1]));
+assert.equal(nativeRespondentScripts.length, 1, "native respondent questionnaire must contain exactly one inline application script.");
+new vm.Script(nativeRespondentScripts[0][2], { filename: "public/kuisioner-responden.html:inline-script" });
+const chooserCss = readFileSync("public/kuisioner-responden.css", "utf8");
 const initialIntakePage = readFileSync("public/kuisioner-awal.html", "utf8");
 const initialIntakeCss = readFileSync("public/kuisioner-awal-layout.css", "utf8");
 const clinicBarcodePage = readFileSync("public/barcode-layanan.html", "utf8");
 const clinicBarcodeCss = readFileSync("public/barcode-layanan-layout.css", "utf8");
 const intakeManagerCss = readFileSync("public/initial-intake-manager.css", "utf8");
-assert.ok(respondentChooser.includes('/kuisioner-pilihan.css?v=1.0.1'), "respondent chooser must load its responsive chooser stylesheet.");
-assert.ok(respondentChooser.includes('src="https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform?embedded=true"'), "respondent chooser must embed the official Google Form directly.");
+assert.ok(respondentChooser.includes('/kuisioner-responden.css?v=1.0.0'), "respondent questionnaire must load its native stylesheet.");
+assert.ok(respondentChooser.includes('id="respondentForm"') && respondentChooser.includes('data-step="0"') && respondentChooser.includes('data-step="1"') && respondentChooser.includes('data-step="2"') && respondentChooser.includes('/api/public-questionnaire') && !respondentChooser.includes("<iframe"), "respondent menu must show the native multi-step questionnaire rather than an embedded Google Form.");
 assert.ok(respondentChooser.includes("https://docs.google.com/forms/d/e/1FAIpQLSfugEp7XQ_YmR9PQNEqLjtm-wilOqlUvF7hW_ewSOt_2Y_guw/viewform"), "respondent chooser must preserve the existing Google Forms backup.");
-assert.ok(chooserCss.includes(".choice-grid") && chooserCss.includes("@media(max-width:650px)"), "respondent chooser must be responsive.");
+assert.ok(chooserCss.includes(".field-grid") && chooserCss.includes("@media(max-width:620px)") && chooserCss.includes(".photo-grid"), "native respondent questionnaire must have responsive form and photo layouts.");
 assert.ok(!respondentChooser.includes("window.location.replace(destination)") && !respondentChooser.includes("window.setTimeout(finish"), "respondent chooser must never force an automatic redirect.");
 assert.ok(integratedRespondentForm.includes('/api/public-questionnaire') && integratedRespondentForm.includes('name="consent"') && integratedRespondentForm.includes('name="website"'), "integrated public form must use the public submission API, explicit consent, and a honeypot.");
 
