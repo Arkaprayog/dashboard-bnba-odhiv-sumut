@@ -1,3 +1,10 @@
+## 1.1.67 — 2026-10-18
+- Menambahkan stylesheet dashboard terpisah `dashboard.css` untuk mengunci tampilan solid clean: latar dashboard Moss Green tanpa foto, card solid beraksen Sky Blue, tanpa blur/glow, serta ukuran font proporsional.
+- Memisahkan layer akhir Login ke `login.css` sambil mempertahankan struktur HTML, background foto alam, dan alur autentikasi; field password tetap transparan tanpa autofill abu-abu dan lapisan kartu putih.
+- Menambahkan sapaan waktu perangkat di atas nama owner, avatar 58×58 px ber-border Sky Blue, dan layout responsif untuk aksi header serta jam live.
+- Mempertahankan lazy loading dan decoding asynchronous untuk foto database; memperbarui versi web/PWA ke 1.1.67 serta Android debug/native ke 1.2.35 (versionCode 38).
+- Menambahkan pemeriksaan regresi untuk pemisahan stylesheet, sapaan dinamis, tema dashboard solid, versi dan konfigurasi FCM.
+
 ## 1.1.66 — 2026-10-17
 - Memperbaiki workflow build Android agar konfigurasi Firebase tervalidasi dan build tidak langsung berhenti hanya karena secret `GOOGLE_SERVICES_JSON` tidak tersedia; konfigurasi klien dari proyek Android menjadi fallback.
 - Menambahkan Firebase Cloud Messaging SDK dan service penerima native untuk token serta pesan notifikasi; pengiriman otomatis dari Google Forms/kuesioner tetap memerlukan endpoint pengirim server dan pemicu event yang terverifikasi.
