@@ -3,6 +3,7 @@
 - Menambahkan `loading="lazy"` / `decoding="async"` pada gambar foto yang ditampilkan, termasuk foto responden privat di tabel.
 - Menambahkan kompresi upload berbasis Canvas: sisi terpanjang maksimal 800 px, kualitas awal 70%, keluaran WebP/JPEG, ukuran sasaran di bawah 300 KB; kompresi berjalan sebelum handler upload lama agar endpoint dan nama field tidak berubah.
 - Memuat foto asesmen dalam dua permintaan paralel per kelompok untuk mengurangi waktu tunggu tanpa memuat seluruh foto sekaligus.
+- Menyegarkan cache aset foto menjadi CSS/JS 1.0.1 agar browser mengambil versi optimasi terbaru.
 - Menyelaraskan versi web/PWA ke 1.1.64 dan Android Debug/Release ke 1.2.33 (versionCode 36), serta menambah pemeriksaan regresi dan smoke test aset optimasi foto.
 
 ## 1.1.63 — 2026-10-17
