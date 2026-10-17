@@ -4,6 +4,9 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.Notification;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -35,6 +38,8 @@ import androidx.biometric.BiometricPrompt;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.FileProvider;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -46,7 +51,7 @@ public final class MainActivity extends FragmentActivity {
     private static final String DASHBOARD_URL = "https://sahabatodhivsumut.web.id/";
     private static final String DASHBOARD_HOST = "sahabatodhivsumut.web.id";
     private static final String PREFS = "sahabat_odhiv_preferences";
-    private static final String CHANNEL_ID = "sahabat_odhiv_notifications";
+    private static final String CHANNEL_ID = "sahabat_odhiv_fcm_v1";
     private static final int REQUEST_IMAGE_CHOOSER = 4107;
     private static final int REQUEST_CAMERA_TEST = 4108;
     private static final int REQUEST_GALLERY_TEST = 4109;
@@ -296,12 +301,7 @@ public final class MainActivity extends FragmentActivity {
         if (item.getItemId() == 2) { showTestNotification(); return true; }
         if (item.getItemId() == 6) { launchCameraTest(); return true; }
         if (item.getItemId() == 7) { launchGalleryTest(); return true; }
-        if (item.getItemId() == 3) {
-            new AlertDialog.Builder(this).setTitle("Status notifikasi push native")
-                .setMessage("Notifikasi lokal perangkat tersedia. Pengiriman push otomatis belum aktif karena Firebase Cloud Messaging dan kredensial server belum dikonfigurasi.")
-                .setPositiveButton("Mengerti", (dialog, which) -> {}).show();
-            return true;
-        }
+        if (item.getItemId() == 3) { showPushStatus(); return true; }
         if (item.getItemId() == 4) { openExternal(DASHBOARD_URL); return true; }
         if (item.getItemId() == 5) {
             new AlertDialog.Builder(this).setTitle("Sahabat ODHIV Sumut")
@@ -407,17 +407,57 @@ public final class MainActivity extends FragmentActivity {
             } else {
                 Toast.makeText(this, "Izin notifikasi ditolak; notifikasi uji tidak dapat ditampilkan.", Toast.LENGTH_LONG).show();
             }
+            return;
+        }
+        if (requestCode == 702) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showPushStatus();
+            } else {
+                Toast.makeText(this, "Izin notifikasi ditolak; push tidak dapat ditampilkan.", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Notifikasi Sahabat ODHIV", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Notifikasi Sahabat ODHIV", NotificationManager.IMPORTANCE_HIGH);
             channel.setDescription("Pemberitahuan aplikasi Sahabat ODHIV Sumut");
             channel.enableVibration(true);
+            channel.setVibrationPattern(new long[]{0, 300, 150, 300});
+            channel.setShowBadge(true);
+            channel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+            channel.setSound(
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
+                new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build()
+            );
             NotificationManager manager = getSystemService(NotificationManager.class);
             if (manager != null) manager.createNotificationChannel(channel);
         }
+    }
+
+    private void showPushStatus() {
+        if (Build.VERSION.SDK_INT >= 33 &&
+                checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 702);
+            return;
+        }
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                new AlertDialog.Builder(this).setTitle("Status Firebase Cloud Messaging")
+                    .setMessage("Token FCM belum berhasil diperoleh. Periksa konfigurasi Firebase, koneksi internet, dan layanan Google Play pada perangkat.")
+                    .setPositiveButton("Tutup", (dialog, which) -> {}).show();
+                return;
+            }
+            String token = task.getResult();
+            boolean tokenAvailable = token != null && !token.trim().isEmpty();
+            getSharedPreferences(PREFS, MODE_PRIVATE).edit()
+                .putBoolean("fcm_token_available", tokenAvailable).apply();
+            String message = tokenAvailable
+                ? "Firebase Cloud Messaging berhasil memberi token pada perangkat ini. Penerimaan notifikasi Android telah disiapkan. Pengiriman otomatis dari Google Forms/kuesioner tetap memerlukan endpoint pengirim di server."
+                : "Firebase belum memberikan token untuk perangkat ini. Periksa konfigurasi dan coba lagi.";
+            new AlertDialog.Builder(this).setTitle("Status Firebase Cloud Messaging")
+                .setMessage(message).setPositiveButton("Mengerti", (dialog, which) -> {}).show();
+        });
     }
 
     private void showTestNotification() {
@@ -432,7 +472,8 @@ public final class MainActivity extends FragmentActivity {
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle("Sahabat ODHIV Sumut")
             .setContentText("Notifikasi perangkat berhasil diuji.")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setAutoCancel(true);
         manager.notify(701, notification.build());
     }
