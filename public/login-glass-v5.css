@@ -40,3 +40,73 @@ html body:has(#loginCard) #loginCard > .login-security {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
 }
+
+
+/* Login v5.1: remove the cloudy white card layer and grey password/icon surfaces. */
+html body:has(#loginCard) #loginCard {
+  background:rgba(0,0,0,.25)!important;
+  background-color:rgba(0,0,0,.25)!important;
+  background-image:none!important;
+  -webkit-backdrop-filter:blur(10px)!important;
+  backdrop-filter:blur(10px)!important;
+  border:1px solid rgba(255,255,255,.3)!important;
+  box-shadow:0 8px 32px 0 rgba(0,0,0,.3)!important;
+}
+html body:has(#loginCard) #loginCard .login-password-field,
+html body:has(#loginCard) #loginCard .login-password-field::before,
+html body:has(#loginCard) #loginCard .login-password-field::after,
+html body:has(#loginCard) #loginCard .login-password-field input,
+html body:has(#loginCard) #loginCard .login-password-field input[type="password"],
+html body:has(#loginCard) #loginCard .input-group,
+html body:has(#loginCard) #loginCard .input-field {
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+}
+html body:has(#loginCard) #loginCard .login-password-field {
+  border:1.5px solid rgba(255,255,255,.6)!important;
+  border-radius:12px!important;
+}
+html body:has(#loginCard) #loginCard .login-password-field:focus-within {
+  background:transparent!important;
+  background-color:transparent!important;
+  border-color:#fff!important;
+  box-shadow:none!important;
+}
+html body:has(#loginCard) #loginCard .login-password-field .lock,
+html body:has(#loginCard) #loginCard .login-password-field .input-icon,
+html body:has(#loginCard) #loginCard .login-password-field .toggle,
+html body:has(#loginCard) #loginCard .login-password-field .toggle-password,
+html body:has(#loginCard) #loginCard .login-password-field .icon-container {
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  border:0!important;
+  outline:0!important;
+}
+html body:has(#loginCard) #loginCard .login-password-field input[type="password"] {
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border:0!important;
+  border-radius:0!important;
+}
+html body:has(#loginCard) #loginCard .login-password-field .toggle,
+html body:has(#loginCard) #loginCard .login-password-field .toggle-password {
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border-radius:0!important;
+}
+html body:has(#loginCard) #loginCard .login-submit,
+html body:has(#loginCard) #loginCard .btn-masuk,
+html body:has(#loginCard) #loginCard button[type="submit"] {
+  background:#fff!important;
+  background-color:#fff!important;
+  background-image:none!important;
+  color:#1a1a1a!important;
+  -webkit-text-fill-color:#1a1a1a!important;
+  font-weight:700!important;
+  border:0!important;
+  box-shadow:none!important;
+}
