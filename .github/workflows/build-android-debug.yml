@@ -3,7 +3,7 @@ name: Build Sahabat ODHIV Sumut Android Debug APK
 on:
   workflow_dispatch:
   push:
-    branches: [main, feature/firebase-cloud-messaging]
+    branches: [main]
     paths:
       - 'android-app/**'
       - '.github/workflows/build-android-debug.yml'
