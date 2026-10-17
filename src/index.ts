@@ -27,6 +27,10 @@ interface Env {
   VAPID_PRIVATE_KEY?: string;
   VAPID_PUBLIC_KEY?: string;
   VAPID_SUBJECT?: string;
+  FCM_PROJECT_ID?: string;
+  FCM_SERVICE_ACCOUNT_EMAIL?: string;
+  FCM_PRIVATE_KEY?: string;
+  GOOGLE_FORMS_WEBHOOK_SECRET?: string;
 }
 
 const NO_STORE = { "cache-control": "no-store", "x-content-type-options": "nosniff", "x-frame-options": "DENY", "referrer-policy": "no-referrer", "permissions-policy": "camera=(), microphone=(), geolocation=()", "cross-origin-resource-policy": "same-origin", "x-permitted-cross-domain-policies": "none", "content-security-policy": "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'" };
@@ -190,6 +194,49 @@ async function googleAccessToken(env: Env): Promise<string> {
 }
 
 
+async function firebaseMessagingAccessToken(env: Env): Promise<string> {
+  const email = env.FCM_SERVICE_ACCOUNT_EMAIL;
+  const pem = env.FCM_PRIVATE_KEY;
+  if (!email || !pem) throw new Error("FCM service account belum dikonfigurasi.");
+
+  const now = Math.floor(Date.now() / 1000);
+  const enc = (value: unknown) => b64(new TextEncoder().encode(JSON.stringify(value)));
+  const header = enc({ alg: "RS256", typ: "JWT" });
+  const claim = enc({
+    iss: email,
+    scope: "https://www.googleapis.com/auth/firebase.messaging",
+    aud: "https://oauth2.googleapis.com/token",
+    iat: now,
+    exp: now + 3600,
+  });
+  const unsigned = header + "." + claim;
+  const normalizedPem = pem.replace(/\\n/g, "\n").trim();
+  const body = normalizedPem.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\s/g, "");
+  const binary = atob(body);
+  const keyBytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+  const signingKey = await crypto.subtle.importKey(
+    "pkcs8",
+    keyBytes,
+    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const signature = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", signingKey, new TextEncoder().encode(unsigned));
+  const assertion = unsigned + "." + b64(new Uint8Array(signature));
+  const response = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+      assertion,
+    }),
+  });
+  if (!response.ok) throw new Error("FCM OAuth token request failed (HTTP " + response.status + ").");
+  const payload = await response.json() as { access_token?: string };
+  if (!payload.access_token) throw new Error("FCM OAuth response did not contain an access token.");
+  return payload.access_token;
+}
+
 async function getOrCreateDriveFolder(token: string, name: string, parentId?: string): Promise<{ id: string; name: string; webViewLink?: string }> {
   const q = ["name = '" + name.replace(/\\/g, "\\\\").replace(/'/g, "\\'") + "'", "mimeType = 'application/vnd.google-apps.folder'", "trashed = false"];
   if (parentId) q.push("'" + parentId.replace(/'/g, "\\'") + "' in parents");
@@ -294,6 +341,22 @@ async function ensureFeatureSchema(env: Env) {
       state_value TEXT NOT NULL,
       updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     )`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS fcm_devices (
+      token_hash TEXT PRIMARY KEY,
+      token TEXT NOT NULL,
+      admin_id TEXT REFERENCES admins(id) ON DELETE CASCADE,
+      platform TEXT NOT NULL DEFAULT 'android',
+      device_label TEXT NOT NULL DEFAULT 'Android',
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )`),
+    env.DB.prepare(`CREATE INDEX IF NOT EXISTS idx_fcm_devices_admin ON fcm_devices(admin_id)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS notification_events (
+      event_hash TEXT PRIMARY KEY,
+      source TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )`),
+    env.DB.prepare(`CREATE INDEX IF NOT EXISTS idx_notification_events_source_created ON notification_events(source, created_at)`),
   ]);
 }
 
@@ -380,7 +443,7 @@ async function sessionTeam(request: Request, env: Env): Promise<TeamSession | nu
     .bind(idHash, now).first<TeamSession>();
 }
 
-async function sendPushToAll(env: Env, title: string, body: string, tag: string): Promise<{ configured: boolean; subscriptions: number; failed: number }> {
+async function sendWebPushToAll(env: Env, title: string, body: string, tag: string): Promise<{ configured: boolean; subscriptions: number; failed: number }> {
   if (!env.VAPID_PRIVATE_KEY || !env.VAPID_PUBLIC_KEY || !env.VAPID_SUBJECT) {
     return { configured: false, subscriptions: 0, failed: 0 };
   }
@@ -418,11 +481,101 @@ async function sendPushToAll(env: Env, title: string, body: string, tag: string)
   return { configured: true, subscriptions: subscriptions.length, failed: results.filter((ok) => !ok).length };
 }
 
+async function sendFcmToAll(env: Env, title: string, body: string, tag: string): Promise<{ configured: boolean; subscriptions: number; failed: number }> {
+  if (!env.FCM_PROJECT_ID || !env.FCM_SERVICE_ACCOUNT_EMAIL || !env.FCM_PRIVATE_KEY) {
+    return { configured: false, subscriptions: 0, failed: 0 };
+  }
+  const projectId = env.FCM_PROJECT_ID.trim();
+  if (!/^[a-zA-Z0-9][a-zA-Z0-9-]{4,150}$/.test(projectId)) {
+    console.warn("fcm_configuration_invalid", { stage: "project_id" });
+    return { configured: false, subscriptions: 0, failed: 0 };
+  }
+  const rows = await env.DB.prepare("SELECT token_hash,token FROM fcm_devices").all<{
+    token_hash: string;
+    token: string;
+  }>();
+  const devices = rows.results || [];
+  if (!devices.length) return { configured: true, subscriptions: 0, failed: 0 };
+
+  let accessToken: string;
+  try {
+    accessToken = await firebaseMessagingAccessToken(env);
+  } catch {
+    console.warn("fcm_delivery_failed", { stage: "oauth" });
+    return { configured: true, subscriptions: devices.length, failed: devices.length };
+  }
+
+  const endpoint = "https://fcm.googleapis.com/v1/projects/" + encodeURIComponent(projectId) + "/messages:send";
+  const results = await Promise.all(devices.map(async (device): Promise<boolean> => {
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          authorization: "Bearer " + accessToken,
+          "content-type": "application/json; charset=UTF-8",
+        },
+        body: JSON.stringify({
+          message: {
+            token: device.token,
+            notification: { title: title.slice(0, 120), body: body.slice(0, 240) },
+            android: {
+              priority: "HIGH",
+              notification: {
+                channel_id: "sahabat_odhiv_notifications_v2",
+                sound: "default",
+                default_vibrate_timings: true,
+                notification_count: 1,
+              },
+            },
+            data: {
+              url: "/",
+              tag: tag.slice(0, 80),
+              source: "sahabat_dashboard",
+            },
+          },
+        }),
+      });
+      if (response.ok) return true;
+      const errorText = await response.text().catch(() => "");
+      if (response.status === 404 || /UNREGISTERED|registration-token-not-registered/i.test(errorText)) {
+        await env.DB.prepare("DELETE FROM fcm_devices WHERE token_hash=?").bind(device.token_hash).run();
+      }
+      // Never log raw provider response: it can include token and project diagnostics.
+      console.warn("fcm_delivery_failed", { status: response.status });
+      return false;
+    } catch {
+      console.warn("fcm_delivery_failed", { stage: "request" });
+      return false;
+    }
+  }));
+  return { configured: true, subscriptions: devices.length, failed: results.filter((ok) => !ok).length };
+}
+
+async function sendPushToAll(env: Env, title: string, body: string, tag: string): Promise<{ configured: boolean; subscriptions: number; failed: number }> {
+  const [web, native] = await Promise.all([
+    sendWebPushToAll(env, title, body, tag),
+    sendFcmToAll(env, title, body, tag),
+  ]);
+  return {
+    configured: web.configured || native.configured,
+    subscriptions: web.subscriptions + native.subscriptions,
+    failed: web.failed + native.failed,
+  };
+}
+
 async function recordNotification(env: Env, title: string, body: string, action: string) {
   await ensureFeatureSchema(env);
   await env.DB.prepare("INSERT INTO dashboard_notifications(title,body,action) VALUES(?,?,?)")
     .bind(title.slice(0, 120), body.slice(0, 240), action.slice(0, 80)).run();
-  await sendPushToAll(env, title, body, action);
+  try {
+    const delivery = await sendPushToAll(env, title, body, action);
+    if (delivery.failed > 0) {
+      console.warn("push_delivery_incomplete", { action, subscriptions: delivery.subscriptions, failed: delivery.failed });
+    }
+  } catch {
+    // Keep the durable dashboard notification even if a push provider is temporarily unavailable.
+    console.warn("push_delivery_failed", { action, stage: "dispatch" });
+  }
 }
 
 async function audit(env: Env, adminId: string, action: string) {
@@ -608,7 +761,10 @@ export default {
           } else {
             const previousCount = Number(prior.state_value) || 0;
             if (rowCount > previousCount) {
-              await recordNotification(env, "Ada respons Google Form baru", "Data respons baru masuk. Masuk ke dashboard untuk memeriksanya.", "new_form_response");
+              const recentDirectHook = await env.DB.prepare("SELECT event_hash FROM notification_events WHERE source='google_forms' AND created_at >= datetime('now','-20 minutes') LIMIT 1").first<{ event_hash: string }>();
+              if (!recentDirectHook) {
+                await recordNotification(env, "Ada respons Google Form baru", "Data respons baru masuk. Masuk ke dashboard untuk memeriksanya.", "new_form_response");
+              }
             }
             if (rowCount !== previousCount) {
               await env.DB.prepare("UPDATE notification_state SET state_value=?,updated_at=CURRENT_TIMESTAMP WHERE state_key='response_row_count'").bind(String(rowCount)).run();
@@ -1531,6 +1687,11 @@ export default {
             } catch {
               console.warn("team_submission_audit_failed");
             }
+            try {
+              await recordNotification(env, "Kuisioner Tahap 1 baru", "Ada pengiriman Kuisioner Tahap 1 dari aplikasi internal. Masuk ke dashboard untuk meninjau.", "new_stage1_submission");
+            } catch {
+              console.warn("team_questionnaire_notification_failed");
+            }
             return reply({ ok: true, message: "Pendataan berhasil dikirim dan terhubung ke dashboard kuesioner.", timestamp, teamName: petugas.display_name });
           } catch (error) {
             if (accessToken) for (const id of uploadedIds) {
@@ -1736,6 +1897,11 @@ export default {
               throw new Error("Google Sheets gagal menyimpan baris kuesioner (HTTP " + appendResponse.status + "). " + detail);
             }
             await audit(env, admin.id, "owner_questionnaire_submit");
+            try {
+              await recordNotification(env, "Kuisioner Tahap 1 baru", "Ada pengiriman Kuisioner Tahap 1 dari aplikasi internal. Masuk ke dashboard untuk meninjau.", "new_stage1_submission");
+            } catch {
+              console.warn("owner_questionnaire_notification_failed");
+            }
             return reply({ ok: true, message: "Kuesioner tersimpan.", tab: "Kuisioner Owner" });
           } catch (error) {
             if (token) for (const id of uploadedIds) {
@@ -2099,8 +2265,70 @@ export default {
           return reply({ ok: true });
         }
 
+        if (url.pathname === "/api/notifications/google-form" && request.method === "POST") {
+          requestStage = "google_forms_push_webhook";
+          if (!env.GOOGLE_FORMS_WEBHOOK_SECRET) return reply({ error: "Webhook Google Forms belum dikonfigurasi." }, 503);
+          const authorization = request.headers.get("Authorization") || "";
+          const suppliedSecret = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
+          if (!suppliedSecret || suppliedSecret.length > 512) return reply({ error: "Akses webhook tidak diizinkan." }, 401);
+          const expectedHash = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(env.GOOGLE_FORMS_WEBHOOK_SECRET)));
+          const suppliedHash = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(suppliedSecret)));
+          let difference = expectedHash.length ^ suppliedHash.length;
+          for (let i = 0; i < Math.max(expectedHash.length, suppliedHash.length); i++) {
+            difference |= (expectedHash[i] || 0) ^ (suppliedHash[i] || 0);
+          }
+          if (difference !== 0) return reply({ error: "Akses webhook tidak diizinkan." }, 401);
+          const contentLength = Number(request.headers.get("content-length") || "0");
+          if (contentLength > 16 * 1024) return reply({ error: "Event webhook terlalu besar." }, 413);
+          let body: { eventId?: unknown };
+          try { body = await request.json() as typeof body; } catch { return reply({ error: "Format event webhook tidak valid." }, 400); }
+          const eventId = typeof body.eventId === "string" ? body.eventId.trim() : "";
+          if (eventId.length < 8 || eventId.length > 500) return reply({ error: "ID event Google Forms tidak valid." }, 400);
+          await ensureFeatureSchema(env);
+          const eventHash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(eventId)));
+          const inserted = await env.DB.prepare("INSERT OR IGNORE INTO notification_events(event_hash,source) VALUES(?,'google_forms')").bind(eventHash).run();
+          if (!inserted.meta.changes) return reply({ ok: true, duplicate: true });
+          try {
+            await recordNotification(env, "Responden baru dari Google Forms", "Ada respons baru masuk melalui Google Forms. Masuk ke dashboard untuk memeriksanya.", "new_form_response");
+            return reply({ ok: true, duplicate: false });
+          } catch {
+            await env.DB.prepare("DELETE FROM notification_events WHERE event_hash=?").bind(eventHash).run();
+            return reply({ error: "Notifikasi belum berhasil dicatat. Google Forms dapat mencoba kembali." }, 503);
+          }
+        }
+
+        if (url.pathname === "/api/fcm/devices" && request.method === "POST") {
+          if (!isAllowedOrigin(request, env)) return reply({ error: "Origin tidak diizinkan." }, 403);
+          const admin = await sessionAdmin(request, env);
+          if (!admin) return reply({ error: "Silakan login." }, 401);
+          if (admin.role !== "owner" && admin.role !== "admin") return reply({ error: "Peran tidak diizinkan mendaftarkan perangkat push." }, 403);
+          const csrf = request.headers.get("X-CSRF-Token");
+          if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
+          await ensureFeatureSchema(env);
+          let body: { token?: unknown; platform?: unknown; deviceLabel?: unknown };
+          try { body = await request.json() as typeof body; } catch { return reply({ error: "Format pendaftaran FCM tidak valid." }, 400); }
+          const token = typeof body.token === "string" ? body.token.trim() : "";
+          const platform = typeof body.platform === "string" ? body.platform : "android";
+          const deviceLabel = typeof body.deviceLabel === "string" ? body.deviceLabel.trim().slice(0, 80) : "Android";
+          if (platform !== "android" || token.length < 80 || token.length > 4096 || !/^[A-Za-z0-9:_\-.]+$/.test(token)) {
+            return reply({ error: "Token perangkat FCM tidak valid." }, 400);
+          }
+          if (deviceLabel && !/^[A-Za-z0-9 _.-]+$/.test(deviceLabel)) return reply({ error: "Label perangkat tidak valid." }, 400);
+          const tokenHash = await digestHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token)));
+          await env.DB.prepare(`INSERT INTO fcm_devices(token_hash,token,admin_id,platform,device_label)
+            VALUES(?,?,?,'android',?)
+            ON CONFLICT(token_hash) DO UPDATE SET token=excluded.token,admin_id=excluded.admin_id,platform=excluded.platform,device_label=excluded.device_label,updated_at=CURRENT_TIMESTAMP`)
+            .bind(tokenHash, token, admin.id, deviceLabel || "Android").run();
+          return reply({ ok: true, message: "Perangkat Android berhasil didaftarkan untuk notifikasi push." });
+        }
+
         if (url.pathname === "/api/push-config" && request.method === "GET") {
-          return reply({ ok: true, enabled: !!(env.VAPID_PUBLIC_KEY && env.VAPID_SUBJECT), publicKey: env.VAPID_PUBLIC_KEY && env.VAPID_SUBJECT ? env.VAPID_PUBLIC_KEY : "" });
+          return reply({
+            ok: true,
+            enabled: !!(env.VAPID_PUBLIC_KEY && env.VAPID_SUBJECT),
+            publicKey: env.VAPID_PUBLIC_KEY && env.VAPID_SUBJECT ? env.VAPID_PUBLIC_KEY : "",
+            nativePushEnabled: !!(env.FCM_PROJECT_ID && env.FCM_SERVICE_ACCOUNT_EMAIL && env.FCM_PRIVATE_KEY),
+          });
         }
 
         if (url.pathname === "/api/owner-profile" && (request.method === "GET" || request.method === "POST")) {
@@ -2169,10 +2397,13 @@ export default {
           if (admin.role !== "owner") return reply({ error: "Hanya owner yang dapat menguji notifikasi." }, 403);
           const csrf = request.headers.get("X-CSRF-Token");
           if (!csrf || csrf !== admin.csrf_token) return reply({ error: "Token CSRF tidak valid." }, 403);
-          if (!env.VAPID_PUBLIC_KEY || !env.VAPID_SUBJECT) return reply({ error: "Konfigurasi kunci publik push belum lengkap di Cloudflare." }, 503);
+          const webPushReady = !!(env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT);
+          const fcmReady = !!(env.FCM_PROJECT_ID && env.FCM_SERVICE_ACCOUNT_EMAIL && env.FCM_PRIVATE_KEY);
+          if (!webPushReady && !fcmReady) return reply({ error: "Konfigurasi Web Push/FCM belum lengkap di Cloudflare." }, 503);
           await ensureFeatureSchema(env);
-          const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM push_subscriptions").first<{ n: number }>();
-          if (!count?.n) return reply({ error: "Belum ada perangkat yang berlangganan notifikasi. Aktifkan notifikasi HP terlebih dahulu." }, 409);
+          const webCount = await env.DB.prepare("SELECT COUNT(*) AS n FROM push_subscriptions").first<{ n: number }>();
+          const nativeCount = await env.DB.prepare("SELECT COUNT(*) AS n FROM fcm_devices").first<{ n: number }>();
+          if (!((webCount?.n || 0) + (nativeCount?.n || 0))) return reply({ error: "Belum ada perangkat yang berlangganan notifikasi. Aktifkan notifikasi HP terlebih dahulu." }, 409);
           await env.DB.prepare("INSERT INTO dashboard_notifications(title,body,action) VALUES(?,?,?)")
             .bind("Tes notifikasi Sahabat ODHIV Sumut", "Tes notifikasi dijadwalkan. Periksa banner dan layar kunci perangkat.", "push_test").run();
           await env.DB.prepare("INSERT INTO notification_state(state_key,state_value) VALUES('pending_push_test',?) ON CONFLICT(state_key) DO UPDATE SET state_value=excluded.state_value,updated_at=CURRENT_TIMESTAMP")
